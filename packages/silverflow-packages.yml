@@ -1,0 +1,72 @@
+generated: '2026-08-27'
+method: searched
+source: registry.npmjs.org, pypi.org, rubygems.org, crates.io, api.github.com, and
+  https://docs.silverflow.com/
+name: Silverflow client packages
+official_sdk_count: 0
+packages: []
+finding: >-
+  Silverflow publishes NO first-party client libraries in any package registry, and no SDK,
+  CLI or code-sample repository anywhere public. This is a deliberate posture, not an oversight:
+  the OpenAPI's own info.description states "This OpenAPI specification cannot be used for code
+  generation. Please reach out to your TAM regarding code generation using the API Spec." — so
+  Silverflow routes client generation through its technical account managers rather than
+  shipping or supporting generated clients.
+registry_probes:
+- registry: npm
+  query: https://registry.npmjs.org/-/v1/search?text=silverflow
+  result_count: 0
+  version: null
+  published: null
+  note: Zero results. No @silverflow scope, no silverflow-* package.
+- registry: pypi
+  query: https://pypi.org/pypi/silverflow/json
+  result: name-collision
+  version: null
+  published: null
+  note: >-
+    A PyPI project named `silverflow` EXISTS but belongs to a different company — author
+    "Silvestro", author_email hello@silverstream.ai, describing "SilverRiver ... an SDK for
+    advanced automation and AI-driven tasks" installed as `pip install silverriver`. It has
+    nothing to do with Silverflow the card processor and is deliberately NOT recorded as a
+    package here. Flagged because a naive registry-name match would misattribute it.
+- registry: rubygems
+  query: https://rubygems.org/api/v1/gems/silverflow.json
+  result: not-found
+  version: null
+  published: null
+- registry: crates.io
+  query: https://crates.io/api/v1/crates?q=silverflow
+  result_count: 0
+  version: null
+  published: null
+- registry: github
+  query: https://api.github.com/orgs/silverflow
+  status: 404
+  version: null
+  published: null
+  note: >-
+    No GitHub organisation. A repository-search for "silverflow" returns 41 unrelated personal
+    repositories (a Quicksilver interface, a dbt medallion demo, a Fedora OS image, several
+    empty repos) — none belongs to the company. No GitHubOrganization pointer was emitted.
+distribution_model:
+  spec_download: https://docs.silverflow.com/apidocs/latest/openapi.yml
+  spec_download_note: >-
+    The OpenAPI is the deliverable. The docs Introduction explicitly points integrators at it —
+    "Use the Download button at the top of the page to download the API definition" — and
+    suggests importing it into Postman to bootstrap a collection.
+  postman:
+    official_collection_published: false
+    note: >-
+      Silverflow RECOMMENDS Postman and links Postman's own OpenAPI-import documentation, but
+      publishes no public Postman collection or workspace of its own. No Postman pointer was
+      emitted, because the check asks whether the PROVIDER publishes a collection.
+  cdn_components: none
+  cli: none
+consequence_note: >-
+  With no SDK, no CLI and a spec marked unsuitable for code generation, every Silverflow
+  integration is hand-written against the raw HTTP contract. For an agent this is actually a
+  clean surface — one well-specified REST API, no version skew between an SDK and the API — but
+  it means there is no first-party abandonment signal to read here, in either direction. The
+  freshness evidence for this provider is the changelog instead: 398 dated releases, the most
+  recent 2026-08-25, two days before this pass.

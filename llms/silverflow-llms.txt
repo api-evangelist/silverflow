@@ -1,0 +1,57 @@
+# Silverflow
+
+> Cloud-based card payment processing platform with direct card network connectivity
+
+## Overview
+
+Silverflow is a payment processing platform that connects directly to card networks (Visa, Mastercard, etc.), providing real-time transaction insights through modern REST APIs. We serve payment service providers, payment facilitators, acquirers, and merchants.
+
+## Key Capabilities
+
+- Card payment processing with direct network connectivity
+- 3D-Secure authentication and Strong Customer Authentication (SCA)
+- Network tokenization for secure card storage
+- Direct-to-card payouts
+- Dispute management and fraud prevention
+- Transaction-level fee reporting and interchange optimization
+- Real-time authorization and clearing
+- Automatic compliance with scheme requirements
+
+## Documentation
+
+- Getting Started: https://docs.silverflow.com/guides/getting-started
+- API Reference: https://docs.silverflow.com/apidocs/latest/index.html
+- Main Website: https://www.silverflow.com/
+
+## Core Concepts
+
+**Merchants vs Acceptors**: Merchants represent legal entities; acceptors are technical configurations for network connectivity (BIN-based).
+
+**Authentication**: Use Agent Activation Token to activate, then create API keys with specific permissions and IP restrictions.
+
+**Transaction Flow**: Charges → Authorization → Clearing → Settlement. Disputes and chargebacks handled through dedicated endpoints.
+
+**Data Model**: Rich transaction data including network response codes, interchange fees, scheme fees, and full payment metadata.
+
+## API Structure
+
+- **Integration**: Authentication, API key management
+- **Accounts**: Merchant and acceptor setup
+- **Transaction Assurance**: 3DS, tokenization, fraud checks
+- **Charges**: Payment processing (auth, capture, void, refund)
+- **Reporting**: Settlements, reconciliation, analytics
+- **Disputes & Fraud**: Chargeback handling, fraud management
+- **Transaction Breakdown**: Detailed fee and cost analysis
+- **File Subscriptions**: Batch data delivery
+
+## Use Cases
+
+- PSPs building card acquiring capabilities
+- Payment facilitators needing direct network access
+- Merchants optimizing interchange fees
+- Acquirers modernizing infrastructure
+- Platforms requiring rich transaction data for ML/analytics
+
+## Support
+
+Contact: support@silverflow.com

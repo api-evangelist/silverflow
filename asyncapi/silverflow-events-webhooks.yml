@@ -1,0 +1,284 @@
+generated: '2026-08-27'
+method: derived
+source: openapi/silverflow-openapi.yml x-webhooks (31 event definitions) enriched from https://docs.silverflow.com/guides/event-notifications
+name: Silverflow event notifications (webhooks)
+asyncapi_published: false
+asyncapi_note: Silverflow publishes NO AsyncAPI document. Its event surface is described inside the OpenAPI, in
+  a top-level `x-webhooks` block carrying 31 event definitions each with a resolved payload schema and in most cases
+  a worked example. That is a real, machine-readable event contract — it is simply expressed as an OpenAPI vendor
+  extension rather than as AsyncAPI. No AsyncAPI file was authored here; inventing one would misrepresent what Silverflow
+  ships.
+docs:
+- https://docs.silverflow.com/guides/event-notifications
+- https://docs.silverflow.com/apidocs/latest/index.html#tag/Event-Subscriptions
+envelope:
+  standard: CloudEvents 1.0
+  spec: https://cloudevents.io/
+  content_type: application/json
+  transport: HTTP(S) POST to a subscriber-registered webhook
+  user_agent_prefix: Silverflow-Event-Notifications
+  fields:
+  - id
+  - specversion
+  - source
+  - type
+  - agent
+  - subject
+  - time
+  - datacontenttype
+  - dataschema
+  - data
+  extension_attributes:
+  - agent
+  type_namespace: com.silverflow.<domain>.<event>
+  source_namespace: https://silverflow.com/<domain>
+  dataschema_namespace: https://silverflow.com/schemas/events/<domain>/<event>/<major>.<minor>
+delivery:
+  guarantee: at-least-once
+  duplicates: possible — deduplicate on the CloudEvents `id`
+  ordering: not guaranteed — use `time` to reconstruct the order of operations
+  payload_style: thin — identifiers and metadata only, never entity data; the consumer must call back into the REST
+    API to read state
+  staleness_warning: the referenced entity may have changed by the time it is retrieved
+  expected_response: 2xx; anything else (4xx/5xx, timeout, connection failure) is a failed delivery
+  test_event: a test notification (type com.silverflow.<domain>.test, subject "test", data.testEvent true) is sent
+    on subscription create and delete
+  signature_verification: NOT DOCUMENTED — no signing secret, HMAC header or mTLS-to-webhook mechanism is published.
+    See conventions/silverflow-conventions.yml events.signature_note.
+versioning:
+  carrier: the `dataschema` URI
+  minor: non-breaking; applied automatically to existing subscriptions; consumers must tolerate new fields
+  major: breaking; existing subscriptions are unaffected — a NEW subscription must be created to receive the new
+    major version
+subscription_management:
+  create: createEventSubscription (POST /v1/eventSubscriptions)
+  list: getEventSubscriptions (GET /v1/eventSubscriptions)
+  read: getSubscription (GET /v1/eventSubscriptions/{eventSubscriptionKey})
+  update: updateEventSubscription (PATCH /v1/eventSubscriptions/{eventSubscriptionKey})
+  delete: deleteEventSubscription (DELETE /v1/eventSubscriptions/{eventSubscriptionKey})
+totals:
+  events: 31
+  domains: 11
+  with_payload_schema: 31
+  with_example: 27
+event_domains:
+- domain: AMMF Submission Events
+  event_count: 3
+  events:
+  - event: events.ammfSubmissions.submitted
+    operation_id: ammfSubmissionEventSubmitted
+    summary: Submission Submitted
+    payload_schema: AmmfSubmissionSubmittedEventNotification1_0
+    examples:
+    - submissionSubmitted
+  - event: events.ammfSubmissions.approved
+    operation_id: ammfSubmissionEventApproved
+    summary: Submission Approved
+    payload_schema: AmmfSubmissionApprovedEventNotification1_0
+    examples:
+    - submissionSubmitted
+  - event: events.ammfSubmissions.rejected
+    operation_id: ammfSubmissionEventRejected
+    summary: Submission Rejected
+    payload_schema: AmmfSubmissionRejectedEventNotification1_0
+    examples:
+    - submissionSubmitted
+- domain: BEP Authentication
+  event_count: 1
+  events:
+  - event: authenticationStatus
+    operation_id: bepWebhook
+    summary: BEP Authentication Status Update
+    payload_schema: AuthenticationNotification
+    description: "The authentication status updates will be sent to the `webhook` registered during \nthe [creation\
+      \ of a BEP](#operation/bep) authentication intent."
+- domain: Charges Events
+  event_count: 1
+  events:
+  - event: events.charges.action
+    operation_id: chargeActionEvent
+    summary: Charge Action
+    payload_schema: ChargeActionEventNotificationVersion1_0
+    examples:
+    - authorization
+    - reversal
+    - refund
+    - offline-refund
+    - clearing
+    - increment
+- domain: Clearing Events
+  event_count: 2
+  events:
+  - event: events.clearing.abandoned
+    operation_id: abandonedClearing
+    summary: Abandoned Clearing Event
+    payload_schema: ClearingEventNotificationVersion1_0AbandonedClearingEvent
+  - event: events.clearing.offlineRefundOutcome
+    operation_id: offlineRefundOutcome
+    summary: Offline Refund Outcome Event
+    payload_schema: ClearingEventNotificationVersion1_0OfflineRefundOutcomeEvent
+- domain: Disputes Events
+  event_count: 13
+  events:
+  - event: events.disputes.received
+    operation_id: disputeEventReceived
+    summary: Received
+    payload_schema: DisputeEventNotificationVersion1_0Received
+    examples:
+    - received
+  - event: events.disputes.acceptanceInitiated
+    operation_id: disputeEventAcceptanceInitiated
+    summary: Acceptance Initiated
+    payload_schema: DisputeEventNotificationVersion1_0AcceptanceInitiated
+    examples:
+    - acceptanceInitiated
+  - event: events.disputes.acceptanceFailed
+    operation_id: disputeEventAcceptanceFailed
+    summary: Acceptance Failed
+    payload_schema: DisputeEventNotificationVersion1_0AcceptanceFailed
+    examples:
+    - acceptanceFailed
+  - event: events.disputes.defenseInitiated
+    operation_id: disputeEventDefenseInitiated
+    summary: Defense Initiated
+    payload_schema: DisputeEventNotificationVersion1_0DefenseInitiated
+    examples:
+    - defenseInitiated
+  - event: events.disputes.defenseFailed
+    operation_id: disputeEventDefenseFailed
+    summary: Defense Failed
+    payload_schema: DisputeEventNotificationVersion1_0DefenseFailed
+    examples:
+    - defenseFailed
+  - event: events.disputes.evidenceSubmitted
+    operation_id: disputeEventEvidenceSubmitted
+    summary: Evidence Submitted
+    payload_schema: DisputeEventNotificationVersion1_0EvidenceSubmitted
+    examples:
+    - received
+  - event: events.disputes.evidenceRejected
+    operation_id: disputeEventEvidenceRejected
+    summary: Evidence Rejected
+    payload_schema: DisputeEventNotificationVersion1_0EvidenceRejected
+    examples:
+    - evidenceRejected
+  - event: events.disputes.awaitingResponse
+    operation_id: disputeEventAwaitingResponse
+    summary: Awaiting Response
+    payload_schema: DisputeEventNotificationVersion1_0AwaitingResponse
+    examples:
+    - received
+  - event: events.disputes.closedAccepted
+    operation_id: disputeEventClosedAccepted
+    summary: Closed Accepted
+    payload_schema: DisputeEventNotificationVersion1_0ClosedAccepted
+    examples:
+    - closedAccepted
+  - event: events.disputes.closedWon
+    operation_id: disputeEventClosedWon
+    summary: Closed Won
+    payload_schema: DisputeEventNotificationVersion1_0ClosedWon
+    examples:
+    - closedWon
+  - event: events.disputes.closedLost
+    operation_id: disputeEventClosedLost
+    summary: Closed Lost
+    payload_schema: DisputeEventNotificationVersion1_0ClosedLost
+    examples:
+    - closedLost
+  - event: events.disputes.reversed
+    operation_id: disputeEventReversed
+    summary: Reversed
+    payload_schema: DisputeEventNotificationVersion1_0Reversed
+    examples:
+    - reversed
+  - event: events.disputes.withdrawn
+    operation_id: disputeEventWithdrawn
+    summary: Withdrawn
+    payload_schema: DisputeEventNotificationVersion1_0Withdrawn
+    examples:
+    - withdrawn
+- domain: Distribution Events
+  event_count: 1
+  events:
+  - event: events.distributions.sent
+    operation_id: distributionsSentEvent
+    summary: Distribution Sent
+    payload_schema: DistributionsSentEventNotificationVersion1_1
+    examples:
+    - successfulDistribution
+    - failedDistribution
+- domain: Fraud Notification Events
+  event_count: 1
+  events:
+  - event: events.fraudNotifications
+    operation_id: fraudNotificationEvent
+    summary: Received
+    payload_schema: FraudNotificationEventNotificationVersion1_0Received
+- domain: Network Tokens Events
+  event_count: 4
+  events:
+  - event: events.networkTokens.created
+    operation_id: networkTokenCreated
+    summary: Network Token Created
+    payload_schema: NetworkTokenEventNotification1_0Created
+    examples:
+    - created
+  - event: events.networkTokens.updated
+    operation_id: networkTokenUpdated
+    summary: Network Token Updated
+    payload_schema: NetworkTokenEventNotification1_0Updated
+    examples:
+    - updated
+  - event: events.networkTokens.archived
+    operation_id: networkTokenArchived
+    summary: Network Token Archived
+    payload_schema: NetworkTokenEventNotification1_0Archived
+    examples:
+    - archived
+  - event: events.networkTokens.failed
+    operation_id: networkTokenFailed
+    summary: Network Token Failed
+    payload_schema: NetworkTokenEventNotification1_0Failed
+    examples:
+    - failed
+- domain: Processor Tokens Events
+  event_count: 3
+  events:
+  - event: events.processorTokens.created
+    operation_id: processorTokenCreated
+    summary: Processor Token Created
+    payload_schema: ProcessorTokenEventNotification1_1Created
+    examples:
+    - created
+  - event: events.processorTokens.archived
+    operation_id: processorTokenArchived
+    summary: Processor Token Archived
+    payload_schema: ProcessorTokenEventNotification1_1Archived
+    examples:
+    - archived
+  - event: events.processorTokens.cvcDeleted
+    operation_id: processorTokenCvcDeleted
+    summary: Processor Token CVC Deleted
+    payload_schema: ProcessorTokenEventNotification1_1CvcDeleted
+    examples:
+    - cvcDeleted
+- domain: Reconciliation Events
+  event_count: 1
+  events:
+  - event: events.reconciliation.networkFundsTransferCompleted
+    operation_id: networkFundsTransferCompleted
+    summary: Network Funds Transfer Completed
+    payload_schema: NftCompletedNotificationVersion1_0
+    examples:
+    - closedAccepted
+- domain: Report Events
+  event_count: 1
+  events:
+  - event: events.reports.updated
+    operation_id: reportNotificationEvent
+    summary: Report Updated
+    payload_schema: ReportEventNotification1_0
+    examples:
+    - reportsCompleted
+    - reportsFailed

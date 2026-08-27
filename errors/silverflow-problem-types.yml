@@ -1,0 +1,665 @@
+generated: '2026-08-27'
+method: derived
+source: openapi/silverflow-openapi.yml (components.schemas *ErrorDetails / *Error type+title+status enums) enriched
+  from https://docs.silverflow.com/guides/error-handling
+name: Silverflow problem types
+format: rfc7807
+format_note: 'Silverflow states it follows RFC 7807 Problem Details for HTTP APIs (the predecessor of RFC 9457)
+  with one declared deviation: the media type is application/json, NOT application/problem+json. The string `application/problem+json`
+  does not appear anywhere in the OpenAPI. A second stated deviation: 502 and 504 returned from the infrastructure
+  may carry only text/html. Consumers matching on media type will not detect these as problem documents; they must
+  match on the `type` URI instead.'
+docs: https://docs.silverflow.com/guides/error-handling
+envelope:
+  fields:
+  - type
+  - title
+  - status
+  - detail
+  - instance
+  required:
+  - type
+  - title
+  - status
+  - detail
+  - instance
+  type_namespace: /silverflow/problems/
+  media_type: application/json
+  note: '`type` is a relative URI reference under /silverflow/problems/; it is an identifier, not a dereferenceable
+    document.'
+retry_policy:
+  retriable_status_codes:
+  - 429
+  - 502
+  - 503
+  - 504
+  non_retriable: All other 4xx and 5xx codes will yield the same result and should not be retried.
+  retry_after_header: Retry-After — states the minimum number of seconds to wait before retrying (429)
+  idempotency_note: For endpoints that accept Idempotency-Key, a safe retry replays the original outcome. See conventions/silverflow-conventions.yml.
+  source: https://docs.silverflow.com/guides/error-handling
+totals:
+  problem_types: 85
+  with_title: 72
+  with_status: 76
+  families:
+    core: 22
+    charge: 20
+    report: 11
+    3ds: 6
+    riskAssessments: 5
+    idempotency: 4
+    bin: 3
+    merchant-acceptor: 3
+    schemeFees: 3
+    bep: 2
+    card-management: 2
+    card: 1
+    charges: 1
+    distribution: 1
+    processorTokens: 1
+  status_distribution:
+    400: 14
+    401: 4
+    403: 1
+    404: 8
+    408: 1
+    409: 36
+    412: 1
+    415: 1
+    422: 5
+    429: 1
+    500: 2
+    503: 2
+http_status_coverage_in_spec:
+  _note: count of operations declaring each 4xx/5xx response
+  '400': 118
+  '401': 134
+  '403': 127
+  '404': 84
+  '405': 2
+  '408': 1
+  '409': 54
+  '411': 1
+  '412': 16
+  '413': 1
+  '415': 3
+  '422': 7
+  '429': 130
+  '500': 48
+  '503': 12
+problem_types:
+- type: /silverflow/problems/3ds/not-found
+  family: 3ds
+  title: Not Found
+  status: 404
+  schemas:
+  - EntityNotFoundErrorDetails
+  occurrences: 2
+- type: /silverflow/problems/3ds/unenrolled-account-number
+  family: 3ds
+  title: Unenrolled Account Number
+  status: 422
+  schemas:
+  - UnenrolledAccountNumberErrorDetails
+  occurrences: 2
+- type: /silverflow/problems/3ds/unenrolled-acquirer-or-merchant
+  family: 3ds
+  title: Unenrolled Acquirer or Merchant
+  status: 422
+  schemas:
+  - UnenrolledAcquireOrMerchantErrorDetails
+  occurrences: 2
+- type: /silverflow/problems/3ds/unsupported-card-network
+  family: 3ds
+  title: Unsupported Card Network
+  status: 409
+  schemas:
+  - UnsupportedCardNetworkErrorDetails
+  occurrences: 5
+- type: /silverflow/problems/3ds/unsupported-card-network-region
+  family: 3ds
+  title: Unsupported Region for this Card Network
+  status: 409
+  schemas:
+  - UnsupportedCardNetworkRegionErrorDetails
+  occurrences: 3
+- type: /silverflow/problems/3ds/unsupported-protocol-version
+  family: 3ds
+  title: Unsupported Protocol Version
+  status: 422
+  schemas:
+  - UnsupportedProtocolVersionErrorDetails
+  occurrences: 4
+- type: /silverflow/problems/authentication-required
+  family: core
+  title: Authentication Required
+  status: 401
+  schemas:
+  - AuthenticationRequiredErrorDetails
+  - NotAuthorizedError
+  - UnauthorizedError
+  occurrences: 15
+- type: /silverflow/problems/bad-request
+  family: core
+  title: Bad Request
+  status: 400
+  schemas:
+  - BadRequestErrorDetails
+  - BadRequestProblemDetail
+  - GenericBadRequestError
+  occurrences: 9
+- type: /silverflow/problems/bep/authorization-result-already-submitted
+  family: bep
+  title: Authorization Result Already Submitted
+  status: 409
+  schemas:
+  - AuthorizationResultAlreadySubmittedErrorDetails
+  occurrences: 2
+- type: /silverflow/problems/bep/unauthenticated
+  family: bep
+  title: Unauthenticated BEP Entity
+  status: 409
+  schemas:
+  - UnauthenticatedBepEntityErrorDetails
+  occurrences: 2
+- type: /silverflow/problems/bin/unexpected-currency
+  family: bin
+  status: 409
+  schemas:
+  - UnexpectedCurrencyErrorDetails
+  occurrences: 2
+- type: /silverflow/problems/bin/unexpected-message-system
+  family: bin
+  title: Unexpected Message System
+  status: 409
+  schemas:
+  - UnexpectedMessageSystem
+  occurrences: 2
+- type: /silverflow/problems/bin/unexpected-network
+  family: bin
+  title: Incompatible Card Network
+  status: 409
+  schemas:
+  - IncompatibleCardNetworkErrorDetails
+  - schemas-IncompatibleCardNetworkErrorDetails
+  occurrences: 6
+- type: /silverflow/problems/blocked-merchant-acceptor
+  family: core
+  title: Blocked Merchant Acceptor
+  status: 409
+  schemas:
+  - BlockedMerchantAcceptorError
+  occurrences: 2
+- type: /silverflow/problems/card-management/cannot-determine-card-network
+  family: card-management
+  title: Cannot Determine Card Network
+  status: 400
+  schemas:
+  - CannotDetermineCardNetworkError
+  occurrences: 2
+- type: /silverflow/problems/card-management/referenced-acceptor-not-found-by-route
+  family: card-management
+  title: Referenced Acceptor Not Found By Route
+  status: 409
+  schemas:
+  - ReferencedAcceptorNotFoundByRouteError
+  occurrences: 2
+- type: /silverflow/problems/card/invalid
+  family: card
+  title: Invalid Card
+  status: 409
+  schemas:
+  - InvalidCardErrorDetails
+  occurrences: 6
+- type: /silverflow/problems/charge/already-canceled
+  family: charge
+  title: Charge Already Canceled
+  status: 409
+  schemas:
+  - AlreadyCanceledErrorDetails
+  occurrences: 1
+- type: /silverflow/problems/charge/already-refunded
+  family: charge
+  title: Charge Already Refunded
+  status: 409
+  schemas:
+  - AlreadyRefundedErrorDetails
+  occurrences: 1
+- type: /silverflow/problems/charge/cannot-clear-zero-amount
+  family: charge
+  title: Cannot Clear Zero Amount
+  status: 409
+  schemas:
+  - ClearingCurrentZeroAmountErrorDetails
+  occurrences: 2
+- type: /silverflow/problems/charge/cannot-determine-card-network-by-card-number
+  family: charge
+  title: Cannot Determine Card Network By Card Number
+  status: 409
+  schemas:
+  - CannotDetermineCardNetworkErrorDetails
+  occurrences: 3
+- type: /silverflow/problems/charge/clearing-already-submitted
+  family: charge
+  title: Clearing Already Submitted
+  status: 409
+  schemas:
+  - ClearingAlreadySubmittedErrorDetails
+  occurrences: 2
+- type: /silverflow/problems/charge/incompatible-authentication-status
+  family: charge
+  title: Incompatible Authentication Status
+  status: 409
+  schemas:
+  - IncompatibleAuthenticationStatus
+  occurrences: 2
+- type: /silverflow/problems/charge/incompatible-bin
+  family: charge
+  occurrences: 1
+- type: /silverflow/problems/charge/incompatible-card
+  family: charge
+  title: Incompatible Card
+  status: 409
+  schemas:
+  - IncompatibleCardErrorDetails
+  occurrences: 6
+- type: /silverflow/problems/charge/incompatible-card-network-for-operation
+  family: charge
+  title: Incompatible Network For Operation
+  status: 409
+  schemas:
+  - IncompatibleCardNetworkForOperation
+  occurrences: 3
+- type: /silverflow/problems/charge/invalid-amount
+  family: charge
+  status: 409
+  schemas:
+  - InvalidAmountErrorDetails
+  occurrences: 2
+- type: /silverflow/problems/charge/invalid-operation
+  family: charge
+  title: Invalid Operation on Charge
+  status: 409
+  schemas:
+  - ChargeInvalidOperationErrorDetails
+  occurrences: 3
+- type: /silverflow/problems/charge/invalid-request
+  family: charge
+  title: Invalid Request
+  status: 400
+  schemas:
+  - InvalidRequestError
+  - schemas-InvalidRequestErrorDetails
+  occurrences: 4
+- type: /silverflow/problems/charge/missing-network-reference
+  family: charge
+  status: 409
+  schemas:
+  - MissingNetworkReferenceErrorDetails
+  occurrences: 2
+- type: /silverflow/problems/charge/too-old
+  family: charge
+  occurrences: 1
+- type: /silverflow/problems/charge/unexpected-authorization-status
+  family: charge
+  title: Unexpected Authorization Status
+  status: 409
+  schemas:
+  - UnexpectedAuthorizationErrorDetails
+  occurrences: 2
+- type: /silverflow/problems/charge/unexpected-clearing-mode
+  family: charge
+  status: 409
+  schemas:
+  - UnexpectedClearingModeErrorDetails
+  occurrences: 2
+- type: /silverflow/problems/charge/unexpected-clearing-status
+  family: charge
+  title: Unexpected Clearing Status
+  status: 409
+  schemas:
+  - UnexpectedClearingStatusErrorDetails
+  - schemas-UnexpectedClearingStatusErrorDetails
+  occurrences: 4
+- type: /silverflow/problems/charge/unexpected-intent
+  family: charge
+  status: 409
+  schemas:
+  - UnexpectedIntentErrorDetails
+  occurrences: 2
+- type: /silverflow/problems/charge/unexpected-refunds-status
+  family: charge
+  status: 409
+  schemas:
+  - UnexpectedRefundStatusErrorDetails
+  occurrences: 2
+- type: /silverflow/problems/charge/unexpected-sequence
+  family: charge
+  title: Unexpected Sequence
+  status: 400
+  schemas:
+  - UnexpectedSequenceErrorDetails
+  occurrences: 2
+- type: /silverflow/problems/charges/invalid-charge
+  family: charges
+  title: Invalid Charge
+  status: 409
+  schemas:
+  - ChargeTooOldForClearingErrorDetails
+  occurrences: 2
+- type: /silverflow/problems/conflict
+  family: core
+  title: Conflict
+  status: 409
+  schemas:
+  - ConflictError
+  occurrences: 1
+- type: /silverflow/problems/distribution/not-found
+  family: distribution
+  title: Distribution not found
+  status: 404
+  schemas:
+  - DistributionNotFoundError
+  occurrences: 2
+- type: /silverflow/problems/entity-not-found
+  family: core
+  title: Not Found
+  status: 404
+  schemas:
+  - schemas-EntityNotFoundErrorDetails
+  occurrences: 3
+- type: /silverflow/problems/forbidden
+  family: core
+  title: Forbidden
+  status: 403
+  schemas:
+  - ForbiddenError
+  - ForbiddenErrorDetails
+  - components-schemas-ForbiddenError
+  occurrences: 13
+- type: /silverflow/problems/idempotency/request-body-mismatch
+  family: idempotency
+  occurrences: 2
+- type: /silverflow/problems/idempotency/request-is-still-being-processed
+  family: idempotency
+  title: Request Is Still Being Processed
+  status: 409
+  schemas:
+  - IdempotentRequestIsStillBeingProcessedError
+  - IdempotentRequestIsStillBeingProcessedErrorDetails
+  occurrences: 6
+- type: /silverflow/problems/idempotency/request-mismatch
+  family: idempotency
+  title: Idempotent Request Mismatch
+  status: 409
+  schemas:
+  - IdempotentRequestMismatchError
+  - NonMatchingIdempotentRequestErrorDetails
+  occurrences: 7
+- type: /silverflow/problems/idempotency/temporarily-unavailable
+  family: idempotency
+  occurrences: 1
+- type: /silverflow/problems/incompatible-mcc
+  family: core
+  title: Incompatible MCC
+  status: 400
+  schemas:
+  - IncompatibleMccError
+  occurrences: 2
+- type: /silverflow/problems/incompatible-network-for-operation
+  family: core
+  title: Incompatible Network For Operation
+  status: 400
+  schemas:
+  - IncompatibleNetworkForOperationError
+  occurrences: 2
+- type: /silverflow/problems/internal-server-error
+  family: core
+  title: Internal Server Error
+  status: 500
+  schemas:
+  - InternalServerError
+  - InternalServerErrorDetails
+  - InternalServerErrorProblemDetail
+  occurrences: 13
+- type: /silverflow/problems/invalid-input
+  family: core
+  title: Invalid Book Date Range
+  status: 400
+  schemas:
+  - InputValidationError
+  - InvalidBookDateRangeErrorDetails
+  - InvalidInputError
+  occurrences: 21
+- type: /silverflow/problems/invalid-offset-token
+  family: core
+  title: Invalid Offset Token
+  status: 400
+  schemas:
+  - InvalidOffsetTokenError
+  - InvalidOffsetTokenErrorDetails
+  occurrences: 4
+- type: /silverflow/problems/invalid-request
+  family: core
+  title: Invalid Request
+  status: 400
+  schemas:
+  - InvalidRequestErrorDetails
+  - schemas-InvalidRequestError
+  occurrences: 3
+- type: /silverflow/problems/invalid-to-or-from-date
+  family: core
+  title: Invalid To or From Date
+  status: 400
+  schemas:
+  - InvalidToOrFromDateErrorDetails
+  occurrences: 2
+- type: /silverflow/problems/merchant-acceptor/blocked
+  family: merchant-acceptor
+  title: Blocked Merchant Acceptor
+  status: 409
+  schemas:
+  - BlockedMerchantAcceptorErrorDetails
+  occurrences: 3
+- type: /silverflow/problems/merchant-acceptor/incompatible-mcc
+  family: merchant-acceptor
+  title: Incompatible Merchant Category Code
+  status: 409
+  schemas:
+  - IncompatibleMccErrorDetails
+  occurrences: 2
+- type: /silverflow/problems/merchant-acceptor/missing-pos-address
+  family: merchant-acceptor
+  title: Missing Point of Sale Address
+  status: 409
+  schemas:
+  - MissingPosAddressErrorDetails
+  occurrences: 2
+- type: /silverflow/problems/method-not-allowed
+  family: core
+  occurrences: 1
+- type: /silverflow/problems/not-found
+  family: core
+  title: Not Found
+  status: 404
+  schemas:
+  - NotFoundError
+  occurrences: 5
+- type: /silverflow/problems/precondition-failed
+  family: core
+  title: Precondition Failed
+  status: 412
+  schemas:
+  - PreconditionFailedProblemDetail
+  occurrences: 2
+- type: /silverflow/problems/processorTokens/invalid-processor-token
+  family: processorTokens
+  title: Invalid Processor Token
+  status: 409
+  schemas:
+  - InvalidProcessorTokenErrorDetails
+  occurrences: 2
+- type: /silverflow/problems/referenced-entity-not-found
+  family: core
+  title: Referenced Entity Not Found
+  status: 409
+  schemas:
+  - ReferencedEntityNotFoundError
+  - ReferencedEntityNotFoundErrorDetails
+  occurrences: 7
+- type: /silverflow/problems/report/bin-not-found
+  family: report
+  title: Bin not found
+  status: 404
+  schemas:
+  - BinNotFoundErrorDetails
+  occurrences: 2
+- type: /silverflow/problems/report/entity-already-exists
+  family: report
+  title: Entity Already Exists
+  schemas:
+  - EntityAlreadyExistsErrorDetails
+  occurrences: 2
+- type: /silverflow/problems/report/invalid-date-range
+  family: report
+  title: Invalid date range
+  status: 400
+  schemas:
+  - InvalidDateRangeErrorDetails
+  occurrences: 2
+- type: /silverflow/problems/report/invalid-offset-token
+  family: report
+  title: Invalid Offset Token
+  status: 400
+  schemas:
+  - schemas-InvalidOffsetTokenError
+  occurrences: 1
+- type: /silverflow/problems/report/invalid-report-name
+  family: report
+  title: Invalid report name
+  status: 400
+  schemas:
+  - InvalidReportNameErrorDetails
+  occurrences: 1
+- type: /silverflow/problems/report/not-authorized
+  family: report
+  title: Not authorized
+  status: 401
+  schemas:
+  - NotAuthorizedErrorDetails
+  occurrences: 7
+- type: /silverflow/problems/report/referenced-entity-archived
+  family: report
+  title: Referenced Entity Archived
+  schemas:
+  - ReferencedEntityArchivedErrorDetails
+  occurrences: 2
+- type: /silverflow/problems/report/referenced-entity-not-found
+  family: report
+  title: Referenced Entity Not Found
+  schemas:
+  - schemas-ReferencedEntityNotFoundErrorDetails
+  occurrences: 2
+- type: /silverflow/problems/report/report-not-found
+  family: report
+  title: Report not found
+  status: 404
+  schemas:
+  - ReportNotFoundErrorDetails
+  occurrences: 3
+- type: /silverflow/problems/report/report-schedule-not-found
+  family: report
+  title: Report schedule not found
+  status: 404
+  schemas:
+  - ReportScheduleNotFoundErrorDetails
+  occurrences: 4
+- type: /silverflow/problems/report/unsupported-mime-type
+  family: report
+  title: Unsupported mimeType
+  status: 415
+  schemas:
+  - UnsupportedMimeTypeErrorDetails
+  occurrences: 3
+- type: /silverflow/problems/riskAssessments/merchant-acceptor-not-found
+  family: riskAssessments
+  title: The merchant acceptor was not found.
+  status: 422
+  schemas:
+  - MerchantAcceptorNotFoundError
+  occurrences: 1
+- type: /silverflow/problems/riskAssessments/no-customer-token
+  family: riskAssessments
+  title: No risk provider token found for given agent key
+  status: 409
+  schemas:
+  - RiskProviderNoCustomerTokenError
+  occurrences: 1
+- type: /silverflow/problems/riskAssessments/not-authorized
+  family: riskAssessments
+  title: Not authorized
+  status: 401
+  schemas:
+  - schemas-NotAuthorizedErrorDetails
+  occurrences: 1
+- type: /silverflow/problems/riskAssessments/provider-timeout
+  family: riskAssessments
+  title: Request timed out
+  status: 408
+  schemas:
+  - RiskProviderTimeoutError
+  occurrences: 1
+- type: /silverflow/problems/riskAssessments/provider-unexpected
+  family: riskAssessments
+  title: Request to risk provider returned with unexpected error
+  status: 500
+  schemas:
+  - RiskProviderUnexpectedError
+  occurrences: 1
+- type: /silverflow/problems/schemeFees/card-network-mismatch
+  family: schemeFees
+  title: Card network mismatch
+  status: 400
+  schemas:
+  - CardNetworkMismatchErrorDetails
+  occurrences: 2
+- type: /silverflow/problems/schemeFees/card-network-not-supported
+  family: schemeFees
+  occurrences: 1
+- type: /silverflow/problems/schemeFees/not-found
+  family: schemeFees
+  title: Not found
+  status: 404
+  schemas:
+  - NotFoundErrorDetails
+  occurrences: 2
+- type: /silverflow/problems/service-unavailable
+  family: core
+  title: Service Unavailable
+  status: 503
+  occurrences: 2
+- type: /silverflow/problems/temporary-server-error
+  family: core
+  title: Temporary Server Error
+  status: 503
+  schemas:
+  - TemporaryServerErrorDetails
+  occurrences: 2
+- type: /silverflow/problems/too-many-requests
+  family: core
+  title: Too Many Requests
+  status: 429
+  schemas:
+  - TooManyRequestsError
+  - TooManyRequestsErrorDetails
+  - schemas-TooManyRequestsError
+  occurrences: 11
+- type: /silverflow/problems/unauthorized
+  family: core
+  title: Unauthorized
+  status: 401
+  occurrences: 2
+- type: /silverflow/problems/unprocessable-content
+  family: core
+  status: 422
+  occurrences: 2

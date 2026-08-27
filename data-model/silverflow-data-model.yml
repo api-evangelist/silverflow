@@ -1,0 +1,287 @@
+generated: '2026-08-27'
+method: derived
+source: openapi/silverflow-openapi.yml ($ref graph, path structure and *Key id-reference fields)
+  cross-checked against https://docs.silverflow.com/guides/entities-and-hierarchies
+name: Silverflow data model
+docs:
+- https://docs.silverflow.com/guides/entities-and-hierarchies
+- https://docs.silverflow.com/guides/charges-lifecycle
+- https://docs.silverflow.com/guides/dispute-lifecycle
+identifier_scheme:
+  style: typed, prefixed, opaque, immutable string keys
+  form: <prefix>-<base62>
+  note: >-
+    Every top-level resource carries a `key` property whose prefix names its type, so a bare
+    identifier is self-describing anywhere it appears. This is the single most useful property
+    of the model for an agent — a key found in an event payload can be routed to the right
+    endpoint without any surrounding context.
+  prefixes:
+  - {prefix: cgt-, entity: Agent}
+  - {prefix: apk-, entity: ApiKey}
+  - {prefix: mct-, entity: Merchant}
+  - {prefix: mac-, entity: MerchantAcceptor}
+  - {prefix: enr-, entity: Enrollment}
+  - {prefix: bin-, entity: Bin}
+  - {prefix: chg-, entity: Charge}
+  - {prefix: act-, entity: ChargeAction}
+  - {prefix: tds-, entity: ThreeDsAuthentication}
+  - {prefix: bep-, entity: BepAuthentication}
+  - {prefix: ptk-, entity: ProcessorToken}
+  - {prefix: ntk-, entity: NetworkToken}
+  - {prefix: dsp-, entity: Dispute}
+  - {prefix: deh-, entity: DisputeEventHistory}
+  - {prefix: dok-, entity: Document}
+  - {prefix: frn-, entity: FraudNotification}
+  - {prefix: scr-, entity: Screening}
+  - {prefix: rsk-, entity: RiskAssessment}
+  - {prefix: rep-, entity: Report}
+  - {prefix: rak-, entity: ReportSchedule}
+  - {prefix: dst-, entity: Distribution}
+  - {prefix: sub-, entity: EventSubscription / FileSubscription}
+  - {prefix: nft-, entity: NetworkFundsTransfer}
+  - {prefix: rcl-, entity: ReconciliationDetail}
+  - {prefix: cma-, entity: CardManagementAction}
+  - {prefix: asm-, entity: AmmfSubmission}
+  - {prefix: evt-, entity: EventNotification}
+core_hierarchy:
+  summary: >-
+    Agent -> Merchant -> MerchantAcceptor is the spine. An Agent is the API tenant (the
+    acquirer, PSP or payfac holding the credentials). A Merchant is a legal entity. A
+    MerchantAcceptor is the TECHNICAL configuration that binds that merchant to a BIN for
+    network connectivity — the distinction Silverflow's own llms.txt calls out first:
+    "Merchants represent legal entities; acceptors are technical configurations for network
+    connectivity (BIN-based)." Every charge is created against an acceptor, not against a
+    merchant.
+  note: >-
+    MerchantAcceptor is VERSIONED — it has a draft version that is edited and then activated
+    (getDraftAcceptorVersion, activateAcceptor, getAcceptorVersion), which is why a bad
+    acceptor change is superseded rather than rolled back.
+entities:
+- name: Agent
+  key_prefix: cgt-
+  operations: [getAgent, updateAgent, activateAgent, createAgentBearerToken]
+  note: The API tenant. Literal "current" may be used in place of the agent key.
+- name: ApiKey
+  key_prefix: apk-
+  operations: [createApiKey, getApiKeys, getApiKey, updateApiKey, deleteApiKey]
+- name: Merchant
+  key_prefix: mct-
+  operations: [createMerchant, getMerchants, getMerchant, updateMerchant, deleteMerchant]
+- name: MerchantAcceptor
+  key_prefix: mac-
+  operations: [createAcceptor, getMerchantAcceptors, getAcceptors, getAcceptor, updateAcceptor,
+    deleteAcceptorVersion, getAcceptorVersion, activateAcceptor, getDraftAcceptorVersion]
+- name: Bin
+  key_prefix: bin-
+  operations: [getBins, getBin, getBinConfigurations]
+  note: Bank Identification Number configuration — the network connectivity an acceptor is
+    bound to. Read-only through the API; provisioned by Silverflow.
+- name: Enrollment
+  key_prefix: enr-
+  operations: [getAllEnrollments, createEnrollment, getEnrollmentByKey, deleteEnrollment,
+    updateEnrollment]
+  note: Registers an acceptor with a card-network programme.
+- name: Screening
+  key_prefix: scr-
+  operations: [postScreening, listScreenings, getScreening, listScreeningResults]
+  note: Merchant compliance screening (e.g. MATCH/terminated-merchant checks).
+- name: Charge
+  key_prefix: chg-
+  operations: [createCharge, createChargeBep, createChargeFunding, createChargePayout,
+    createChargePos, createChargeAtm, createChargeMit, createChargeMitFromInitialCharge,
+    createChargeMitFunding, createChargeWip, getCharge, getCharges]
+  note: The central money object. Nine distinct creation operations by charge type.
+- name: ChargeAction
+  key_prefix: act-
+  operations: [cancel, refund, offlineRefund, reverse, increment, triggerManualClearing,
+    getAction, getActions]
+  note: Every post-authorization mutation is an ACTION appended to the charge, not an edit of
+    it. The charge is an append-only event log; this is why the reversibility model is
+    state-based.
+- name: ThreeDsAuthentication
+  key_prefix: tds-
+  operations: [create3dsAuthentication, get3dsAuthentications, create3riAuthentication,
+    get3dsAuthentication, 3dsCardRanges]
+- name: BepAuthentication
+  key_prefix: bep-
+  operations: [bep, getCompleteBep, finalizeBep]
+- name: ProcessorToken
+  key_prefix: ptk-
+  operations: [createProcessorToken, getProcessorTokens, getProcessorToken,
+    archiveProcessorToken, getProcessorTokenCardData]
+  note: Silverflow-vaulted card data.
+- name: NetworkToken
+  key_prefix: ntk-
+  operations: [createNetworkToken, listNetworkTokens, getNetworkToken, archiveNetworkToken,
+    getNetworkTokenData, createNetworkTokenCryptogram]
+  note: EMVCo network token (Visa VTS / Mastercard SCOF).
+- name: Dispute
+  key_prefix: dsp-
+  operations: [getDisputes, getDispute, acceptDispute, defendDispute, submitEvidence,
+    rejectEvidence, getDisputeEventHistory, getEventHistory, getDisputeDocumentsMetadata,
+    addDisputeDocumentsMetadata]
+- name: Document
+  key_prefix: dok-
+  operations: [getDocument, archiveDocument, downloadDocumentFile, uploadDocumentFile]
+  note: Dispute evidence files. Two-step — create metadata, then PUT the file body.
+- name: FraudNotification
+  key_prefix: frn-
+  operations: [getFraudNotification, getFraudNotifications]
+- name: RiskAssessment
+  key_prefix: rsk-
+  operations: [performRiskAssessment]
+- name: Report
+  key_prefix: rep-
+  operations: [listReport, getReport, getReportFile, createChargesReport,
+    createSettlementDetailsReport, createDisputeHistoryEventsReport,
+    createFraudNotificationsReport, createAmmfReport, createQuarterlySchemeReport,
+    schemeFeeDetails, reconciliationDetails, createNetworkFundsTransfersReport]
+- name: ReportSchedule
+  key_prefix: rak-
+  operations: [createReportSchedule, listReportSchedules, getReportSchedule,
+    archiveReportSchedule, updateReportSchedule]
+- name: Distribution
+  key_prefix: dst-
+  operations: [createDistribution, listDistributions, getDistribution, updateDistribution,
+    archiveDistribution]
+  note: Delivery target for generated reports.
+- name: EventSubscription
+  operations: [createEventSubscription, getEventSubscriptions, getSubscription,
+    updateEventSubscription, deleteEventSubscription]
+- name: FileSubscription
+  operations: [ListFileSubscriptions, CreateFileSubscription, PutFileSubscription,
+    DeleteFileSubscription]
+- name: NetworkFundsTransfer
+  key_prefix: nft-
+  operations: [getNetworkFundsTransfers, getNetworkFundsTransferByNetworkFundsTransferKey]
+- name: ReconciliationDetail
+  key_prefix: rcl-
+  operations: [getReconciliationDetails, getReconciliationDetailsFundsTransferDate,
+    listReconciliationDetailsByNetworkFundsTransferKey]
+relationships:
+- from: Agent
+  to: Merchant
+  type: has_many
+  via: agentKey
+- from: Agent
+  to: ApiKey
+  type: has_many
+  via: agentKey
+- from: Agent
+  to: Bin
+  type: has_many
+  via: agentKey
+- from: Merchant
+  to: MerchantAcceptor
+  type: has_many
+  via: merchantKey
+  path_evidence: POST /v1/merchants/{merchantKey}/acceptors
+- from: MerchantAcceptor
+  to: Merchant
+  type: belongs_to
+  via: merchantKey
+- from: MerchantAcceptor
+  to: Bin
+  type: belongs_to
+  via: binKey
+- from: MerchantAcceptor
+  to: Enrollment
+  type: has_many
+  via: merchantAcceptorKey
+- from: Charge
+  to: MerchantAcceptor
+  type: belongs_to
+  via: merchantAcceptorKey
+- from: Charge
+  to: ChargeAction
+  type: has_many
+  via: chargeKey
+  path_evidence: GET /v1/charges/{chargeKey}/actions
+- from: ChargeAction
+  to: Charge
+  type: belongs_to
+  via: chargeKey
+- from: Charge
+  to: Charge
+  type: belongs_to
+  via: initialChargeKey
+  note: Recurring/MIT and WIP charges reference the initial cardholder-present charge.
+- from: Charge
+  to: Charge
+  type: has_many
+  via: refundChargeKey / refundedChargeKey
+  note: Refund linkage is expressed as charge-to-charge references.
+- from: Charge
+  to: ThreeDsAuthentication
+  type: belongs_to
+  via: threeDsKey
+- from: Charge
+  to: BepAuthentication
+  type: belongs_to
+  via: bepKey
+- from: Charge
+  to: ProcessorToken
+  type: belongs_to
+  via: processorTokenKey
+- from: Charge
+  to: NetworkToken
+  type: belongs_to
+  via: networkTokenKey
+- from: Charge
+  to: Dispute
+  type: has_many
+  via: chargeKey
+- from: Dispute
+  to: Document
+  type: has_many
+  via: disputeKey
+  path_evidence: GET /v1/disputes/{disputeKey}/documents
+- from: Dispute
+  to: DisputeEventHistory
+  type: has_many
+  via: disputeKey
+- from: ProcessorToken
+  to: MerchantAcceptor
+  type: belongs_to
+  via: merchantAcceptorKey
+- from: NetworkToken
+  to: MerchantAcceptor
+  type: belongs_to
+  via: merchantAcceptorKey
+- from: FraudNotification
+  to: Charge
+  type: belongs_to
+  via: chargeKey
+- from: RiskAssessment
+  to: MerchantAcceptor
+  type: belongs_to
+  via: merchantAcceptorKey
+- from: ReportSchedule
+  to: Report
+  type: has_many
+  via: reportScheduleKey
+- from: ReportSchedule
+  to: Distribution
+  type: belongs_to
+  via: distributionKey
+- from: NetworkFundsTransfer
+  to: ReconciliationDetail
+  type: has_many
+  via: networkFundsTransferKey
+  path_evidence: GET /v1/reports/reconciliationDetails/networkFundsTransferKey/{networkFundsTransferKey}
+totals:
+  entities: 24
+  relationships: 26
+  component_schemas: 1752
+  paths: 101
+  operations: 137
+schema_note: >-
+  1752 component schemas for 137 operations is an unusually high ratio. It is driven by the
+  per-network discriminated unions (each of visa / mastercard / american-express / discover /
+  diners / bancontact / unknown gets its own ISO-field schema, repeated per action type) and by
+  per-error *ErrorDetails schemas. There is also visible schema-name collision debt from spec
+  assembly — names such as `schemas-EntityNotFoundErrorDetails`,
+  `components-schemas-ForbiddenError` and `openapi_components-schemas-InvalidInputErrorDetails`
+  are mangled duplicates of their unprefixed siblings, which suggests the published document is
+  merged from several source specs. Worth reporting to Silverflow: it makes generated client
+  models noisy and is the likely reason the spec is marked as not suitable for code generation.

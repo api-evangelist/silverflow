@@ -1,0 +1,265 @@
+generated: '2026-08-27'
+method: derived
+source: openapi/silverflow-openapi.yml + https://docs.silverflow.com/guides/error-handling +
+  https://docs.silverflow.com/guides/event-notifications + https://docs.silverflow.com/guides/idempotency
+name: Silverflow standards conformance
+note: >-
+  Every entry below is asserted from the CONTRACT or from Silverflow's own documentation, with
+  the exact location named in `evidence`. Nothing is asserted from a marketing claim, and
+  absence is recorded as conforms:false rather than omitted.
+
+standards:
+- id: openapi
+  name: OpenAPI Specification
+  version: 3.0.3
+  conforms: true
+  evidence: >-
+    openapi/silverflow-openapi.yml declares `openapi: 3.0.3` and parses cleanly — 101 paths,
+    137 operations, 1752 component schemas, 31 x-webhooks. Silverflow states its own posture in
+    the spec's Introduction tag: "Our API is formally described using the OpenAPI 3 standard
+    (version 3.0.3). This standard allows us to define our API in a contract-first way and use
+    it for validation and conformance testing."
+  caveat: >-
+    info.description carries "This OpenAPI specification cannot be used for code generation.
+    Please reach out to your TAM regarding code generation using the API Spec." The document is
+    published for reading and tooling, but Silverflow does not warrant it for codegen.
+
+- id: rfc7807
+  name: Problem Details for HTTP APIs (RFC 7807)
+  conforms: partial
+  evidence: >-
+    https://docs.silverflow.com/guides/error-handling — "We follow the error response format
+    proposed in RFC 7807". 85 distinct problem `type` URIs under /silverflow/problems/ are
+    declared in the spec, with type/title/status/detail/instance all required.
+  deviations:
+  - media type is application/json, not application/problem+json (stated by Silverflow)
+  - 502/504 from infrastructure may return text/html only (stated by Silverflow)
+  detail: errors/silverflow-problem-types.yml
+
+- id: rfc9457
+  name: Problem Details for HTTP APIs (RFC 9457)
+  conforms: false
+  evidence: >-
+    Silverflow cites RFC 7807 by name, not its successor RFC 9457, and does not use the
+    problem+json media type that both RFCs specify. The shape is compatible; the declaration and
+    the content type are not.
+
+- id: cloudevents
+  name: CloudEvents
+  version: '1.0'
+  conforms: true
+  evidence: >-
+    https://docs.silverflow.com/guides/event-notifications — "Event notifications use the JSON
+    format and follow the CloudEvents specification", with a worked envelope carrying
+    specversion 1.0, id, source, type, subject, time, datacontenttype, dataschema, data plus an
+    `agent` extension attribute. 31 event types are declared in openapi x-webhooks.
+  binding: HTTP structured-mode JSON over POST
+  detail: asyncapi/silverflow-events-webhooks.yml
+
+- id: idempotency
+  name: Idempotent request handling (Idempotency-Key)
+  conforms: true
+  evidence: >-
+    components/parameters/IdempotencyKey declares the `Idempotency-Key` request header, applied
+    to 19 money-moving operations. 24-hour key retention, 409 on request mismatch
+    (/silverflow/problems/idempotency/request-mismatch) and 409 while in flight
+    (/silverflow/problems/idempotency/request-is-still-being-processed) are all documented at
+    https://docs.silverflow.com/guides/idempotency.
+  caveat: >-
+    Not IETF draft-ietf-httpapi-idempotency-key-header conformant in one respect — the draft
+    permits server-side fingerprinting of the request; Silverflow requires byte-identical
+    bodies INCLUDING JSON attribute ORDER. It also fails open (processes without idempotency)
+    when its idempotency store is unavailable.
+  detail: conventions/silverflow-conventions.yml
+
+- id: pagination
+  name: Cursor pagination
+  conforms: true
+  evidence: >-
+    components/parameters limit (1-100, default 10), offsetToken and sortOrder, applied to 10
+    list operations; documented at https://docs.silverflow.com/guides/pagination.
+  caveat: The page envelope key varies per collection rather than being a fixed `data` wrapper.
+
+- id: http-conditional-requests
+  name: HTTP conditional requests (RFC 9110 ETag / If-Match)
+  conforms: true
+  evidence: >-
+    components/parameters/ifMatch declares the If-Match request header; the value is taken from
+    the ETag response header or the object's `version` attribute, and a stale value yields 412
+    Precondition Failed (/silverflow/problems/precondition-failed, declared on 16 operations).
+    Documented at https://docs.silverflow.com/guides/idempotency#conditional-updates.
+  caveat: If-Match carries an integer version rather than an RFC 9110 entity-tag string.
+
+- id: rfc7617
+  name: HTTP Basic authentication
+  conforms: true
+  evidence: >-
+    components/securitySchemes/ApiKey is `type: http, scheme: basic`; the scheme description
+    cites RFC 7617 explicitly and gives the key/secret to username/password mapping.
+
+- id: rfc6750
+  name: OAuth 2.0 Bearer Token Usage
+  conforms: partial
+  evidence: >-
+    components/securitySchemes/BearerToken is `type: http, scheme: bearer, bearerFormat: JWT`
+    and cites RFC 6750. The token TRANSPORT follows RFC 6750, but the tokens are minted by a
+    proprietary endpoint (createAgentBearerToken), not by an OAuth authorization server.
+  caveat: See oauth2 below.
+
+- id: oauth2
+  name: OAuth 2.0 authorization framework
+  conforms: false
+  evidence: >-
+    No oauth2 securityScheme is declared. /.well-known/oauth-authorization-server returned 404
+    on www.silverflow.com, docs.silverflow.com, eu-west-1.api.silverflow.com and
+    api.silverflow.co. There is no authorization endpoint, no token endpoint, no scope surface
+    and no consent flow — third-party delegation is done by minting an agent bearer JWT
+    directly.
+
+- id: oidc
+  name: OpenID Connect
+  conforms: false
+  evidence: /.well-known/openid-configuration returned 404 on all four probed hosts; no
+    openIdConnect securityScheme is declared.
+
+- id: mtls
+  name: Mutual TLS client authentication
+  conforms: true
+  evidence: >-
+    components/securitySchemes/MutualTLS documents X.509 client certificates signed by a
+    customer-provided CA registered against an agent, validated at the TLS handshake with
+    tenant verification by matching the agent key embedded in the certificate against the CA.
+  caveat: >-
+    Modelled in the spec as `type: apiKey, in: header, name: '-'` because OpenAPI 3.0.3 has no
+    mutualTLS scheme type (3.1 added it). Semantically conformant, structurally misdeclared.
+
+- id: json-api
+  name: 'JSON:API'
+  conforms: false
+  evidence: Responses are plain domain JSON with per-collection envelopes; no JSON:API document
+    structure, media type or relationship objects.
+
+- id: odata
+  name: OData
+  conforms: false
+  evidence: No $metadata surface, no OData query options.
+
+- id: scim
+  name: SCIM
+  conforms: false
+  evidence: No urn:ietf:params:scim:schemas:* URN appears in the spec; user/agent provisioning
+    is proprietary.
+
+- id: fhir
+  name: HL7 FHIR
+  conforms: false
+  evidence: Not a healthcare API.
+
+domain_standards:
+  note: >-
+    0.12.0 domain_standard_conformance — does the CONTRACT declare the standard of its own
+    market? For card acquiring the relevant bodies are the card networks (ISO 8583 message
+    types and field semantics), EMVCo (3-D Secure, network tokenization), PCI SSC (PCI DSS)
+    and ISO 20022 for bank-side settlement messaging. Findings below are read from the spec.
+  standards:
+  - id: iso8583
+    name: ISO 8583 financial transaction message format
+    conforms: true
+    strength: strong
+    evidence: >-
+      The contract is written IN the vocabulary of ISO 8583 rather than merely referencing it.
+      components/schemas/isoFieldResponseCode is described as "Contents of field 39";
+      components/schemas/responseCode likewise. The authorizationResponse object is a
+      discriminated union over `network` whose branches are named
+      authorizationIsoFieldsVisa* / authorizationIsoFieldsMastercard* /
+      authorizationIsoFieldsAmericanExpress* / authorizationIsoFieldsDiners* /
+      authorizationIsoFieldsDiscover* / authorizationIsoFieldsBancontact*, each carrying that
+      network's ISO field set. Message types are named directly in the sandbox documentation
+      (0100 authorization, 0400 reversal, 0420 reversal advice), and the charge-actions guide
+      states that a reversal "only creates a 4XX ISO 8583 message". Silverflow exposes the raw
+      network protocol rather than abstracting it away — which is the whole product thesis.
+    spec_locations:
+    - components/schemas/isoFieldResponseCode
+    - components/schemas/responseCode
+    - components/schemas/authorizationResponseForAuthorizationAndRefundActions (discriminator on network)
+    - components/schemas/authorizationIsoFieldsVisaForAuthorizationAndRefundActions
+    - components/schemas/authorizationIsoFieldsMastercardForAuthorizationAndRefundActions
+    docs: https://docs.silverflow.com/guides/charge-actions
+  - id: emv-3ds
+    name: EMV 3-D Secure (EMVCo)
+    conforms: true
+    strength: strong
+    evidence: >-
+      A dedicated 3DS Authentication surface — POST /v1/3ds (create3dsAuthentication),
+      POST /v1/3ds/3ri (create3riAuthentication, 3RI = 3DS Requestor Initiated),
+      GET /v1/3ds/{threedsKey}, POST /v1/3ds/cardRanges — with EMV 3DS protocol concepts as
+      first-class fields: protocol version negotiation (the problem type
+      /silverflow/problems/3ds/unsupported-protocol-version), the 3DS Method URL and
+      method-initiate step, challenge vs frictionless flow selection via challengeIndicator,
+      threeRiIndicator values including installment and standing-order, and directory-server
+      enrolment errors (/silverflow/problems/3ds/unenrolled-account-number,
+      /silverflow/problems/3ds/unenrolled-acquirer-or-merchant).
+    spec_locations: [paths./3ds, paths./3ds/3ri, paths./3ds/cardRanges, tags 3DS Authentication]
+    docs: https://docs.silverflow.com/guides/3d-secure
+  - id: emvco-network-tokenization
+    name: EMVCo payment tokenization (Visa VTS / Mastercard MDES-SCOF)
+    conforms: true
+    strength: strong
+    evidence: >-
+      The Network Tokenization surface (POST /v1/networkTokens, GET/DELETE
+      /v1/networkTokens/{networkTokenKey}, GET .../networkTokenData, POST .../cryptogram) is
+      described in Silverflow's own llms.txt and docs as "a gateway into Mastercard Secure Card
+      on File (SCOF) and Visa Token Service (VTS)", with token lifecycle events
+      (events.networkTokens.created / updated / archived / failed) and per-transaction
+      cryptogram generation — the EMVCo tokenization model.
+    spec_locations: [paths./networkTokens, tags Network Tokenization, x-webhooks events.networkTokens.*]
+    docs: https://docs.silverflow.com/guides/networktokenization
+  - id: sca-psd2
+    name: PSD2 Strong Customer Authentication
+    conforms: partial
+    strength: moderate
+    evidence: >-
+      SCA is handled as a first-class outcome rather than as a declared regulatory conformance:
+      the sandbox publishes a soft-decline trigger for "Customer Authentication Required"
+      (network codes 1A on Visa/Discover, 65 on Mastercard) and the 3DS surface exists to
+      satisfy it. Silverflow's own llms.txt lists "3D-Secure authentication and Strong Customer
+      Authentication (SCA)" as a capability. There is no exemption-flag vocabulary
+      (TRA/low-value/trusted-beneficiary) exposed as a named field in the spec, and no PSD2 or
+      RTS conformance statement is published.
+  - id: pci-dss
+    name: PCI DSS
+    conforms: unknown
+    strength: none
+    evidence: >-
+      Not asserted anywhere public. Silverflow handles PANs directly (processor tokenization
+      stores card data; POST /v1/processorTokens/{key}/cardData returns it), which is not
+      possible without PCI DSS validation, but no attestation, certification page or trust
+      center is published on silverflow.com. Recorded as unknown rather than inferred. The only
+      public security surfaces are the RFC 9116 security.txt and the /disclaimer page, which
+      states that "transmission of cardholder data and sensitive information is strictly
+      limited to dedicated API channels and should never occur through insecure communication
+      channels."
+  - id: iso20022
+    name: ISO 20022
+    conforms: false
+    evidence: >-
+      No ISO 20022 message type (pacs/camt/pain) appears in the contract. Settlement and
+      reconciliation are exposed as Silverflow-native report and network-funds-transfer
+      resources, not as ISO 20022 messages.
+
+compliance_certifications_published: false
+compliance_note: >-
+  No Compliance pointer was emitted in apis.yml. Silverflow publishes no certification list,
+  trust center, SOC 2 report request page, or PCI attestation on any public URL probed. That is
+  the finding — not an omission of this pass.
+
+infrastructure_signals:
+  domain_security: security/silverflow-domain-security.yml
+  highlights:
+  - TLS 1.3 on every host probed
+  - DNSSEC enabled on silverflow.com
+  - 'CAA records restrict issuance to digicert.com, amazonaws.com, pki.goog and visa.com — the
+    presence of visa.com as an authorized CA is itself corroboration of a direct Visa network
+    connection'
+  - SPF present; DMARC published with p=reject
+  - HSTS max-age 31536000 on www.silverflow.com (absent on docs.silverflow.com)

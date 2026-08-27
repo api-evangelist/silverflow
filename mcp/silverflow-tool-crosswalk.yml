@@ -1,0 +1,822 @@
+generated: '2026-08-27'
+method: derived
+source: mcp/silverflow-mcp.yml (candidate tools) bound to openapi/silverflow-openapi.yml operationIds
+name: Silverflow MCP tool <-> REST crosswalk
+status: candidate
+status_note: 'Silverflow ships no MCP server (mcp/silverflow-mcp.yml deployment.mode: none) and no GraphQL
+  endpoint. This crosswalk therefore binds a DERIVED candidate tool set to real REST operationIds, so the tool
+  surface can be forged later without re-reading the spec. Every operationId below was verified to exist in
+  the published contract; confidence is high because the binding is mechanical, not semantic.'
+surfaces:
+  openapi:
+    path: openapi/silverflow-openapi.yml
+    source_url: https://docs.silverflow.com/apidocs/latest/openapi.yml
+    operations: 137
+    gated: false
+    note: Spec is public and anonymous; the API itself requires authentication on every endpoint.
+  graphql:
+    present: false
+    note: No GraphQL surface. No /graphql path on any host.
+  mcp:
+    present: false
+    url: null
+    gated: null
+    note: No MCP server published; see mcp/silverflow-mcp.yml probes[].
+  webhooks:
+    present: true
+    events: 31
+    standard: CloudEvents 1.0
+    detail: asyncapi/silverflow-events-webhooks.yml
+    note: 31 event types have NO REST equivalent as a push surface — they are the async projection of the same
+      data core, and are listed under event_only[] below.
+crosswalk:
+- tool: search_charges
+  category: charges
+  rest:
+  - getCharges
+  binding: one-to-one
+  confidence: high
+  note: inputSchema is the union of the backing operations parameters+requestBody; all operationIds verified
+    against the spec
+  read_only: true
+  requires_idempotency_key: false
+  irreversible: false
+- tool: get_charge
+  category: charges
+  rest:
+  - getCharge
+  binding: one-to-one
+  confidence: high
+  note: inputSchema is the union of the backing operations parameters+requestBody; all operationIds verified
+    against the spec
+  read_only: true
+  requires_idempotency_key: false
+  irreversible: false
+- tool: list_charge_actions
+  category: charges
+  rest:
+  - getActions
+  - getAction
+  binding: composite
+  confidence: high
+  note: inputSchema is the union of the backing operations parameters+requestBody; all operationIds verified
+    against the spec
+  read_only: true
+  requires_idempotency_key: false
+  irreversible: false
+- tool: get_card_info
+  category: pre-flight
+  rest:
+  - postCardInfo
+  - getCardInfo
+  binding: composite
+  confidence: high
+  note: inputSchema is the union of the backing operations parameters+requestBody; all operationIds verified
+    against the spec
+  read_only: true
+  requires_idempotency_key: false
+  irreversible: false
+- tool: estimate_fees
+  category: pre-flight
+  rest:
+  - estimateInterchangeFee
+  - getSchemeFeeEstimation
+  binding: composite
+  confidence: high
+  note: inputSchema is the union of the backing operations parameters+requestBody; all operationIds verified
+    against the spec
+  read_only: true
+  requires_idempotency_key: false
+  irreversible: false
+- tool: assess_transaction_risk
+  category: pre-flight
+  rest:
+  - performRiskAssessment
+  binding: one-to-one
+  confidence: high
+  note: inputSchema is the union of the backing operations parameters+requestBody; all operationIds verified
+    against the spec
+  read_only: false
+  requires_idempotency_key: false
+  irreversible: false
+- tool: create_charge
+  category: charges
+  rest:
+  - createCharge
+  binding: one-to-one
+  confidence: high
+  note: inputSchema is the union of the backing operations parameters+requestBody; all operationIds verified
+    against the spec
+  read_only: false
+  requires_idempotency_key: true
+  irreversible: false
+- tool: refund_charge
+  category: charges
+  rest:
+  - refund
+  binding: one-to-one
+  confidence: high
+  note: inputSchema is the union of the backing operations parameters+requestBody; all operationIds verified
+    against the spec
+  read_only: false
+  requires_idempotency_key: true
+  irreversible: false
+- tool: reverse_or_cancel_charge
+  category: charges
+  rest:
+  - reverse
+  - cancel
+  binding: composite
+  confidence: high
+  note: inputSchema is the union of the backing operations parameters+requestBody; all operationIds verified
+    against the spec
+  read_only: false
+  requires_idempotency_key: true
+  irreversible: false
+- tool: list_merchants
+  category: accounts
+  rest:
+  - getMerchants
+  - getMerchant
+  binding: composite
+  confidence: high
+  note: inputSchema is the union of the backing operations parameters+requestBody; all operationIds verified
+    against the spec
+  read_only: true
+  requires_idempotency_key: false
+  irreversible: false
+- tool: list_acceptors
+  category: accounts
+  rest:
+  - getAcceptors
+  - getAcceptor
+  - getMerchantAcceptors
+  binding: composite
+  confidence: high
+  note: inputSchema is the union of the backing operations parameters+requestBody; all operationIds verified
+    against the spec
+  read_only: true
+  requires_idempotency_key: false
+  irreversible: false
+- tool: onboard_merchant
+  category: accounts
+  rest:
+  - createMerchant
+  - createAcceptor
+  - activateAcceptor
+  binding: composite
+  confidence: high
+  note: inputSchema is the union of the backing operations parameters+requestBody; all operationIds verified
+    against the spec
+  read_only: false
+  requires_idempotency_key: false
+  irreversible: false
+- tool: list_disputes
+  category: disputes
+  rest:
+  - getDisputes
+  - getDispute
+  - getDisputeEventHistory
+  binding: composite
+  confidence: high
+  note: inputSchema is the union of the backing operations parameters+requestBody; all operationIds verified
+    against the spec
+  read_only: true
+  requires_idempotency_key: false
+  irreversible: false
+- tool: defend_dispute
+  category: disputes
+  rest:
+  - defendDispute
+  - submitEvidence
+  - addDisputeDocumentsMetadata
+  - uploadDocumentFile
+  binding: composite
+  confidence: high
+  note: inputSchema is the union of the backing operations parameters+requestBody; all operationIds verified
+    against the spec
+  read_only: false
+  requires_idempotency_key: false
+  irreversible: false
+- tool: accept_dispute
+  category: disputes
+  rest:
+  - acceptDispute
+  binding: one-to-one
+  confidence: high
+  note: inputSchema is the union of the backing operations parameters+requestBody; all operationIds verified
+    against the spec
+  read_only: false
+  requires_idempotency_key: false
+  irreversible: true
+- tool: manage_tokens
+  category: tokenization
+  rest:
+  - createProcessorToken
+  - getProcessorToken
+  - getProcessorTokens
+  - createNetworkToken
+  - getNetworkToken
+  - listNetworkTokens
+  - createNetworkTokenCryptogram
+  binding: composite
+  confidence: high
+  note: inputSchema is the union of the backing operations parameters+requestBody; all operationIds verified
+    against the spec
+  read_only: false
+  requires_idempotency_key: false
+  irreversible: false
+- tool: run_report
+  category: reporting
+  rest:
+  - createChargesReport
+  - createSettlementDetailsReport
+  - reconciliationDetails
+  - schemeFeeDetails
+  - createDisputeHistoryEventsReport
+  - createFraudNotificationsReport
+  - listReport
+  - getReport
+  - getReportFile
+  binding: composite
+  confidence: high
+  note: inputSchema is the union of the backing operations parameters+requestBody; all operationIds verified
+    against the spec
+  read_only: false
+  requires_idempotency_key: false
+  irreversible: false
+- tool: get_reconciliation
+  category: reporting
+  rest:
+  - getReconciliationDetails
+  - getReconciliationDetailsFundsTransferDate
+  - listReconciliationDetailsByNetworkFundsTransferKey
+  - getNetworkFundsTransfers
+  - getNetworkFundsTransferByNetworkFundsTransferKey
+  binding: composite
+  confidence: high
+  note: inputSchema is the union of the backing operations parameters+requestBody; all operationIds verified
+    against the spec
+  read_only: true
+  requires_idempotency_key: false
+  irreversible: false
+- tool: manage_event_subscriptions
+  category: events
+  rest:
+  - createEventSubscription
+  - getEventSubscriptions
+  - getSubscription
+  - updateEventSubscription
+  - deleteEventSubscription
+  binding: composite
+  confidence: high
+  note: inputSchema is the union of the backing operations parameters+requestBody; all operationIds verified
+    against the spec
+  read_only: false
+  requires_idempotency_key: false
+  irreversible: false
+mcp_only: []
+mcp_only_note: No MCP server exists, so no tool can be MCP-only.
+event_only:
+- event: events.ammfSubmissions.submitted
+  operation_id: ammfSubmissionEventSubmitted
+  domain: AMMF Submission Events
+  reason: push-only notification; the equivalent REST read is a GET on the subject key it carries
+- event: events.ammfSubmissions.approved
+  operation_id: ammfSubmissionEventApproved
+  domain: AMMF Submission Events
+  reason: push-only notification; the equivalent REST read is a GET on the subject key it carries
+- event: events.ammfSubmissions.rejected
+  operation_id: ammfSubmissionEventRejected
+  domain: AMMF Submission Events
+  reason: push-only notification; the equivalent REST read is a GET on the subject key it carries
+- event: authenticationStatus
+  operation_id: bepWebhook
+  domain: BEP Authentication
+  reason: push-only notification; the equivalent REST read is a GET on the subject key it carries
+- event: events.charges.action
+  operation_id: chargeActionEvent
+  domain: Charges Events
+  reason: push-only notification; the equivalent REST read is a GET on the subject key it carries
+- event: events.clearing.abandoned
+  operation_id: abandonedClearing
+  domain: Clearing Events
+  reason: push-only notification; the equivalent REST read is a GET on the subject key it carries
+- event: events.clearing.offlineRefundOutcome
+  operation_id: offlineRefundOutcome
+  domain: Clearing Events
+  reason: push-only notification; the equivalent REST read is a GET on the subject key it carries
+- event: events.disputes.received
+  operation_id: disputeEventReceived
+  domain: Disputes Events
+  reason: push-only notification; the equivalent REST read is a GET on the subject key it carries
+- event: events.disputes.acceptanceInitiated
+  operation_id: disputeEventAcceptanceInitiated
+  domain: Disputes Events
+  reason: push-only notification; the equivalent REST read is a GET on the subject key it carries
+- event: events.disputes.acceptanceFailed
+  operation_id: disputeEventAcceptanceFailed
+  domain: Disputes Events
+  reason: push-only notification; the equivalent REST read is a GET on the subject key it carries
+- event: events.disputes.defenseInitiated
+  operation_id: disputeEventDefenseInitiated
+  domain: Disputes Events
+  reason: push-only notification; the equivalent REST read is a GET on the subject key it carries
+- event: events.disputes.defenseFailed
+  operation_id: disputeEventDefenseFailed
+  domain: Disputes Events
+  reason: push-only notification; the equivalent REST read is a GET on the subject key it carries
+- event: events.disputes.evidenceSubmitted
+  operation_id: disputeEventEvidenceSubmitted
+  domain: Disputes Events
+  reason: push-only notification; the equivalent REST read is a GET on the subject key it carries
+- event: events.disputes.evidenceRejected
+  operation_id: disputeEventEvidenceRejected
+  domain: Disputes Events
+  reason: push-only notification; the equivalent REST read is a GET on the subject key it carries
+- event: events.disputes.awaitingResponse
+  operation_id: disputeEventAwaitingResponse
+  domain: Disputes Events
+  reason: push-only notification; the equivalent REST read is a GET on the subject key it carries
+- event: events.disputes.closedAccepted
+  operation_id: disputeEventClosedAccepted
+  domain: Disputes Events
+  reason: push-only notification; the equivalent REST read is a GET on the subject key it carries
+- event: events.disputes.closedWon
+  operation_id: disputeEventClosedWon
+  domain: Disputes Events
+  reason: push-only notification; the equivalent REST read is a GET on the subject key it carries
+- event: events.disputes.closedLost
+  operation_id: disputeEventClosedLost
+  domain: Disputes Events
+  reason: push-only notification; the equivalent REST read is a GET on the subject key it carries
+- event: events.disputes.reversed
+  operation_id: disputeEventReversed
+  domain: Disputes Events
+  reason: push-only notification; the equivalent REST read is a GET on the subject key it carries
+- event: events.disputes.withdrawn
+  operation_id: disputeEventWithdrawn
+  domain: Disputes Events
+  reason: push-only notification; the equivalent REST read is a GET on the subject key it carries
+- event: events.distributions.sent
+  operation_id: distributionsSentEvent
+  domain: Distribution Events
+  reason: push-only notification; the equivalent REST read is a GET on the subject key it carries
+- event: events.fraudNotifications
+  operation_id: fraudNotificationEvent
+  domain: Fraud Notification Events
+  reason: push-only notification; the equivalent REST read is a GET on the subject key it carries
+- event: events.networkTokens.created
+  operation_id: networkTokenCreated
+  domain: Network Tokens Events
+  reason: push-only notification; the equivalent REST read is a GET on the subject key it carries
+- event: events.networkTokens.updated
+  operation_id: networkTokenUpdated
+  domain: Network Tokens Events
+  reason: push-only notification; the equivalent REST read is a GET on the subject key it carries
+- event: events.networkTokens.archived
+  operation_id: networkTokenArchived
+  domain: Network Tokens Events
+  reason: push-only notification; the equivalent REST read is a GET on the subject key it carries
+- event: events.networkTokens.failed
+  operation_id: networkTokenFailed
+  domain: Network Tokens Events
+  reason: push-only notification; the equivalent REST read is a GET on the subject key it carries
+- event: events.processorTokens.created
+  operation_id: processorTokenCreated
+  domain: Processor Tokens Events
+  reason: push-only notification; the equivalent REST read is a GET on the subject key it carries
+- event: events.processorTokens.archived
+  operation_id: processorTokenArchived
+  domain: Processor Tokens Events
+  reason: push-only notification; the equivalent REST read is a GET on the subject key it carries
+- event: events.processorTokens.cvcDeleted
+  operation_id: processorTokenCvcDeleted
+  domain: Processor Tokens Events
+  reason: push-only notification; the equivalent REST read is a GET on the subject key it carries
+- event: events.reconciliation.networkFundsTransferCompleted
+  operation_id: networkFundsTransferCompleted
+  domain: Reconciliation Events
+  reason: push-only notification; the equivalent REST read is a GET on the subject key it carries
+- event: events.reports.updated
+  operation_id: reportNotificationEvent
+  domain: Report Events
+  reason: push-only notification; the equivalent REST read is a GET on the subject key it carries
+rest_only:
+- operation_id: 3dsCardRanges
+  method: POST
+  path: /3ds/cardRanges
+  tag: 3DS Authentication
+  reason: not selected for the candidate tool set
+- operation_id: CreateFileSubscription
+  method: POST
+  path: /fileSubscription
+  tag: File Subscriptions
+  reason: not selected for the candidate tool set
+- operation_id: CreatePinUnblock
+  method: POST
+  path: /cardManagement/actions/pinUnblock
+  tag: Card Management
+  reason: not selected for the candidate tool set
+- operation_id: DeleteFileSubscription
+  method: DELETE
+  path: /fileSubscription/{subscriptionKey}
+  tag: File Subscriptions
+  reason: not selected for the candidate tool set
+- operation_id: ListFileSubscriptions
+  method: GET
+  path: /fileSubscription
+  tag: File Subscriptions
+  reason: not selected for the candidate tool set
+- operation_id: PutFileSubscription
+  method: PUT
+  path: /fileSubscription/{subscriptionKey}
+  tag: File Subscriptions
+  reason: not selected for the candidate tool set
+- operation_id: activateAgent
+  method: POST
+  path: /agents/{agentKey}/activate
+  tag: Agents
+  reason: not selected for the candidate tool set
+- operation_id: archiveDistribution
+  method: DELETE
+  path: /distributions/{distributionKey}
+  tag: Distributions
+  reason: not selected for the candidate tool set
+- operation_id: archiveDocument
+  method: DELETE
+  path: /documents/{documentKey}
+  tag: Documents
+  reason: not selected for the candidate tool set
+- operation_id: archiveNetworkToken
+  method: DELETE
+  path: /networkTokens/{networkTokenKey}
+  tag: Network Tokenization
+  reason: not selected for the candidate tool set
+- operation_id: archiveProcessorToken
+  method: DELETE
+  path: /processorTokens/{processorTokenKey}
+  tag: Processor Tokenization
+  reason: not selected for the candidate tool set
+- operation_id: archiveReportSchedule
+  method: DELETE
+  path: /reportSchedules/{reportScheduleKey}
+  tag: Report Scheduling
+  reason: not selected for the candidate tool set
+- operation_id: bep
+  method: POST
+  path: /bep
+  tag: BEP Authentication
+  reason: not selected for the candidate tool set
+- operation_id: cancelPosCharge
+  method: POST
+  path: /pos/charges/{chargeKey}/cancel
+  tag: POS Charge Actions
+  reason: not selected for the candidate tool set
+- operation_id: create3dsAuthentication
+  method: POST
+  path: /3ds
+  tag: 3DS Authentication
+  reason: not selected for the candidate tool set
+- operation_id: create3riAuthentication
+  method: POST
+  path: /3ds/3ri
+  tag: 3DS Authentication
+  reason: not selected for the candidate tool set
+- operation_id: createAgentBearerToken
+  method: POST
+  path: /agents/{agentKey}/bearerToken
+  tag: Agents
+  reason: not selected for the candidate tool set
+- operation_id: createAmmfReport
+  method: POST
+  path: /reports/ammfReport
+  tag: Card Network Reports
+  reason: not selected for the candidate tool set
+- operation_id: createApiKey
+  method: POST
+  path: /apiKeys
+  tag: API Keys
+  reason: not selected for the candidate tool set
+- operation_id: createChargeAtm
+  method: POST
+  path: /charges/atm
+  tag: Create Charges
+  reason: not selected for the candidate tool set
+- operation_id: createChargeBep
+  method: POST
+  path: /charges/bep
+  tag: Create Charges
+  reason: not selected for the candidate tool set
+- operation_id: createChargeFunding
+  method: POST
+  path: /charges/funding
+  tag: Create Charges
+  reason: not selected for the candidate tool set
+- operation_id: createChargeMit
+  method: POST
+  path: /charges/mit
+  tag: Create Recurring
+  reason: not selected for the candidate tool set
+- operation_id: createChargeMitFromInitialCharge
+  method: POST
+  path: /charges/{initialChargeKey}/mit
+  tag: Create Recurring
+  reason: not selected for the candidate tool set
+- operation_id: createChargeMitFunding
+  method: POST
+  path: /charges/mitFunding
+  tag: Create Recurring
+  reason: not selected for the candidate tool set
+- operation_id: createChargePayout
+  method: POST
+  path: /charges/payout
+  tag: Create Charges
+  reason: not selected for the candidate tool set
+- operation_id: createChargePos
+  method: POST
+  path: /charges/pos
+  tag: Create Charges
+  reason: not selected for the candidate tool set
+- operation_id: createChargeWip
+  method: POST
+  path: /charges/{initialChargeKey}/wip
+  tag: Create Recurring
+  reason: not selected for the candidate tool set
+- operation_id: createDistribution
+  method: POST
+  path: /distributions
+  tag: Distributions
+  reason: not selected for the candidate tool set
+- operation_id: createEnrollment
+  method: POST
+  path: /enrollments
+  tag: Enrollments
+  reason: not selected for the candidate tool set
+- operation_id: createNetworkFundsTransfersReport
+  method: POST
+  path: /reports/networkFundsTransfers
+  tag: Reconciliation Reports
+  reason: not selected for the candidate tool set
+- operation_id: createPosCharge
+  method: POST
+  path: /pos/charges
+  tag: Create POS Charges
+  reason: not selected for the candidate tool set
+- operation_id: createQuarterlySchemeReport
+  method: POST
+  path: /reports/quarterlySchemeReport
+  tag: Card Network Reports
+  reason: not selected for the candidate tool set
+- operation_id: createReportSchedule
+  method: POST
+  path: /reportSchedules
+  tag: Report Scheduling
+  reason: not selected for the candidate tool set
+- operation_id: deleteAcceptorVersion
+  method: DELETE
+  path: /acceptors/{acceptorKey}
+  tag: Merchant Acceptors
+  reason: not selected for the candidate tool set
+- operation_id: deleteApiKey
+  method: DELETE
+  path: /apiKeys/{apiKey}
+  tag: API Keys
+  reason: not selected for the candidate tool set
+- operation_id: deleteEnrollment
+  method: DELETE
+  path: /enrollments/{enrollmentKey}
+  tag: Enrollments
+  reason: not selected for the candidate tool set
+- operation_id: deleteMerchant
+  method: DELETE
+  path: /merchants/{merchantKey}
+  tag: Merchants
+  reason: not selected for the candidate tool set
+- operation_id: downloadDocumentFile
+  method: GET
+  path: /documents/{documentKey}/file
+  tag: Documents
+  reason: not selected for the candidate tool set
+- operation_id: finalizeBep
+  method: POST
+  path: /bep/{bepKey}/authorizationResult
+  tag: BEP Authentication
+  reason: not selected for the candidate tool set
+- operation_id: get3dsAuthentication
+  method: GET
+  path: /3ds/{threedsKey}
+  tag: 3DS Authentication
+  reason: not selected for the candidate tool set
+- operation_id: get3dsAuthentications
+  method: GET
+  path: /3ds
+  tag: 3DS Authentication
+  reason: not selected for the candidate tool set
+- operation_id: getAcceptorVersion
+  method: GET
+  path: /acceptors/{acceptorKey}/versions/{acceptorVersion}
+  tag: Merchant Acceptors
+  reason: not selected for the candidate tool set
+- operation_id: getAgent
+  method: GET
+  path: /agents/{agentKey}
+  tag: Agents
+  reason: not selected for the candidate tool set
+- operation_id: getAllEnrollments
+  method: GET
+  path: /enrollments
+  tag: Enrollments
+  reason: not selected for the candidate tool set
+- operation_id: getApiKey
+  method: GET
+  path: /apiKeys/{apiKey}
+  tag: API Keys
+  reason: not selected for the candidate tool set
+- operation_id: getApiKeys
+  method: GET
+  path: /apiKeys
+  tag: API Keys
+  reason: not selected for the candidate tool set
+- operation_id: getBin
+  method: GET
+  path: /bins/{binKey}
+  tag: Bins
+  reason: not selected for the candidate tool set
+- operation_id: getBinConfigurations
+  method: GET
+  path: /bins/{binKey}/configurations
+  tag: Bins
+  reason: not selected for the candidate tool set
+- operation_id: getBins
+  method: GET
+  path: /bins
+  tag: Bins
+  reason: not selected for the candidate tool set
+- operation_id: getCompleteBep
+  method: GET
+  path: /bep/{bepKey}
+  tag: BEP Authentication
+  reason: not selected for the candidate tool set
+- operation_id: getCurrencyRates
+  method: GET
+  path: /currencyConversionRate/network/{network}/effectiveDate/{effectiveDate}
+  tag: Currency Conversion Rates
+  reason: not selected for the candidate tool set
+- operation_id: getDisputeDocumentsMetadata
+  method: GET
+  path: /disputes/{disputeKey}/documents
+  tag: Disputes
+  reason: not selected for the candidate tool set
+- operation_id: getDistribution
+  method: GET
+  path: /distributions/{distributionKey}
+  tag: Distributions
+  reason: not selected for the candidate tool set
+- operation_id: getDocument
+  method: GET
+  path: /documents/{documentKey}
+  tag: Documents
+  reason: not selected for the candidate tool set
+- operation_id: getDraftAcceptorVersion
+  method: GET
+  path: /acceptors/{acceptorKey}/versions/draft
+  tag: Merchant Acceptors
+  reason: not selected for the candidate tool set
+- operation_id: getEnrollmentByKey
+  method: GET
+  path: /enrollments/{enrollmentKey}
+  tag: Enrollments
+  reason: not selected for the candidate tool set
+- operation_id: getEventHistory
+  method: GET
+  path: /disputes/eventHistory/{eventHistoryKey}
+  tag: Disputes
+  reason: not selected for the candidate tool set
+- operation_id: getFraudNotification
+  method: GET
+  path: /fraudNotifications/{fraudNotificationKey}
+  tag: Fraud Notifications
+  reason: not selected for the candidate tool set
+- operation_id: getFraudNotifications
+  method: GET
+  path: /fraudNotifications
+  tag: Fraud Notifications
+  reason: not selected for the candidate tool set
+- operation_id: getNetworkTokenData
+  method: GET
+  path: /networkTokens/{networkTokenKey}/networkTokenData
+  tag: Network Tokenization
+  reason: not selected for the candidate tool set
+- operation_id: getProcessorTokenCardData
+  method: GET
+  path: /processorTokens/{processorTokenKey}/cardData
+  tag: Processor Tokenization
+  reason: not selected for the candidate tool set
+- operation_id: getReportSchedule
+  method: GET
+  path: /reportSchedules/{reportScheduleKey}
+  tag: Report Scheduling
+  reason: not selected for the candidate tool set
+- operation_id: getScreening
+  method: GET
+  path: /screenings/{screeningsKey}
+  tag: Screenings
+  reason: not selected for the candidate tool set
+- operation_id: increment
+  method: POST
+  path: /charges/{chargeKey}/increment
+  tag: Charge Actions
+  reason: not selected for the candidate tool set
+- operation_id: listDistributions
+  method: GET
+  path: /distributions
+  tag: Distributions
+  reason: not selected for the candidate tool set
+- operation_id: listPosCharges
+  method: GET
+  path: /pos/charges
+  tag: Retrieve POS Charges
+  reason: not selected for the candidate tool set
+- operation_id: listReportSchedules
+  method: GET
+  path: /reportSchedules
+  tag: Report Scheduling
+  reason: not selected for the candidate tool set
+- operation_id: listScreeningResults
+  method: GET
+  path: /screenings/{screeningsKey}/results
+  tag: Screenings
+  reason: not selected for the candidate tool set
+- operation_id: listScreenings
+  method: GET
+  path: /screenings
+  tag: Screenings
+  reason: not selected for the candidate tool set
+- operation_id: offlineRefund
+  method: POST
+  path: /charges/{chargeKey}/offlineRefund
+  tag: Charge Actions
+  reason: not selected for the candidate tool set
+- operation_id: postScreening
+  method: POST
+  path: /screenings
+  tag: Screenings
+  reason: not selected for the candidate tool set
+- operation_id: refundPosCharge
+  method: POST
+  path: /pos/charges/{chargeKey}/refund
+  tag: POS Charge Actions
+  reason: not selected for the candidate tool set
+- operation_id: rejectEvidence
+  method: POST
+  path: /disputes/{disputeKey}/rejectEvidence
+  tag: Disputes
+  reason: not selected for the candidate tool set
+- operation_id: triggerManualClearing
+  method: POST
+  path: /charges/{chargeKey}/clear
+  tag: Charge Actions
+  reason: not selected for the candidate tool set
+- operation_id: updateAcceptor
+  method: PATCH
+  path: /acceptors/{acceptorKey}
+  tag: Merchant Acceptors
+  reason: not selected for the candidate tool set
+- operation_id: updateAgent
+  method: PATCH
+  path: /agents/{agentKey}
+  tag: Agents
+  reason: not selected for the candidate tool set
+- operation_id: updateApiKey
+  method: PATCH
+  path: /apiKeys/{apiKey}
+  tag: API Keys
+  reason: not selected for the candidate tool set
+- operation_id: updateDistribution
+  method: PATCH
+  path: /distributions/{distributionKey}
+  tag: Distributions
+  reason: not selected for the candidate tool set
+- operation_id: updateEnrollment
+  method: PATCH
+  path: /enrollments/{enrollmentKey}
+  tag: Enrollments
+  reason: not selected for the candidate tool set
+- operation_id: updateMerchant
+  method: PATCH
+  path: /merchants/{merchantKey}
+  tag: Merchants
+  reason: not selected for the candidate tool set
+- operation_id: updateReportSchedule
+  method: PATCH
+  path: /reportSchedules/{reportScheduleKey}
+  tag: Report Scheduling
+  reason: not selected for the candidate tool set
+coverage:
+  rest_operations: 137
+  bound_to_a_tool: 55
+  rest_only: 82
+  tools: 19
+  events: 31
+  coverage_pct: 40.1

@@ -1,0 +1,134 @@
+overlay: 1.0.0
+info:
+  title: API Evangelist enrichment overlay for the Silverflow API
+  version: 1.0.0
+x-provenance:
+  generated: '2026-08-27'
+  method: generated
+  source: openapi/silverflow-openapi.yml
+  extends: openapi/silverflow-openapi.yml
+  note: >-
+    Non-destructive overlay carrying API Evangelist's enrichment findings back onto Silverflow's
+    published contract. It asserts nothing Silverflow does not already document — every action
+    below annotates an operation or component that exists in the spec, using facts sourced from
+    Silverflow's own guides. The original spec is never mutated. Applying this overlay is
+    optional; its purpose is to make runtime semantics (idempotency, reversibility, retry,
+    pagination) legible to a code generator or an agent that reads only the contract.
+actions:
+- target: $.info
+  description: Record the enrichment provenance and the runtime-semantics artifacts on the
+    document root.
+  update:
+    x-apievangelist-enrichment:
+      profiled: '2026-08-27'
+      conventions: conventions/silverflow-conventions.yml
+      errors: errors/silverflow-problem-types.yml
+      decline_codes: errors/silverflow-decline-codes.yml
+      lifecycle: lifecycle/silverflow-lifecycle.yml
+      events: asyncapi/silverflow-events-webhooks.yml
+      data_model: data-model/silverflow-data-model.yml
+      conformance: conformance/silverflow-conformance.yml
+- target: $
+  description: Declare the cross-cutting runtime semantics Silverflow documents in prose but
+    does not express in the contract.
+  update:
+    x-runtime-semantics:
+      idempotency:
+        header: Idempotency-Key
+        retention_hours: 24
+        match_scope: full URL + byte-identical request body INCLUDING JSON attribute order
+        fails_open: true
+        source: https://docs.silverflow.com/guides/idempotency
+      conditional_updates:
+        header: If-Match
+        value: ETag response header or the object's `version` attribute
+        conflict_status: 412
+        source: https://docs.silverflow.com/guides/idempotency
+      pagination:
+        style: cursor
+        params: [limit, offsetToken, sortOrder]
+        limit_default: 10
+        limit_max: 100
+        terminator: absence of offsetToken in the response
+        source: https://docs.silverflow.com/guides/pagination
+      errors:
+        standard: RFC 7807
+        media_type: application/json
+        deviation: not application/problem+json
+        type_namespace: /silverflow/problems/
+        source: https://docs.silverflow.com/guides/error-handling
+      retry:
+        retriable_status_codes: [429, 502, 503, 504]
+        retry_after_header: Retry-After
+        source: https://docs.silverflow.com/guides/error-handling
+      events:
+        envelope: CloudEvents 1.0
+        delivery: at-least-once, unordered, thin payload
+        dedup_key: id
+        signature_verification: not documented
+        source: https://docs.silverflow.com/guides/event-notifications
+- target: $.components.securitySchemes.MutualTLS
+  description: >-
+    Flag the mTLS scheme modelling defect. OpenAPI 3.0.3 has no `mutualTLS` type, so Silverflow
+    declared it as `type: apiKey, in: header, name: '-'`, which makes a generator emit a bogus
+    header parameter named '-'. Annotated rather than corrected, because rewriting the type
+    would break 3.0.3 validity.
+  update:
+    x-actual-type: mutualTLS
+    x-modelling-note: Declared as apiKey because OpenAPI 3.0.3 predates the mutualTLS scheme
+      type. Clients must not send a header named '-'; they must present an X.509 client
+      certificate at the TLS handshake.
+    x-upgrade-path: 'On a move to OpenAPI 3.1, replace with `type: mutualTLS`.'
+- target: $.paths['/charges/{chargeKey}/reverse'].post
+  description: Record the reversal window so an agent can tell before calling whether this is
+    the right undo operation.
+  update:
+    x-reversal-of: authorization
+    x-window: while clearingMode = manual AND the charge is not yet cleared
+    x-on-window-expiry: use POST /charges/{chargeKey}/refund
+    x-source: https://docs.silverflow.com/guides/charge-actions
+- target: $.paths['/charges/{chargeKey}/cancel'].post
+  description: Record the cancel window, including the one explicit clock-based boundary in the
+    charge surface.
+  update:
+    x-reversal-of: scheduled clearing + authorization
+    x-window: while clearingMode = auto AND the charge is not yet sent for clearing; where the
+      charge carries `clearAfter`, up until that timestamp
+    x-on-window-expiry: >-
+      HTTP 409 /silverflow/problems/charge/clearing-already-submitted; use
+      POST /charges/{chargeKey}/refund
+    x-source: https://docs.silverflow.com/guides/charge-actions
+- target: $.paths['/charges/{chargeKey}/refund'].post
+  description: Record that the refund window is unbounded in Silverflow's own documentation.
+  update:
+    x-reversal-of: a cleared charge
+    x-window-stated: false
+    x-window-note: Silverflow publishes no maximum refund age; the card networks' own rules
+      apply and are not restated in the contract.
+    x-source: https://docs.silverflow.com/guides/charge-actions
+- target: $.paths['/disputes/{disputeKey}/accept'].post
+  description: Mark the one-way door on the dispute surface.
+  update:
+    x-irreversible: true
+    x-warning: Accepting a dispute concedes the chargeback. There is no un-accept operation and
+      the terminal state is closedAccepted. Never call speculatively.
+    x-recoverable-alternative: POST /disputes/{disputeKey}/defend
+- target: $.components.parameters.IdempotencyKey
+  description: Make the strict byte-match requirement visible at the parameter, not only in the
+    guide.
+  update:
+    x-retention-hours: 24
+    x-match-scope: full URL + byte-identical request body INCLUDING JSON attribute order
+    x-mismatch-response: '409 /silverflow/problems/idempotency/request-mismatch'
+    x-in-flight-response: '409 /silverflow/problems/idempotency/request-is-still-being-processed'
+    x-fails-open: Silverflow processes the request WITHOUT idempotency if its idempotency store
+      is unavailable, so this header is not an absolute exactly-once guarantee.
+    x-source: https://docs.silverflow.com/guides/idempotency
+- target: $.components.schemas.isoFieldResponseCode
+  description: Name the standard the field belongs to, so a consumer knows whose registry
+    defines its values.
+  update:
+    x-standard: ISO 8583 field 39
+    x-registry-owner: the card network named in authorizationResponse.network — values differ
+      per network
+    x-documented-values: errors/silverflow-decline-codes.yml

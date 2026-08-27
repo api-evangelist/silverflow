@@ -1,0 +1,58 @@
+generated: '2026-08-27'
+method: searched
+source: https://docs.silverflow.com/guides/error-handling
+name: Silverflow rate limits
+docs:
+- https://docs.silverflow.com/guides/error-handling
+limit_count: 0
+limit_count_note: >-
+  Silverflow documents rate limiting as a BEHAVIOUR but publishes no NUMBERS. The error-handling
+  guide states only that "the server's resource consumption limits the number of requests per
+  second you can make" and that the API begins returning 429 past that threshold. No requests-
+  per-second figure, no burst allowance, no per-key or per-account quota, and no per-endpoint
+  limit is published anywhere on docs.silverflow.com or in the OpenAPI. An integrator cannot
+  size a client from the public documentation; the actual ceiling is presumably set per contract
+  through the technical account manager. This is an honest zero, not an unchecked field.
+limits: []
+runtime_signal:
+  status_code_on_exhaustion: 429
+  status_title: Too Many Requests
+  problem_type: /silverflow/problems/too-many-requests
+  response_headers:
+  - name: Retry-After
+    documented: true
+    semantics: >-
+      "Clients should respect the Retry-After response header, which states the minimum number
+      of seconds to wait before retrying again." Value is in seconds.
+    source: https://docs.silverflow.com/guides/error-handling
+  - name: X-RateLimit-Limit / X-RateLimit-Remaining / X-RateLimit-Reset
+    documented: false
+    note: Not documented and not declared in any OpenAPI response `headers` block.
+  - name: RateLimit / RateLimit-Policy (RFC 9331 draft)
+    documented: false
+    note: Not documented.
+  header_declared_in_openapi: false
+  header_declared_note: >-
+    The OpenAPI declares 429 responses on 130 operations but declares no response `headers`
+    for any of them — the only response headers declared anywhere in the spec are Location (32
+    operations), Content-Disposition and Content-Encoding. Retry-After is documented in prose
+    only, so a code generator reading the spec alone will not surface it.
+retry_guidance:
+  retriable_status_codes: [429, 502, 503, 504]
+  non_retriable: All other 4xx and 5xx codes — retrying yields the same result.
+  safe_retry_mechanism: >-
+    19 write operations accept an Idempotency-Key header, so a retry after 429 on those
+    operations replays the original outcome rather than double-charging. See
+    conventions/silverflow-conventions.yml.
+  source: https://docs.silverflow.com/guides/error-handling
+scope:
+  documented_scope: per-agent / per-credential is implied but never stated
+  note: >-
+    The guide attributes the limit to "the server's resource consumption" without naming the
+    dimension it is counted on (API key, agent, endpoint, or IP). Unresolved from public docs.
+observed:
+  probed: false
+  note: >-
+    Not observed live. Every Silverflow API endpoint requires authentication (the API "requires
+    authentication on all endpoints and methods"), so no unauthenticated request can be issued
+    to read rate-limit headers off a real response.

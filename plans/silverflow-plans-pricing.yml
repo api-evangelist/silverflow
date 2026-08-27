@@ -1,0 +1,35 @@
+generated: '2026-08-27'
+method: searched
+source: https://www.silverflow.com/
+name: Silverflow plans and pricing
+plan_count: 0
+plans: []
+note: >-
+  Silverflow publishes no pricing. https://www.silverflow.com/pricing returns 404 (the Next.js
+  404 shell), there is no plan or tier page anywhere in the site navigation
+  (/, /platform, /about, /customer, /career, /blog, /contact, /privacy, /disclaimer), and the
+  docs carry no billing, quota or overage documentation. The commercial model is a
+  contact-sales enterprise engagement: the site's only conversion path is
+  https://www.silverflow.com/contact ("Get in touch"), and onboarding is described in the docs
+  as running through an assigned technical account manager who issues an Agent Activation
+  Token. This is expected for a card processor selling to acquirers, PSPs and payment
+  facilitators, where pricing is interchange-plus and negotiated per contract.
+  plan_count: 0 is a measured absence, not a gap in this pass.
+commercial_model:
+  self_serve_signup: false
+  free_tier: false
+  published_rate_card: false
+  sales_gate: https://www.silverflow.com/contact
+  customer_segments:
+  - acquirers
+  - payment service providers (PSPs)
+  - payment facilitators (payfacs) and marketplaces
+  - merchants
+  segments_source: https://www.silverflow.com/customer
+evidence:
+- url: https://www.silverflow.com/pricing
+  status: 404
+- url: https://www.silverflow.com/contact
+  status: 200
+- url: https://www.silverflow.com/customer
+  status: 200

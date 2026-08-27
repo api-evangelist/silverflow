@@ -1,0 +1,113 @@
+generated: '2026-08-27'
+method: searched
+source: https://docs.silverflow.com/guides/authentication + openapi/silverflow-openapi.yml components.securitySchemes
+summary:
+  types:
+  - apiKey
+  - http
+  api_key_in:
+  - header
+schemes:
+- name: ApiKey
+  type: http
+  scheme: basic
+  description: 'The primary method of authenticating to the Silverflow API is through API keys.
+
+
+    API keys can be created by calling the [createApiKey](#operation/createApiKey) endpoint. You can create
+    up to 40 API keys and also update and delete them, allowing for _credential rotation_.
+
+
+    The _Agent Activation_ process will generate an initial API Key for you. See [Activate Agent](#section/Getting-Started).
+
+
+    A cal'
+  sources:
+  - openapi/silverflow-openapi.yml
+  primary: true
+  summary: HTTP Basic where username = API key `key` (prefix apk-) and password = the key `secret`.
+  credential_lifecycle: Created with POST /v1/apiKeys (createApiKey); up to 40 keys per agent; updatable
+    and deletable, which is how credential rotation is done. The `secret` is returned ONCE, at creation,
+    and is never retrievable again.
+  bootstrap: The Agent Activation process (POST /v1/agents/{agentKey}/activate) mints the first API key
+    from an Agent Activation Token issued during onboarding.
+  rfc: RFC 7617
+  scoping:
+    permissions: Each key carries an explicit permission list (e.g. charges:List, reports:All). A call
+      lacking the permission returns 403 whose detail names the permission needed. Least privilege is
+      documented as the recommended practice.
+    permission_reference: https://docs.silverflow.com/apidocs/latest/index.html#tag/API-Keys/operation/createApiKey
+    ip_restrictions: Keys can be pinned to CIDR ranges (e.g. 185.184.111.39/32, 102.177.115.120/29, 0.0.0.0/0).
+      Use outside the range returns a generic 401 Authentication Required rather than a distinguishing
+      error.
+- name: BearerToken
+  type: http
+  scheme: bearer
+  bearerFormat: JWT
+  description: 'Bearer tokens are temporary security credentials that can be used to authorize ''third
+    parties'' (bearers) access to the Silverflow API on behalf of the agent.
+
+
+    These tokens are created by calling the [createAgentBearerToken](#operation/createAgentBearerToken)
+    endpoint.
+
+
+    Once created the `token` field must be used in the HTTP `Authorization` header using the `Bearer`
+    scheme.
+
+    Here''s an example of an '
+  sources:
+  - openapi/silverflow-openapi.yml
+  primary: false
+  summary: Short-lived JWT for delegating access to a third party on behalf of the agent.
+  credential_lifecycle: Created with POST /v1/agents/{agentKey}/bearerToken (createAgentBearerToken).
+    Described as "temporary security credentials"; no published TTL.
+  rfc: RFC 6750
+  scoping:
+    permissions: Same permission model as API keys.
+    ip_restrictions: Supported, same CIDR mechanism.
+- name: MutualTLS
+  type: apiKey
+  in: header
+  parameter: '-'
+  description: 'The client must set up mTLS connection with a valid X.509 client certificate signed by
+    a customer-provided CA (certificate authority) that is registered to a specific agent. The customer-provided
+    CA certificate must be shared and added to Silverflow''s trust store prior to calling endpoints.
+
+
+    Certificate validation happens at the transport layer during TLS handshake. Tenant verification is
+    performe'
+  sources:
+  - openapi/silverflow-openapi.yml
+  primary: false
+  actual_type: mutualTLS
+  type_modelling_defect: 'Declared in the OpenAPI as `type: apiKey, in: header, name: ''-''` rather than
+    OpenAPI 3.1''s `type: mutualTLS`. This is a spec-modelling workaround (OpenAPI 3.0.3 has no mutualTLS
+    type), so a generator reading the spec will emit a bogus header parameter named ''-''. Worth reporting
+    to Silverflow.'
+  summary: Transport-layer mTLS with an X.509 client certificate signed by a customer-provided CA registered
+    against a specific agent.
+  enrolment: The customer's CA certificate must be shared with Silverflow and added to its trust store
+    before any call. Tenant verification matches the agent key embedded in the client certificate against
+    the agent key embedded in the trusted CA.
+  validation_point: TLS handshake
+docs:
+- https://docs.silverflow.com/guides/authentication
+- https://docs.silverflow.com/guides/getting-started
+- https://docs.silverflow.com/apidocs/latest/index.html#tag/API-Keys
+name: Silverflow authentication
+required_on: every endpoint and method — "The Silverflow API requires authentication on all endpoints
+  and methods."
+default_security:
+- ApiKey: []
+- BearerToken: []
+oauth2:
+  supported: false
+  note: No oauth2 or openIdConnect security scheme is declared and no OAuth authorization-server metadata
+    is served at /.well-known/oauth-authorization-server on any host (all 404). No scopes/ artifact was
+    written — there is no scope surface to record.
+token_prefixes:
+  api_key: apk-
+  agent: cgt-
+secrets_handling: The API key secret is shown once. Rotation is create-new -> switch -> delete-old, using
+  the 40-key allowance.

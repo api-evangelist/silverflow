@@ -1,0 +1,348 @@
+generated: '2026-08-27'
+method: searched
+source: https://docs.silverflow.com/guides/idempotency + https://docs.silverflow.com/guides/pagination
+  + https://docs.silverflow.com/guides/error-handling + https://docs.silverflow.com/guides/api-lifecycle
+  + https://docs.silverflow.com/guides/charge-actions + derived from openapi/silverflow-openapi.yml
+name: Silverflow API conventions
+docs:
+- https://docs.silverflow.com/guides/idempotency
+- https://docs.silverflow.com/guides/pagination
+- https://docs.silverflow.com/guides/error-handling
+- https://docs.silverflow.com/guides/api-lifecycle
+- https://docs.silverflow.com/guides/charge-actions
+- https://docs.silverflow.com/guides/event-notifications
+
+authentication:
+  style: HTTP Basic (API key id + secret) or HTTP Bearer (agent JWT); mutual TLS available
+  required_on: every endpoint and method
+  detail: see authentication/silverflow-authentication.yml
+  permissions: Least-privilege permission strings on each key (e.g. charges:List, reports:All);
+    a call without the permission returns 403 naming the permission required.
+  ip_restrictions: API keys and bearer tokens can be pinned to CIDR ranges; out-of-range use
+    returns a generic 401.
+
+idempotency:
+  supported: true
+  header: Idempotency-Key
+  location: request header
+  required: false
+  key_generation: client-generated; the client is responsible for uniqueness
+  retention: 24 hours
+  retention_note: >-
+    "Idempotency keys are stored for 24 hours, so generated idempotency keys should be unique
+    within that time frame."
+  scope: >-
+    The complete URL AND the request body must match the original request byte-for-byte,
+    INCLUDING the order of attributes in the JSON payload. This is a stricter contract than most
+    payment APIs (which hash a canonicalised body) and is the single most important thing for an
+    agent to get right: re-serialising the same object with a different key order counts as a
+    mismatch.
+  operation_count: 19
+  operations:
+  - createCharge
+  - createChargeBep
+  - createChargeFunding
+  - createChargePayout
+  - createChargePos
+  - createChargeAtm
+  - createChargeMitFromInitialCharge
+  - createChargeMit
+  - createChargeMitFunding
+  - createChargeWip
+  - cancel
+  - refund
+  - offlineRefund
+  - reverse
+  - increment
+  - triggerManualClearing
+  - createPosCharge
+  - cancelPosCharge
+  - refundPosCharge
+  discovery: >-
+    "Endpoints that support idempotency can be recognized by the fact that they accept the
+    Idempotency-Key header" — i.e. presence of the components/parameters/IdempotencyKey $ref
+    on the operation. Every money-moving write is covered; provisioning writes (merchants,
+    acceptors, keys, subscriptions) are not, and use conditional updates instead.
+  conflict_behaviour:
+  - condition: request body or URL differs from the original for the same key
+    status: 409
+    problem_type: /silverflow/problems/idempotency/request-mismatch
+    former_type: /silverflow/problems/idempotency/request-body-mismatch (renamed 2025-08-13)
+  - condition: original request still in flight
+    status: 409
+    problem_type: /silverflow/problems/idempotency/request-is-still-being-processed
+    retriable: true
+    note: Was 503 before 2025-08-13.
+  degraded_mode: >-
+    IMPORTANT AND UNUSUAL — "If this state becomes unavailable, requests are processed WITHOUT
+    idempotency to prevent transactions from failing solely due to the idempotency state being
+    inaccessible." Silverflow deliberately chooses availability over exactly-once. The error
+    /silverflow/problems/idempotency/temporarily-unavailable was retired for this reason. An
+    agent cannot treat an Idempotency-Key as an absolute double-charge guarantee.
+  source: https://docs.silverflow.com/guides/idempotency
+
+conditional_updates:
+  supported: true
+  mechanism: optimistic concurrency via ETag / version
+  request_header: If-Match
+  value_source:
+  - the ETag response header returned on GET
+  - the `version` attribute of the object body
+  applies_to: PATCH operations that do not accept Idempotency-Key (merchants, merchant acceptors,
+    enrollments, API keys, agents, subscriptions, distributions, report schedules)
+  conflict_status: 412
+  problem_type: /silverflow/problems/precondition-failed
+  operation_count_declaring_412: 16
+  note: >-
+    Guards the lost-update problem. This is the provisioning-side analogue of idempotency —
+    together the two cover the full write surface, which is why neither dimension is `na`.
+  source: https://docs.silverflow.com/guides/idempotency
+
+pagination:
+  style: opaque cursor (offset token)
+  request_params:
+  - name: limit
+    in: query
+    default: 10
+    minimum: 1
+    maximum: 100
+  - name: offsetToken
+    in: query
+    note: taken from the previous page's offsetToken property
+  - name: sortOrder
+    in: query
+    values: [asc, desc]
+    default_sort_field: resource creation date, unless otherwise specified
+  filter_params: [from, to, date, and per-collection external reference fields]
+  response_shape: >-
+    Each page is an object keyed by the collection name (e.g. `merchants: [...]`) plus a sibling
+    `offsetToken` string. The collection key VARIES PER ENDPOINT — "the resources are returned in
+    a page structure, which varies per collection" — so a generic client cannot assume a fixed
+    `data` envelope.
+  terminator: absence of the `offsetToken` property means there is no further page
+  error: /silverflow/problems/invalid-offset-token (invalid or expired token)
+  operation_count: 10
+  source: https://docs.silverflow.com/guides/pagination
+
+errors:
+  standard: RFC 7807 Problem Details
+  media_type: application/json
+  deviation: media type is application/json, NOT application/problem+json; 502/504 from
+    infrastructure may return text/html only
+  fields: [type, title, status, detail, instance]
+  type_namespace: /silverflow/problems/
+  catalog: errors/silverflow-problem-types.yml
+  decline_codes: errors/silverflow-decline-codes.yml
+  source: https://docs.silverflow.com/guides/error-handling
+
+rate_limit_signaling:
+  status: 429
+  header: Retry-After (seconds)
+  published_numbers: false
+  detail: rate-limits/silverflow-rate-limits.yml
+
+versioning:
+  style: single evolving version; /v1 path prefix; semver info.version bumped per release
+  current: 1.417.0
+  breaking_change_policy: published
+  deprecation_grace_period: typically 6 months
+  detail: lifecycle/silverflow-lifecycle.yml
+
+identifiers:
+  style: typed, prefixed, opaque string keys
+  pattern: '<3-4 letter prefix>-<base62 id>'
+  examples:
+  - prefix: mct-
+    entity: merchant
+  - prefix: act-
+    entity: charge action
+  - prefix: chg-
+    entity: charge
+  - prefix: apk-
+    entity: API key
+  - prefix: cgt-
+    entity: agent
+  - prefix: enr-
+    entity: enrollment
+  - prefix: evt-
+    entity: event notification
+  note: Keys are described as "immutable, unique identifier" throughout the spec; full map in
+    data-model/silverflow-data-model.yml.
+
+field_expansion:
+  supported: false
+  note: No `expand`, `fields` or sparse-fieldset parameter exists in the spec. Related entities
+    are fetched by following the typed key with a second call — the event-notification model
+    depends on exactly this (notifications carry identifiers, not data).
+
+metadata:
+  supported: partial
+  mechanism: a free-text `reference` field on charges, actions and acceptors carries
+    caller-supplied correlation values; there is no generic key/value `metadata` object.
+
+request_tracing:
+  request_id_header: not documented
+  correlation: >-
+    No X-Request-Id or trace header is documented or declared in the spec. Correlation is done
+    with the caller's own `reference` field and with the returned resource key. The `instance`
+    member of the RFC 7807 problem body is the closest thing to a per-failure identifier.
+
+events:
+  transport: HTTP(S) webhook (POST)
+  envelope: CloudEvents 1.0
+  content_type: application/json
+  user_agent: starts with Silverflow-Event-Notifications
+  subscription_api: Event Subscriptions (createEventSubscription / getEventSubscriptions /
+    updateEventSubscription / deleteEventSubscription)
+  delivery: at-least-once; duplicates possible; use the CloudEvents `id` as a deduplication key
+  ordering: not guaranteed — notifications may arrive out of chronological sequence; use `time`
+    to reconstruct order
+  thin_payloads: >-
+    Notifications carry identifiers and metadata only, never the entity data. The consumer must
+    call back into the REST API with the `subject` / `data` keys to retrieve state — which also
+    means the entity may have changed by the time it is read.
+  versioning: the `dataschema` URI carries a major.minor version; minor bumps are applied
+    automatically to existing subscriptions, major bumps require a NEW subscription
+  signature_verification: not documented
+  signature_note: >-
+    GAP — no webhook signing secret, HMAC header, or mTLS-to-webhook mechanism is documented in
+    the event-notifications guide. Consumers are given no published way to verify that a
+    notification originated from Silverflow beyond the User-Agent prefix and (optionally)
+    source-IP allowlisting, which they are not given a published range for either. Callers
+    should treat notifications as untrusted hints and confirm state via an authenticated GET —
+    which the thin-payload design already forces them to do.
+  catalog: asyncapi/silverflow-events-webhooks.yml
+
+dry_run_mode:
+  supported: false
+  grade: none
+  note: >-
+    No `dry_run`, `simulate`, `preview` or validate-only flag exists on any write operation.
+    The nearest facilities are genuinely useful but are separate, purpose-built ESTIMATION
+    endpoints rather than a rehearsal of the write: POST /v1/fees/interchange/estimate
+    (estimateInterchangeFee) and POST /v1/fees/scheme/estimate (getSchemeFeeEstimation) price a
+    transaction before it happens, POST /v1/cardInfo (postCardInfo) resolves a PAN's network,
+    funding type and issuer country, and POST /v1/riskAssessments (performRiskAssessment)
+    scores a transaction. An agent can therefore pre-flight COST and ELIGIBILITY, but cannot
+    rehearse the authorization itself outside the sandbox environment.
+  pre_flight_operations:
+  - estimateInterchangeFee
+  - getSchemeFeeEstimation
+  - postCardInfo
+  - performRiskAssessment
+
+reversibility:
+  applicable: true
+  grade: verified
+  grade_basis: >-
+    verified — reversal paths exist as first-class operations AND Silverflow states the window
+    in which each one works, in its own documentation, per operation. The windows are
+    state-based rather than clock-based for the authorization lifecycle (clearing status is the
+    boundary), and clock-based where a clock applies (clearAfter, dispute response deadlines).
+  source: https://docs.silverflow.com/guides/charge-actions
+  summary: >-
+    Every money-moving write on the charge surface has a documented reversal, and the boundary
+    is always the same fact: has the charge been sent for clearing. Before clearing, an
+    authorization is undone with reverse (manual clearing mode) or cancel (auto clearing mode).
+    After clearing, money has moved and the only reversal is a refund. An agent must read
+    `clearingMode` and clearing status BEFORE choosing which reversal to call — calling the
+    wrong one returns 409, it does not silently fall through.
+  operations:
+  - action: reverse
+    operation_id: reverse
+    path: POST /v1/charges/{chargeKey}/reverse
+    reverses: authorization (full or partial)
+    window: >-
+      Only while clearingMode = manual AND the charge has not been cleared. Emits an ISO 8583
+      4XX reversal message; does not affect clearing/settlement of an already-cleared charge.
+    on_window_expiry: use refund instead
+    failure_problem_types:
+    - /silverflow/problems/charge/unexpected-clearing-status
+    - /silverflow/problems/charge/unexpected-clearing-mode
+    idempotent: true
+  - action: cancel
+    operation_id: cancel
+    path: POST /v1/charges/{chargeKey}/cancel
+    reverses: scheduled clearing + full authorization reversal, in one call
+    window: >-
+      Only while clearingMode = auto AND the charge has not been sent for clearing. Where the
+      charge was created with a `clearAfter` timestamp, it can be cancelled up until that
+      timestamp — this is the one explicit CLOCK-based window on the charge surface.
+    on_window_expiry: HTTP 409 /silverflow/problems/charge/clearing-already-submitted; use
+      refund instead
+    idempotent: true
+  - action: refund
+    operation_id: refund
+    path: POST /v1/charges/{chargeKey}/refund
+    reverses: a cleared charge — returns funds to the cardholder
+    window: >-
+      After clearing. Silverflow publishes NO maximum age in days for a refund; the practical
+      limit is the card networks' own refund/credit rules, which Silverflow does not restate.
+      Recorded as unstated rather than assumed.
+    window_stated: false
+    idempotent: true
+  - action: offlineRefund
+    operation_id: offlineRefund
+    path: POST /v1/charges/{chargeKey}/offlineRefund
+    reverses: a charge processed outside the normal online flow
+    window: not stated
+    window_stated: false
+    idempotent: true
+  - action: increment
+    operation_id: increment
+    path: POST /v1/charges/{chargeKey}/increment
+    reverses: n/a — raises the authorized amount; the DOWNWARD counterpart is reverse (partial)
+    window: only while clearingMode = manual and the charge is not cleared; validity of the
+      increment matches the validity of the original pre-authorization
+    idempotent: true
+  - action: cancelPosCharge
+    operation_id: cancelPosCharge
+    path: POST /v1/pos/charges/{chargeKey}/cancel
+    reverses: a terminal-to-cloud POS charge before clearing
+    window: same clearing boundary as cancel
+    idempotent: true
+  - action: refundPosCharge
+    operation_id: refundPosCharge
+    path: POST /v1/pos/charges/{chargeKey}/refund
+    reverses: a cleared POS charge
+    window: not stated
+    window_stated: false
+    idempotent: true
+  - action: acceptDispute
+    operation_id: acceptDispute
+    path: POST /v1/disputes/{disputeKey}/accept
+    reverses: nothing — this is the IRREVERSIBLE branch of the dispute flow
+    window: >-
+      Accepting a dispute concedes the chargeback. There is no un-accept operation. The dispute
+      lifecycle exposes `awaitingResponse` and a response deadline through the dispute object
+      and its event history; once accepted the terminal state is `closedAccepted`.
+    reversible: false
+    warning: An agent must never call acceptDispute speculatively; it is a one-way door.
+  non_reversible_writes:
+  - operation: createMerchant / createAcceptor
+    note: soft-reversible — deleteMerchant and deleteAcceptorVersion archive rather than destroy;
+      acceptors are versioned with an activatable draft version, so a bad change can be
+      superseded rather than undone.
+  - operation: archiveNetworkToken / archiveProcessorToken / archiveDocument /
+      archiveReportSchedule / archiveDistribution
+    note: archive semantics — the resource stops being usable but is retained. No un-archive
+      operation is published; a new token must be created.
+  - operation: acceptDispute
+    note: irreversible, see above
+  - operation: deleteApiKey
+    note: irreversible; the secret is only ever returned once at creation, so a deleted key
+      cannot be restored, only replaced.
+  agent_guidance: >-
+    Before any charge write, an agent should (1) read `clearingMode` on the charge it is about
+    to create or amend, (2) send an Idempotency-Key, and (3) know which of reverse / cancel /
+    refund applies at the current clearing status. Before any dispute write, it should treat
+    accept as terminal and defend/submitEvidence as the recoverable path.
+
+cross_references:
+  errors: errors/silverflow-problem-types.yml
+  decline_codes: errors/silverflow-decline-codes.yml
+  lifecycle: lifecycle/silverflow-lifecycle.yml
+  authentication: authentication/silverflow-authentication.yml
+  rate_limits: rate-limits/silverflow-rate-limits.yml
+  events: asyncapi/silverflow-events-webhooks.yml
+  data_model: data-model/silverflow-data-model.yml

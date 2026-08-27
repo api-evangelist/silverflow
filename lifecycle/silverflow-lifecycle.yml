@@ -1,0 +1,94 @@
+generated: '2026-08-27'
+method: searched
+source: https://docs.silverflow.com/guides/api-lifecycle
+name: Silverflow API lifecycle
+docs:
+- https://docs.silverflow.com/guides/api-lifecycle
+- https://docs.silverflow.com/apidocs/latest/index.html#tag/Release-Notes
+versioning:
+  scheme: single-evolving-version
+  current_version: 1.417.0
+  version_source: openapi/silverflow-openapi.yml info.version
+  path_prefix: /v1
+  note: >-
+    "Our API has a single version that evolves over time instead of having multiple versions
+    simultaneously." The URL path carries /v1 across every server; the semantic version
+    (info.version) is bumped per release and each bump is documented in the in-spec Release
+    Notes. There is no side-by-side version negotiation and no version header.
+  breaking_changes_defined: true
+  breaking_change_definition:
+    breaking:
+    - Removing an endpoint entirely
+    - Replacing an endpoint with an equivalent one (method change, URL structure change)
+    - Adding required fields to requests
+    - Removing required fields from requests or responses
+    - Renaming or deleting response fields
+    - Renaming or deleting required query parameters
+    - Changing the data type of a field
+    - Introducing new mandatory authentication methods
+    - Changing access permissions for an existing endpoint
+    - Removing or significantly changing error codes clients rely on
+    non_breaking:
+    - Introducing new endpoints
+    - Adding new optional request fields
+    - Adding new optional or required response fields
+    - Making previously required fields optional
+    - Changing the order of JSON fields
+    - Adding new optional query parameters
+    - Introducing new error codes while retaining existing ones
+    - Performance or stability improvements that do not alter the contract
+deprecation:
+  policy_published: true
+  policy_url: https://docs.silverflow.com/guides/api-lifecycle
+  grace_period: typically 6 months
+  process:
+  - Announcement — deprecations announced in advance via the changelog and email notification
+  - Deprecation warning — the feature is marked with a DEPRECATED tag and a removal date
+  - Grace period — typically 6 months for clients to transition
+  - Removal — the feature is removed; migration guides provided where necessary
+  sunset_headers:
+    rfc8594_sunset_header: not-documented
+    deprecation_header: not-documented
+    note: >-
+      Silverflow signals deprecation in documentation and by email, not with RFC 8594
+      Sunset/Deprecation HTTP response headers. No Sunset or Deprecation header appears in
+      the OpenAPI response definitions.
+  deprecated_operations_in_spec: []
+  note_on_spec_deprecations: >-
+    No operation in openapi/silverflow-openapi.yml carries `deprecated: true` as of
+    v1.417.0. Deprecations are instead announced with dates in the Release Notes — e.g.
+    v1.409.1 (2026-08-07) announces that from 22 November 2026 POST /v1/charges/bep and
+    POST /v1/charges/{initialChargeKey}/wip will return 409
+    /silverflow/problems/card/invalid when no valid card is found, and v1.414.0
+    (2026-08-19) records the removal of the deprecated
+    GET /v1/acceptors/{acceptorKey}/enrollments endpoint.
+maturity_labels:
+- label: EXPERIMENTAL
+  meaning: >-
+    May change in a breaking way outside the normal deprecation process, may be unstable,
+    may have incomplete documentation, and may rarely be removed entirely. Communication is
+    informational only.
+- label: BETA
+  meaning: Legacy label being phased out in favour of EXPERIMENTAL.
+- label: DEPRECATED
+  meaning: Marked with a removal date; removed after the grace period.
+status_page:
+  url: https://status.silverflow.com/
+  provider: Atlassian Statuspage
+  http_status: 200
+  observed: '2026-08-27'
+  note: >-
+    Live Statuspage instance reporting "All Systems Operational" at probe time, with
+    incident history and uptime panels. This is the pointer common[] type StatusPage reads.
+sla:
+  published: false
+  note: >-
+    No public SLA / uptime commitment document was found on silverflow.com,
+    docs.silverflow.com or the status page. Silverflow sells through a commercial contract
+    with a named technical account manager (TAM); SLA terms are presumed contractual and
+    are not published.
+support:
+  contact: support@silverflow.com
+  named_role: Technical Account Manager (TAM) — referenced throughout the docs and in
+    info.description of the OpenAPI
+  contact_page: https://www.silverflow.com/contact

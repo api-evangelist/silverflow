@@ -1,0 +1,16 @@
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA256
+
+Contact: mailto:security@silverflow.com
+Expires: 2026-03-01T00:00:00.000Z
+Encryption: https://www.silverflow.com/.well-known/pgp-key.txt
+Preferred-Languages: en
+Canonical: https://www.silverflow.com/.well-known/security.txt
+Policy: https://www.silverflow.com/.well-known/security-policy.txt
+-----BEGIN PGP SIGNATURE-----
+
+iHUEAREIAB0WIQS5tbjehffWj+Ga/sFYkraVjDfhcQUCZ8bS1gAKCRBYkraVjDfh
+cUV7AP91TtvnUB/iZ2br9JUKZ8hRnrUPhBOAfQRSly4SpnohbQD8Cj1ln6JdW1W2
+w7gX2tTp5D7DqEsqPNwPLxEZEGc9mvY=
+=SyEI
+-----END PGP SIGNATURE-----

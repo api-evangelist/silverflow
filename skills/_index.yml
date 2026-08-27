@@ -1,0 +1,51 @@
+generated: '2026-08-27'
+method: generated
+source: openapi/silverflow-openapi.yml + the Silverflow guides at https://docs.silverflow.com/guides/
+name: Silverflow Agent Skills
+note: >-
+  Silverflow publishes no AGENTS.md, no skills directory and no agent-facing operating
+  instructions — searched first, not found. These four skills are GENERATED from the published
+  OpenAPI and Silverflow's own guides, one per marquee flow. Every operationId, path and event
+  name in them was verified to exist in openapi/silverflow-openapi.yml before publication; none
+  was invented. Each skill leads with the runtime semantics an agent gets wrong by default on
+  this API — which undo operation the clearing state allows, that idempotency compares raw
+  bytes including JSON key order, that accepting a dispute is irreversible, and that a 2xx is
+  not a successful payment.
+skills:
+- name: silverflow-take-a-card-payment
+  file: skills/silverflow-take-a-card-payment.md
+  flow: authorize -> clear -> settle, with pre-flight and undo
+  operations: 12
+  key_warning: The undo operation is chosen by clearing state (reverse / cancel / refund), not
+    by intent; calling the wrong one returns 409.
+- name: silverflow-handle-a-dispute
+  file: skills/silverflow-handle-a-dispute.md
+  flow: chargeback triage, evidence, defend or accept
+  operations: 14
+  key_warning: acceptDispute is a one-way door with no un-accept operation. Require human
+    confirmation.
+- name: silverflow-onboard-a-merchant
+  file: skills/silverflow-onboard-a-merchant.md
+  flow: merchant -> acceptor (draft/activate) -> enrollment -> screening
+  operations: 19
+  key_warning: Provisioning uses If-Match optimistic concurrency, NOT Idempotency-Key; acceptors
+    are versioned with an activatable draft rather than edited in place.
+- name: silverflow-reconcile-and-report
+  file: skills/silverflow-reconcile-and-report.md
+  flow: settlement and reconciliation reads, async report lifecycle, schedules and distributions
+  operations: 28
+  key_warning: Report generation is an async job — subscribe to events.reports.updated rather
+    than polling blindly.
+verification:
+  operation_ids_verified: true
+  event_names_verified: true
+  paths_verified: true
+  method: 'Programmatic check against openapi/silverflow-openapi.yml paths[].operationId,
+    x-webhooks[].operationId and x-webhooks[] keys on 2026-08-27; zero unresolved references.'
+grounding:
+  openapi: openapi/silverflow-openapi.yml
+  conventions: conventions/silverflow-conventions.yml
+  errors: errors/silverflow-problem-types.yml
+  decline_codes: errors/silverflow-decline-codes.yml
+  events: asyncapi/silverflow-events-webhooks.yml
+  sandbox: sandbox/silverflow-sandbox.yml

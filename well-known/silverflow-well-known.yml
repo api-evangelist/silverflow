@@ -1,0 +1,94 @@
+generated: '2026-08-27'
+method: probed
+source: 'Direct HTTPS probe of /.well-known/* on every Silverflow website, docs and API host, 2026-08-27'
+name: Silverflow well-known documents
+note: >-
+  Only https://www.silverflow.com/.well-known/security.txt returned a real document
+  (RFC 9116, PGP clear-signed). Every other probed path returned 404. The 404 bodies on
+  www.silverflow.com and docs.silverflow.com are the Next.js SPA 404 shell (~124KB / ~204KB
+  of HTML) and the API hosts return a compact JSON 404 envelope; none of them is a document.
+  NOTE ON EXPIRY - the served security.txt carries `Expires: 2026-03-01T00:00:00.000Z`,
+  which is in the past as of this probe. The file is served and valid RFC 9116 syntax, but
+  per RFC 9116 s2.5.5 an expired file should not be relied upon; Silverflow should re-sign
+  and re-publish it.
+hosts:
+- host: www.silverflow.com
+  documents:
+  - path: /.well-known/security.txt
+    status: 200
+    content_type: text/plain; charset=UTF-8
+    file: well-known/silverflow-security.txt
+  - path: /.well-known/openid-configuration
+    status: 404
+  - path: /.well-known/oauth-authorization-server
+    status: 404
+  - path: /.well-known/api-catalog
+    status: 404
+  - path: /.well-known/ai-plugin.json
+    status: 404
+  - path: /.well-known/agent-card.json
+    status: 404
+  - path: /.well-known/agent.json
+    status: 404
+- host: docs.silverflow.com
+  documents:
+  - path: /.well-known/security.txt
+    status: 404
+  - path: /.well-known/openid-configuration
+    status: 404
+  - path: /.well-known/oauth-authorization-server
+    status: 404
+  - path: /.well-known/api-catalog
+    status: 404
+  - path: /.well-known/ai-plugin.json
+    status: 404
+  - path: /.well-known/agent-card.json
+    status: 404
+  - path: /.well-known/agent.json
+    status: 404
+- host: eu-west-1.api.silverflow.com
+  documents:
+  - path: /.well-known/security.txt
+    status: 404
+  - path: /.well-known/openid-configuration
+    status: 404
+  - path: /.well-known/oauth-authorization-server
+    status: 404
+  - path: /.well-known/api-catalog
+    status: 404
+  - path: /.well-known/ai-plugin.json
+    status: 404
+  - path: /.well-known/agent-card.json
+    status: 404
+  - path: /.well-known/agent.json
+    status: 404
+- host: api.silverflow.co
+  documents:
+  - path: /.well-known/security.txt
+    status: 404
+  - path: /.well-known/openid-configuration
+    status: 404
+  - path: /.well-known/oauth-authorization-server
+    status: 404
+  - path: /.well-known/api-catalog
+    status: 404
+  - path: /.well-known/ai-plugin.json
+    status: 404
+  - path: /.well-known/agent-card.json
+    status: 404
+  - path: /.well-known/agent.json
+    status: 404
+related:
+- path: /.well-known/security-policy.txt
+  host: www.silverflow.com
+  status: 200
+  note: Referenced by the security.txt `Policy:` field; coordinated-disclosure policy prose.
+- path: /.well-known/pgp-key.txt
+  host: www.silverflow.com
+  status: 200
+  note: Referenced by the security.txt `Encryption:` field; PGP public key block for security@silverflow.com.
+a2a_agent_card:
+  found: false
+  note: >-
+    No A2A Agent Card. /.well-known/agent-card.json and the legacy /.well-known/agent.json
+    were probed on all four hosts above; every one returned 404. No a2a/ artifact was written.

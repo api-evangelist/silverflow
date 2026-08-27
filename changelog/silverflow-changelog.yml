@@ -1,0 +1,330 @@
+generated: '2026-08-27'
+method: searched
+source: https://docs.silverflow.com/apidocs/latest/openapi.yml (tags[] "Release Notes" description), rendered
+  at https://docs.silverflow.com/apidocs/latest/index.html#tag/Release-Notes
+name: Silverflow API changelog
+note: Silverflow publishes no standalone /changelog page. The changelog is carried INSIDE the OpenAPI
+  document, as the description of the `Release Notes` tag (~225KB of markdown), and rendered by Redoc
+  as a documentation section. Every entry names the exact operationIds affected and labels Breaking, Deprecation
+  and Experimental changes explicitly. Machine-readable in practice, but only if a consumer knows to look
+  inside the spec.
+docs: https://docs.silverflow.com/apidocs/latest/index.html#tag/Release-Notes
+scheme: semver (MAJOR.MINOR.PATCH) over a single evolving /v1 API; the version is openapi info.version
+current_version: 1.417.0
+totals:
+  entries_published: 398
+  oldest: '2023-12-05'
+  newest: '2026-08-25'
+  breaking_entries: 30
+  deprecation_entries: 20
+  experimental_entries: 43
+cadence_note: 398 dated releases between 2023-12-05 and 2026-08-25.
+entries:
+- version: 1.417.0
+  date: '2026-08-25'
+  breaking: false
+  deprecation: false
+  experimental: true
+  changes:
+  - 'Experimental: Added support for PIN unblock on the following endpoint:'
+  - 'Added support for Apple Pay and Google Pay for Discover charges on the following endpoints:'
+- version: 1.416.0
+  date: '2026-08-21'
+  breaking: false
+  deprecation: false
+  experimental: false
+  changes:
+  - Added values `installment` and `standing-order` to the `threeRiIndicator` field of the `POST /v1/3ds/3ri`
+    endpoint.
+  - Added new field `installmentTerms` to the `POST /v1/3ds/3ri` endpoint.
+- version: 1.415.0
+  date: '2026-08-21'
+  breaking: false
+  deprecation: false
+  experimental: true
+  changes:
+  - 'Experimental: Added support for cancelling or reversing an ATM charge on the following endpoints.'
+- version: 1.414.0
+  date: '2026-08-19'
+  breaking: true
+  deprecation: false
+  experimental: false
+  changes: &id001
+  - 'Breaking: Removed the deprecated `GET /v1/acceptors/{acceptorKey}/enrollments` endpoint.'
+- version: 1.413.0
+  date: '2026-08-18'
+  breaking: false
+  deprecation: false
+  experimental: false
+  changes:
+  - Added the optional `merchantKey` query parameter to the List Enrollments endpoint, to filter Enrollments
+    by Merchant.
+  - Removed the incorrectly documented `404 Not Found` response from the List Enrollments endpoint. The
+    endpoint returns an empty page when no Enrollments match.
+- version: 1.412.0
+  date: '2026-08-17'
+  breaking: false
+  deprecation: false
+  experimental: false
+  changes:
+  - 'Added `initialRefundReferences.initialTraceId` to the following endpoint for Mastercard:'
+- version: 1.411.2
+  date: '2026-08-12'
+  breaking: false
+  deprecation: false
+  experimental: false
+  changes:
+  - Fixed enum values for `cardEntry`, `order` and `fundingType` in the response body of MIT funding charges
+    retrieved via `GET /v1/charges/{chargeKey}`.
+- version: 1.411.1
+  date: '2026-08-11'
+  breaking: false
+  deprecation: false
+  experimental: false
+  changes:
+  - Updated the List Dispute Documents endpoints `GET v1/disputes/{disputeKey}/documents` description.
+- version: 1.411.0
+  date: '2026-08-10'
+  breaking: false
+  deprecation: false
+  experimental: true
+  changes:
+  - 'Experimental: Added new `charges:CreateAtm` permission to the all Api Keys endpoints.'
+- version: 1.410.0
+  date: '2026-08-07'
+  breaking: false
+  deprecation: false
+  experimental: true
+  changes:
+  - 'Experimental: Added support for ATM transactions on the following endpoint for VISA and Mastercard:'
+- version: 1.409.1
+  date: '2026-08-07'
+  breaking: false
+  deprecation: true
+  experimental: false
+  changes: &id004
+  - 'Deprecation: From November 22, 2026, if a valid card is not found using `card.number` in the request,
+    the response will be a `409` with type `/silverflow/problems/card/invalid` for the following endpoints:'
+- version: 1.409.0
+  date: '2026-08-06'
+  breaking: false
+  deprecation: false
+  experimental: false
+  changes:
+  - 'Added the `switchPeriodNumber` and `switchPeriodDate` fields to Bancontact Reconciliation Details
+    in reports and on the following endpoints:'
+- version: 1.408.0
+  date: '2026-08-05'
+  breaking: false
+  deprecation: false
+  experimental: false
+  changes:
+  - 'Added the optional `type` object to the response of the following endpoints:'
+- version: 1.407.0
+  date: '2026-08-04'
+  breaking: false
+  deprecation: false
+  experimental: true
+  changes:
+  - 'Experimental: Added support for EnhancedData in the following endpoints for Mastercard'
+- version: 1.406.0
+  date: '2026-07-30'
+  breaking: false
+  deprecation: false
+  experimental: true
+  changes:
+  - 'Experimental: Added support for EnhancedData in the following endpoints for VISA'
+  - Added new `type.order` enum variants `ucof`, `standing-order`, `one-click` to `POST /v1/charges/funding`
+  - Added new `type.cardEntry` enum variants `token-on-file`, `card-on-file` to `POST /v1/charges/funding`
+  - Added new `type.order` enum variants `ucof`, `standing-order` to `POST /v1/charges/mitFunding`
+  - Added new `type.cardEntry` enum variant `token-on-file` to `POST /v1/charges/mitFunding`
+- version: 1.405.2
+  date: '2026-07-23'
+  breaking: false
+  deprecation: false
+  experimental: false
+  changes:
+  - Added reason field to `com.silverflow.clearing.abandoned` event
+- version: 1.405.1
+  date: '2026-07-21'
+  breaking: false
+  deprecation: false
+  experimental: false
+  changes:
+  - Removed the `visa_base2` value from the `fileTypes` property of the experimental Create File Subscription
+    and Update File Subscription endpoints.
+- version: 1.405.0
+  date: '2026-07-16'
+  breaking: false
+  deprecation: false
+  experimental: false
+  changes:
+  - 'Added permissions the File Subscription endpoints:'
+  - 'Removed the experimental tag from the `discover` and `diners` values of the `network` property in
+    the following endpoints:'
+  - Removed the experimental tag from the `processorTokenKey` property for the Request Card Info endpoint.
+- version: 1.404.0
+  date: '2026-07-15'
+  breaking: false
+  deprecation: false
+  experimental: true
+  changes:
+  - 'Experimental: Added the endpoints to support POS charges in the Terminal-to-Cloud API:'
+- version: 1.403.0
+  date: '2026-07-08'
+  breaking: false
+  deprecation: true
+  experimental: false
+  changes: &id005
+  - 'Deprecation: From December 8, 2026, the `status` parameter will be removed from the request on the
+    following endpoint: `GET /v1/disputes/{disputeKey}/eventHistory`'
+- version: 1.402.0
+  date: '2026-07-08'
+  breaking: false
+  deprecation: false
+  experimental: true
+  changes:
+  - 'Experimental: Added support for the `merchantInfo` object as an alternative to a pre-onboarded merchant
+    acceptor on the following endpoints:'
+  - 'Experimental: Authentications created using the standalone `merchantInfo` flow now return `merchantInfo`
+    instead of `merchantAcceptorRef` on the following endpoints:'
+- version: 1.401.0
+  date: '2026-07-03'
+  breaking: true
+  deprecation: false
+  experimental: false
+  changes: &id002
+  - 'Breaking: The `fraudLiability` field is now optional for payout charges in the response on the following
+    endpoints:'
+  - 'Breaking: Charges with `clearingMode` set to `auto` and no explicit `clearAfter` value are no longer
+    delayed by 1 hour before clearing. These charges are now sent immediately to clearing.'
+- version: 1.400.0
+  date: '2026-07-01'
+  breaking: true
+  deprecation: false
+  experimental: false
+  changes: &id003
+  - 'Breaking: The `threeDsPriorAuthenticationInfo` field is now required on the `POST /v1/3ds/3ri` endpoint,
+    following the previously announced deprecation process (1.339.0).'
+- version: 1.399.0
+  date: '2026-06-30'
+  breaking: false
+  deprecation: false
+  experimental: false
+  changes:
+  - Added `payment_designation` enum to the `amexModel` property for all American Express BINs endpoints.
+  - The `marketplaceId` and `rampProviderId` fields are no longer experimental on the all Merchant Acceptors
+    endpoints.
+- version: 1.398.0
+  date: '2026-06-30'
+  breaking: false
+  deprecation: false
+  experimental: false
+  changes:
+  - 'Added support for the `dccIndicator` property in `mastercardCardInfo` on the existing endpoints:'
+recent_breaking:
+- version: 1.414.0
+  date: '2026-08-19'
+  changes: *id001
+- version: 1.401.0
+  date: '2026-07-03'
+  changes: *id002
+- version: 1.400.0
+  date: '2026-07-01'
+  changes: *id003
+- version: 1.333.0
+  date: '2025-12-03'
+  changes:
+  - 'Breaking: Added card network validation for the merchant acceptor to the `POST /v1/bep` endpoint.
+    A merchant acceptor that has a bin with a card network other than `bancontact` will now result in
+    a 409 error with `type` of `/silverflow/problems/bin/unexpected-network`.'
+  - Added documentation for 409 error with `type` of `/silverflow/problems/referenced-entity-not-found`,
+    which was previously undocumented on the `POST /v1/bep` endpoint.
+- version: 1.332.1
+  date: '2025-11-26'
+  changes:
+  - 'Breaking: Charges authorized more than 6 months ago can no longer be cleared with the `POST /v1/charges/{chargeKey}/clear`
+    endpoint.'
+  - 'Breaking: The `clearAfter` property can no longer be set to values more than 6 months in the future
+    on the following endpoints:'
+- version: 1.331.0
+  date: '2025-11-10'
+  changes:
+  - 'Breaking: For all Charges endpoints the error with `type` of `/silverflow/problems/idempotency/request-is-still-being-processed`
+    now has a 409 status code instead of 503.'
+  - 'Breaking: For all Charges endpoints the error with `type` of `/silverflow/problems/idempotency/request-body-mismatch`
+    has been renamed to `/silverflow/problems/idempotency/request-mismatch`.'
+  - 'Fixed the documentation for the error with `type` of `/silverflow/problems/invalid-input`. The field
+    `validationErrors[].instancePath` has been corrected to `validationErrors[].path`. This affects the
+    following endpoints:'
+- version: 1.329.0
+  date: '2025-11-04'
+  changes:
+  - 'Breaking: The `POST /v1/charges/{chargeKey}/clear` endpoint can be called at most 6 months after
+    the charge was created.'
+- version: 1.325.0
+  date: '2025-10-28'
+  changes:
+  - 'Breaking: Removed the deprecated `acquirerId` field in MATCH Screening responses on all Screening
+    endpoints.'
+  - 'Breaking: Removed the deprecated `acquirerBID` field in VMSS Screening requests and responses on
+    all Screening endpoints.'
+recent_deprecations:
+- version: 1.409.1
+  date: '2026-08-07'
+  changes: *id004
+- version: 1.403.0
+  date: '2026-07-08'
+  changes: *id005
+- version: 1.395.0
+  date: '2026-06-24'
+  changes:
+  - 'Deprecation: From November 22, 2026, the `type.sequence` field will be removed from both the request
+    and response on the following endpoints:'
+  - 'Deprecation: From November 22, 2026, the `type.sequence` field will be removed from the response
+    for BEP charges on the following endpoints:'
+  - 'The field `authorizationResponse.network` in the `201` response of the `POST /v1/charges/{chargeKey}/increment`
+    endpoint incorrectly contained an unsupported network: `american-express`; this has now been removed.
+    The examples have also been updated to reflect this change.'
+- version: 1.370.0
+  date: '2026-04-02'
+  changes:
+  - 'Deprecation: From 23 August, 2026 in the `BepSuccessReponse` of the `GET /v1/bep/{bepKey}` endpoint,
+    the field `bepaf` will not always return the entire BEPAF value. Instead, once 45 days have passed
+    since the BEP authentication was created, we will only return the part of the BEPAF value that is
+    required for WIP transactions.'
+  - 'The `billingAddress.countryCode`, `billingAddress.city`, and `billiingAddress.line1` fields are no
+    longer required for requests to endpoints:'
+  - 'The `billingAddress.countryCode`, `billingAddress.city`, and `billiingAddress.line1` fields are no
+    longer required in the response of endpoints:'
+- version: 1.339.0
+  date: '2025-12-18'
+  changes:
+  - 'Added field `foreignRetailer` to the following endpoints:'
+  - 'Added card validation to the `POST /v1/charges/{chargeKey}/offlineRefund` endpoint:'
+  - 'Deprecation: From May 4, 2026, the `fraudLiability` field will be optional for payout charges in
+    the responses on the `GET /v1/charges/{chargeKey}` and `GET /v1/charges` endpoints.'
+  - 'Deprecation: From May 4, 2026, when using `clearingMode` `auto` the `clearAfter` field will have
+    to be set in order to allow for cancelations of the created charge on all Charges endpoints.'
+  - 'Deprecation: From May 1, 2026, the `threeDsPriorAuthenticationInfo` field will be required on the
+    `POST /v1/3ds/3ri` endpoint.'
+- version: 1.335.0
+  date: '2025-12-10'
+  changes:
+  - 'Deprecation: Deprecated the `MATCH` screeningType in the Create Screening Request endpoint.'
+- version: 1.321.0
+  date: '2025-10-06'
+  changes:
+  - 'Breaking: Removed the `issm` type from the Create Enrollment endpoint as ISSM Merchant Enrollment
+    has been decommissioned by Mastercard.'
+  - 'Deprecation: Deprecated the `issm` type in the Get Enrollment and List Enrollments endpoints.'
+- version: 1.318.0
+  date: '2025-09-19'
+  changes:
+  - 'Added the ability to set `clearingMode` and `clearAfter` for Mastercard charges on the following
+    endpoints:'
+  - 'Deprecation: Deprecated `type.sequence` for the `POST /v1/charges/funding` endpoint. The property
+    has no effect on the created charge.'
+  - 'Deprecation: Added a deprecation note for additional properties on several endpoints. From January
+    29, 2026, these endpoints will reject any undocumented properties they receive with a 400 error. The
+    affected endpoints are:'

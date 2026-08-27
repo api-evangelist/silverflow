@@ -1,0 +1,138 @@
+generated: '2026-08-27'
+method: searched
+source: https://docs.silverflow.com/guides/sandbox
+name: Silverflow authorization decline / response codes
+docs:
+- https://docs.silverflow.com/guides/sandbox
+- https://docs.silverflow.com/guides/charge-actions
+scope_note: >-
+  Silverflow is a card PROCESSOR sitting directly on the card networks, not a gateway that
+  normalises issuer responses into its own vocabulary. It does NOT publish a proprietary
+  decline-code registry. What it returns is the raw network authorization response — ISO 8583
+  field 39 — surfaced as `authorizationResponse.responseCode` with a human-readable
+  `authorizationResponse.responseCodeDescription`, alongside the emitting `network`. The
+  authoritative meaning of any given code is therefore the CARD NETWORK's, and it differs per
+  network: the same decline is 05 on Visa/Mastercard/Discover and 100 on Diners.
+  The catalogue below is the set of codes Silverflow itself names and documents, taken from
+  the sandbox amount-trigger matrix — the only place Silverflow publishes code-to-meaning
+  mappings. It is a real subset, not a complete network registry, and it is labelled as such.
+envelope:
+  field: authorizationResponse.responseCode
+  description_field: authorizationResponse.responseCodeDescription
+  network_field: authorizationResponse.network
+  iso_field: ISO 8583 field 39
+  discriminated_union: >-
+    authorizationResponse is a discriminated union on `network` (american-express, bancontact,
+    diners, discover, mastercard, visa, unknown), so the per-network ISO field set differs.
+    Actions created before 2023-10-07 carry network `unknown` with the remaining properties
+    unpopulated.
+  additional_signals:
+  - merchant advice code (Mastercard) — e.g. 51 is returned with merchant advice code 02
+  - AVS result (address verification) — N, R, U, W, X, Y, Z
+  - CVC/CVV result — M, N, P, S, U, Y (plus Diners 006/007)
+  - account name inquiry / name validation result (Visa F34 DS4 tags, Mastercard F108 SE08 SF02)
+masked_to_buyers:
+  documented: false
+  note: >-
+    Silverflow does not document any masking or normalisation of decline codes toward the
+    cardholder or the merchant — the network's own response code and description are passed
+    through. Any buyer-facing softening is the acquirer/PSP's responsibility, not Silverflow's.
+sandbox_trigger_model: >-
+  In sandbox each row below is reproduced by sending the given amount in minor units. See
+  sandbox/silverflow-sandbox.yml.
+decline_codes:
+- sandbox_amount: default
+  meaning: Approved
+  action: none — transaction succeeded
+  codes: {american_express: '000', bancontact: '00', discover: '00', mastercard: '00', visa: '00', diners: '000'}
+- sandbox_amount: '100005'
+  meaning: Do not honor
+  action: Generic issuer decline. Do not retry with the same card without cardholder action; ask
+    the cardholder to contact their issuer or use another card.
+  codes: {discover: '05', mastercard: '05', visa: '05', diners: '100'}
+- sandbox_amount: '100010'
+  meaning: Partial amount / partial approval
+  action: The issuer approved less than the requested amount. Collect the remainder by another
+    tender or reverse the authorization.
+  codes: {discover: '10', mastercard: '10', visa: '10'}
+- sandbox_amount: '100014'
+  meaning: Invalid account / card number
+  action: Hard decline. Do not retry; re-collect the card number.
+  codes: {mastercard: '14', visa: '14'}
+- sandbox_amount: '100030'
+  meaning: Format error
+  action: Request was malformed at the network layer. Fix the request; do not retry unchanged.
+  codes: {mastercard: '30', diners: '904'}
+- sandbox_amount: '100051'
+  meaning: Insufficient funds / over credit limit
+  action: Soft decline. May be retried later per network reattempt rules; Mastercard returns
+    merchant advice code 02 alongside.
+  codes: {mastercard: 51 (merchant advice code 02), visa: '51'}
+- sandbox_amount: '100054'
+  meaning: Expired card
+  action: Hard decline. Re-collect card expiry, or use a network token / account updater.
+  codes: {discover: '52'}
+- sandbox_amount: '100061'
+  meaning: Insufficient funds / over credit limit / decline
+  action: Soft decline. Retry subject to network reattempt limits.
+  codes: {discover: '61'}
+- sandbox_amount: '100065'
+  meaning: Exceeds withdrawal count limit
+  action: Soft decline. Cardholder has exceeded a velocity limit; retry later or request SCA.
+  codes: {discover: '65', visa: '65'}
+- sandbox_amount: '100085'
+  meaning: No reason to decline a request for address verification, CVV2 verification, or credit
+    voucher or merchandise return
+  action: Informational approval on a verification-only request.
+  codes: {discover: '85', mastercard: '85', visa: '85'}
+- sandbox_amount: '100101'
+  meaning: Expired card / invalid expiration date
+  action: Hard decline. Re-collect expiry.
+  codes: {american_express: '101', diners: '101'}
+- sandbox_amount: '100116'
+  meaning: Not sufficient funds
+  action: Soft decline. Retry subject to reattempt rules.
+  codes: {american_express: '116'}
+- sandbox_amount: '100165'
+  meaning: Soft decline — customer authentication required (SCA)
+  action: Re-attempt the charge with 3-D Secure authentication (POST /v1/3ds) and submit the
+    resulting authentication data.
+  codes: {discover: 1A, mastercard: '65', visa: 1A}
+pos_decline_codes:
+- sandbox_amount: 3055 (terminalEntryMode = contactless, chip)
+  meaning: Invalid PIN
+  codes: {american_express: '117', discover: '55', mastercard: '55', visa: '55'}
+- sandbox_amount: '3065'
+  meaning: 'Mastercard: exceeds withdrawal count limit (request PIN entry)'
+  codes: {mastercard: '65'}
+- sandbox_amount: '3165'
+  meaning: 'Mastercard: exceeds withdrawal count limit (issuer PIN request in single-tap mode)'
+  codes: {mastercard: '65'}
+- sandbox_amount: '3075'
+  meaning: Allowable number of PIN tries exceeded
+  codes: {american_express: '106', discover: '75', mastercard: '75', visa: '75'}
+- sandbox_amount: '3087'
+  meaning: Purchase amount only, no cash back allowed
+  codes: {mastercard: '87'}
+- sandbox_amount: '3091'
+  meaning: Issuer unavailable
+  codes: {discover: '91', mastercard: '91', visa: '91'}
+atm_decline_codes:
+  note: ATM / cash-withdrawal scenarios, Mastercard only, per the sandbox guide.
+  codes:
+  - {sandbox_amount: '80000', meaning: Refer to card issuer, mastercard: '01'}
+  - {sandbox_amount: '82000', meaning: Pick-up card, mastercard: '04'}
+  - {sandbox_amount: '84000', meaning: Stolen card, mastercard: '43'}
+  - {sandbox_amount: '86000', meaning: Not sufficient funds, mastercard: '51'}
+  - {sandbox_amount: '88000', meaning: Expired card, mastercard: '54'}
+  - {sandbox_amount: '90000', meaning: Incorrect PIN, mastercard: '55'}
+  - {sandbox_amount: '92000', meaning: Exceeds withdrawal limit, mastercard: '61'}
+  - {sandbox_amount: '94000', meaning: PIN tries exceeded, mastercard: '75'}
+totals:
+  decline_codes: 13
+  pos_codes: 6
+  atm_codes: 8
+relationship_to_problem_types: >-
+  These are DISTINCT from errors/silverflow-problem-types.yml. A decline is a successful HTTP
+  200 charge whose authorization status is `declined` with a network response code; a problem
+  type is a 4xx/5xx HTTP failure of the API call itself. Agents must check both.

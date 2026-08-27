@@ -1,0 +1,171 @@
+generated: '2026-08-27'
+method: derived
+source: openapi/silverflow-openapi.yml (candidate tools derived from operations) — no
+  Silverflow-published MCP server exists
+name: Silverflow MCP server (candidate)
+status: candidate
+deployment:
+  mode: none
+  auth: unknown
+  verified: probed
+  note: >-
+    Silverflow ships NO MCP server, hosted or local. mcp.silverflow.com does not resolve;
+    POST tools/list to https://docs.silverflow.com/mcp and https://www.silverflow.com/mcp
+    returned the Next.js SPA 404 shell, and https://eu-west-1.api.silverflow.com/mcp returned
+    {"status":404,"message":"Not found"}. No @silverflow package exists on npm (registry search
+    for "silverflow" returns 0 results) or PyPI (the PyPI project named `silverflow` belongs to
+    an unrelated company, silverstream.ai). No MCP server is referenced in the docs or in
+    Silverflow's own llms.txt. `mode: none` and no endpoint is recorded — the tools below are a
+    DERIVED candidate surface, not something an agent can call today.
+probes:
+- url: https://mcp.silverflow.com/mcp
+  status: 0
+  note: DNS does not resolve
+- url: https://eu-west-1.api.silverflow.com/mcp
+  status: 404
+  body: '{"status":404,"message":"Not found"}'
+- url: https://docs.silverflow.com/mcp
+  status: 404
+  note: SPA 404 shell
+- url: https://www.silverflow.com/mcp
+  status: 404
+  note: SPA 404 shell
+candidate_note: >-
+  The tools below are derived one-to-one from real Silverflow operationIds in
+  openapi/silverflow-openapi.yml. Each tool's real inputSchema is the backing operation's
+  parameters + requestBody; the binding is recorded in mcp/silverflow-tool-crosswalk.yml.
+  Selection is deliberately conservative — read-heavy and pre-flight operations first, with
+  every money-moving write flagged for confirmation, because this API authorizes card payments.
+safety_posture:
+  irreversible_after_clearing: [createCharge, createChargeMit, createChargePayout, triggerManualClearing]
+  one_way_doors: [acceptDispute, deleteApiKey]
+  require_idempotency_key: >-
+    Every tool bound to one of the 19 idempotent operations must send an Idempotency-Key and
+    must serialise the request body with stable key ordering — see
+    conventions/silverflow-conventions.yml idempotency.scope.
+  confirmation_recommended: >-
+    Any tool that creates a charge, clears, refunds, reverses, cancels, or accepts a dispute
+    should require explicit human confirmation. See conventions reversibility.
+tools:
+- name: search_charges
+  category: charges
+  rest: [getCharges]
+  description: List charges with date, status and reference filters, cursor-paginated.
+  read_only: true
+- name: get_charge
+  category: charges
+  rest: [getCharge]
+  description: Retrieve one charge by chg- key, including authorization and clearing status.
+  read_only: true
+- name: list_charge_actions
+  category: charges
+  rest: [getActions, getAction]
+  description: List the actions appended to a charge (authorization, increment, reversal,
+    cancellation, clearing, refund).
+  read_only: true
+- name: get_card_info
+  category: pre-flight
+  rest: [postCardInfo, getCardInfo]
+  description: Resolve a PAN's network, funding type and issuing details before charging.
+  read_only: true
+- name: estimate_fees
+  category: pre-flight
+  rest: [estimateInterchangeFee, getSchemeFeeEstimation]
+  description: Estimate interchange and scheme fees for a prospective transaction.
+  read_only: true
+- name: assess_transaction_risk
+  category: pre-flight
+  rest: [performRiskAssessment]
+  description: Score a transaction for risk before authorizing.
+  read_only: false
+  note: Creates a risk-assessment record; no money moves.
+- name: create_charge
+  category: charges
+  rest: [createCharge]
+  description: Authorize a card payment.
+  read_only: false
+  requires_idempotency_key: true
+  requires_confirmation: true
+- name: refund_charge
+  category: charges
+  rest: [refund]
+  description: Refund a cleared charge, full or partial.
+  read_only: false
+  requires_idempotency_key: true
+  requires_confirmation: true
+- name: reverse_or_cancel_charge
+  category: charges
+  rest: [reverse, cancel]
+  description: Undo an authorization before clearing — reverse when clearingMode is manual,
+    cancel when it is auto.
+  read_only: false
+  requires_idempotency_key: true
+  requires_confirmation: true
+- name: list_merchants
+  category: accounts
+  rest: [getMerchants, getMerchant]
+  description: List and read merchant legal entities.
+  read_only: true
+- name: list_acceptors
+  category: accounts
+  rest: [getAcceptors, getAcceptor, getMerchantAcceptors]
+  description: List and read merchant acceptors (BIN-bound technical configurations).
+  read_only: true
+- name: onboard_merchant
+  category: accounts
+  rest: [createMerchant, createAcceptor, activateAcceptor]
+  description: Create a merchant, configure an acceptor draft and activate it.
+  read_only: false
+  requires_confirmation: true
+- name: list_disputes
+  category: disputes
+  rest: [getDisputes, getDispute, getDisputeEventHistory]
+  description: List and read chargebacks and their event history.
+  read_only: true
+- name: defend_dispute
+  category: disputes
+  rest: [defendDispute, submitEvidence, addDisputeDocumentsMetadata, uploadDocumentFile]
+  description: Defend a dispute and attach evidence documents.
+  read_only: false
+  requires_confirmation: true
+- name: accept_dispute
+  category: disputes
+  rest: [acceptDispute]
+  description: Concede a chargeback.
+  read_only: false
+  requires_confirmation: true
+  irreversible: true
+- name: manage_tokens
+  category: tokenization
+  rest: [createProcessorToken, getProcessorToken, getProcessorTokens, createNetworkToken,
+    getNetworkToken, listNetworkTokens, createNetworkTokenCryptogram]
+  description: Create and read processor and network tokens, and mint transaction cryptograms.
+  read_only: false
+  requires_confirmation: true
+  note: Handles cardholder data. Should be gated behind explicit PCI-aware policy.
+- name: run_report
+  category: reporting
+  rest: [createChargesReport, createSettlementDetailsReport, reconciliationDetails,
+    schemeFeeDetails, createDisputeHistoryEventsReport, createFraudNotificationsReport,
+    listReport, getReport, getReportFile]
+  description: Generate and retrieve settlement, reconciliation, scheme-fee, dispute and fraud
+    reports.
+  read_only: false
+  note: Report generation is a POST but produces a file, not a money movement.
+- name: get_reconciliation
+  category: reporting
+  rest: [getReconciliationDetails, getReconciliationDetailsFundsTransferDate,
+    listReconciliationDetailsByNetworkFundsTransferKey, getNetworkFundsTransfers,
+    getNetworkFundsTransferByNetworkFundsTransferKey]
+  description: Read reconciliation details and network funds transfers.
+  read_only: true
+- name: manage_event_subscriptions
+  category: events
+  rest: [createEventSubscription, getEventSubscriptions, getSubscription,
+    updateEventSubscription, deleteEventSubscription]
+  description: Manage CloudEvents webhook subscriptions.
+  read_only: false
+totals:
+  candidate_tools: 19
+  operations_covered: 55
+  operations_total: 137

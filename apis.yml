@@ -1,23 +1,165 @@
 aid: silverflow
 name: Silverflow
-description: 'Silverflow is a company surfaced via the API Evangelist harvest backlog (source: secondary-market)
-  and added to the network as a stub for full-pipeline profiling.'
+description: 'Silverflow is an Amsterdam-based cloud-native card processing platform
+  that connects acquirers, payment service providers, payment facilitators and merchants
+  directly to the card networks (Visa, Mastercard, Amex, Discover, Diners, Maestro,
+  Bancontact) through a single REST API. Founded in 2019, the company replaces legacy
+  acquiring processor infrastructure with a contract-first, OpenAPI 3.0-described
+  platform covering merchant and acceptor onboarding, 3-D Secure and BEP authentication,
+  processor and network tokenization, authorization, clearing and settlement, incremental
+  authorizations, reversals, refunds and payouts, terminal-to-cloud POS charges, ATM
+  card management, dispute and chargeback handling, fraud notifications, transaction
+  risk assessment, interchange and scheme-fee estimation, and a full reconciliation
+  and reporting suite. The Silverflow API exposes 137 operations across 101 paths,
+  emits 31 CloudEvents 1.0 webhook notifications through an event-subscription surface,
+  and publishes a sandbox with amount-driven authorization test scenarios.'
 url: https://raw.githubusercontent.com/api-evangelist/silverflow/refs/heads/main/apis.yml
 x-type: company
 x-source: harvest:secondary-market
-x-tier: stub
-x-tier-reason: harvest
 specificationVersion: '0.20'
 created: '2026-08-27'
 modified: '2026-08-27'
+image: https://www.silverflow.com/silverflow_logo_dark.svg
 tags:
-- Company
-apis: []
+- Payments
+- Card Processing
+- Acquiring
+- Financial Services
+- Tokenization
+- 3-D Secure
+- Disputes
+- Chargebacks
+- Interchange
+- Reconciliation
+- Point of Sale
+- Netherlands
+apis:
+- name: Silverflow API
+  description: 'The Silverflow card processing API — a single, contract-first OpenAPI
+    3.0.3 description covering accounts (agents, API keys, BINs, merchants, merchant
+    acceptors, enrollments, screenings), 3-D Secure and BEP authentication, processor
+    and network tokenization, charge creation (standard, recurring/MIT, funding, payout,
+    POS, ATM), charge actions (increment, reverse, cancel, refund, offline refund,
+    manual clearing), disputes and documents, fraud notifications, card info, currency
+    conversion rates, interchange and scheme fee estimation, transaction risk assessment,
+    reconciliation details, network funds transfers, report generation and scheduling,
+    distributions and file subscriptions.'
+  humanURL: https://docs.silverflow.com/
+  baseURL: https://eu-west-1.api.silverflow.com/v1
+  tags:
+  - Payments
+  - Card Processing
+  - Acquiring
+  - Charges
+  - Disputes
+  - Tokenization
+  properties:
+  - type: OpenAPI
+    url: openapi/silverflow-openapi.yml
+  - type: Documentation
+    url: https://docs.silverflow.com/
+  - type: APIReference
+    url: https://docs.silverflow.com/apidocs/latest/index.html
+  - type: GettingStarted
+    url: https://docs.silverflow.com/guides/getting-started
+  - type: Authentication
+    url: authentication/silverflow-authentication.yml
+  - type: Webhooks
+    url: asyncapi/silverflow-events-webhooks.yml
+  - type: ErrorCatalog
+    url: errors/silverflow-problem-types.yml
+  - type: DeclineCodes
+    url: errors/silverflow-decline-codes.yml
+  - type: RateLimits
+    url: rate-limits/silverflow-rate-limits.yml
+  - type: Conventions
+    url: conventions/silverflow-conventions.yml
+  - type: Idempotency
+    url: conventions/silverflow-conventions.yml
+  - type: DataModel
+    url: data-model/silverflow-data-model.yml
+  - type: Sandbox
+    url: sandbox/silverflow-sandbox.yml
+  - type: Overlay
+    url: overlays/silverflow-openapi-overlay.yaml
+  - type: ToolCrosswalk
+    url: mcp/silverflow-tool-crosswalk.yml
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
 - FN: APIs.json
   email: info@apis.io
 common:
+- type: DomainSecurity
+  url: security/silverflow-domain-security.yml
 - type: Website
-  url: https://www.nasdaqprivatemarket.com/
+  url: https://www.silverflow.com/
+- type: DeveloperPortal
+  url: https://docs.silverflow.com/
+- type: Documentation
+  url: https://docs.silverflow.com/
+- type: APIReference
+  url: https://docs.silverflow.com/apidocs/latest/index.html
+- type: GettingStarted
+  url: https://docs.silverflow.com/guides/getting-started
+- type: Blog
+  url: https://www.silverflow.com/blog
+- type: Support
+  url: https://www.silverflow.com/contact
+- type: Login
+  url: https://portal.silverflow.com/
+- type: PrivacyPolicy
+  url: https://www.silverflow.com/privacy
+- type: StatusPage
+  url: https://status.silverflow.com/
+- type: Deprecation
+  url: lifecycle/silverflow-lifecycle.yml
+- type: Lifecycle
+  url: lifecycle/silverflow-lifecycle.yml
+- type: ChangeLog
+  url: changelog/silverflow-changelog.yml
+- type: LLMsTxt
+  url: llms/silverflow-llms.txt
+- type: SecurityTxt
+  url: well-known/silverflow-security.txt
+- type: Security
+  url: security/silverflow-vulnerability-disclosure.yml
+- type: VulnerabilityDisclosure
+  url: security/silverflow-vulnerability-disclosure.yml
+- type: WellKnown
+  url: well-known/silverflow-well-known.yml
+- type: Conformance
+  url: conformance/silverflow-conformance.yml
+- type: Webhooks
+  url: asyncapi/silverflow-events-webhooks.yml
+- type: AgentSkill
+  url: skills/_index.yml
+- type: Packages
+  url: packages/silverflow-packages.yml
+- type: Plans
+  url: plans/silverflow-plans-pricing.yml
+- type: Authentication
+  url: authentication/silverflow-authentication.yml
+- type: Idempotency
+  url: conventions/silverflow-conventions.yml
+- type: Conventions
+  url: conventions/silverflow-conventions.yml
+- type: ErrorCatalog
+  url: errors/silverflow-problem-types.yml
+- type: DeclineCodes
+  url: errors/silverflow-decline-codes.yml
+- type: RateLimits
+  url: rate-limits/silverflow-rate-limits.yml
+- type: Sandbox
+  url: sandbox/silverflow-sandbox.yml
+- type: DataModel
+  url: data-model/silverflow-data-model.yml
+- type: Overlay
+  url: overlays/silverflow-openapi-overlay.yaml
+- type: ToolCrosswalk
+  url: mcp/silverflow-tool-crosswalk.yml
+x-enrichment:
+  date: '2026-08-27'
+  status: enriched
+  artifacts_added: 28
+  pass: local-v1
