@@ -1,0 +1,182 @@
+slug: silverflow
+provider: Silverflow
+generated_by: planning/capability-mapping/scripts/classify_capabilities.py
+model: claude-opus-5
+frame:
+- Banking & Capital Markets
+min_confidence: 0.7
+capability_model:
+  source: https://github.com/vincentmakes/turbo-ea-capabilities
+  license: CC-BY-4.0
+  attribution: Turbo EA Capabilities by Vincent Verdet — Turbo EA, https://github.com/vincentmakes/turbo-ea-capabilities,
+    CC BY 4.0
+  notice: NOTICE
+edge_count: 16
+edges:
+- tag: Create Charges
+  spec_file: silverflow-create-charges-api-openapi.yml
+  capability_id: BC-1340.70
+  capability_id_l1: BC-1340
+  capability_name: Card Transaction Processing Management
+  confidence: 0.92
+  evidence: POST /charges  createCharge  Create Charge; POST /charges/pos  createChargePos; POST /charges/atm  createChargeAtm;
+    schemas authorizationIsoFieldsVisa, emvData, PinBlockIso4
+  reason: Creation of card authorisation transactions (ecommerce, POS, ATM, funding, payout) with EMV,
+    PIN block and ISO authorisation fields — card transaction authorisation and processing on the acquiring
+    side.
+- tag: Create POS Charges
+  spec_file: silverflow-create-pos-charges-api-openapi.yml
+  capability_id: BC-1340.70
+  capability_id_l1: BC-1340
+  capability_name: Card Transaction Processing Management
+  confidence: 0.9
+  evidence: POST /pos/charges  createPosCharge  Create Charge [EXPERIMENTAL]; schemas POS, SoftPOS, emvData,
+    schemas-ClearingStatus
+  reason: Card-present POS/SoftPOS charge creation with EMV data and clearing status — card transaction
+    authorisation and processing.
+- tag: Charge Actions
+  spec_file: silverflow-charge-actions-api-openapi.yml
+  capability_id: BC-1340.70
+  capability_id_l1: BC-1340
+  capability_name: Card Transaction Processing Management
+  confidence: 0.87
+  evidence: POST /charges/{chargeKey}/refund  refund  Refund Charge; POST /charges/{chargeKey}/reverse;
+    POST /charges/{chargeKey}/clear  triggerManualClearing
+  reason: Post-authorisation lifecycle actions on card charges — cancel, refund, reversal, increment,
+    manual clearing — with authorization ISO field and ClearingAction schemas. This is card transaction
+    processing on an acquiring platform.
+- tag: Create Recurring
+  spec_file: silverflow-create-recurring-api-openapi.yml
+  capability_id: BC-1340.70
+  capability_id_l1: BC-1340
+  capability_name: Card Transaction Processing Management
+  confidence: 0.85
+  evidence: POST /charges/mit  createChargeMit  Create MIT Charge; POST /charges/{initialChargeKey}/mit  createChargeMitFromInitialCharge;
+    schemas MitChargeType, MastercardInitialTransactionReference
+  reason: Merchant-initiated / recurring card transactions linked to an initial charge, with authorization
+    ISO fields and SCA handling — card transaction authorisation and processing, not subscription commercial
+    management.
+- tag: Disputes
+  spec_file: silverflow-disputes-api-openapi.yml
+  capability_id: BC-1340.70
+  capability_id_l1: BC-1340
+  capability_name: Card Transaction Processing Management
+  confidence: 0.85
+  evidence: POST /disputes/{disputeKey}/accept  acceptDispute; POST /disputes/{disputeKey}/submitEvidence;
+    POST /disputes/{disputeKey}/defend  defendDispute; schemas disputeStages, disputeResponseReasonIdMastercard
+  reason: Full chargeback/dispute lifecycle against card schemes — accept, defend, submit and reject evidence,
+    dispute stages and reason codes. Card Transaction Processing Management explicitly covers chargebacks.
+- tag: POS Charge Actions
+  spec_file: silverflow-pos-charge-actions-api-openapi.yml
+  capability_id: BC-1340.70
+  capability_id_l1: BC-1340
+  capability_name: Card Transaction Processing Management
+  confidence: 0.85
+  evidence: POST /pos/charges/{chargeKey}/cancel cancelPosCharge; POST /pos/charges/{chargeKey}/refund
+    refundPosCharge; schemas ReversalAction, AuthorizationResponseForReversalActions
+  reason: Cancellation, refund and authorisation reversal of point-of-sale card charges is core card transaction
+    processing (authorisation/reversal handling).
+- tag: Retrieve Charges
+  spec_file: silverflow-retrieve-charges-api-openapi.yml
+  capability_id: BC-1340.70
+  capability_id_l1: BC-1340
+  capability_name: Card Transaction Processing Management
+  confidence: 0.85
+  evidence: GET /charges/{chargeKey} getCharge Get Charge; schemas 'AuthorizationStatus', 'ChargeStatus',
+    'authorizationIsoFields', 'terminalEntryMode'
+  reason: Retrieval of card authorisation/clearing records processed by an acquiring processor — card
+    transaction processing.
+- tag: 3DS Authentication
+  spec_file: silverflow-3ds-authentication-api-openapi.yml
+  capability_id: BC-1340.70
+  capability_id_l1: BC-1340
+  capability_name: Card Transaction Processing Management
+  confidence: 0.8
+  evidence: '"Create 3DS Authentication", "Create 3RI Authentication", "Retrieve Card Ranges"; schemas
+    acsUrl, threeDSServerTransID, ThreeDsChallengeFinished'
+  reason: 3-D Secure cardholder authentication performed as part of card transaction authorisation and
+    fraud screening on a card-processing platform — card transaction processing.
+- tag: Fraud Notifications
+  spec_file: silverflow-fraud-notifications-api-openapi.yml
+  capability_id: BC-1400.30
+  capability_id_l1: BC-1400
+  capability_name: Fraud Detection & Investigation Management
+  confidence: 0.8
+  evidence: GET /fraudNotifications/{fraudNotificationKey} getFraudNotification Get Fraud Notification;
+    schemas FraudNotification, acquirerReferenceNumber, fraud-notifications_chargeInfo
+  reason: Retrieval of card-network fraud notifications tied to charges/ARNs is card fraud detection and
+    investigation data for the acquirer.
+- tag: Network Funds Transfers
+  spec_file: silverflow-network-funds-transfers-api-openapi.yml
+  capability_id: BC-1340.30
+  capability_id_l1: BC-1340
+  capability_name: Clearing & Settlement Management
+  confidence: 0.8
+  evidence: GET /reports/networkFundsTransfers/fundsTransferDate/{fundsTransferDate} getNetworkFundsTransfers
+    List Network Funds Transfers; schemas networkFundsTransfer_SettlementService, OpeningDebitBalance,
+    ReportedAmount
+  reason: Funds transfers from the card networks with settlement service and balance data are card scheme
+    clearing and settlement information.
+- tag: Retrieve POS Charges
+  spec_file: silverflow-retrieve-pos-charges-api-openapi.yml
+  capability_id: BC-1340.70
+  capability_id_l1: BC-1340
+  capability_name: Card Transaction Processing Management
+  confidence: 0.8
+  evidence: GET /pos/charges listPosCharges List Charges; schemas 'ChargeListItem', 'components-schemas-cardEntry',
+    'schemas-ChargeType'
+  reason: Point-of-sale card charge records from the card processing platform — card transaction processing.
+- tag: Network Tokenization
+  spec_file: silverflow-network-tokenization-api-openapi.yml
+  capability_id: BC-1340
+  capability_id_l1: BC-1340
+  capability_name: Payments & Card Management
+  confidence: 0.75
+  evidence: POST /networkTokens createNetworkToken Create Network Token; POST /networkTokens/{networkTokenKey}/cryptogram
+    createNetworkTokenCryptogram; schemas TokenData, track2Data
+  reason: Provisioning and lifecycle of card network tokens and cryptograms used in card transactions
+    — clearly Payments & Card Management; ambiguous between card issuance/digitisation and transaction
+    processing so no L2.
+- tag: Transaction Risk Assessment
+  spec_file: silverflow-transaction-risk-assessment-api-openapi.yml
+  capability_id: BC-1400.30
+  capability_id_l1: BC-1400
+  capability_name: Fraud Detection & Investigation Management
+  confidence: 0.75
+  evidence: POST /riskAssessments performRiskAssessment Perform a risk assessment for a given provider;
+    schemas 'FraudioRequest', 'CybersourceRequest', 'score', 'AvsResult'
+  reason: Per-transaction fraud scoring via fraud-screening providers on card transactions — fraud detection.
+    Could also be read as fraud screening inside card transaction processing (BC-1340.70), hence not maximal
+    confidence.
+- tag: Card Info
+  spec_file: silverflow-card-info-api-openapi.yml
+  capability_id: BC-1340
+  capability_id_l1: BC-1340
+  capability_name: Payments & Card Management
+  confidence: 0.72
+  evidence: POST /cardInfo  postCardInfo  Request Card Info; GET /cardInfo/{network} ... schemas MastercardProductType,
+    MastercardCardProgramIdentifier
+  reason: Card/BIN attribute lookup against the card networks (product type, program identifier, token
+    range) — a card processing service supporting authorisation and routing decisions. Sits under Payments
+    & Card Management, but the evidence does not clearly name a single sub-capability (issuance vs transaction
+    processing), so L2 is left open.
+- tag: Card Management
+  spec_file: silverflow-card-management-api-openapi.yml
+  capability_id: BC-1340
+  capability_id_l1: BC-1340
+  capability_name: Payments & Card Management
+  confidence: 0.7
+  evidence: POST /cardManagement/actions/pinUnblock  CreatePinUnblock  Unblock PIN [EXPERIMENTAL]
+  reason: A card servicing action (PIN unblock) executed via terminal/acceptor context on the card network
+    — clearly card management within Payments & Card Management. Single operation gives too little to
+    choose confidently between card issuance/servicing and transaction processing.
+- tag: Fraud Notifications Reports
+  spec_file: silverflow-fraud-notifications-reports-api-openapi.yml
+  capability_id: BC-1400.30
+  capability_id_l1: BC-1400
+  capability_name: Fraud Detection & Investigation Management
+  confidence: 0.7
+  evidence: POST /reports/fraudNotificationRecords createFraudNotificationsReport Create Fraud Notifications
+    Report [EXPERIMENTAL]
+  reason: Generates reports of fraud notification records, supporting card fraud detection/investigation;
+    report-generation framing slightly weakens the edge.
