@@ -1,0 +1,4091 @@
+openapi: 3.2.0
+info:
+  title: Silverflow Merchants API
+  version: 1.417.0
+  contact:
+    name: API Support
+    email: support@silverflow.com
+  license:
+    name: Commercial
+  description: 'Operations tagged Merchants across 2 of this provider''s published API definitions: silverflow-openapi.yml, silverflow-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://eu-west-1.api.silverflow.com/v1
+  description: Production URL for Europe - Equivalent to https://api.silverflow.co/v1
+- url: https://us-east-2.api.silverflow.com/v1
+  description: Production URL for North America
+- url: https://eu-west-1.api-sbx.silverflow.com/v1
+  description: Sandbox URL - Equivalent to https://api-sbx.silverflow.co/v1
+security:
+- ApiKey: []
+- BearerToken: []
+tags:
+- name: Merchants
+  description: ' '
+paths:
+  /merchants:
+    get:
+      operationId: getMerchants
+      summary: List Merchants
+      description: 'This operation returns a (paged) list of all Merchants for the authenticated Agent.
+
+
+        Requires `merchants:List` permission.
+
+        '
+      tags:
+      - Merchants
+      parameters:
+      - $ref: '#/components/parameters/sortOrder'
+      - $ref: '#/components/parameters/limit'
+      - $ref: '#/components/parameters/offsetToken'
+      - $ref: '#/components/parameters/merchantReference'
+      responses:
+        '200':
+          description: A (paged) list of Merchants
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MerchantsPage'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '429':
+          $ref: '#/components/responses/TooManyRequestsError'
+    post:
+      operationId: createMerchant
+      summary: Create Merchant
+      description: 'This operation creates a new Merchant.
+
+
+        Requires `merchants:Create` permission.
+
+        '
+      tags:
+      - Merchants
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MerchantCreate'
+            examples:
+              simpleMerchant:
+                $ref: '#/components/examples/create-merchant-simple'
+      responses:
+        '201':
+          description: The created Merchant
+          headers:
+            Location:
+              description: The URL of the newly created Merchant
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MerchantWithAcceptors'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '409':
+          $ref: '#/components/responses/ConflictError'
+        '429':
+          $ref: '#/components/responses/TooManyRequestsError'
+    servers:
+    - url: https://eu-west-1.api.silverflow.com/v1
+      description: Production URL for Europe - Equivalent to https://api.silverflow.co/v1
+    - url: https://us-east-2.api.silverflow.com/v1
+      description: Production URL for North America
+    - url: https://eu-west-1.api-sbx.silverflow.com/v1
+      description: Sandbox URL - Equivalent to https://api-sbx.silverflow.co/v1
+  /merchants/{merchantKey}:
+    get:
+      operationId: getMerchant
+      summary: Get Merchant
+      description: 'Requires `merchants:Get` permission.
+
+        '
+      tags:
+      - Merchants
+      parameters:
+      - $ref: '#/components/parameters/merchantKey'
+      responses:
+        '200':
+          description: The referenced Merchant
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Merchant'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '429':
+          $ref: '#/components/responses/TooManyRequestsError'
+    patch:
+      operationId: updateMerchant
+      summary: Update Merchant
+      description: 'Requires `merchants:Update` permission.
+
+        '
+      tags:
+      - Merchants
+      parameters:
+      - $ref: '#/components/parameters/merchantKey'
+      - $ref: '#/components/parameters/ifMatch'
+      requestBody:
+        description: 'All mutable fields of a Merchant are optional
+
+          '
+        required: true
+        content:
+          application/merge-patch+json:
+            schema:
+              $ref: '#/components/schemas/MerchantMergeUpdate'
+            examples:
+              changeAddress:
+                $ref: '#/components/examples/update-merchant-change-address'
+      responses:
+        '200':
+          description: The updated Merchant
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Merchant'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '412':
+          $ref: '#/components/responses/PreconditionFailedError'
+        '429':
+          $ref: '#/components/responses/TooManyRequestsError'
+    delete:
+      operationId: deleteMerchant
+      summary: Archive Merchant
+      description: 'This operation archives the specified Merchant.
+
+
+        Requires `merchants:Archive` permission.
+
+        '
+      tags:
+      - Merchants
+      parameters:
+      - $ref: '#/components/parameters/merchantKey'
+      - $ref: '#/components/parameters/ifMatch'
+      responses:
+        '204':
+          description: Merchant archived successfully
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '412':
+          $ref: '#/components/responses/PreconditionFailedError'
+        '429':
+          $ref: '#/components/responses/TooManyRequestsError'
+    servers:
+    - url: https://eu-west-1.api.silverflow.com/v1
+      description: Production URL for Europe - Equivalent to https://api.silverflow.co/v1
+    - url: https://us-east-2.api.silverflow.com/v1
+      description: Production URL for North America
+    - url: https://eu-west-1.api-sbx.silverflow.com/v1
+      description: Sandbox URL - Equivalent to https://api-sbx.silverflow.co/v1
+components:
+  schemas:
+    Acceptor:
+      type: object
+      required:
+      - key
+      - status
+      - mid
+      - mcc
+      - doingBusinessAsName
+      - bin
+      - merchant
+      - created
+      - version
+      - description
+      description: 'A Merchant Acceptor
+
+        '
+      properties:
+        key:
+          $ref: '#/components/schemas/acceptorKey'
+        status:
+          $ref: '#/components/schemas/acceptorStatus'
+        description:
+          $ref: '#/components/schemas/ExtendedFreeTextField'
+        mid:
+          $ref: '#/components/schemas/mid'
+        mcc:
+          $ref: '#/components/schemas/mcc'
+        doingBusinessAsName:
+          $ref: '#/components/schemas/doingBusinessAsName'
+        webshopUrl:
+          $ref: '#/components/schemas/webshopUrl'
+        pointOfSaleAddress:
+          $ref: '#/components/schemas/Address'
+        bin:
+          $ref: '#/components/schemas/Bin'
+        merchant:
+          $ref: '#/components/schemas/Merchant'
+        networkAssignedId:
+          $ref: '#/components/schemas/networkAssignedId'
+        acquirerOrPayFacBusinessId:
+          $ref: '#/components/schemas/acquirerOrPayFacBusinessId'
+        subMerchantId:
+          $ref: '#/components/schemas/subMerchantId'
+        subMerchantAddress:
+          $ref: '#/components/schemas/Address'
+        isoId:
+          $ref: '#/components/schemas/isoId'
+        gatewayId:
+          $ref: '#/components/schemas/gatewayId'
+        restrictions:
+          $ref: '#/components/schemas/AcceptorRestrictions'
+        chargesBlocked:
+          $ref: '#/components/schemas/chargesBlocked'
+        foreignRetailer:
+          $ref: '#/components/schemas/foreignRetailer'
+        marketplaceId:
+          $ref: '#/components/schemas/marketplaceId'
+        rampProviderId:
+          $ref: '#/components/schemas/rampProviderId'
+        tags:
+          $ref: '#/components/schemas/Tags'
+        disputeHandling:
+          $ref: '#/components/schemas/DisputeHandling'
+        created:
+          $ref: '#/components/schemas/created'
+        lastModified:
+          $ref: '#/components/schemas/lastModified'
+        version:
+          $ref: '#/components/schemas/version'
+        reference:
+          $ref: '#/components/schemas/reference'
+        route:
+          $ref: '#/components/schemas/acceptorRoute'
+        merchantVolumeIndicator:
+          $ref: '#/components/schemas/merchantVolumeIndicator'
+        authorizationCurrency:
+          $ref: '#/components/schemas/authorizationCurrencyForAmexDirectMerchant'
+    MerchantWithAcceptors:
+      allOf:
+      - $ref: '#/components/schemas/Merchant'
+      - type: object
+        properties:
+          merchantAcceptors:
+            type: array
+            items:
+              $ref: '#/components/schemas/Acceptor'
+    gatewayId:
+      type: string
+      description: "Merchant Payment Gateway ID (MPG ID). MPG ID is assigned by Mastercard at the time of registration of the MPG as a Service Provider. \nThe value `999998` must be used for MGP ID field if the MPG is wholly owned by the Acquirer.\nThe value `999997` must be used in the MPG ID field if the Merchant uses no gateway and connects directly to the Acquirer. \nIn case no value is provided, `999998` is used by Silverflow where applicable. <span class=\"tag network-tag mastercard-tag\">MASTERCARD</span>\n"
+      pattern: ^\d{1,11}$
+    reference:
+      type: string
+      pattern: ^[a-zA-Z0-9()+,\-.:=@;$_!*\/?#|]+$
+      minLength: 1
+      maxLength: 120
+      description: User-specified reference.
+    marketplaceId:
+      type: string
+      description: Visa provided ID required for marketplaces. If provided, `rampProviderId` must not be provided. <span class="tag network-tag visa-tag">VISA</span>
+      pattern: ^[a-zA-Z0-9]{1,11}$
+    PreconditionFailedProblemDetail:
+      type: object
+      required:
+      - type
+      - title
+      - status
+      - detail
+      - instance
+      properties:
+        type:
+          type: string
+          enum:
+          - /silverflow/problems/precondition-failed
+        title:
+          type: string
+          enum:
+          - Precondition Failed
+        status:
+          type: integer
+          enum:
+          - 412
+        detail:
+          type: string
+          description: 'A human readable explanation specific to this occurrence of the
+
+            problem.
+
+            '
+          example: Connection to database timed out
+        instance:
+          type: string
+          description: 'An absolute URI that identifies the specific occurrence of the problem.
+
+            It may or may not yield further information if dereferenced.
+
+            '
+      additionalProperties: false
+    amexAcquirerBin:
+      anyOf:
+      - $ref: '#/components/schemas/amexPayfacAcquirerBin'
+      - $ref: '#/components/schemas/amexDirectMerchantAcquirerBin'
+      - $ref: '#/components/schemas/amexPaymentDesignationAcquirerBin'
+    version:
+      type: integer
+      description: The version of this object
+      format: int64
+    amexAcquirerIdCode:
+      type: string
+      description: Acquirer Institution ID code (Submitter ID). For PayFac model, this identifies the Payment Facilitator.
+      pattern: ^[A-Z0-9]+$
+      minLength: 6
+      maxLength: 11
+    CountryCodeCreate:
+      oneOf:
+      - $ref: '#/components/schemas/CountryCodeOnlyAlpha3'
+      - $ref: '#/components/schemas/CountryCodeOnlyAlpha2'
+      - $ref: '#/components/schemas/CountryCodeOnlyNumeric'
+    VisaBin:
+      allOf:
+      - type: object
+        required:
+        - network
+        - messageSystem
+        - acquirerIdCode
+        - acquirerBin
+        - bid
+        properties:
+          network:
+            type: string
+            enum:
+            - visa
+          messageSystem:
+            $ref: '#/components/schemas/messageSystem'
+          acquirerIdCode:
+            type: string
+            description: Acquirer Institution ID code. This field corresponds to the CIB, which usually has the same value as the Bin.
+            pattern: ^\d+$
+            minLength: 6
+            maxLength: 6
+          acquirerBin:
+            type: string
+            description: Acquirer Bin. The Bin number as assigned by the card network.
+            pattern: ^\d+$
+            minLength: 6
+            maxLength: 6
+          bid:
+            type: string
+            description: Business Identification Number. The BID number as assigned by the card network.
+            pattern: ^\d+$
+            minLength: 8
+            maxLength: 8
+      - $ref: '#/components/schemas/BaseBin'
+    status:
+      type: string
+      description: The status of the object
+      enum:
+      - active
+      - archived
+    ExtendedNameOfPeopleAndPlaces:
+      type: string
+      pattern: ^[\x20-\x7E\xA0-\xA3\xA5\xA7\xA9-\xB3\xB5-\xB7\xB9-\xBB\xBF-\xFF\u20AC\u0160\u0161\u017D\u017E\u0152\u0153\u0178]+$
+      minLength: 1
+      maxLength: 120
+    DisputeHandling:
+      type: object
+      additionalProperties: false
+      description: Dispute handling settings
+      required:
+      - autoDefense
+      properties:
+        autoDefense:
+          type: boolean
+          description: When autoDefense is set to true, disputes will be auto defended if there is a matching auto-defense rule present. <span class="tag network-tag visa-tag">VISA</span> <span class="tag network-tag mastercard-tag">MASTERCARD</span>
+    MerchantAcceptorTemplate:
+      type: object
+      description: 'A template object used to bulk create merchant acceptors. <a class="experimental-tag-link" href="https://docs.silverflow.com/guides/api-lifecycle#tag/EXPERIMENTAL-Tag"><span class="tag experimental-tag">EXPERIMENTAL</span></a>
+
+        '
+      required:
+      - mid
+      - mcc
+      - description
+      - doingBusinessAsName
+      - binKeys
+      additionalProperties: false
+      properties:
+        mid:
+          $ref: '#/components/schemas/mid'
+        mcc:
+          $ref: '#/components/schemas/mcc'
+        description:
+          $ref: '#/components/schemas/ExtendedFreeTextField'
+        doingBusinessAsName:
+          $ref: '#/components/schemas/doingBusinessAsName'
+        binKeys:
+          type: array
+          minItems: 1
+          maxItems: 30
+          items:
+            $ref: '#/components/schemas/binKey'
+        webshopUrl:
+          $ref: '#/components/schemas/webshopUrl'
+        pointOfSaleAddress:
+          allOf:
+          - description: Required for Point of Sale (POS) acceptors. For certain card network/country combinations the `stateOrProvince` value needs to be a recognised 2-letter uppercase state/province code. For `e-commerce` acceptors the `pointOfSaleAddress` can be omitted and the `registeredAddress` on the Merchant will be used instead.
+          - $ref: '#/components/schemas/AddressCreate'
+        tags:
+          $ref: '#/components/schemas/Tags'
+        reference:
+          $ref: '#/components/schemas/reference'
+        routes:
+          type: array
+          minItems: 1
+          items:
+            type: object
+            additionalProperties: false
+            required:
+            - binKey
+            properties:
+              binKey:
+                $ref: '#/components/schemas/binKey'
+              route:
+                $ref: '#/components/schemas/acceptorRoute'
+    CountryCodeOnlyAlpha2:
+      type: object
+      required:
+      - alpha2
+      additionalProperties: false
+      properties:
+        alpha2:
+          $ref: '#/components/schemas/countryCodeAlpha2'
+    doingBusinessAsName:
+      allOf:
+      - $ref: '#/components/schemas/ExtendedNameOfPeopleAndPlaces'
+      - description: Assumed, trade or fictitious name of the merchant. The name will be trimmed if greater than 25 (Visa) or 22 (Mastercard) characters by the card network. Clients not enrolled in the "extended character set beta" are still subject to the `^[\w,\*,\=,\.\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u00FF-/]+$` pattern for field input.
+      - example: ACME Corp.
+    discoverAcquirerIdCode:
+      type: string
+      description: Acquirer Institution ID code.
+      pattern: ^\d+$
+      minLength: 1
+      maxLength: 11
+    CountryCode:
+      type: object
+      required:
+      - alpha3
+      - alpha2
+      - numeric
+      properties:
+        alpha3:
+          $ref: '#/components/schemas/countryCodeAlpha3'
+        alpha2:
+          $ref: '#/components/schemas/countryCodeAlpha2'
+        numeric:
+          $ref: '#/components/schemas/countryCodeNumeric'
+    mcc:
+      type: string
+      pattern: ^\d+$
+      minLength: 4
+      maxLength: 4
+      description: The Merchant category.
+      example: 742
+    ProblemDetail:
+      type: object
+      description: 'The ''problem detail'' object relays detailed information about the error that occurred. It is defined
+
+        by [RFC 7807 - Problem Details for HTTP APIs](https://tools.ietf.org/html/rfc7807).
+
+
+        Note that additional properties may be used to relay error specific information.
+
+        '
+      properties:
+        type:
+          type: string
+          description: 'An absolute URI that identifies the problem type.
+
+            '
+          default: about:blank
+          example: https://api.silverflow.co/problem/constraint-violation
+        title:
+          type: string
+          description: 'A short, summary of the problem type. Written in english and readable
+
+            for engineers (usually not suited for non technical stakeholders and
+
+            not localized);
+
+            '
+          example: Service Unavailable
+        status:
+          type: integer
+          format: int32
+          description: 'The HTTP status code generated by the origin server for this occurrence
+
+            of the problem.
+
+            '
+          minimum: 100
+          maximum: 599
+          example: 503
+        detail:
+          type: string
+          description: 'A human readable explanation specific to this occurrence of the
+
+            problem.
+
+            '
+          example: Connection to database timed out
+        instance:
+          type: string
+          description: 'An absolute URI that identifies the specific occurrence of the problem.
+
+            It may or may not yield further information if dereferenced.
+
+            '
+      additionalProperties: true
+    acceptorStatus:
+      type: string
+      description: The status of the Acceptor (version)
+      enum:
+      - draft
+      - active
+      - archived
+    AcceptorRestrictions:
+      type: array
+      maxItems: 1
+      description: This field is deprecated. The `chargesBlocked` property on the MerchantAcceptor serves as its replacement.
+      deprecated: true
+      items:
+        $ref: '#/components/schemas/AcceptorRestriction'
+    amexModel:
+      type: string
+      description: The AMEX business model. In the PayFac model, authorization is performed using the SE Number on the BIN. In the Direct Merchant or Payment Designation model, authorization is performed using the SE Number on the Acceptor. If `amexModel` is undefined, the AMEX Bin is treated as a PayFac Bin by default.
+      default: payfac
+      enum:
+      - payfac
+      - direct_merchant
+      - payment_designation
+    isoId:
+      type: string
+      description: Unique ID assigned by the card network for the Independent Sales Organization. <span class="tag network-tag mastercard-tag">MASTERCARD</span>
+      pattern: ^\d{1,11}$
+    dxsCode:
+      description: The dxsCode is provided to acquirers by Diners during onboarding. A unique dxsCode is provided for each IIC.
+      type: string
+      pattern: ^[a-zA-Z0-9]+$
+      minLength: 3
+      maxLength: 3
+    ExtendedFreeTextField:
+      type: string
+      pattern: ^[\x20-\x7E\xA0-\xA3\xA5\xA7\xA9-\xB3\xB5-\xB7\xB9-\xBB\xBF-\xFF\u20AC\u0160\u0161\u017D\u017E\u0152\u0153\u0178]+$
+      minLength: 1
+      maxLength: 160
+      description: Clients not enrolled in the "extended character set beta" are still subject to the `^[\w +=.,:;!?$@()-]+$` pattern for field input.
+    webshopUrl:
+      allOf:
+      - $ref: '#/components/schemas/url'
+      - example: https://acme.com
+    url:
+      type: string
+      description: A valid URL
+      pattern: ^http(s)?:\/\/[a-z0-9-_]+(\.[a-z0-9-_]+)+(\/.*)?$
+      minLength: 8
+      maxLength: 2048
+    Bin:
+      discriminator:
+        propertyName: network
+        mapping:
+          visa: '#/components/schemas/VisaBin'
+          mastercard: '#/components/schemas/MastercardBin'
+          bancontact: '#/components/schemas/BancontactBin'
+          american-express: '#/components/schemas/AmexBin'
+          discover: '#/components/schemas/DiscoverBin'
+          diners: '#/components/schemas/DinersBin'
+      oneOf:
+      - $ref: '#/components/schemas/VisaBin'
+      - $ref: '#/components/schemas/MastercardBin'
+      - $ref: '#/components/schemas/BancontactBin'
+      - $ref: '#/components/schemas/AmexBin'
+      - $ref: '#/components/schemas/DiscoverBin'
+      - $ref: '#/components/schemas/DinersBin'
+    DiscoverBin:
+      allOf:
+      - type: object
+        required:
+        - network
+        - messageSystem
+        - acquirerIdCode
+        - acquirerBin
+        properties:
+          network:
+            type: string
+            enum:
+            - discover
+          messageSystem:
+            type: string
+            enum:
+            - DMS
+            description: Determines the message structure and Data Element definitions for card network.
+          acquirerIdCode:
+            $ref: '#/components/schemas/discoverAcquirerIdCode'
+          acquirerBin:
+            $ref: '#/components/schemas/discoverAcquirerBin'
+          isoId:
+            $ref: '#/components/schemas/discoverIsoId'
+      - $ref: '#/components/schemas/BaseBin'
+    CountryCodeOnlyAlpha3:
+      type: object
+      required:
+      - alpha3
+      additionalProperties: false
+      properties:
+        alpha3:
+          $ref: '#/components/schemas/countryCodeAlpha3'
+    moreItems:
+      type: boolean
+    merchantVolumeIndicator:
+      type: string
+      pattern: ^\d{2}
+      minLength: 2
+      maxLength: 2
+      description: The Merchant Volume Indicator (MVI) is a Visa assigned field used to classify merchants based on their Visa transaction volume. This field is optional for Visa Merchant Acceptors in the US region. <span class="tag network-tag visa-tag">VISA</span>
+    AddressCreate:
+      type: object
+      required:
+      - countryCode
+      - city
+      - line1
+      - postalCode
+      additionalProperties: false
+      description: 'A physical postal address
+
+        '
+      properties:
+        countryCode:
+          $ref: '#/components/schemas/CountryCodeCreate'
+        stateOrProvince:
+          $ref: '#/components/schemas/stateOrProvince'
+        city:
+          $ref: '#/components/schemas/city'
+        line1:
+          $ref: '#/components/schemas/line1'
+        line2:
+          $ref: '#/components/schemas/line2'
+        postalCode:
+          $ref: '#/components/schemas/postalCode'
+    merchantStatus:
+      type: string
+      description: The status of the Merchant
+      enum:
+      - active
+      - archived
+    acceptorKey:
+      description: Uniquely identifies a Merchant Acceptor.
+      type: string
+      pattern: ^mac-[a-zA-Z0-9]+$
+      minLength: 5
+      maxLength: 120
+      example: mac-1JRadf2ffdfrdPMf2XrS2
+    countryCodeNumeric:
+      type: string
+      pattern: ^[0-9]+$
+      minLength: 3
+      maxLength: 3
+      description: 'The ISO code of the country.
+
+
+        **European ISO Country Codes**
+
+
+        <details>
+
+
+        | Country | Alpha-2 code | Numeric |
+
+        | ------- | ------------ | ------- |
+
+        | Åland Islands | AX | 248 |
+
+        | Andorra | AD | 020 |
+
+        | Austria | AT | 040 |
+
+        | Belgium | BE | 056 |
+
+        | Cyprus | CY | 196 |
+
+        | Estonia | EE | 233 |  |
+
+        | Finland | FI | 246 |
+
+        | France | FR | 250 |
+
+        | French Guiana | GF | 254 |
+
+        | French Southern Territories | TF | 260 |
+
+        | Germany | DE | 280 |
+
+        | Greece | GR | 300 |
+
+        | Guadeloupe | GP | 312 |
+
+        | Ireland | IE | 372 |
+
+        | Italy | IT | 380 |
+
+        | Kosovo, United Nations Mission in Kosovo (UNMIK) | QZ | 900 |
+
+        | Latvia | LV | 428 |
+
+        | Lithuania | LT | 440 |
+
+        | Luxembourg | LU | 442 |
+
+        | Malta | MT | 470 |
+
+        | Martinique | MQ | 474 |
+
+        | Mayotte | YT | 175 |
+
+        | Monaco | MC | 492 |
+
+        | Montenegro | ME | 499 |
+
+        | Netherlands | NL | 528 |
+
+        | Portugal | PT | 620 |
+
+        | Reunion | RE | 638 |
+
+        | Saint Barthélemy | BL | 652 |
+
+        | Saint Martin (French Part) | MF | 663 |
+
+        | San Marino | SM | 674 |
+
+        | Slovakia | SK | 703 |
+
+        | Slovenia | SI | 705 |
+
+        | Spain | ES | 724 |
+
+        | St. Pierre and Miquelon | PM | 666 |
+
+        | Vatican City State (Holy See) | VA | 336 |
+
+
+        </details>
+
+
+        **US ISO Country Codes**
+
+
+        <details>
+
+
+        | Country | Alpha-2 code | Numeric |
+
+        | ------- | ------------ | ------- |
+
+        | American Samoa | AS | 016 |
+
+        | Bonaire, St. Eusasius and Saba | BQ | 535 |
+
+        | British Indian Ocean Territory | IO | 086 |
+
+        | Ecuador | EC | 218 |
+
+        | Guam | GU | 316 |
+
+        | Marshall Islands | MH | 584 |
+
+        | Micronesia, Federated States of | FM | 583 |
+
+        | Northern Mariana Islands | MP | 580 |
+
+        | Palau | PW | 585 |
+
+        | Palestine, State of | PS | 275 |
+
+        | Puerto Rico | PR | 630 |
+
+        | Timor-Leste | TP | 626 |
+
+        | Turks and Caicos Islands | TC | 796 |
+
+        | U.S. Minor Outlying Islands | UM | 581 |
+
+        | United States | US | 840 |
+
+        | Virgin Islands, British | VG | 092 |
+
+        | Virgin Islands, U.S. | VI | 850 |
+
+
+        </details>
+
+
+        **Other ISO Country Codes**
+
+
+        <details>
+
+
+        | Country | Alpha-2 code | Numeric |
+
+        | ------- | ------------ | ------- |
+
+        | Afghanistan | AF | 004 |
+
+        | Albania | AL | 008 |
+
+        | Algeria | DZ | 012 |
+
+        | Angola | AO | 024 |
+
+        | Anguilla | AI | 660 |
+
+        | Antarctica | AQ | 010 |
+
+        | Antigua and Barbuda | AG | 028 |
+
+        | Argentina | AR | 032 |
+
+        | Armenia | AM | 051 |
+
+        | Aruba | AW | 533 |
+
+        | Australia | AU | 036 |
+
+        | Azerbaijan | AZ | 031 |
+
+        | Bahamas | BS | 044 |
+
+        | Bahrain | BH | 048 |
+
+        | Bangladesh | BD | 050 |
+
+        | Barbados | BB | 052 |
+
+        | Belarus | BR | 112 |
+
+        | Belize | BZ | 084 |
+
+        | Benin | BJ | 204 |
+
+        | Bermuda | BM | 060 |
+
+        | Bhutan | BT | 064 |
+
+        | Bolivia, Plurinational State of | BO | 068 |
+
+        | Bosnia and Herzegovina | BA | 070 |
+
+        | Botswana | BW | 072 |
+
+        | Bouvet Island | BV | 074 |
+
+        | Brazil | BR | 076 |
+
+        | Brunei Darussalam | BN | 096 |
+
+        | Bulgaria | BG | 100 |
+
+        | Burkina Faso | BF | 854 |
+
+        | Burundi | BI | 108 |
+
+        | Cambodia | KH | 116 |
+
+        | Cameroon | CM | 120 |
+
+        | Canada | CA | 124 |
+
+        | Cape Verde | CV | 132 |
+
+        | Cayman Islands | KY | 136 |
+
+        | Central African Republic | CF | 140 |
+
+        | Chad | TD | 148 |
+
+        | Chile | CL | 152 |
+
+        | China | CN | 156 |
+
+        | Christmas Island | CX | 162 |
+
+        | Cocos (Keeling) Islands | CC | 166 |
+
+        | Colombia | CO | 170 |
+
+        | Comoros | KM | 174 |
+
+        | Congo | CG | 178 |
+
+        | Cook Islands | CK | 184 |
+
+        | Costa Rica | CR | 188 |
+
+        | Côte D''Ivoire | CI | 384 |
+
+        | Croatia | HR | 191 |
+
+        | Cuba | CU | 192 |
+
+        | Curacao | CW | 531 |
+
+        | Czech Republic | CZ | 203 |
+
+        | Democratic Republic of the Congo | CD | 180 |
+
+        | Denmark | DK | 208 |
+
+        | Djibouti | DJ | 262 |
+
+        | Dominica | DM | 212 |
+
+        | Dominican Republic | DO | 214 |
+
+        | Egypt | EG | 818 |
+
+        | El Salvador | SV | 222 |
+
+        | Equatorial Guinea | GQ | 226 |
+
+        | Eritrea | ER | 232 |
+
+        | Ethiopia | ET | 230 |
+
+        | Falkland Islands (Malvinas) | FK | 238 |
+
+        | Faroe Islands | FO | 234 |
+
+        | Fiji | FJ | 242 |
+
+        | French Polynesia | PF | 258 |
+
+        | Gabon | GA | 266 |
+
+        | Gambia | GM | 270 |
+
+        | Georgia | GE | 268 |
+
+        | Ghana | GH | 288 |
+
+        | Gibraltar | GI | 292 |
+
+        | Greenland | GL | 304 |
+
+        | Grenada | GD | 308 |
+
+        | Guatemala | GT | 320 |
+
+        | Guernsey | GG | 831 |
+
+        | Guinea | GN | 324 |
+
+        | Guinea-Bissau | GW | 624 |
+
+        | Guyana | GY | 328 |
+
+        | Haiti | HT | 332 |
+
+        | Heard and McDonald Islands | HM | 334 |
+
+        | Honduras | HN | 340 |
+
+        | Hong Kong | HK | 344 |
+
+        | Hungary | HU | 348 |
+
+        | Iceland | IS | 352 |
+
+        | India | IN | 356 |
+
+        | Indonesia | ID | 360 |
+
+        | Iraq | IQ | 368 |
+
+        | Isle of Man | IM | 833 |
+
+        | Israel | IL | 376 |
+
+        | Jamaica | JM | 388 |
+
+        | Japan | JP | 392 |
+
+        | Jersey | JE | 832 |
+
+        | Jordan | JO | 400 |
+
+        | Kazakhstan | KZ | 398 |
+
+        | Kenya | KE | 404 |
+
+        | Kiribati | KI | 296 |
+
+        | Korea, Republic of | KR | 410 |
+
+        | Kuwait | KW | 414 |
+
+        | Kyrgyzstan | KG | 417 |
+
+        | Lao People''s Democratic Republic | LA | 418 |
+
+        | Lebanon | LB | 422 |
+
+        | Lesotho | LS | 426 |
+
+        | Liberia | LR | 430 |
+
+        | Libyan Arab Jamahiriya | LY | 434 |
+
+        | Liechtenstein | LI | 438 |
+
+        | Macao | MO | 446 |
+
+        | Macedonia | MK | 807 |
+
+        | Madagascar | MG | 450 |
+
+        | Malawi | MW | 454 |
+
+        | Malaysia | MY | 458 |
+
+        | Maldives | MV | 462 |
+
+        | Mali | ML | 466 |
+
+        | Mauritania | MR | 478 |
+
+        | Mauritius | MU | 480 |
+
+        | Mexico | MX | 484 |
+
+        | Moldova, Republic of | MD | 498 |
+
+        | Mongolia | MN | 496 |
+
+        | Montserrat | MS | 500 |
+
+        | Morocco | MA | 504 |
+
+        | Mozambique | MZ | 508 |
+
+        | Myanmar (effective 1 November 2012) | MM | 104 |
+
+        | Namibia | NA | 516 |
+
+        | Nauru | NR | 520 |
+
+        | Nepal | NP | 524 |
+
+        | Netherlands Antilles | AN | 530 |
+
+        | New Caledonia | NC | 540 |
+
+        | New Zealand | NZ | 554 |
+
+        | Nicaragua | NI | 558 |
+
+        | Niger | NE | 562 |
+
+        | Nigeria | NG | 566 |
+
+        | Niue | NU | 570 |
+
+        | Norfolk Island | NF | 574 |
+
+        | Norway | NO | 578 |
+
+        | Oman | OM | 512 |
+
+        | Pakistan | PK | 586 |
+
+        | Panama | PA | 591 |
+
+        | Papua New Guinea | PG | 598 |
+
+        | Paraguay | PY | 600 |
+
+        | Peru | PE | 604 |
+
+        | Philippines | PH | 608 |
+
+        | Pitcairn | PN | 612 |
+
+        | Poland | PL | 616 |
+
+        | Qatar | QA | 634 |
+
+        | Republic of South Sudan | SS | 728 |
+
+        | Romania | RO | 642 |
+
+        | Russian Federation | RU | 643 |
+
+        | Rwanda | RW | 646 |
+
+        | Samoa | WS | 882 |
+
+        | Sao Tome and Principe | ST | 678 |
+
+        | Saudi Arabia | SA | 682 |
+
+        | Senegal | SN | 686 |
+
+        | Serbia | RS | 688 |
+
+        | Seychelles | SC | 690 |
+
+        | Sierra Leone | SL | 694 |
+
+        | Singapore | SG | 702 |
+
+        | Sint Maarten (Dutch Part) | SX | 534 |
+
+        | Solomon Islands | SB | 090 |
+
+        | Somalia | SO | 706 |
+
+        | South Africa | ZA | 710 |
+
+        | South Georgia and the South Sandwich Islands | GS | 239 |
+
+        | Sri Lanka | LK | 144 |
+
+        | Saint Helena, Ascension and Tristan Da Cunha | SH | 654 |
+
+        | St. Kitts and Nevis | KN | 659 |
+
+        | St. Lucia | LC | 662 |
+
+        | St. Vincent and the Grenadines | VC | 670 |
+
+        | Suriname | SR | 740 |
+
+        | Svalbard and Jan Mayen | SJ | 744 |
+
+        | Swaziland | SZ | 748 |
+
+        | Sweden | SE | 752 |
+
+        | Switzerland | CH | 756 |
+
+        | Taiwan | TW | 158 |
+
+        | Tajikistan | TJ | 762 |
+
+        | Tanzania, United Republic of | TZ | 834 |
+
+        | Thailand | TH | 764 |
+
+        | Togo | TG | 768 |
+
+        | Tokelau | TK | 772 |
+
+        | Tonga | TO | 776 |
+
+        | Trinidad and Tobago | TT | 780 |
+
+        | Tunisia | TN | 788 |
+
+        | Turkey | TR | 792 |
+
+        | Turkmenistan | TM | 795 |
+
+        | Tuvalu | TV | 798 |
+
+        | Uganda | UG | 800 |
+
+        | Ukraine | UA | 804 |
+
+        | United Arab Emirates | AE | 784 |
+
+        | United Kingdom | GB | 826 |
+
+        | Uruguay | UY | 858 |
+
+        | Uzbekistan | UZ | 860 |
+
+        | Vanuatu | VU | 548 |
+
+        | Venezuela, Bolivarian Republic of | VE | 862 |
+
+        | Vietnam | VN | 704 |
+
+        | Wallis and Futuna | WF | 876 |
+
+        | Western Sahara | EH | 732 |
+
+        | Yemen | YE | 886 |
+
+        | Zambia | ZM | 894 |
+
+        | Zimbabwe | ZW | 716 |
+
+
+        </details>'
+      externalDocs:
+        description: Find more info here
+        url: https://www.iso.org/iso-3166-country-codes.html
+      example: '528'
+    amexPaymentDesignationAcquirerBin:
+      allOf:
+      - description: For Payment Designator, this field is automatically copied from acquirerIdCode field.
+      - $ref: '#/components/schemas/amexAcquirerIdCode'
+    businessType:
+      type: string
+      description: "The business type of the merchant. Specifying the businessType for your legal entity may qualify the merchant to benefit from lower interchange fees in the United States (Mastercard and Visa). \n<br> For US merchants, **Mastercard** requires this field for commercial card transactions. If none of the values closely match your business type please contact your Technical Account Manager.\n"
+      enum:
+      - corporation
+      - sole_proprietorship
+      - partnership
+      - non_profit_organization
+      - government_agency
+      - limited_liability_company
+    AmexBin:
+      allOf:
+      - type: object
+        required:
+        - network
+        - messageSystem
+        - acquirerIdCode
+        - acquirerBin
+        properties:
+          network:
+            type: string
+            enum:
+            - american-express
+          messageSystem:
+            type: string
+            enum:
+            - DMS
+            description: Determines the message structure and Data Element definitions for card network.
+          acquirerIdCode:
+            allOf:
+            - description: Acquirer Institution ID code (Submitter ID). For PayFac model, this identifies the Payment Facilitator.
+            - $ref: '#/components/schemas/amexAcquirerIdCode'
+          acquirerBin:
+            allOf:
+            - description: SE Number assigned by AMEX for the Payment Facilitator. For Direct Merchant, this field is automatically copied from acquirerIdCode field.
+            - $ref: '#/components/schemas/amexAcquirerBin'
+          authorizationCurrency:
+            type: string
+            $ref: '#/components/schemas/authorizationCurrency'
+          amexModel:
+            $ref: '#/components/schemas/amexModel'
+      - $ref: '#/components/schemas/BaseBin'
+    currencyCode:
+      type: string
+      enum:
+      - EUR
+      - USD
+      - AFN
+      - ALL
+      - DZD
+      - AOA
+      - XCD
+      - ARS
+      - AMD
+      - AWG
+      - AUD
+      - AZN
+      - BSD
+      - BHD
+      - BDT
+      - BBD
+      - BYN
+      - BZD
+      - XOF
+      - BMD
+      - INR
+      - BTN
+      - BOB
+      - BAM
+      - BWP
+      - NOK
+      - BRL
+      - BND
+      - BGN
+      - BIF
+      - CVE
+      - KHR
+      - XAF
+      - CAD
+      - KYD
+      - CLP
+      - CNY
+      - CNH
+      - COP
+      - KMF
+      - CDF
+      - NZD
+      - CRC
+      - HRK
+      - CUP
+      - CUC
+      - ANG
+      - CZK
+      - DKK
+      - DJF
+      - DOP
+      - EGP
+      - SVC
+      - ERN
+      - ETB
+      - FKP
+      - FJD
+      - XPF
+      - GMD
+      - GEL
+      - GHS
+      - GIP
+      - GTQ
+      - GBP
+      - GNF
+      - GYD
+      - HTG
+      - HNL
+      - HKD
+      - HUF
+      - ISK
+      - IDR
+      - IRR
+      - IQD
+      - ILS
+      - JMD
+      - JPY
+      - JOD
+      - KZT
+      - KES
+      - KPW
+      - KRW
+      - KWD
+      - KGS
+      - LAK
+      - LBP
+      - LSL
+      - ZAR
+      - LRD
+      - LYD
+      - CHF
+      - MOP
+      - MKD
+      - MGA
+      - MWK
+      - MYR
+      - MVR
+      - MRU
+      - MUR
+      - MXN
+      - MDL
+      - MNT
+      - MAD
+      - MZN
+      - MMK
+      - NAD
+      - NPR
+      - NIO
+      - NGN
+      - OMR
+      - PKR
+      - PAB
+      - PGK
+      - PYG
+      - PEN
+      - PHP
+      - PLN
+      - QAR
+      - RON
+      - RUB
+      - RWF
+      - SHP
+      - WST
+      - STN
+      - SAR
+      - RSD
+      - SCR
+      - SLL
+      - SLE
+      - SGD
+      - SBD
+      - SOS
+      - SSP
+      - LKR
+      - SDG
+      - SRD
+      - SZL
+      - SEK
+      - SYP
+      - TWD
+      - TJS
+      - TZS
+      - THB
+      - TOP
+      - TTD
+      - TND
+      - TRY
+      - TMT
+      - UGX
+      - UAH
+      - AED
+      - UYU
+      - UYW
+      - UZS
+      - VUV
+      - VES
+      - VND
+      - YER
+      - ZMW
+      - ZWL
+      - ZWG
+      description: 'The three-letter ISO code of the currency.
+
+
+
+        **European ISO Currency Codes**
+
+
+        <details>
+
+
+        | Country — Currency | Code | Numeric | Minor Units |
+
+        | ------------------ | ---- | ------- | ----------- |
+
+        | Åland Islands — Euro | EUR | 978 | 2 |
+
+        | Andorra — Euro | EUR | 978 | 2 |
+
+        | Austria — Euro | EUR | 978 | 2 |
+
+        | Belgium — Euro | EUR | 978 | 2 |
+
+        | Cyprus — Euro | EUR | 978 | 2 |
+
+        | Estonia — Euro | EUR | 978 | 2 |
+
+        | European Union — Euro | EUR | 978 | 2 |
+
+        | Finland — Euro | EUR | 978 | 2 |
+
+        | France — Euro | EUR | 978 | 2 |
+
+        | French Guiana — Euro | EUR | 978 | 2 |
+
+        | French Southern Territories (The) — Euro | EUR | 978 | 2 |
+
+        | Germany — Euro | EUR | 978 | 2 |
+
+        | Greece — Euro | EUR | 978 | 2 |
+
+        | Guadeloupe — Euro | EUR | 978 | 2 |
+
+        | Holy See (The) — Euro | EUR | 978 | 2 |
+
+        | Ireland — Euro | EUR | 978 | 2 |
+
+        | Italy — Euro | EUR | 978 | 2 |
+
+        | Latvia — Euro | EUR | 978 | 2 |
+
+        | Lithuania — Euro | EUR | 978 | 2 |
+
+        | Luxembourg — Euro | EUR | 978 | 2 |
+
+        | Malta — Euro | EUR | 978 | 2 |
+
+        | Martinique — Euro | EUR | 978 | 2 |
+
+        | Mayotte — Euro | EUR | 978 | 2 |
+
+        | Monaco — Euro | EUR | 978 | 2 |
+
+        | Montenegro — Euro | EUR | 978 | 2 |
+
+        | Netherlands (The) — Euro | EUR | 978 | 2 |
+
+        | Portugal — Euro | EUR | 978 | 2 |
+
+        | Réunion — Euro | EUR | 978 | 2 |
+
+        | Saint Barthélemy — Euro | EUR | 978 | 2 |
+
+        | Saint Martin (French Part) — Euro | EUR | 978 | 2 |
+
+        | Saint Pierre And Miquelon — Euro | EUR | 978 | 2 |
+
+        | San Marino — Euro | EUR | 978 | 2 |
+
+        | Slovakia — Euro | EUR | 978 | 2 |
+
+        | Slovenia — Euro | EUR | 978 | 2 |
+
+        | Spain — Euro | EUR | 978 | 2 |
+
+
+        </details>
+
+
+        **US ISO Currency Codes**
+
+
+        <details>
+
+
+        | Country — Currency | Code | Numeric | Minor Units |
+
+        | ------------------ | ---- | ------- | ----------- |
+
+        | American Samoa — US Dollar | USD | 840 | 2 |
+
+        | Bonaire, Sint Eustatius And Saba — US Dollar | USD | 840 | 2 |
+
+        | British Indian Ocean Territory (The) — US Dollar | USD | 840 | 2 |
+
+        | Ecuador — US Dollar | USD | 840 | 2 |
+
+        | El Salvador — US Dollar | USD | 840 | 2 |
+
+        | Guam — US Dollar | USD | 840 | 2 |
+
+        | Haiti — US Dollar | USD | 840 | 2 |
+
+        | Marshall Islands (The) — US Dollar | USD | 840 | 2 |
+
+        | Micronesia (Federated States Of) — US Dollar | USD | 840 | 2 |
+
+        | Northern Mariana Islands (The) — US Dollar | USD | 840 | 2 |
+
+        | Palau — US Dollar | USD | 840 | 2 |
+
+        | Panama — US Dollar | USD | 840 | 2 |
+
+        | Puerto Rico — US Dollar | USD | 840 | 2 |
+
+        | Timor-leste — US Dollar | USD | 840 | 2 |
+
+        | Turks And Caicos Islands (The) — US Dollar | USD | 840 | 2 |
+
+        | United States Minor Outlying Islands (The) — US Dollar | USD | 840 | 2 |
+
+        | United States Of America (The) — US Dollar | USD | 840 | 2 |
+
+        | Virgin Islands (British) — US Dollar | USD | 840 | 2 |
+
+        | Virgin Islands (U.s.) — US Dollar | USD | 840 | 2 |
+
+
+        </details>
+
+
+        **Other ISO Currency Codes**
+
+
+        <details>
+
+
+        | Country — Currency | Code | Numeric | Minor Units |
+
+        | ------------------ | ---- | ------- | ----------- |
+
+        | Afghanistan — Afghani | AFN | 971 | 2 |
+
+        | Albania — Lek | ALL | 008 | 2 |
+
+        | Algeria — Algerian Dinar | DZD | 012 | 2 |
+
+        | Angola — Kwanza | AOA | 973 | 2 |
+
+        | Anguilla — East Caribbean Dollar | XCD | 951 | 2 |
+
+        | Antigua And Barbuda — East Caribbean Dollar | XCD | 951 | 2 |
+
+        | Argentina — Argentine Peso | ARS | 032 | 2 |
+
+        | Armenia — Armenian Dram | AMD | 051 | 2 |
+
+        | Aruba — Aruban Florin | AWG | 533 | 2 |
+
+        | Australia — Australian Dollar | AUD | 036 | 2 |
+
+        | Azerbaijan — Azerbaijan Manat | AZN | 944 | 2 |
+
+        | Bahamas (The) — Bahamian Dollar | BSD | 044 | 2 |
+
+        | Bahrain — Bahraini Dinar | BHD | 048 | 3 |
+
+        | Bangladesh — Taka | BDT | 050 | 2 |
+
+        | Barbados — Barbados Dollar | BBD | 052 | 2 |
+
+        | Belarus — Belarusian Ruble | BYN | 933 | 2 |
+
+        | Belize — Belize Dollar | BZD | 084 | 2 |
+
+        | Benin — CFA Franc BCEAO | XOF | 952 | 0 |
+
+        | Bermuda — Bermudian Dollar | BMD | 060 | 2 |
+
+        | Bhutan — Indian Rupee | INR | 356 | 2 |
+
+        | Bhutan — Ngultrum | BTN | 064 | 2 |
+
+        | Bolivia (Plurinational State Of) — Boliviano | BOB | 068 | 2 |
+
+        | Bosnia And Herzegovina — Convertible Mark | BAM | 977 | 2 |
+
+        | Botswana — Pula | BWP | 072 | 2 |
+
+        | Bouvet Island — Norwegian Krone | NOK | 578 | 2 |
+
+        | Brazil — Brazilian Real | BRL | 986 | 2 |
+
+        | Brunei Darussalam — Brunei Dollar | BND | 096 | 2 |
+
+        | Bulgaria — Bulgarian Lev | BGN | 975 | 2 |
+
+        | Burkina Faso — CFA Franc BCEAO | XOF | 952 | 0 |
+
+        | Burundi — Burundi Franc | BIF | 108 | 0 |
+
+        | Cabo Verde — Cabo Verde Escudo | CVE | 132 | 2 |
+
+        | Cambodia — Riel | KHR | 116 | 2 |
+
+        | Cameroon — CFA Franc BEAC | XAF | 950 | 0 |
+
+        | Canada — Canadian Dollar | CAD | 124 | 2 |
+
+        | Cayman Islands (The) — Cayman Islands Dollar | KYD | 136 | 2 |
+
+        | Central African Republic (The) — CFA Franc BEAC | XAF | 950 | 0 |
+
+        | Chad — CFA Franc BEAC | XAF | 950 | 0 |
+
+        | Chile — Chilean Peso | CLP | 152 | 0 |
+
+        | China — Yuan Renminbi | CNY | 156 | 2 |
+
+        | China — Yuan Renminbi | CNH | 157 | 2 |
+
+        | Christmas Island — Australian Dollar | AUD | 036 | 2 |
+
+        | Cocos (Keeling) Islands (The) — Australian Dollar | AUD | 036 | 2 |
+
+        | Colombia — Colombian Peso | COP | 170 | 2 |
+
+        | Comoros (The) — Comorian Franc | KMF | 174 | 0 |
+
+        | Congo (The Democratic Republic Of The) — Congolese Franc | CDF | 976 | 2 |
+
+        | Congo (The) — CFA Franc BEAC | XAF | 950 | 0 |
+
+        | Cook Islands (The) — New Zealand Dollar | NZD | 554 | 2 |
+
+        | Costa Rica — Costa Rican Colon | CRC | 188 | 2 |
+
+        | Côte D''ivoire — CFA Franc BCEAO | XOF | 952 | 0 |
+
+        | Croatia — Kuna | HRK | 191 | 2 |
+
+        | Cuba — Cuban Peso | CUP | 192 | 2 |
+
+        | Cuba — Peso Convertible | CUC | 931 | 2 |
+
+        | Curaçao — Netherlands Antillean Guilder | ANG | 532 | 2 |
+
+        | Czechia — Czech Koruna | CZK | 203 | 2 |
+
+        | Denmark — Danish Krone | DKK | 208 | 2 |
+
+        | Djibouti — Djibouti Franc | DJF | 262 | 0 |
+
+        | Dominica — East Caribbean Dollar | XCD | 951 | 2 |
+
+        | Dominican Republic (The) — Dominican Peso | DOP | 214 | 2 |
+
+        | Egypt — Egyptian Pound | EGP | 818 | 2 |
+
+        | El Salvador — El Salvador Colon | SVC | 222 | 2 |
+
+        | Equatorial Guinea — CFA Franc BEAC | XAF | 950 | 0 |
+
+        | Eritrea — Nakfa | ERN | 232 | 2 |
+
+        | Ethiopia — Ethiopian Birr | ETB | 230 | 2 |
+
+        | Falkland Islands (The) [Malvinas] — Falkland Islands Pound | FKP | 238 | 2 |
+
+        | Faroe Islands (The) — Danish Krone | DKK | 208 | 2 |
+
+        | Fiji — Fiji Dollar | FJD | 242 | 2 |
+
+        | French Polynesia — CFP Franc | XPF | 953 | 0 |
+
+        | Gabon — CFA Franc BEAC | XAF | 950 | 0 |
+
+        | Gambia (The) — Dalasi | GMD | 270 | 2 |
+
+        | Georgia — Lari | GEL | 981 | 2 |
+
+        | Ghana — Ghana Cedi | GHS | 936 | 2 |
+
+        | Gibraltar — Gibraltar Pound | GIP | 292 | 2 |
+
+        | Greenland — Danish Krone | DKK | 208 | 2 |
+
+        | Grenada — East Caribbean Dollar | XCD | 951 | 2 |
+
+        | Guatemala — Quetzal | GTQ | 320 | 2 |
+
+        | Guernsey — Pound Sterling | GBP | 826 | 2 |
+
+        | Guinea — Guinean Franc | GNF | 324 | 0 |
+
+        | Guinea-bissau — CFA Franc BCEAO | XOF | 952 | 0 |
+
+        | Guyana — Guyana Dollar | GYD | 328 | 2 |
+
+        | Haiti — Gourde | HTG | 332 | 2 |
+
+        | Heard Island And Mcdonald Islands — Australian Dollar | AUD | 036 | 2 |
+
+        | Honduras — Lempira | HNL | 340 | 2 |
+
+        | Hong Kong — Hong Kong Dollar | HKD | 344 | 2 |
+
+        | Hungary — Forint | HUF | 348 | 2 |
+
+        | Iceland — Iceland Krona | ISK | 352 | 0 |
+
+        | India — Indian Rupee | INR | 356 | 2 |
+
+        | Indonesia — Rupiah | IDR | 360 | 2 |
+
+        | Iran (Islamic Republic Of) — Iranian Rial | IRR | 364 | 2 |
+
+        | Iraq — Iraqi Dinar | IQD | 368 | 3 |
+
+        | Isle Of Man — Pound Sterling | GBP | 826 | 2 |
+
+        | Israel — New Israeli Sheqel | ILS | 376 | 2 |
+
+        | Jamaica — Jamaican Dollar | JMD | 388 | 2 |
+
+        | Japan — Yen | JPY | 392 | 0 |
+
+        | Jersey — Pound Sterling | GBP | 826 | 2 |
+
+        | Jordan — Jordanian Dinar | JOD | 400 | 3 |
+
+        | Kazakhstan — Tenge | KZT | 398 | 2 |
+
+        | Kenya — Kenyan Shilling | KES | 404 | 2 |
+
+        | Kiribati — Australian Dollar | AUD | 036 | 2 |
+
+        | Korea (The Democratic People’s Republic Of) — North Korean Won | KPW | 408 | 2 |
+
+        | Korea (The Republic Of) — Won | KRW | 410 | 0 |
+
+        | Kuwait — Kuwaiti Dinar | KWD | 414 | 3 |
+
+        | Kyrgyzstan — Som | KGS | 417 | 2 |
+
+        | Lao People’s Democratic Republic (The) — Lao Kip | LAK | 418 | 2 |
+
+        | Lebanon — Lebanese Pound | LBP | 422 | 2 |
+
+        | Lesotho — Loti | LSL | 426 | 2 |
+
+        | Lesotho — Rand | ZAR | 710 | 2 |
+
+        | Liberia — Liberian Dollar | LRD | 430 | 2 |
+
+        | Libya — Libyan Dinar | LYD | 434 | 3 |
+
+        | Liechtenstein — Swiss Franc | CHF | 756 | 2 |
+
+        | Macao — Pataca | MOP | 446 | 2 |
+
+        | Macedonia (The Former Yugoslav Republic Of) — Denar | MKD | 807 | 2 |
+
+        | Madagascar — Malagasy Ariary | MGA | 969 | 2 |
+
+        | Malawi — Malawi Kwacha | MWK | 454 | 2 |
+
+        | Malaysia — Malaysian Ringgit | MYR | 458 | 2 |
+
+        | Maldives — Rufiyaa | MVR | 462 | 2 |
+
+        | Mali — CFA Franc BCEAO | XOF | 952 | 0 |
+
+        | Mauritania — Ouguiya | MRU | 929 | 2 |
+
+        | Mauritius — Mauritius Rupee | MUR | 480 | 2 |
+
+        | Mexico — Mexican Peso | MXN | 484 | 2 |
+
+        | Moldova (The Republic Of) — Moldovan Leu | MDL | 498 | 2 |
+
+        | Mongolia — Tugrik | MNT | 496 | 2 |
+
+        | Montserrat — East Caribbean Dollar | XCD | 951 | 2 |
+
+        | Morocco — Moroccan Dirham | MAD | 504 | 2 |
+
+        | Mozambique — Mozambique Metical | MZN | 943 | 2 |
+
+        | Myanmar — Kyat | MMK | 104 | 2 |
+
+        | Namibia — Namibia Dollar | NAD | 516 | 2 |
+
+        | Namibia — Rand | ZAR | 710 | 2 |
+
+        | Nauru — Australian Dollar | AUD | 036 | 2 |
+
+        | Nepal — Nepalese Rupee | NPR | 524 | 2 |
+
+        | New Caledonia — CFP Franc | XPF | 953 | 0 |
+
+        | New Zealand — New Zealand Dollar | NZD | 554 | 2 |
+
+        | Nicaragua — Cordoba Oro | NIO | 558 | 2 |
+
+        | Niger (The) — CFA Franc BCEAO | XOF | 952 | 0 |
+
+        | Nigeria — Naira | NGN | 566 | 2 |
+
+        | Niue — New Zealand Dollar | NZD | 554 | 2 |
+
+        | Norfolk Island — Australian Dollar | AUD | 036 | 2 |
+
+        | Norway — Norwegian Krone | NOK | 578 | 2 |
+
+        | Oman — Rial Omani | OMR | 512 | 3 |
+
+        | Pakistan — Pakistan Rupee | PKR | 586 | 2 |
+
+        | Panama — Balboa | PAB | 590 | 2 |
+
+        | Papua New Guinea — Kina | PGK | 598 | 2 |
+
+        | Paraguay — Guarani | PYG | 600 | 0 |
+
+        | Peru — Sol | PEN | 604 | 2 |
+
+        | Philippines (The) — Philippine Peso | PHP | 608 | 2 |
+
+        | Pitcairn — New Zealand Dollar | NZD | 554 | 2 |
+
+        | Poland — Zloty | PLN | 985 | 2 |
+
+        | Qatar — Qatari Rial | QAR | 634 | 2 |
+
+        | Romania — Romanian Leu | RON | 946 | 2 |
+
+        | Russian Federation (The) — Russian Ruble | RUB | 643 | 2 |
+
+        | Rwanda — Rwanda Franc | RWF | 646 | 0 |
+
+        | Saint Helena, Ascension And Tristan Da Cunha — Saint Helena Pound | SHP | 654 | 2 |
+
+        | Saint Kitts And Nevis — East Caribbean Dollar | XCD | 951 | 2 |
+
+        | Saint Lucia — East Caribbean Dollar | XCD | 951 | 2 |
+
+        | Saint Vincent And The Grenadines — East Caribbean Dollar | XCD | 951 | 2 |
+
+        | Samoa — Tala | WST | 882 | 2 |
+
+        | Sao Tome And Principe — Dobra | STN | 930 | 2 |
+
+        | Saudi Arabia — Saudi Riyal | SAR | 682 | 2 |
+
+        | Senegal — CFA Franc BCEAO | XOF | 952 | 0 |
+
+        | Serbia — Serbian Dinar | RSD | 941 | 2 |
+
+        | Seychelles — Seychelles Rupee | SCR | 690 | 2 |
+
+        | Sierra Leone — Leone | SLL | 694 | 2 |
+
+        | Sierra Leone — Leone | SLE | 925 | 2 |
+
+        | Singapore — Singapore Dollar | SGD | 702 | 2 |
+
+        | Sint Maarten (Dutch Part) — Netherlands Antillean Guilder | ANG | 532 | 2 |
+
+        | Solomon Islands — Solomon Islands Dollar | SBD | 090 | 2 |
+
+        | Somalia — Somali Shilling | SOS | 706 | 2 |
+
+        | South Africa — Rand | ZAR | 710 | 2 |
+
+        | South Sudan — South Sudanese Pound | SSP | 728 | 2 |
+
+        | Sri Lanka — Sri Lanka Rupee | LKR | 144 | 2 |
+
+        | Sudan (The) — Sudanese Pound | SDG | 938 | 2 |
+
+        | Suriname — Surinam Dollar | SRD | 968 | 2 |
+
+        | Svalbard And Jan Mayen — Norwegian Krone | NOK | 578 | 2 |
+
+        | Eswatini — Lilangeni | SZL | 748 | 2 |
+
+        | Sweden — Swedish Krona | SEK | 752 | 2 |
+
+        | Switzerland — Swiss Franc | CHF | 756 | 2 |
+
+        | Syrian Arab Republic — Syrian Pound | SYP | 760 | 2 |
+
+        | Taiwan (Province Of China) — New Taiwan Dollar | TWD | 901 | 2 |
+
+        | Tajikistan — Somoni | TJS | 972 | 2 |
+
+        | Tanzania, United Republic Of — Tanzanian Shilling | TZS | 834 | 2 |
+
+        | Thailand — Baht | THB | 764 | 2 |
+
+        | Togo — CFA Franc BCEAO | XOF | 952 | 0 |
+
+        | Tokelau — New Zealand Dollar | NZD | 554 | 2 |
+
+        | Tonga — Pa’anga | TOP | 776 | 2 |
+
+        | Trinidad And Tobago — Trinidad and Tobago Dollar | TTD | 780 | 2 |
+
+        | Tunisia — Tunisian Dinar | TND | 788 | 3 |
+
+        | Turkey — Turkish Lira | TRY | 949 | 2 |
+
+        | Turkmenistan — Turkmenistan New Manat | TMT | 934 | 2 |
+
+        | Tuvalu — Australian Dollar | AUD | 036 | 2 |
+
+        | Uganda — Uganda Shilling | UGX | 800 | 0 |
+
+        | Ukraine — Hryvnia | UAH | 980 | 2 |
+
+        | United Arab Emirates (The) — UAE Dirham | AED | 784 | 2 |
+
+        | United Kingdom Of Great Britain And Northern Ireland (The) — Pound Sterling | GBP | 826 | 2 |
+
+        | Uruguay — Peso Uruguayo | UYU | 858 | 2 |
+
+        | Uruguay — Unidad Previsional | UYW | 927 | 4 |
+
+        | Uzbekistan — Uzbekistan Sum | UZS | 860 | 2 |
+
+        | Vanuatu — Vatu | VUV | 548 | 0 |
+
+        | Venezuela (Bolivarian Republic Of) — Bolívar Soberano | VES | 928 | 2 |
+
+        | Viet Nam — Dong | VND | 704 | 0 |
+
+        | Wallis And Futuna — CFP Franc | XPF | 953 | 0 |
+
+        | Western Sahara — Moroccan Dirham | MAD | 504 | 2 |
+
+        | Yemen — Yemeni Rial | YER | 886 | 2 |
+
+        | Zambia — Zambian Kwacha | ZMW | 967 | 2 |
+
+        | Zimbabwe — Zimbabwe Dollar | ZWL | 932 | 2 |
+
+        | Zimbabwe — Zimbabwe Gold | ZWG | 924 | 2 |
+
+
+        </details>'
+      externalDocs:
+        description: Find more info here
+        url: https://www.iso.org/iso-4217-currency-codes.html
+      example: EUR
+    MerchantCreate:
+      type: object
+      required:
+      - name
+      - legalName
+      - registeredAddress
+      - customerInquiry
+      - websiteUrl
+      additionalProperties: false
+      properties:
+        name:
+          allOf:
+          - $ref: '#/components/schemas/ExtendedNameOfPeopleAndPlaces'
+          - description: The display name of the Merchant. Clients not enrolled in the "extended character set beta" are still subject to the `^[\w ,\.\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u00FF-\/]+$` pattern for field input.
+        legalName:
+          allOf:
+          - $ref: '#/components/schemas/ExtendedNameOfPeopleAndPlaces'
+          - description: The legal name of the Merchant. Clients not enrolled in the "extended character set beta" are still subject to the `^[\w ,\.\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u00FF-\/]+$` pattern for field input.
+        registeredAddress:
+          allOf:
+          - description: For eCommerce merchants certain card networks and countries (USA, Canada) the `stateOrProvince` field needs to be a recognised 2-letter uppercase state/province code.
+          - $ref: '#/components/schemas/AddressCreate'
+        customerInquiry:
+          $ref: '#/components/schemas/phoneNumber'
+        websiteUrl:
+          $ref: '#/components/schemas/url'
+        description:
+          $ref: '#/components/schemas/ExtendedFreeTextField'
+          description: The description of the Merchant. Clients not enrolled in the "extended character set beta" are still subject to the `[\w +=.,:;!?$@()-]+` pattern for field input.
+        merchantReference:
+          $ref: '#/components/schemas/merchantReference'
+        tags:
+          $ref: '#/components/schemas/Tags'
+        merchantAcceptorTemplate:
+          $ref: '#/components/schemas/MerchantAcceptorTemplate'
+        taxRegistrationId:
+          $ref: '#/components/schemas/taxRegistrationId'
+        sellerEmail:
+          description: A valid email address. Required for merchants to process Amex transactions
+          allOf:
+          - $ref: '#/components/schemas/email'
+        businessType:
+          $ref: '#/components/schemas/businessType'
+    DinersBin:
+      allOf:
+      - required:
+        - network
+        - messageSystem
+        - acquirerBin
+        - acquirerIdCode
+        - dxsCode
+        properties:
+          network:
+            type: string
+            enum:
+            - diners
+          messageSystem:
+            type: string
+            enum:
+            - DMS
+            description: Determines the message structure and Data Element definitions for card network.
+          acquirerBin:
+            allOf:
+            - description: For Diners, this field is automatically copied from the acquirerIdCode (IIC number).
+            - $ref: '#/components/schemas/dinersAcquirerIdCode'
+          acquirerIdCode:
+            $ref: '#/components/schemas/dinersAcquirerIdCode'
+          dxsCode:
+            $ref: '#/components/schemas/dxsCode'
+      - $ref: '#/components/schemas/BaseBin'
+    offsetToken:
+      type: string
+      pattern: ^[a-zA-Z0-9%]+$
+      minLength: 1
+      maxLength: 2048
+    subMerchantId:
+      type: string
+      description: Unique ID assigned by the acquirer or Payment Facilitator to the subMerchant.
+      pattern: ^[a-zA-Z0-9]+$
+      minLength: 1
+      maxLength: 15
+    created:
+      type: string
+      description: The date and time this object was created
+      format: date-time
+    MerchantMergeUpdate:
+      type: object
+      additionalProperties: false
+      properties:
+        name:
+          allOf:
+          - $ref: '#/components/schemas/ExtendedNameOfPeopleAndPlaces'
+          - description: The display name of the Merchant. Clients not enrolled in the "extended character set beta" are still subject to the `^[\w ,\.\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u00FF-\/]+$` pattern for field input.
+        description:
+          allOf:
+          - $ref: '#/components/schemas/ExtendedFreeTextField'
+          - description: The description of the Merchant. Clients not enrolled in the "extended character set beta" are still subject to the `[\w +=.,:;!?$@()-]+` pattern for field input.
+        legalName:
+          allOf:
+          - $ref: '#/components/schemas/ExtendedNameOfPeopleAndPlaces'
+          - description: The legal name of the Merchant. Clients not enrolled in the "extended character set beta" are still subject to the `^[\w ,\.\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u00FF-\/]+$` pattern for field input.
+        registeredAddress:
+          allOf:
+          - description: For eCommerce merchants residing in USA and Canada, certain card networks mandate the `stateOrProvince` field to be a recognised 2-letter uppercase state/province code.
+          - $ref: '#/components/schemas/AddressCreate'
+        customerInquiry:
+          $ref: '#/components/schemas/phoneNumber'
+        websiteUrl:
+          $ref: '#/components/schemas/url'
+        merchantReference:
+          $ref: '#/components/schemas/merchantReference'
+        tags:
+          $ref: '#/components/schemas/Tags'
+        taxRegistrationId:
+          $ref: '#/components/schemas/taxRegistrationId'
+        sellerEmail:
+          description: A valid email address. Required for merchants to process Amex transactions
+          allOf:
+          - $ref: '#/components/schemas/email'
+        businessType:
+          $ref: '#/components/schemas/businessType'
+    messageSystem:
+      type: string
+      description: Determines the message structure and Data Element definitions for card network.
+      enum:
+      - DMS
+      - SMS
+      default: DMS
+    chargesBlocked:
+      type: boolean
+      description: A value of `true` prohibits charges from being created using this Acceptor. If the property is absent upon Acceptor creation a value of `false` is assumed.
+    acquirerOrPayFacBusinessId:
+      type: string
+      description: "Unique ID assigned by the card network for the Payment Facilitator or the acquirer (<span class=\"tag network-tag visa-tag\">VISA</span>) that signed up the merchant.  \n**Note:** Mastercard only uses numeric characters in this field, Visa uses alphanumeric characters.\n"
+      pattern: ^[a-zA-Z0-9]+$
+      minLength: 1
+      maxLength: 11
+    discoverAcquirerBin:
+      type: string
+      description: Acquirer Bin. The Bin number as assigned by the card network.
+      pattern: ^\d+$
+      minLength: 1
+      maxLength: 11
+    postalCode:
+      type: string
+      pattern: ^[A-Z0-9]+([ -][A-Z0-9]+)?$
+      minLength: 1
+      maxLength: 10
+      description: 'The postal code of the address. Clients not enrolled in the "extended character set beta" are still subject to the `^[A-Z0-9]+(\ [A-Z0-9]*)?$` pattern for field input.
+
+        '
+      example: 1114 AA
+    Merchant:
+      type: object
+      required:
+      - key
+      - status
+      - agentKey
+      - name
+      - legalName
+      - registeredAddress
+      - customerInquiry
+      - websiteUrl
+      - created
+      - version
+      description: 'A Merchant acts as a template
+
+        '
+      properties:
+        key:
+          $ref: '#/components/schemas/merchantKey'
+        status:
+          $ref: '#/components/schemas/merchantStatus'
+        merchantReference:
+          $ref: '#/components/schemas/merchantReference'
+        agentKey:
+          $ref: '#/components/schemas/agentKey'
+        name:
+          allOf:
+          - $ref: '#/components/schemas/ExtendedNameOfPeopleAndPlaces'
+          - description: The display name of the Merchant. Clients not enrolled in the "extended character set beta" are still subject to the `^[\w ,\.\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u00FF-\/]+$` pattern for field input.
+        description:
+          allOf:
+          - $ref: '#/components/schemas/ExtendedFreeTextField'
+          - description: The description of the Merchant. Clients not enrolled in the "extended character set beta" are still subject to the `^[\w +=.,:;!?$@()-]+$` pattern for field input.
+        legalName:
+          $ref: '#/components/schemas/merchantLegalName'
+        registeredAddress:
+          $ref: '#/components/schemas/Address'
+        customerInquiry:
+          $ref: '#/components/schemas/phoneNumber'
+        websiteUrl:
+          $ref: '#/components/schemas/url'
+        tags:
+          $ref: '#/components/schemas/Tags'
+        created:
+          $ref: '#/components/schemas/created'
+        lastModified:
+          $ref: '#/components/schemas/lastModified'
+        version:
+          $ref: '#/components/schemas/version'
+        taxRegistrationId:
+          $ref: '#/components/schemas/taxRegistrationId'
+        sellerEmail:
+          $ref: '#/components/schemas/email'
+        businessType:
+          $ref: '#/components/schemas/businessType'
+      example:
+        key: mct-1hPdFhmgaBzMS191nIbJ
+        status: active
+        agentKey: cgt-1hPdFhmgaBzMS85d4QcG
+        merchantReference: AB1234-5678_10.31
+        name: ACME Corporation A/S
+        description: ACME Corporation. Building materials, rockets and birdseed.
+        legalName: ACME Corp. A/S
+        registeredAddress:
+          countryCode:
+            alpha3: USA
+            alpha2: US
+            numeric: 528
+          stateOrProvince: CA
+          city: Hill Valley
+          line1: Riverside Drive 1640
+          postalCode: '91103'
+        customerInquiry: '+15554321'
+        websiteUrl: https://acme.com/catalog/acme.html
+        created: '2021-05-27T10:57:52Z'
+        lastModified: '2021-05-27T10:57:52Z'
+        version: 1
+        sellerEmail: seller@gmail.com
+        taxRegistrationId: US1234567890
+        businessType: corporation
+    merchantLegalName:
+      allOf:
+      - $ref: '#/components/schemas/ExtendedNameOfPeopleAndPlaces'
+      - description: The legal name of the Merchant. Clients not enrolled in the "extended character set beta" are still subject to the `^[\w ,\.\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u00FF-\/]+$` pattern for field input.
+    binKey:
+      description: A key assigned by Silverflow to uniquely identify a Bin.
+      type: string
+      pattern: ^bin-[a-zA-Z0-9]+$
+      minLength: 5
+      maxLength: 120
+    email:
+      type: string
+      description: A valid email address
+      pattern: \w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*
+    amexPayfacAcquirerBin:
+      type: string
+      description: SE Number assigned by AMEX for the Payment Facilitator.
+      pattern: ^\d{10}$
+    Address:
+      type: object
+      required:
+      - countryCode
+      - city
+      - line1
+      - postalCode
+      additionalProperties: false
+      description: 'A physical postal address
+
+        '
+      properties:
+        countryCode:
+          $ref: '#/components/schemas/CountryCode'
+        stateOrProvince:
+          $ref: '#/components/schemas/stateOrProvince'
+        city:
+          $ref: '#/components/schemas/city'
+        line1:
+          $ref: '#/components/schemas/line1'
+        line2:
+          $ref: '#/components/schemas/line2'
+        postalCode:
+          $ref: '#/components/schemas/postalCode'
+    MerchantsPage:
+      allOf:
+      - $ref: '#/components/schemas/Page'
+      - type: object
+        required:
+        - merchants
+        properties:
+          merchants:
+            type: array
+            items:
+              $ref: '#/components/schemas/Merchant'
+    MastercardBin:
+      allOf:
+      - type: object
+        required:
+        - network
+        - messageSystem
+        - acquirerIdCode
+        - acquirerBin
+        properties:
+          network:
+            type: string
+            enum:
+            - mastercard
+          messageSystem:
+            $ref: '#/components/schemas/messageSystem'
+          acquirerIdCode:
+            type: string
+            description: Acquirer Institution ID code. For Mastercard, this field corresponds to the Acquirer ICA.
+            pattern: ^\d+$
+            minLength: 6
+            maxLength: 6
+          acquirerBin:
+            type: string
+            description: Acquirer Bin. The Bin number as assigned by the card network. For Mastercard, this is also referred to as the Acquirer Reference ID.
+            pattern: ^\d+$
+            minLength: 6
+            maxLength: 6
+      - $ref: '#/components/schemas/BaseBin'
+    CountryCodeOnlyNumeric:
+      type: object
+      required:
+      - numeric
+      additionalProperties: false
+      properties:
+        numeric:
+          $ref: '#/components/schemas/countryCodeNumeric'
+    BadRequestProblemDetail:
+      description: 'A ''problem detail'' object for Bad Request (400) errors. Extends the base ProblemDetail
+
+        with a validationErrors array that provides detailed information about validation failures.
+
+        '
+      allOf:
+      - $ref: '#/components/schemas/ProblemDetail'
+      - type: object
+        required:
+        - type
+        - title
+        - status
+        - detail
+        - instance
+        properties:
+          type:
+            type: string
+            description: URI reference identifying the problem type.
+            enum:
+            - /silverflow/problems/bad-request
+            example: /silverflow/problems/bad-request
+          title:
+            type: string
+            description: A short summary of the problem type.
+            enum:
+            - Bad Request
+          status:
+            type: integer
+            format: int32
+            description: The HTTP status code (400 for Bad Request).
+            enum:
+            - 400
+          detail:
+            type: string
+            description: A human readable explanation specific to this occurrence of the problem.
+            example: Validation errors occurred
+          instance:
+            type: string
+            description: An absolute URI that identifies the specific occurrence of the problem.
+          validationErrors:
+            type: array
+            description: 'An array of validation errors that occurred during request processing. Each item can be either
+
+              a simple string message or an object with detailed error information including the path and message.
+
+              '
+            items:
+              oneOf:
+              - type: string
+                description: A simple validation error message
+                example: Invalid 'mid' length
+              - type: object
+                description: A detailed validation error with path and message
+                required:
+                - instancePath
+                - message
+                properties:
+                  instancePath:
+                    type: string
+                    description: The JSON path to the field that caused the validation error
+                    example: /merchantAcceptor/mid
+                  message:
+                    type: string
+                    description: The validation error message
+                    example: must be at most 15 characters
+        additionalProperties: false
+    Tags:
+      type: object
+      description: 'Optional tags provided by the agent to tag the object for maintainability. Tags can be used filtering and sorting on the list views of Disputes. A valid tag-key must:
+
+        - contain only a-z, 0-9, "_" characters
+
+        - first character should be a letter
+
+        - be at least 1 character long
+
+        - be no longer than 24 characters
+
+        - not start with "sf_"
+
+        '
+      additionalProperties:
+        type: string
+        description: Value of the key.
+        pattern: ^.+$
+        minLength: 1
+        maxLength: 100
+      example:
+        IamAKey: ThisIsaValue!
+    line2:
+      allOf:
+      - $ref: '#/components/schemas/ExtendedNameOfPeopleAndPlaces'
+      - description: 'Address line 2. Clients not enrolled in the "extended character set beta" are still subject to the `^[\w ,\.\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u00FF-]+$` pattern for field input.
+
+          '
+      - example: Floor 3
+    line1:
+      allOf:
+      - $ref: '#/components/schemas/ExtendedNameOfPeopleAndPlaces'
+      - description: 'Address line 1. Clients not enrolled in the "extended character set beta" are still subject to the `^[\w ,\.\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u00FF-]+$` pattern for field input.
+
+          '
+        example: Entrada 300
+    BaseBin:
+      type: object
+      required:
+      - key
+      - status
+      - description
+      - acquirerCountryCode
+      - shared
+      - created
+      - version
+      - acquirerIdCode
+      description: 'A Bin is a Bank Identification Number
+
+        '
+      properties:
+        key:
+          $ref: '#/components/schemas/binKey'
+        status:
+          $ref: '#/components/schemas/status'
+        description:
+          description: Description of the Bin. Combination of acquirer, region and card network.
+          $ref: '#/components/schemas/ExtendedFreeTextField'
+          example: Example Acquirer - Mastercard
+        acquirerAgentKey:
+          $ref: '#/components/schemas/acquirerAgentKey'
+        acquirerIdCode:
+          type: string
+        acquirerCountryCode:
+          $ref: '#/components/schemas/CountryCode'
+        shared:
+          type: boolean
+          description: Indicates if this Bin is shared across agents. If so the MIDs are restricted in length to `11`.
+        created:
+          $ref: '#/components/schemas/created'
+        lastModified:
+          $ref: '#/components/schemas/lastModified'
+        version:
+          $ref: '#/components/schemas/version'
+      example:
+        key: bin-1iXRhbDjrT2Yxvo0mSZN
+        status: active
+        description: Example Acquirer - Mastercard
+        acquirerIdCode: 222222
+        acquirerBin: 555555
+        acquirerCountryCode:
+          alpha3: DEU
+          alpha2: DE
+          numeric: '276'
+        acquirerAgentKey: cgt-1nUP5yspouqwUHYSZo9V
+        network: mastercard
+        messageSystem: DMS
+        shared: false
+        created: '2020-08-24T14:15:22.014Z'
+        lastModified: '2020-08-24T21:39:01.957Z'
+        version: 2
+    merchantKey:
+      description: Uniquely identifies a Merchant
+      type: string
+      pattern: ^mct-[a-zA-Z0-9]+$
+      minLength: 5
+      maxLength: 120
+      example: mct-123dinkqFqfq3q2f2adfa
+    Page:
+      type: object
+      properties:
+        offsetToken:
+          $ref: '#/components/schemas/offsetToken'
+        moreItems:
+          $ref: '#/components/schemas/moreItems'
+    acceptorRoute:
+      type: string
+      pattern: ^(^$|^[a-zA-Z0-9-_:;.,]+$)
+      minLength: 0
+      maxLength: 255
+      description: An optional route key to force route charges
+    authorizationCurrencyForAmexDirectMerchant:
+      allOf:
+      - description: Only required if the acceptor is for an AMEX Direct Merchant Bin. If so, this field contains the authorization currency that corresponds to the SE Number.
+      - $ref: '#/components/schemas/currencyCode'
+    rampProviderId:
+      type: string
+      description: Visa provided ID required for ramp providers. If provided, `marketplaceId` must not be provided. <span class="tag network-tag visa-tag">VISA</span>
+      pattern: ^[a-zA-Z0-9]{1,11}$
+    countryCodeAlpha2:
+      type: string
+      pattern: ^[A-Z]+$
+      minLength: 2
+      maxLength: 2
+      description: 'The ISO code of the country.
+
+
+        **European ISO Country Codes**
+
+
+        <details>
+
+
+        | Country | Alpha-2 code | Numeric |
+
+        | ------- | ------------ | ------- |
+
+        | Åland Islands | AX | 248 |
+
+        | Andorra | AD | 020 |
+
+        | Austria | AT | 040 |
+
+        | Belgium | BE | 056 |
+
+        | Cyprus | CY | 196 |
+
+        | Estonia | EE | 233 |  |
+
+        | Finland | FI | 246 |
+
+        | France | FR | 250 |
+
+        | French Guiana | GF | 254 |
+
+        | French Southern Territories | TF | 260 |
+
+        | Germany | DE | 280 |
+
+        | Greece | GR | 300 |
+
+        | Guadeloupe | GP | 312 |
+
+        | Ireland | IE | 372 |
+
+        | Italy | IT | 380 |
+
+        | Kosovo, United Nations Mission in Kosovo (UNMIK) | QZ | 900 |
+
+        | Latvia | LV | 428 |
+
+        | Lithuania | LT | 440 |
+
+        | Luxembourg | LU | 442 |
+
+        | Malta | MT | 470 |
+
+        | Martinique | MQ | 474 |
+
+        | Mayotte | YT | 175 |
+
+        | Monaco | MC | 492 |
+
+        | Montenegro | ME | 499 |
+
+        | Netherlands | NL | 528 |
+
+        | Portugal | PT | 620 |
+
+        | Reunion | RE | 638 |
+
+        | Saint Barthélemy | BL | 652 |
+
+        | Saint Martin (French Part) | MF | 663 |
+
+        | San Marino | SM | 674 |
+
+        | Slovakia | SK | 703 |
+
+        | Slovenia | SI | 705 |
+
+        | Spain | ES | 724 |
+
+        | St. Pierre and Miquelon | PM | 666 |
+
+        | Vatican City State (Holy See) | VA | 336 |
+
+
+        </details>
+
+
+        **US ISO Country Codes**
+
+
+        <details>
+
+
+        | Country | Alpha-2 code | Numeric |
+
+        | ------- | ------------ | ------- |
+
+        | American Samoa | AS | 016 |
+
+        | Bonaire, St. Eusasius and Saba | BQ | 535 |
+
+        | British Indian Ocean Territory | IO | 086 |
+
+        | Ecuador | EC | 218 |
+
+        | Guam | GU | 316 |
+
+        | Marshall Islands | MH | 584 |
+
+        | Micronesia, Federated States of | FM | 583 |
+
+        | Northern Mariana Islands | MP | 580 |
+
+        | Palau | PW | 585 |
+
+        | Palestine, State of | PS | 275 |
+
+        | Puerto Rico | PR | 630 |
+
+        | Timor-Leste | TP | 626 |
+
+        | Turks and Caicos Islands | TC | 796 |
+
+        | U.S. Minor Outlying Islands | UM | 581 |
+
+        | United States | US | 840 |
+
+        | Virgin Islands, British | VG | 092 |
+
+        | Virgin Islands, U.S. | VI | 850 |
+
+
+        </details>
+
+
+        **Other ISO Country Codes**
+
+
+        <details>
+
+
+        | Country | Alpha-2 code | Numeric |
+
+        | ------- | ------------ | ------- |
+
+        | Afghanistan | AF | 004 |
+
+        | Albania | AL | 008 |
+
+        | Algeria | DZ | 012 |
+
+        | Angola | AO | 024 |
+
+        | Anguilla | AI | 660 |
+
+        | Antarctica | AQ | 010 |
+
+        | Antigua and Barbuda | AG | 028 |
+
+        | Argentina | AR | 032 |
+
+        | Armenia | AM | 051 |
+
+        | Aruba | AW | 533 |
+
+        | Australia | AU | 036 |
+
+        | Azerbaijan | AZ | 031 |
+
+        | Bahamas | BS | 044 |
+
+        | Bahrain | BH | 048 |
+
+        | Bangladesh | BD | 050 |
+
+        | Barbados | BB | 052 |
+
+        | Belarus | BR | 112 |
+
+        | Belize | BZ | 084 |
+
+        | Benin | BJ | 204 |
+
+        | Bermuda | BM | 060 |
+
+        | Bhutan | BT | 064 |
+
+        | Bolivia, Plurinational State of | BO | 068 |
+
+        | Bosnia and Herzegovina | BA | 070 |
+
+        | Botswana | BW | 072 |
+
+        | Bouvet Island | BV | 074 |
+
+        | Brazil | BR | 076 |
+
+        | Brunei Darussalam | BN | 096 |
+
+        | Bulgaria | BG | 100 |
+
+        | Burkina Faso | BF | 854 |
+
+        | Burundi | BI | 108 |
+
+        | Cambodia | KH | 116 |
+
+        | Cameroon | CM | 120 |
+
+        | Canada | CA | 124 |
+
+        | Cape Verde | CV | 132 |
+
+        | Cayman Islands | KY | 136 |
+
+        | Central African Republic | CF | 140 |
+
+        | Chad | TD | 148 |
+
+        | Chile | CL | 152 |
+
+        | China | CN | 156 |
+
+        | Christmas Island | CX | 162 |
+
+        | Cocos (Keeling) Islands | CC | 166 |
+
+        | Colombia | CO | 170 |
+
+        | Comoros | KM | 174 |
+
+        | Congo | CG | 178 |
+
+        | Cook Islands | CK | 184 |
+
+        | Costa Rica | CR | 188 |
+
+        | Côte D''Ivoire | CI | 384 |
+
+        | Croatia | HR | 191 |
+
+        | Cuba | CU | 192 |
+
+        | Curacao | CW | 531 |
+
+        | Czech Republic | CZ | 203 |
+
+        | Democratic Republic of the Congo | CD | 180 |
+
+        | Denmark | DK | 208 |
+
+        | Djibouti | DJ | 262 |
+
+        | Dominica | DM | 212 |
+
+        | Dominican Republic | DO | 214 |
+
+        | Egypt | EG | 818 |
+
+        | El Salvador | SV | 222 |
+
+        | Equatorial Guinea | GQ | 226 |
+
+        | Eritrea | ER | 232 |
+
+        | Ethiopia | ET | 230 |
+
+        | Falkland Islands (Malvinas) | FK | 238 |
+
+        | Faroe Islands | FO | 234 |
+
+        | Fiji | FJ | 242 |
+
+        | French Polynesia | PF | 258 |
+
+        | Gabon | GA | 266 |
+
+        | Gambia | GM | 270 |
+
+        | Georgia | GE | 268 |
+
+        | Ghana | GH | 288 |
+
+        | Gibraltar | GI | 292 |
+
+        | Greenland | GL | 304 |
+
+        | Grenada | GD | 308 |
+
+        | Guatemala | GT | 320 |
+
+        | Guernsey | GG | 831 |
+
+        | Guinea | GN | 324 |
+
+        | Guinea-Bissau | GW | 624 |
+
+        | Guyana | GY | 328 |
+
+        | Haiti | HT | 332 |
+
+        | Heard and McDonald Islands | HM | 334 |
+
+        | Honduras | HN | 340 |
+
+        | Hong Kong | HK | 344 |
+
+        | Hungary | HU | 348 |
+
+        | Iceland | IS | 352 |
+
+        | India | IN | 356 |
+
+        | Indonesia | ID | 360 |
+
+        | Iraq | IQ | 368 |
+
+        | Isle of Man | IM | 833 |
+
+        | Israel | IL | 376 |
+
+        | Jamaica | JM | 388 |
+
+        | Japan | JP | 392 |
+
+        | Jersey | JE | 832 |
+
+        | Jordan | JO | 400 |
+
+        | Kazakhstan | KZ | 398 |
+
+        | Kenya | KE | 404 |
+
+        | Kiribati | KI | 296 |
+
+        | Korea, Republic of | KR | 410 |
+
+        | Kuwait | KW | 414 |
+
+        | Kyrgyzstan | KG | 417 |
+
+        | Lao People''s Democratic Republic | LA | 418 |
+
+        | Lebanon | LB | 422 |
+
+        | Lesotho | LS | 426 |
+
+        | Liberia | LR | 430 |
+
+        | Libyan Arab Jamahiriya | LY | 434 |
+
+        | Liechtenstein | LI | 438 |
+
+        | Macao | MO | 446 |
+
+        | Macedonia | MK | 807 |
+
+        | Madagascar | MG | 450 |
+
+        | Malawi | MW | 454 |
+
+        | Malaysia | MY | 458 |
+
+        | Maldives | MV | 462 |
+
+        | Mali | ML | 466 |
+
+        | Mauritania | MR | 478 |
+
+        | Mauritius | MU | 480 |
+
+        | Mexico | MX | 484 |
+
+        | Moldova, Republic of | MD | 498 |
+
+        | Mongolia | MN | 496 |
+
+        | Montserrat | MS | 500 |
+
+        | Morocco | MA | 504 |
+
+        | Mozambique | MZ | 508 |
+
+        | Myanmar (effective 1 November 2012) | MM | 104 |
+
+        | Namibia | NA | 516 |
+
+        | Nauru | NR | 520 |
+
+        | Nepal | NP | 524 |
+
+        | Netherlands Antilles | AN | 530 |
+
+        | New Caledonia | NC | 540 |
+
+        | New Zealand | NZ | 554 |
+
+        | Nicaragua | NI | 558 |
+
+        | Niger | NE | 562 |
+
+        | Nigeria | NG | 566 |
+
+        | Niue | NU | 570 |
+
+        | Norfolk Island | NF | 574 |
+
+        | Norway | NO | 578 |
+
+        | Oman | OM | 512 |
+
+        | Pakistan | PK | 586 |
+
+        | Panama | PA | 591 |
+
+        | Papua New Guinea | PG | 598 |
+
+        | Paraguay | PY | 600 |
+
+        | Peru | PE | 604 |
+
+        | Philippines | PH | 608 |
+
+        | Pitcairn | PN | 612 |
+
+        | Poland | PL | 616 |
+
+        | Qatar | QA | 634 |
+
+        | Republic of South Sudan | SS | 728 |
+
+        | Romania | RO | 642 |
+
+        | Russian Federation | RU | 643 |
+
+        | Rwanda | RW | 646 |
+
+        | Samoa | WS | 882 |
+
+        | Sao Tome and Principe | ST | 678 |
+
+        | Saudi Arabia | SA | 682 |
+
+        | Senegal | SN | 686 |
+
+        | Serbia | RS | 688 |
+
+        | Seychelles | SC | 690 |
+
+        | Sierra Leone | SL | 694 |
+
+        | Singapore | SG | 702 |
+
+        | Sint Maarten (Dutch Part) | SX | 534 |
+
+        | Solomon Islands | SB | 090 |
+
+        | Somalia | SO | 706 |
+
+        | South Africa | ZA | 710 |
+
+        | South Georgia and the South Sandwich Islands | GS | 239 |
+
+        | Sri Lanka | LK | 144 |
+
+        | Saint Helena, Ascension and Tristan Da Cunha | SH | 654 |
+
+        | St. Kitts and Nevis | KN | 659 |
+
+        | St. Lucia | LC | 662 |
+
+        | St. Vincent and the Grenadines | VC | 670 |
+
+        | Suriname | SR | 740 |
+
+        | Svalbard and Jan Mayen | SJ | 744 |
+
+        | Swaziland | SZ | 748 |
+
+        | Sweden | SE | 752 |
+
+        | Switzerland | CH | 756 |
+
+        | Taiwan | TW | 158 |
+
+        | Tajikistan | TJ | 762 |
+
+        | Tanzania, United Republic of | TZ | 834 |
+
+        | Thailand | TH | 764 |
+
+        | Togo | TG | 768 |
+
+        | Tokelau | TK | 772 |
+
+        | Tonga | TO | 776 |
+
+        | Trinidad and Tobago | TT | 780 |
+
+        | Tunisia | TN | 788 |
+
+        | Turkey | TR | 792 |
+
+        | Turkmenistan | TM | 795 |
+
+        | Tuvalu | TV | 798 |
+
+        | Uganda | UG | 800 |
+
+        | Ukraine | UA | 804 |
+
+        | United Arab Emirates | AE | 784 |
+
+        | United Kingdom | GB | 826 |
+
+        | Uruguay | UY | 858 |
+
+        | Uzbekistan | UZ | 860 |
+
+        | Vanuatu | VU | 548 |
+
+        | Venezuela, Bolivarian Republic of | VE | 862 |
+
+        | Vietnam | VN | 704 |
+
+        | Wallis and Futuna | WF | 876 |
+
+        | Western Sahara | EH | 732 |
+
+        | Yemen | YE | 886 |
+
+        | Zambia | ZM | 894 |
+
+        | Zimbabwe | ZW | 716 |
+
+
+        </details>'
+      externalDocs:
+        description: Find more info here
+        url: https://www.iso.org/iso-3166-country-codes.html
+      example: NL
+    countryCodeAlpha3:
+      type: string
+      pattern: ^[A-Z]+$
+      minLength: 3
+      maxLength: 3
+      description: 'The ISO code of the country.
+
+
+        **European ISO Country Codes**
+
+
+        <details>
+
+
+        | Country | Alpha-2 code | Numeric |
+
+        | ------- | ------------ | ------- |
+
+        | Åland Islands | AX | 248 |
+
+        | Andorra | AD | 020 |
+
+        | Austria | AT | 040 |
+
+        | Belgium | BE | 056 |
+
+        | Cyprus | CY | 196 |
+
+        | Estonia | EE | 233 |  |
+
+        | Finland | FI | 246 |
+
+        | France | FR | 250 |
+
+        | French Guiana | GF | 254 |
+
+        | French Southern Territories | TF | 260 |
+
+        | Germany | DE | 280 |
+
+        | Greece | GR | 300 |
+
+        | Guadeloupe | GP | 312 |
+
+        | Ireland | IE | 372 |
+
+        | Italy | IT | 380 |
+
+        | Kosovo, United Nations Mission in Kosovo (UNMIK) | QZ | 900 |
+
+        | Latvia | LV | 428 |
+
+        | Lithuania | LT | 440 |
+
+        | Luxembourg | LU | 442 |
+
+        | Malta | MT | 470 |
+
+        | Martinique | MQ | 474 |
+
+        | Mayotte | YT | 175 |
+
+        | Monaco | MC | 492 |
+
+        | Montenegro | ME | 499 |
+
+        | Netherlands | NL | 528 |
+
+        | Portugal | PT | 620 |
+
+        | Reunion | RE | 638 |
+
+        | Saint Barthélemy | BL | 652 |
+
+        | Saint Martin (French Part) | MF | 663 |
+
+        | San Marino | SM | 674 |
+
+        | Slovakia | SK | 703 |
+
+        | Slovenia | SI | 705 |
+
+        | Spain | ES | 724 |
+
+        | St. Pierre and Miquelon | PM | 666 |
+
+        | Vatican City State (Holy See) | VA | 336 |
+
+
+        </details>
+
+
+        **US ISO Country Codes**
+
+
+        <details>
+
+
+        | Country | Alpha-2 code | Numeric |
+
+        | ------- | ------------ | ------- |
+
+        | American Samoa | AS | 016 |
+
+        | Bonaire, St. Eusasius and Saba | BQ | 535 |
+
+        | British Indian Ocean Territory | IO | 086 |
+
+        | Ecuador | EC | 218 |
+
+        | Guam | GU | 316 |
+
+        | Marshall Islands | MH | 584 |
+
+        | Micronesia, Federated States of | FM | 583 |
+
+        | Northern Mariana Islands | MP | 580 |
+
+        | Palau | PW | 585 |
+
+        | Palestine, State of | PS | 275 |
+
+        | Puerto Rico | PR | 630 |
+
+        | Timor-Leste | TP | 626 |
+
+        | Turks and Caicos Islands | TC | 796 |
+
+        | U.S. Minor Outlying Islands | UM | 581 |
+
+        | United States | US | 840 |
+
+        | Virgin Islands, British | VG | 092 |
+
+        | Virgin Islands, U.S. | VI | 850 |
+
+
+        </details>
+
+
+        **Other ISO Country Codes**
+
+
+        <details>
+
+
+        | Country | Alpha-2 code | Numeric |
+
+        | ------- | ------------ | ------- |
+
+        | Afghanistan | AF | 004 |
+
+        | Albania | AL | 008 |
+
+        | Algeria | DZ | 012 |
+
+        | Angola | AO | 024 |
+
+        | Anguilla | AI | 660 |
+
+        | Antarctica | AQ | 010 |
+
+        | Antigua and Barbuda | AG | 028 |
+
+        | Argentina | AR | 032 |
+
+        | Armenia | AM | 051 |
+
+        | Aruba | AW | 533 |
+
+        | Australia | AU | 036 |
+
+        | Azerbaijan | AZ | 031 |
+
+        | Bahamas | BS | 044 |
+
+        | Bahrain | BH | 048 |
+
+        | Bangladesh | BD | 050 |
+
+        | Barbados | BB | 052 |
+
+        | Belarus | BR | 112 |
+
+        | Belize | BZ | 084 |
+
+        | Benin | BJ | 204 |
+
+        | Bermuda | BM | 060 |
+
+        | Bhutan | BT | 064 |
+
+        | Bolivia, Plurinational State of | BO | 068 |
+
+        | Bosnia and Herzegovina | BA | 070 |
+
+        | Botswana | BW | 072 |
+
+        | Bouvet Island | BV | 074 |
+
+        | Brazil | BR | 076 |
+
+        | Brunei Darussalam | BN | 096 |
+
+        | Bulgaria | BG | 100 |
+
+        | Burkina Faso | BF | 854 |
+
+        | Burundi | BI | 108 |
+
+        | Cambodia | KH | 116 |
+
+        | Cameroon | CM | 120 |
+
+        | Canada | CA | 124 |
+
+        | Cape Verde | CV | 132 |
+
+        | Cayman Islands | KY | 136 |
+
+        | Central African Republic | CF | 140 |
+
+        | Chad | TD | 148 |
+
+        | Chile | CL | 152 |
+
+        | China | CN | 156 |
+
+        | Christmas Island | CX | 162 |
+
+        | Cocos (Keeling) Islands | CC | 166 |
+
+        | Colombia | CO | 170 |
+
+        | Comoros | KM | 174 |
+
+        | Congo | CG | 178 |
+
+        | Cook Islands | CK | 184 |
+
+        | Costa Rica | CR | 188 |
+
+        | Côte D''Ivoire | CI | 384 |
+
+        | Croatia | HR | 191 |
+
+        | Cuba | CU | 192 |
+
+        | Curacao | CW | 531 |
+
+        | Czech Republic | CZ | 203 |
+
+        | Democratic Republic of the Congo | CD | 180 |
+
+        | Denmark | DK | 208 |
+
+        | Djibouti | DJ | 262 |
+
+        | Dominica | DM | 212 |
+
+        | Dominican Republic | DO | 214 |
+
+        | Egypt | EG | 818 |
+
+        | El Salvador | SV | 222 |
+
+        | Equatorial Guinea | GQ | 226 |
+
+        | Eritrea | ER | 232 |
+
+        | Ethiopia | ET | 230 |
+
+        | Falkland Islands (Malvinas) | FK | 238 |
+
+        | Faroe Islands | FO | 234 |
+
+        | Fiji | FJ | 242 |
+
+        | French Polynesia | PF | 258 |
+
+        | Gabon | GA | 266 |
+
+        | Gambia | GM | 270 |
+
+        | Georgia | GE | 268 |
+
+        | Ghana | GH | 288 |
+
+        | Gibraltar | GI | 292 |
+
+        | Greenland | GL | 304 |
+
+        | Grenada | GD | 308 |
+
+        | Guatemala | GT | 320 |
+
+        | Guernsey | GG | 831 |
+
+        | Guinea | GN | 324 |
+
+        | Guinea-Bissau | GW | 624 |
+
+        | Guyana | GY | 328 |
+
+        | Haiti | HT | 332 |
+
+        | Heard and McDonald Islands | HM | 334 |
+
+        | Honduras | HN | 340 |
+
+        | Hong Kong | HK | 344 |
+
+        | Hungary | HU | 348 |
+
+        | Iceland | IS | 352 |
+
+        | India | IN | 356 |
+
+        | Indonesia | ID | 360 |
+
+        | Iraq | IQ | 368 |
+
+        | Isle of Man | IM | 833 |
+
+        | Israel | IL | 376 |
+
+        | Jamaica | JM | 388 |
+
+        | Japan | JP | 392 |
+
+        | Jersey | JE | 832 |
+
+        | Jordan | JO | 400 |
+
+        | Kazakhstan | KZ | 398 |
+
+        | Kenya | KE | 404 |
+
+        | Kiribati | KI | 296 |
+
+        | Korea, Republic of | KR | 410 |
+
+        | Kuwait | KW | 414 |
+
+        | Kyrgyzstan | KG | 417 |
+
+        | Lao People''s Democratic Republic | LA | 418 |
+
+        | Lebanon | LB | 422 |
+
+        | Lesotho | LS | 426 |
+
+        | Liberia | LR | 430 |
+
+        | Libyan Arab Jamahiriya | LY | 434 |
+
+        | Liechtenstein | LI | 438 |
+
+        | Macao | MO | 446 |
+
+        | Macedonia | MK | 807 |
+
+        | Madagascar | MG | 450 |
+
+        | Malawi | MW | 454 |
+
+        | Malaysia | MY | 458 |
+
+        | Maldives | MV | 462 |
+
+        | Mali | ML | 466 |
+
+        | Mauritania | MR | 478 |
+
+        | Mauritius | MU | 480 |
+
+        | Mexico | MX | 484 |
+
+        | Moldova, Republic of | MD | 498 |
+
+        | Mongolia | MN | 496 |
+
+        | Montserrat | MS | 500 |
+
+        | Morocco | MA | 504 |
+
+        | Mozambique | MZ | 508 |
+
+        | Myanmar (effective 1 November 2012) | MM | 104 |
+
+        | Namibia | NA | 516 |
+
+        | Nauru | NR | 520 |
+
+        | Nepal | NP | 524 |
+
+        | Netherlands Antilles | AN | 530 |
+
+        | New Caledonia | NC | 540 |
+
+        | New Zealand | NZ | 554 |
+
+        | Nicaragua | NI | 558 |
+
+        | Niger | NE | 562 |
+
+        | Nigeria | NG | 566 |
+
+        | Niue | NU | 570 |
+
+        | Norfolk Island | NF | 574 |
+
+        | Norway | NO | 578 |
+
+        | Oman | OM | 512 |
+
+        | Pakistan | PK | 586 |
+
+        | Panama | PA | 591 |
+
+        | Papua New Guinea | PG | 598 |
+
+        | Paraguay | PY | 600 |
+
+        | Peru | PE | 604 |
+
+        | Philippines | PH | 608 |
+
+        | Pitcairn | PN | 612 |
+
+        | Poland | PL | 616 |
+
+        | Qatar | QA | 634 |
+
+        | Republic of South Sudan | SS | 728 |
+
+        | Romania | RO | 642 |
+
+        | Russian Federation | RU | 643 |
+
+        | Rwanda | RW | 646 |
+
+        | Samoa | WS | 882 |
+
+        | Sao Tome and Principe | ST | 678 |
+
+        | Saudi Arabia | SA | 682 |
+
+        | Senegal | SN | 686 |
+
+        | Serbia | RS | 688 |
+
+        | Seychelles | SC | 690 |
+
+        | Sierra Leone | SL | 694 |
+
+        | Singapore | SG | 702 |
+
+        | Sint Maarten (Dutch Part) | SX | 534 |
+
+        | Solomon Islands | SB | 090 |
+
+        | Somalia | SO | 706 |
+
+        | South Africa | ZA | 710 |
+
+        | South Georgia and the South Sandwich Islands | GS | 239 |
+
+        | Sri Lanka | LK | 144 |
+
+        | Saint Helena, Ascension and Tristan Da Cunha | SH | 654 |
+
+        | St. Kitts and Nevis | KN | 659 |
+
+        | St. Lucia | LC | 662 |
+
+        | St. Vincent and the Grenadines | VC | 670 |
+
+        | Suriname | SR | 740 |
+
+        | Svalbard and Jan Mayen | SJ | 744 |
+
+        | Swaziland | SZ | 748 |
+
+        | Sweden | SE | 752 |
+
+        | Switzerland | CH | 756 |
+
+        | Taiwan | TW | 158 |
+
+        | Tajikistan | TJ | 762 |
+
+        | Tanzania, United Republic of | TZ | 834 |
+
+        | Thailand | TH | 764 |
+
+        | Togo | TG | 768 |
+
+        | Tokelau | TK | 772 |
+
+        | Tonga | TO | 776 |
+
+        | Trinidad and Tobago | TT | 780 |
+
+        | Tunisia | TN | 788 |
+
+        | Turkey | TR | 792 |
+
+        | Turkmenistan | TM | 795 |
+
+        | Tuvalu | TV | 798 |
+
+        | Uganda | UG | 800 |
+
+        | Ukraine | UA | 804 |
+
+        | United Arab Emirates | AE | 784 |
+
+        | United Kingdom | GB | 826 |
+
+        | Uruguay | UY | 858 |
+
+        | Uzbekistan | UZ | 860 |
+
+        | Vanuatu | VU | 548 |
+
+        | Venezuela, Bolivarian Republic of | VE | 862 |
+
+        | Vietnam | VN | 704 |
+
+        | Wallis and Futuna | WF | 876 |
+
+        | Western Sahara | EH | 732 |
+
+        | Yemen | YE | 886 |
+
+        | Zambia | ZM | 894 |
+
+        | Zimbabwe | ZW | 716 |
+
+
+        </details>'
+      externalDocs:
+        description: Find more info here
+        url: https://www.iso.org/iso-3166-country-codes.html
+      example: NLD
+    dinersAcquirerIdCode:
+      type: string
+      description: Acquirer Institution ID code. For Diners, this field corresponds to the IIC number.
+      pattern: ^\d+$
+      minLength: 6
+      maxLength: 11
+    city:
+      allOf:
+      - $ref: '#/components/schemas/ExtendedNameOfPeopleAndPlaces'
+      - description: 'The city of the address. Clients not enrolled in the "extended character set beta" are still subject to the `^[\w ,\.\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u00FF-]+$` pattern for field input.
+
+          '
+        example: Amsterdam-Duivendrecht
+    taxRegistrationId:
+      type: string
+      description: "A unique identifier assigned to individuals or entities for tax-related purposes. The format, name and use of this id may vary depending on the country and card network. \n<br> **Visa** requires all acquirers to include the SIRET for France or the Tax Identification Number for Belgium and Luxembourg for all domestic transactions.\n<br> **Mastercard** and **Discover** require the Tax Id Number in the US for commercial card transactions.\n"
+      pattern: ^[a-zA-Z0-9]+$
+      maxLength: 20
+    merchantReference:
+      description: Merchant reference number used by the Agent. Must not start with "mct-".
+      type: string
+      pattern: ^(?!mct-)[a-zA-Z0-9()+,\-.:=@;$_!*\/?#|]+$
+      minLength: 1
+      maxLength: 120
+    amexDirectMerchantAcquirerBin:
+      allOf:
+      - description: For Direct Merchant, this field is automatically copied from acquirerIdCode field.
+      - $ref: '#/components/schemas/amexAcquirerIdCode'
+    BancontactBin:
+      allOf:
+      - type: object
+        required:
+        - network
+        - messageSystem
+        - acquirerIdCode
+        - acquirerBin
+        properties:
+          network:
+            type: string
+            enum:
+            - bancontact
+          messageSystem:
+            $ref: '#/components/schemas/messageSystem'
+          acquirerIdCode:
+            type: string
+            description: Acquirer Institution ID code.
+            pattern: ^\d+$
+            minLength: 6
+            maxLength: 6
+          acquirerBin:
+            type: string
+            description: Acquirer Bin. The Bin number as assigned by the card network.
+            pattern: ^\d+$
+            minLength: 6
+            maxLength: 6
+      - $ref: '#/components/schemas/BaseBin'
+    acquirerAgentKey:
+      type: string
+      description: Acquirer Agent Key shows the owner agent Key of the Bin.
+      pattern: ^cgt-[a-zA-Z0-9]+|^$
+      default: ''
+    discoverIsoId:
+      type: string
+      description: Unique number assigned by Discover to a certified ISO. This field is mandatory if the direct Merchant relationship is maintained by an ISO
+      minLength: 1
+      maxLength: 11
+    mid:
+      type: string
+      description: 'As per card network requirements, the Merchant ID assigned by the acquirer must uniquely identify a legal merchant per acquirer BIN.
+
+
+        **Note:** For AMEX merchant acceptors, either provide Seller ID of a seller onboarded by a Payfac, or SE number of an AMEX Direct Merchant.
+
+
+        | Network | Length | Characters | Pattern |
+
+        | ------- | ------ | ---------- | --------|
+
+        | AMEX  | 1-20 | alphanumeric |  /^[a-zA-Z0-9-_\.]+$/ |
+
+        | Bancontact  | 1-15 | alphanumeric | /^[a-zA-Z0-9-_\.]+$/ |
+
+        | Diners | 1-15 | alphanumeric |  /^[a-zA-Z0-9# -]+$/ |
+
+        | Discover | 1-15 | alphanumeric | /^[a-zA-Z0-9-_\.]+$/  |
+
+        | Mastercard | 1-15 | alphanumeric | /^[a-zA-Z0-9-_\.]+$/ |
+
+        | Visa  | 1-15 | alphanumeric | /^[a-zA-Z0-9-_\.]+$/ |
+
+        '
+      minLength: 1
+      maxLength: 20
+      example: UO2344SDDAUOGS
+    networkAssignedId:
+      type: string
+      description: 'Unique ID assigned by the card network for the merchant. Used for example for Private Label transactions or large merchants.
+
+
+        | Network | Length | Characters |
+
+        | ------- | ------ | ---------- |
+
+        | Mastercard | 6 | alpha numeric |
+
+        | Visa | 10 | numeric |
+
+        | Bancontact | 6 | numeric |
+
+        '
+      pattern: ^\d{10}|[a-zA-Z0-9]{6}|\d{6}$
+    lastModified:
+      type: string
+      description: The date and time this object was last modified
+      format: date-time
+    phoneNumber:
+      type: string
+      description: An international phone number
+      pattern: ^(00|\+)[1-9]\d+$
+      minLength: 5
+      maxLength: 33
+      example: '+31850609160'
+    AcceptorRestriction:
+      type: object
+      description: An object containing restrictions on the Merchant Acceptor
+      deprecated: true
+      properties:
+        suspendPayouts:
+          type: boolean
+          deprecated: true
+          description: (Coming soon) When set to true payment instructions for this merchant acceptor will not be sent until set to false again.
+        blockCharges:
+          type: boolean
+          deprecated: true
+          description: This field is deprecated. The `chargesBlocked` property on the MerchantAcceptor serves as its replacement.
+    foreignRetailer:
+      type: boolean
+      description: Applicable for Visa Marketplace and Ramp Provider programs only. Indicates if the end merchant is in a different country than the Marketplace or Ramp Provider. <span class="tag network-tag visa-tag">VISA</span>
+    authorizationCurrency:
+      type: string
+      allOf:
+      - description: Used by American Express to verify an authorization for the provided SE Number. <br> **Note:** The following currencies are not permitted; **Belarusian Ruble(BYN), Cuban Peso(CUP), Iranian Rial(IRR), North Korean Won(KPW), Russian Federation Ruble(RUB), and Syrian Pound(SYP)**.
+      - $ref: '#/components/schemas/currencyCode'
+    agentKey:
+      description: Uniquely identifies an Agent
+      type: string
+      pattern: ^cgt-[a-zA-Z0-9]+|current$
+      example: cgt-1UF2NafdfrdPMf2XrS2
+    stateOrProvince:
+      allOf:
+      - $ref: '#/components/schemas/ExtendedNameOfPeopleAndPlaces'
+      - description: 'The state (US) or province (non-US) of the address. Required for US Point of Sale (POS) acceptors. Clients not enrolled in the "extended character set beta" are still subject to the `^[\w ,\.\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u00FF-]+$` pattern for field input.
+
+          '
+        example: Noord-Holland
+  examples:
+    create-merchant-simple:
+      summary: Example request creating a Merchant that is 'active'
+      value:
+        merchantReference: AB1234-5678_10.31
+        name: ACME Corporation
+        description: ACME Corporation. Building materials, rockets and birdseed.
+        legalName: Acme Corp.
+        registeredAddress:
+          countryCode:
+            alpha3: USA
+          stateOrProvince: CA
+          city: Hill Valley
+          line1: Riverside Drive
+          line2: '1640'
+          postalCode: '91103'
+        customerInquiry: '+15554321'
+        websiteUrl: https://acme.com/catalog
+    update-merchant-change-address:
+      summary: Example request updating the Merchant address
+      value:
+        registeredAddress:
+          countryCode:
+            alpha3: USA
+          stateOrProvince: CA
+          city: Hill Valley
+          line1: Riverside Drive 1640
+          postalCode: '91103'
+  parameters:
+    merchantReference:
+      name: merchantReference
+      description: Merchant reference number used by the Agent. Must not start with "mct-".
+      in: query
+      required: false
+      schema:
+        $ref: '#/components/schemas/merchantReference'
+    merchantKey:
+      name: merchantKey
+      description: 'Immutable, unique identifier of the merchant
+
+        '
+      in: path
+      required: true
+      schema:
+        $ref: '#/components/schemas/merchantKey'
+    offsetToken:
+      name: offsetToken
+      description: The offset token. This token is returned in the response of previous request.
+      in: query
+      required: false
+      schema:
+        $ref: '#/components/schemas/offsetToken'
+    sortOrder:
+      name: sortOrder
+      description: The sort order, __asc__ending or __desc__ending
+      in: query
+      required: false
+      schema:
+        type: string
+        enum:
+        - asc
+        - desc
+      example: desc
+    ifMatch:
+      name: If-Match
+      description: The request condition
+      in: header
+      required: false
+      schema:
+        type: integer
+        format: int32
+    limit:
+      name: limit
+      description: The number of items to return
+      in: query
+      required: false
+      schema:
+        type: integer
+        format: int32
+        minimum: 1
+        maximum: 100
+        default: 10
+      example: 1
+  responses:
+    BadRequestError:
+      description: The request was malformed. See the response body for details
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/BadRequestProblemDetail'
+          example:
+            type: /silverflow/problems/bad-request
+            title: Bad Request
+            status: 400
+            detail: Validation errors occurred
+            instance: https://api.silverflow.co/v1/merchants/mct-1hPdFqhgstYTUhlphPDp
+            validationErrors:
+            - instancePath: /tags/0/businessId
+              message: must not be longer than 255 characters
+    UnauthorizedError:
+      description: Authentication information is missing or invalid
+      headers:
+        WWW_Authenticate:
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ProblemDetail'
+          example:
+            type: https://datatracker.ietf.org/doc/html/rfc2616#section-10.4.2
+            title: Unauthorized
+            status: 401
+            detail: The credentials supplied in the request are either missing, invalid, or not applicable in the current scope
+    TooManyRequestsError:
+      description: The number of requests (per minute) has exceeded the configured maximum
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ProblemDetail'
+          example:
+            type: /silverflow/problems/too-many-requests
+            title: Too Many Requests
+            status: 429
+            detail: You have exceeded the rate limit. Please try again after the specified delay.
+            instance: /silverflow/b0451a9d-f66d-4ef7-9f5d-d48064a2bb3e
+    ForbiddenError:
+      description: The authenticated client is forbidden to make the request for the resource identified.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ProblemDetail'
+          example:
+            type: https://datatracker.ietf.org/doc/html/rfc2616#section-10.4.4
+            title: Forbidden
+            status: 403
+            detail: The server is refusing to execute the request for the current authenticated user
+            instance: https://api.silverflow.co/v1/merchants/mct-1hPdFqhgstYTUhlphPDp
+    ConflictError:
+      description: The request could not be completed due to a conflict with the current state of the resources involved in the request.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ProblemDetail'
+    PreconditionFailedError:
+      description: The conditions specified in the HTTP headers of the request were not met.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/PreconditionFailedProblemDetail'
+          example:
+            detail: The referenced bin with key 'bin-5nHQqdP4wTClI7MDMw5j' did not have the expected version 5
+            instance: /silverflow/00b32804-1109-4761-8776-9436a3c6b26b
+            status: 412
+            title: Precondition Failed
+            type: /silverflow/problems/precondition-failed
+    NotFoundError:
+      description: The requested resource was not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ProblemDetail'
+          example:
+            type: https://datatracker.ietf.org/doc/html/rfc2616#section-10.4.5
+            title: Not Found
+            status: 404
+            detail: The entity referenced in the request could not be found
+            instance: https://api.silverflow.co/v1/merchants/mct-1hPdFqhgstYTUhlphPDp
+  securitySchemes:
+    ApiKey:
+      description: "The primary method of authenticating to the Silverflow API is through API keys.\n\nAPI keys can be created by calling the [createApiKey](#operation/createApiKey) endpoint. You can create up to 40 API keys and also update and delete them, allowing for _credential rotation_.\n\nThe _Agent Activation_ process will generate an initial API Key for you. See [Activate Agent](#section/Getting-Started).\n\nA call to the [createApiKey](#operation/createApiKey) endpoint will return the following structure:\n\n```json\n{\n    \"key\": \"apk-1wtRxni5IsPsSpBLWpwr\",\n    \"status\": \"active\",\n    \"agentKey\": \"cgt-1wtRvFLIjDOyyUR5Q2LB\",\n    \"description\": \"Data lake API key\",\n    \"permissions\": [\n        \"charges:List\",\n        \"reports:All\"\n    ],\n    \"created\": \"2021-06-22T11:21:45.115Z\",\n    \"secret\": \"FWtnOOHAjbD6rNxWWEeVOCj7JXSEPGJQ\",\n    \"version\": 1\n}\n```\n\n> **Important:** The `secret` is only returned once in the response to the `createApiKey` call.\n\nOnce created, the `key` and `secret` fields from the API key must be used in the HTTP `Authorization` header using the `Basic` scheme.\nThe Basic scheme requires a **username** and **password** to be specified, separated by a `:` (colon) and Base64 encoded.\n\nUse the following values from the API key to construct a Basic authentication header:\n\n| Basic field | API key field | Example |\n| ----------- | ------------- | ------- |\n| username | `key` | `apk-1wtRxni5IsPsSpBLWpwr` |\n| password | `secret` | `FWtnOOHAjbD6rNxWWEeVOCj7JXSEPGJQ` |\n\nIn pseudo-code a valid HTTP Basic Authentication header would be constructed as follows:\n\n```ts\nconst apiKeyId = \"apk-1wtRxni5IsPsSpBLWpwr\";\nconst apiKeySecret = \"FWtnOOHAjbD6rNxWWEeVOCj7JXSEPGJQ\";\nconst authnValue = \"Basic \" + base64Encode(apiKeyId + \":\" + apiKeySecret);\nrequest.setHeader(\"Authorization\", authnValue);\n```\n\nUsing the values from the example a valid HTTP request would look like the following:\n\n```http\nGET /v1/agents/current HTTP/1.1\nAccept: application/json\nAuthorization: Basic YXBrLTF3dFJ4bmk1SXNQc1NwQkxXcHdyOkZXdG5PT0hBamJENnJOeFdXRWVWT0NqN0pYU0VQR0pR\n```\n\nMore information on the Basic scheme can be found in [RFC-7617 - The 'Basic' HTTP Authentication Scheme](https://datatracker.ietf.org/doc/html/rfc7617)."
+      type: http
+      scheme: basic
+    BearerToken:
+      description: 'Bearer tokens are temporary security credentials that can be used to authorize ''third parties'' (bearers) access to the Silverflow API on behalf of the agent.
+
+
+        These tokens are created by calling the [createAgentBearerToken](#operation/createAgentBearerToken) endpoint.
+
+
+        Once created the `token` field must be used in the HTTP `Authorization` header using the `Bearer` scheme.
+
+        Here''s an example of an HTTP request with a bearer token:
+
+
+        ```http
+
+        GET /v1/merchants/mct-1hPdFhmgaBzMS191nIbJ HTTP/1.1
+
+        Accept: application/json
+
+        Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...40EFOgxf_3I6mPZ16bXqHd5tUyApgl0mNOAXPm5AhnA
+
+
+        ```
+
+
+        More information on the Bearer scheme can be found in [RFC-6750 - The OAuth 2.0 Authorization Framework: Bearer Token Usage](https://datatracker.ietf.org/doc/html/rfc6750).'
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+    MutualTLS:
+      type: apiKey
+      in: header
+      name: '-'
+      description: 'The client must set up mTLS connection with a valid X.509 client certificate signed by a customer-provided CA (certificate authority) that is registered to a specific agent. The customer-provided CA certificate must be shared and added to Silverflow''s trust store prior to calling endpoints.
+
+
+        Certificate validation happens at the transport layer during TLS handshake. Tenant verification is performed by matching the agent key embedded in the client certificate against the agent key embedded in the trusted CA.
+
+        '
+x-refined-from:
+- silverflow-openapi.yml
+- silverflow-openapi.yml
+x-tagGroups:
+- name: ''
+  tags:
+  - Introduction
+  - Release Notes
+- name: Accounts
+  tags:
+  - Agents
+  - API Keys
+  - Bins
+  - Merchants
+  - Merchant Acceptors
+  - Enrollments
+  - Screenings
+- name: Event Notifications
+  tags:
+  - Event Subscriptions
+  - Charges Events
+  - Disputes Events
+  - Fraud Notification Events
+  - Processor Tokens Events
+  - Network Tokens Events
+  - Report Events
+  - Distribution Events
+  - AMMF Submission Events
+  - Reconciliation Events
+  - Clearing Events
+- name: 3DS Authentication
+  tags:
+  - 3DS Authentication
+- name: BEP Authentication
+  tags:
+  - BEP Authentication
+- name: Tokenization
+  tags:
+  - Processor Tokenization
+  - Network Tokenization
+- name: Charges
+  tags:
+  - Create Charges
+  - Create Recurring
+  - Retrieve Charges
+  - Charge Actions
+- name: Terminal-To-Cloud
+  tags:
+  - Create POS Charges
+  - Retrieve POS Charges
+  - POS Charge Actions
+- name: Card Management
+  tags:
+  - Card Management
+- name: Disputes
+  tags:
+  - Disputes
+  - Documents
+- name: Fraud Notifications
+  tags:
+  - Fraud Notifications
+- name: Card Info
+  tags:
+  - Card Info
+- name: Currency Conversion Rates
+  tags:
+  - Currency Conversion Rates
+- name: Fees
+  tags:
+  - Fees
+- name: Reconciliation
+  tags:
+  - Reconciliation Details
+  - Network Funds Transfers
+- name: Reports
+  tags:
+  - Reconciliation Reports
+  - Settlement Reports
+  - Card Network Reports
+  - Dispute Reports
+  - Fraud Notifications Reports
+  - Charges Reports
+  - Scheme Fee Reports
+  - Retrieve Reports
+  - Report Scheduling
+  - Distributions
+- name: Transaction Risk Assessment
+  tags:
+  - Transaction Risk Assessment
+- name: File Subscriptions
+  tags:
+  - File Subscriptions

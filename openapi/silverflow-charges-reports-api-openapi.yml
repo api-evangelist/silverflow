@@ -1,0 +1,600 @@
+openapi: 3.2.0
+info:
+  title: Silverflow Charges Reports API
+  version: 1.417.0
+  contact:
+    name: API Support
+    email: support@silverflow.com
+  license:
+    name: Commercial
+  description: 'Operations tagged Charges Reports across 2 of this provider''s published API definitions: silverflow-openapi.yml, silverflow-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://eu-west-1.api.silverflow.com/v1
+  description: Production URL for Europe - Equivalent to https://api.silverflow.co/v1
+- url: https://us-east-2.api.silverflow.com/v1
+  description: Production URL for North America
+- url: https://eu-west-1.api-sbx.silverflow.com/v1
+  description: Sandbox URL - Equivalent to https://api-sbx.silverflow.co/v1
+security:
+- ApiKey: []
+- BearerToken: []
+tags:
+- name: Charges Reports
+paths:
+  /reports/charges:
+    post:
+      operationId: createChargesReport
+      summary: Create Charges Report [EXPERIMENTAL]
+      description: 'Schedules the creation of a Charges Report.
+
+
+        Requires the `reports:CreateCharges` permission.
+
+        '
+      tags:
+      - Charges Reports
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChargesReportRequest'
+      responses:
+        '201':
+          description: The scheduled Charges Report
+          headers:
+            Location:
+              description: The URL of the newly created Charges Report
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateChargesReportResponse'
+              example:
+                key: rep-1e1dAHhgstYTUhlphPzZ
+                reportName: Charges
+                parameters:
+                  createdFrom: '2019-08-24T14:15:22Z'
+                  createdTo: '2019-08-24T14:15:22Z'
+                mimeType: text/csv
+                agentKey: cgt-1e1dAHhgstYTUhlphPzZ
+                reference: Report Reference
+                status: scheduled
+                created: '2019-08-24T14:15:22Z'
+                distributions:
+                - dst-1e1dAHhgstYTUhlphPzZ
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                oneOf:
+                - $ref: '#/components/schemas/InvalidDateRangeErrorDetails'
+                - $ref: '#/components/schemas/InvalidReportNameErrorDetails'
+                - $ref: '#/components/schemas/InputValidationError'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotAuthorizedErrorDetails'
+        '403':
+          $ref: '#/components/responses/openapi_components-responses-ForbiddenError-3'
+        '429':
+          $ref: '#/components/responses/openapi_components-responses-TooManyRequestsError-3'
+    servers:
+    - url: https://eu-west-1.api.silverflow.com/v1
+      description: Production URL for Europe - Equivalent to https://api.silverflow.co/v1
+    - url: https://us-east-2.api.silverflow.com/v1
+      description: Production URL for North America
+    - url: https://eu-west-1.api-sbx.silverflow.com/v1
+      description: Sandbox URL - Equivalent to https://api-sbx.silverflow.co/v1
+components:
+  schemas:
+    chargesReportParameters:
+      type: object
+      description: The query parameters used for a report.
+      required:
+      - createdFrom
+      - createdTo
+      additionalProperties: false
+      properties:
+        createdFrom:
+          type: string
+          format: date-time
+          description: Include only items that have a created date greater than or equal to the specified date
+        createdTo:
+          type: string
+          format: date-time
+          description: Include only items that have a created date less than or equal to the specified date
+    openapi_components-schemas-ValidationError:
+      type: object
+      required:
+      - path
+      - errorCode
+      - message
+      properties:
+        path:
+          type: string
+          description: The path to the error location in the request params or body.
+        errorCode:
+          type: string
+          description: The error code identifying the error type.
+        message:
+          type: string
+          description: The error message.
+    errorTitle:
+      type: string
+      description: 'A short, human-readable summary of the problem type. It does not change from occurrence to occurrence of the error.
+
+        '
+    errorInstance:
+      type: string
+      description: 'A reference that identifies the specific occurrence of the error. The instance is unique for every error.
+
+        '
+    components-schemas-reference:
+      type: string
+      description: Unique ID used to identify a report.
+      maxLength: 120
+    errorStatus:
+      type: integer
+      format: int32
+      description: 'The HTTP status code generated by the origin server for this occurrence
+
+        of the problem.
+
+        '
+    CreateChargesReportResponse:
+      type: object
+      required:
+      - reportName
+      - parameters
+      - mimeType
+      - key
+      - agentKey
+      - status
+      - created
+      properties:
+        reportName:
+          $ref: '#/components/schemas/ChargesReportName'
+        parameters:
+          $ref: '#/components/schemas/chargesReportParameters'
+        mimeType:
+          $ref: '#/components/schemas/chargesReportMimeType'
+        key:
+          $ref: '#/components/schemas/reportKey'
+        agentKey:
+          $ref: '#/components/schemas/AgentKey'
+        reference:
+          $ref: '#/components/schemas/components-schemas-reference'
+        status:
+          $ref: '#/components/schemas/createReportStatus'
+        created:
+          $ref: '#/components/schemas/openapi_components-schemas-created-2'
+        distributions:
+          $ref: '#/components/schemas/distributions'
+    InputValidationError:
+      type: object
+      required:
+      - type
+      - title
+      - status
+      - detail
+      - instance
+      - validationErrors
+      properties:
+        type:
+          allOf:
+          - $ref: '#/components/schemas/errorType'
+          - enum:
+            - /silverflow/problems/invalid-input
+        title:
+          allOf:
+          - $ref: '#/components/schemas/errorTitle'
+          - enum:
+            - Invalid Input
+        status:
+          allOf:
+          - $ref: '#/components/schemas/errorStatus'
+          - enum:
+            - 400
+        detail:
+          allOf:
+          - $ref: '#/components/schemas/errorDetail'
+          - enum:
+            - The request does not adhere to the defined API schema.
+        instance:
+          $ref: '#/components/schemas/errorInstance'
+        validationErrors:
+          type: array
+          items:
+            $ref: '#/components/schemas/openapi_components-schemas-ValidationError'
+          description: A list of validation errors.
+    distributionKey:
+      description: Uniquely identifies a distribution object
+      type: string
+      pattern: ^dst-[a-zA-Z0-9]+$
+      minLength: 10
+      maxLength: 120
+      example: dst-1e1dAHhgstYTUhlphPzZ
+    ChargesReportRequest:
+      type: object
+      required:
+      - parameters
+      - mimeType
+      description: Create Charges Report
+      additionalProperties: false
+      properties:
+        parameters:
+          $ref: '#/components/schemas/chargesReportParameters'
+        mimeType:
+          $ref: '#/components/schemas/chargesReportMimeType'
+        reference:
+          $ref: '#/components/schemas/components-schemas-reference'
+        distributions:
+          $ref: '#/components/schemas/distributions'
+    errorDetail:
+      type: string
+      description: 'A human readable explanation specific to this occurrence of the problem.
+
+        '
+    ChargesReportName:
+      type: string
+      description: The name of the report.
+      enum:
+      - Charges
+    NotAuthorizedErrorDetails:
+      type: object
+      required:
+      - type
+      - title
+      - status
+      - detail
+      - instance
+      properties:
+        type:
+          allOf:
+          - $ref: '#/components/schemas/errorType'
+          - enum:
+            - /silverflow/problems/report/not-authorized
+        title:
+          allOf:
+          - $ref: '#/components/schemas/errorTitle'
+          - enum:
+            - Not authorized
+        status:
+          allOf:
+          - $ref: '#/components/schemas/errorStatus'
+          - enum:
+            - 401
+        detail:
+          $ref: '#/components/schemas/errorDetail'
+        instance:
+          $ref: '#/components/schemas/errorInstance'
+    InvalidDateRangeErrorDetails:
+      type: object
+      required:
+      - type
+      - title
+      - status
+      - detail
+      - instance
+      properties:
+        type:
+          allOf:
+          - $ref: '#/components/schemas/errorType'
+          - enum:
+            - /silverflow/problems/report/invalid-date-range
+        title:
+          allOf:
+          - $ref: '#/components/schemas/errorTitle'
+          - enum:
+            - Invalid date range
+        status:
+          allOf:
+          - $ref: '#/components/schemas/errorStatus'
+          - enum:
+            - 400
+        detail:
+          $ref: '#/components/schemas/errorDetail'
+        instance:
+          $ref: '#/components/schemas/errorInstance'
+    AgentKey:
+      description: Uniquely identifies an Agent
+      type: string
+      pattern: ^cgt-[a-zA-Z0-9]+|current$
+      readOnly: true
+      example: cgt-1UF2NafdfrdPMf2XrS2
+    chargesReportMimeType:
+      type: string
+      description: The mime-type in which the Charges report is available.
+      enum:
+      - text/csv
+    openapi_components-schemas-ProblemDetail-2:
+      type: object
+      description: 'The ''problem detail'' object relays detailed information about the error that occurred. It is defined
+
+        by [RFC 7807 - Problem Details for HTTP APIs](https://tools.ietf.org/html/rfc7807).
+
+
+        Note that additional properties may be used to relay error specific information. For instance,
+
+        A Bad Request error may hold information about the individual validation errors found in the request.
+
+        '
+      properties:
+        type:
+          type: string
+          description: 'An absolute URI that identifies the problem type.
+
+            '
+          default: about:blank
+          example: https://api.silverflow.co/problem/constraint-violation
+        title:
+          type: string
+          description: 'A short, summary of the problem type. Written in english and readable
+
+            for engineers (usually not suited for non technical stakeholders and
+
+            not localized);
+
+            '
+          example: Service Unavailable
+        status:
+          type: integer
+          format: int32
+          description: 'The HTTP status code generated by the origin server for this occurrence
+
+            of the problem.
+
+            '
+          minimum: 100
+          maximum: 599
+          example: 503
+        detail:
+          type: string
+          description: 'A human readable explanation specific to this occurrence of the
+
+            problem.
+
+            '
+          example: Connection to database timed out
+        instance:
+          type: string
+          description: 'An absolute URI that identifies the specific occurrence of the problem.
+
+            It may or may not yield further information if dereferenced.
+
+            '
+      additionalProperties: true
+      example:
+        type: https://api.silverflow.co/problem/bad-request
+        title: Bad Request
+        status: 400
+        detail: The request could not be processed as it contained an invalid request entity
+        instance: https://api.silverflow.co/v1/reports/rep-1hPdFqhgstYTUhlphPDp
+        validationErrors:
+        - The value of property 'status' should be one of 'idle', 'active' or 'archived'
+        - The value of property 'tags.0.businessId' must not be longer than 255 characters
+    createReportStatus:
+      description: The status of the report.
+      type: string
+      enum:
+      - scheduled
+    errorType:
+      type: string
+      description: 'A relative URI reference, this property can be used to perform automated error handling.
+
+        '
+    reportKey:
+      description: Uniquely identifies a report object
+      type: string
+      pattern: ^rep-[a-zA-Z0-9]+$
+      minLength: 10
+      maxLength: 120
+      example: rep-1e1dAHhgstYTUhlphPzZ
+    distributions:
+      description: 'The distribution objects'' keys.
+
+
+        If passed, the report will be distributed when generation is completed.
+
+        '
+      type: array
+      items:
+        $ref: '#/components/schemas/distributionKey'
+    InvalidReportNameErrorDetails:
+      type: object
+      required:
+      - type
+      - title
+      - status
+      - detail
+      - instance
+      properties:
+        type:
+          allOf:
+          - $ref: '#/components/schemas/errorType'
+          - enum:
+            - /silverflow/problems/report/invalid-report-name
+        title:
+          allOf:
+          - $ref: '#/components/schemas/errorTitle'
+          - enum:
+            - Invalid report name
+        status:
+          allOf:
+          - $ref: '#/components/schemas/errorStatus'
+          - enum:
+            - 400
+        detail:
+          $ref: '#/components/schemas/errorDetail'
+        instance:
+          $ref: '#/components/schemas/errorInstance'
+    openapi_components-schemas-created-2:
+      type: string
+      description: The date and time this object was created
+      format: date-time
+      readOnly: true
+  responses:
+    openapi_components-responses-ForbiddenError-3:
+      description: The authenticated client is forbidden to make the request for the resource identified.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/openapi_components-schemas-ProblemDetail-2'
+          example:
+            type: /silverflow/problems/forbidden
+            title: Forbidden
+            status: 403
+            detail: 'Authenticated user ''apk-33GjasQdWl4781OsErvi'' is missing the following permission(s): reports:List'
+            instance: /silverflow/b0451a9d-f66d-4ef7-9f5d-d48064a2bb3e
+    openapi_components-responses-TooManyRequestsError-3:
+      description: The number of requests (per minute) has exceeded the configured maximum
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/openapi_components-schemas-ProblemDetail-2'
+          example:
+            type: /silverflow/problems/too-many-requests
+            title: Too Many Requests
+            status: 429
+            detail: You have exceeded the rate limit. Please try again after the specified delay.
+            instance: /silverflow/b0451a9d-f66d-4ef7-9f5d-d48064a2bb3e
+  securitySchemes:
+    ApiKey:
+      description: "The primary method of authenticating to the Silverflow API is through API keys.\n\nAPI keys can be created by calling the [createApiKey](#operation/createApiKey) endpoint. You can create up to 40 API keys and also update and delete them, allowing for _credential rotation_.\n\nThe _Agent Activation_ process will generate an initial API Key for you. See [Activate Agent](#section/Getting-Started).\n\nA call to the [createApiKey](#operation/createApiKey) endpoint will return the following structure:\n\n```json\n{\n    \"key\": \"apk-1wtRxni5IsPsSpBLWpwr\",\n    \"status\": \"active\",\n    \"agentKey\": \"cgt-1wtRvFLIjDOyyUR5Q2LB\",\n    \"description\": \"Data lake API key\",\n    \"permissions\": [\n        \"charges:List\",\n        \"reports:All\"\n    ],\n    \"created\": \"2021-06-22T11:21:45.115Z\",\n    \"secret\": \"FWtnOOHAjbD6rNxWWEeVOCj7JXSEPGJQ\",\n    \"version\": 1\n}\n```\n\n> **Important:** The `secret` is only returned once in the response to the `createApiKey` call.\n\nOnce created, the `key` and `secret` fields from the API key must be used in the HTTP `Authorization` header using the `Basic` scheme.\nThe Basic scheme requires a **username** and **password** to be specified, separated by a `:` (colon) and Base64 encoded.\n\nUse the following values from the API key to construct a Basic authentication header:\n\n| Basic field | API key field | Example |\n| ----------- | ------------- | ------- |\n| username | `key` | `apk-1wtRxni5IsPsSpBLWpwr` |\n| password | `secret` | `FWtnOOHAjbD6rNxWWEeVOCj7JXSEPGJQ` |\n\nIn pseudo-code a valid HTTP Basic Authentication header would be constructed as follows:\n\n```ts\nconst apiKeyId = \"apk-1wtRxni5IsPsSpBLWpwr\";\nconst apiKeySecret = \"FWtnOOHAjbD6rNxWWEeVOCj7JXSEPGJQ\";\nconst authnValue = \"Basic \" + base64Encode(apiKeyId + \":\" + apiKeySecret);\nrequest.setHeader(\"Authorization\", authnValue);\n```\n\nUsing the values from the example a valid HTTP request would look like the following:\n\n```http\nGET /v1/agents/current HTTP/1.1\nAccept: application/json\nAuthorization: Basic YXBrLTF3dFJ4bmk1SXNQc1NwQkxXcHdyOkZXdG5PT0hBamJENnJOeFdXRWVWT0NqN0pYU0VQR0pR\n```\n\nMore information on the Basic scheme can be found in [RFC-7617 - The 'Basic' HTTP Authentication Scheme](https://datatracker.ietf.org/doc/html/rfc7617)."
+      type: http
+      scheme: basic
+    BearerToken:
+      description: 'Bearer tokens are temporary security credentials that can be used to authorize ''third parties'' (bearers) access to the Silverflow API on behalf of the agent.
+
+
+        These tokens are created by calling the [createAgentBearerToken](#operation/createAgentBearerToken) endpoint.
+
+
+        Once created the `token` field must be used in the HTTP `Authorization` header using the `Bearer` scheme.
+
+        Here''s an example of an HTTP request with a bearer token:
+
+
+        ```http
+
+        GET /v1/merchants/mct-1hPdFhmgaBzMS191nIbJ HTTP/1.1
+
+        Accept: application/json
+
+        Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...40EFOgxf_3I6mPZ16bXqHd5tUyApgl0mNOAXPm5AhnA
+
+
+        ```
+
+
+        More information on the Bearer scheme can be found in [RFC-6750 - The OAuth 2.0 Authorization Framework: Bearer Token Usage](https://datatracker.ietf.org/doc/html/rfc6750).'
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+    MutualTLS:
+      type: apiKey
+      in: header
+      name: '-'
+      description: 'The client must set up mTLS connection with a valid X.509 client certificate signed by a customer-provided CA (certificate authority) that is registered to a specific agent. The customer-provided CA certificate must be shared and added to Silverflow''s trust store prior to calling endpoints.
+
+
+        Certificate validation happens at the transport layer during TLS handshake. Tenant verification is performed by matching the agent key embedded in the client certificate against the agent key embedded in the trusted CA.
+
+        '
+x-refined-from:
+- silverflow-openapi.yml
+- silverflow-openapi.yml
+x-tagGroups:
+- name: ''
+  tags:
+  - Introduction
+  - Release Notes
+- name: Accounts
+  tags:
+  - Agents
+  - API Keys
+  - Bins
+  - Merchants
+  - Merchant Acceptors
+  - Enrollments
+  - Screenings
+- name: Event Notifications
+  tags:
+  - Event Subscriptions
+  - Charges Events
+  - Disputes Events
+  - Fraud Notification Events
+  - Processor Tokens Events
+  - Network Tokens Events
+  - Report Events
+  - Distribution Events
+  - AMMF Submission Events
+  - Reconciliation Events
+  - Clearing Events
+- name: 3DS Authentication
+  tags:
+  - 3DS Authentication
+- name: BEP Authentication
+  tags:
+  - BEP Authentication
+- name: Tokenization
+  tags:
+  - Processor Tokenization
+  - Network Tokenization
+- name: Charges
+  tags:
+  - Create Charges
+  - Create Recurring
+  - Retrieve Charges
+  - Charge Actions
+- name: Terminal-To-Cloud
+  tags:
+  - Create POS Charges
+  - Retrieve POS Charges
+  - POS Charge Actions
+- name: Card Management
+  tags:
+  - Card Management
+- name: Disputes
+  tags:
+  - Disputes
+  - Documents
+- name: Fraud Notifications
+  tags:
+  - Fraud Notifications
+- name: Card Info
+  tags:
+  - Card Info
+- name: Currency Conversion Rates
+  tags:
+  - Currency Conversion Rates
+- name: Fees
+  tags:
+  - Fees
+- name: Reconciliation
+  tags:
+  - Reconciliation Details
+  - Network Funds Transfers
+- name: Reports
+  tags:
+  - Reconciliation Reports
+  - Settlement Reports
+  - Card Network Reports
+  - Dispute Reports
+  - Fraud Notifications Reports
+  - Charges Reports
+  - Scheme Fee Reports
+  - Retrieve Reports
+  - Report Scheduling
+  - Distributions
+- name: Transaction Risk Assessment
+  tags:
+  - Transaction Risk Assessment
+- name: File Subscriptions
+  tags:
+  - File Subscriptions

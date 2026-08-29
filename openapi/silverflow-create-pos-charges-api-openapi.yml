@@ -1,0 +1,2206 @@
+openapi: 3.2.0
+info:
+  title: Silverflow Create POS Charges API
+  version: 1.417.0
+  contact:
+    name: API Support
+    email: support@silverflow.com
+  license:
+    name: Commercial
+  description: 'Operations tagged Create POS Charges across 2 of this provider''s published API definitions: silverflow-openapi.yml, silverflow-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://eu-west-1.api.silverflow.com/v1
+  description: Production URL for Europe - Equivalent to https://api.silverflow.co/v1
+- url: https://us-east-2.api.silverflow.com/v1
+  description: Production URL for North America
+- url: https://eu-west-1.api-sbx.silverflow.com/v1
+  description: Sandbox URL - Equivalent to https://api-sbx.silverflow.co/v1
+security:
+- ApiKey: []
+- BearerToken: []
+tags:
+- name: Create POS Charges
+  description: Create a POS charge.
+paths:
+  /pos/charges:
+    servers:
+    - url: https://devices.eu-west-1.api.silverflow.com/v1
+      description: Production environment
+    post:
+      operationId: createPosCharge
+      summary: Create Charge [EXPERIMENTAL]
+      security:
+      - MutualTLS: []
+      description: '> **Notice:** This endpoint has different server URLs and authorization method than the rest of the API.
+
+
+        Create a new POS charge.
+
+        '
+      parameters:
+      - $ref: '#/components/parameters/IdempotencyKey'
+      tags:
+      - Create POS Charges
+      requestBody:
+        description: Create a new POS charge.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateChargeRequest'
+      responses:
+        '201':
+          description: The created charge
+          headers:
+            Location:
+              description: The URL of the newly created charge
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateChargeResponse'
+              examples:
+                onlinePin:
+                  $ref: '#/components/examples/OnlinePinResponse'
+                manualEntry:
+                  $ref: '#/components/examples/ManualEntryResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                oneOf:
+                - $ref: '#/components/schemas/openapi_components-schemas-InvalidInputErrorDetails'
+                - $ref: '#/components/schemas/schemas-InvalidRequestErrorDetails'
+              examples:
+                InvalidInputErrorExample:
+                  $ref: '#/components/examples/components-examples-InvalidInputErrorExample'
+                InvalidRequestErrorExample:
+                  $ref: '#/components/examples/InvalidRequestErrorExample'
+        '401':
+          $ref: '#/components/responses/openapi_components-responses-UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/components-responses-ForbiddenError'
+        '409':
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                oneOf:
+                - $ref: '#/components/schemas/ReferencedEntityNotFoundErrorDetails'
+                - $ref: '#/components/schemas/CannotDetermineCardNetworkErrorDetails'
+                - $ref: '#/components/schemas/IncompatibleCardNetworkForOperation'
+                - $ref: '#/components/schemas/schemas-IncompatibleCardNetworkErrorDetails'
+                - $ref: '#/components/schemas/BlockedMerchantAcceptorErrorDetails'
+                - $ref: '#/components/schemas/NonMatchingIdempotentRequestErrorDetails'
+                - $ref: '#/components/schemas/MissingPosAddressErrorDetails'
+                - $ref: '#/components/schemas/UnexpectedMessageSystem'
+                - $ref: '#/components/schemas/IncompatibleCardErrorDetails'
+                - $ref: '#/components/schemas/IdempotentRequestIsStillBeingProcessedErrorDetails'
+                - $ref: '#/components/schemas/UnexpectedCurrencyErrorDetails'
+              examples:
+                ReferencedEntityNotFoundErrorExample:
+                  $ref: '#/components/examples/components-examples-ReferencedEntityNotFoundErrorExample'
+                CannotDetermineCardNetworkErrorExample:
+                  $ref: '#/components/examples/CannotDetermineCardNetworkErrorExample'
+                IncompatibleCardNetworkForOperationErrorExample:
+                  $ref: '#/components/examples/IncompatibleCardNetworkForOperationExample'
+                IncompatibleCardNetworkErrorExample:
+                  $ref: '#/components/examples/examples-IncompatibleCardNetworkErrorExample'
+                BlockedMerchantAcceptorErrorExample:
+                  $ref: '#/components/examples/BlockedMerchantAcceptorErrorExample'
+                BlockedBinErrorExample:
+                  $ref: '#/components/examples/BlockedBinErrorExample'
+                NonMatchingIdempotentRequestErrorExample:
+                  $ref: '#/components/examples/NonMatchingIdempotentRequestErrorExample'
+                MissingPosAddressProblemExample:
+                  $ref: '#/components/examples/MissingPosAddressErrorExample'
+                UnexpectedMessageSystemExample:
+                  $ref: '#/components/examples/UnexpectedMessageSystemExample'
+                IncompatibleCardErrorDetails:
+                  $ref: '#/components/examples/IncompatibleCardErrorExample'
+                IdempotentRequestIsStillBeingProcessedErrorExample:
+                  $ref: '#/components/examples/IdempotentRequestIsStillBeingProcessedExample'
+                UnexpectedCurrencyErrorDetails:
+                  $ref: '#/components/examples/UnexpectedCurrencyErrorExample'
+        '429':
+          $ref: '#/components/responses/components-responses-TooManyRequestsError'
+        '500':
+          $ref: '#/components/responses/responses-InternalServerError'
+components:
+  schemas:
+    BaseTerminal:
+      type: object
+      required:
+      - id
+      - attended
+      properties:
+        id:
+          type: string
+          description: Terminal's ID
+          pattern: ^[a-zA-Z0-9]+$
+          minLength: 1
+          maxLength: 8
+          example: AAFF
+        attended:
+          type: boolean
+          description: Whether the terminal is attended or not.
+    POS:
+      allOf:
+      - type: object
+        required:
+        - type
+        properties:
+          type:
+            type: string
+            enum:
+            - pos
+      - $ref: '#/components/schemas/BaseTerminal'
+      - type: object
+        required:
+        - capabilities
+        properties:
+          capabilities:
+            type: array
+            description: 'The capabilities of the terminal. This can be one or multiple, and if more than one is specified it means that it is capable of all of those things.
+
+
+              #### Restrictions
+
+
+              If `capabilities` include `keyEntry` or `signature` then `attended` must be set to `true`.
+
+              '
+            items:
+              $ref: '#/components/schemas/TerminalCapability'
+            example:
+            - contactChip
+            - contactlessChip
+            - contactMagStripe
+            - oneTap
+    components-schemas-expiryYear:
+      type: integer
+      description: 'The year the card expires including the century
+
+        '
+      minimum: 1950
+      maximum: 2200
+    SoftPOS:
+      allOf:
+      - type: object
+        required:
+        - type
+        properties:
+          type:
+            type: string
+            enum:
+            - softpos
+      - $ref: '#/components/schemas/BaseTerminal'
+      - type: object
+        required:
+        - attended
+        - capabilities
+        properties:
+          attended:
+            type: boolean
+            enum:
+            - true
+          capabilities:
+            type: array
+            description: 'The capabilities of the terminal. This can be one or multiple, and if more than one is specified it means that it is capable of all of those things.
+
+              '
+            items:
+              $ref: '#/components/schemas/softPosTerminalCapability'
+            example:
+            - onlinePin
+            - contactlessChip
+            - noCvm
+            - oneTap
+    schemas-ClearingStatus:
+      type: string
+      description: Clearing status of the charge
+      enum:
+      - none
+      - manual
+      - pending
+      - completed
+      - canceled
+      - abandoned
+      example: pending
+    CreateChargeRequest:
+      type: object
+      additionalProperties: false
+      required:
+      - merchantAcceptorResolver
+      - card
+      - amount
+      - type
+      - terminal
+      description: 'Create a charge request
+
+        '
+      properties:
+        merchantAcceptorResolver:
+          $ref: '#/components/schemas/components-schemas-AcceptorResolver'
+        card:
+          $ref: '#/components/schemas/schemas-CardInput'
+        amount:
+          $ref: '#/components/schemas/RequestAmount'
+        type:
+          $ref: '#/components/schemas/schemas-ChargeType'
+        localTransactionDateTime:
+          $ref: '#/components/schemas/localTransactionDateTime'
+        transactionReference:
+          $ref: '#/components/schemas/transactionReference'
+        track2Data:
+          $ref: '#/components/schemas/track2Data'
+        emvData:
+          $ref: '#/components/schemas/emvData'
+        cardSequenceNumber:
+          $ref: '#/components/schemas/cardSequenceNumber'
+        pinBlock:
+          $ref: '#/components/schemas/components-schemas-PinBlock'
+        terminal:
+          $ref: '#/components/schemas/Terminal'
+        allowPartialApproval:
+          $ref: '#/components/schemas/allowPartialApproval'
+        clearAfter:
+          $ref: '#/components/schemas/schemas-clearAfter'
+    isoFieldResponseCodeDescription:
+      type: string
+      description: The description of the `responseCode`
+      example: Approved
+    newEmvData:
+      type: string
+      description: 'This field contains integrated circuit card (ICC) related binary data that is transmitted from the card issuer to the ICC. This field is formatted as 510 hexadecimal characters, which translates to 255 bytes.
+
+
+        If this field is present in the response message, it should be passed without modification to the ICC.
+
+        '
+      pattern: ^[A-Fa-f0-9]+$
+      minLength: 1
+      maxLength: 510
+      example: 5F2A0209785F34010082027C008407A0000000093510950500000080009A031104119C01009F02060000000043149F090200029F10120210A780030400009F2100000000000000FF9F1A0202509F26082E3EAB17CEEC500C9F2701809F330360A0409F34034403029F3501229F360200169F3704BC75E9B39F4005A00090F0019F4C089F21B02E0EEAC454
+    schemas-ChargeType:
+      description: Describes the kind of POS charge the merchant wants to submit.
+      type: object
+      required:
+      - intent
+      - cardEntry
+      - order
+      - terminalEntryMode
+      properties:
+        intent:
+          $ref: '#/components/schemas/components-schemas-intent'
+        cardEntry:
+          $ref: '#/components/schemas/components-schemas-cardEntry'
+        order:
+          $ref: '#/components/schemas/schemas-order'
+        terminalEntryMode:
+          $ref: '#/components/schemas/schemas-terminalEntryMode'
+        sequence:
+          $ref: '#/components/schemas/schemas-sequence'
+    PinBlockDataIso4:
+      type: string
+      title: ISO-4 Block
+      description: 'Contains encrypted PIN information, formatted as an `ISO-4` block of 32 hexadecimal characters.
+
+        '
+      pattern: ^[A-Fa-f0-9]+$
+      minLength: 32
+      maxLength: 32
+      example: 32CF86E514CB24FE32CF86E514CB24FE
+    schemas-PinBlockIso4:
+      type: object
+      title: ISO-4 PIN Block
+      description: PIN block related data in `ISO-4` format.
+      additionalProperties: false
+      required:
+      - block
+      - format
+      - zoneId
+      - keyId
+      properties:
+        format:
+          type: string
+          description: Indicates the type of PIN block format used.
+          enum:
+          - ISO-4
+        block:
+          $ref: '#/components/schemas/PinBlockDataIso4'
+        zoneId:
+          $ref: '#/components/schemas/PinBlockZoneId'
+        keyId:
+          $ref: '#/components/schemas/schemas-PinBlockKeyId'
+    schemas-BaseAmountBreakdown:
+      type: object
+      required:
+      - baseAmount
+      description: 'A breakdown of the transaction `value`.
+
+
+        All provided amounts must exactly add up to `value`.
+
+        Providing a breakdown is only required if any other amounts besides the `baseAmount` are included.
+
+        '
+      properties:
+        baseAmount:
+          allOf:
+          - description: 'The base transaction value in minor units. For example `$12.34` should be encoded as `1234`.
+
+              '
+          - $ref: '#/components/schemas/openapi_components-schemas-amountValue'
+    schemas-CardInput:
+      type: object
+      required:
+      - number
+      - expiryMonth
+      - expiryYear
+      additionalProperties: false
+      description: Card data
+      properties:
+        number:
+          $ref: '#/components/schemas/components-schemas-pan'
+        expiryMonth:
+          $ref: '#/components/schemas/expiryMonth'
+        expiryYear:
+          $ref: '#/components/schemas/components-schemas-expiryYear'
+        createProcessorToken:
+          type: boolean
+          default: false
+          description: 'When set to `true`, Silverflow will [create a processor token](https://docs.silverflow.com/guides/card-tokenization) for the provided `card` and return a processor token key in the response field `card.processorTokenKey`. <a class="experimental-tag-link" href="https://docs.silverflow.com/guides/api-lifecycle#tag/EXPERIMENTAL-Tag"><span class="tag experimental-tag">EXPERIMENTAL</span></a>
+
+
+            **This flag is non-blocking.** When failing to create a processor token, the authorization will take place as usual and no `card.processorTokenKey` will be returned.
+
+            '
+    schemas-ResponseAmount:
+      type: object
+      required:
+      - value
+      - currency
+      additionalProperties: false
+      description: 'The amount encoded as an object with a `value` in minor units and a `currency` code.
+
+
+        An optional `breakdown` can be provided to indicate specific sub-amounts.
+
+        '
+      properties:
+        value:
+          allOf:
+          - description: 'The full transaction amount in minor units. For example `$12.34` should be encoded as `1234`.
+
+
+              If a `breakdown` is provided, it must exactly add up to this `value`.
+
+              '
+          - $ref: '#/components/schemas/openapi_components-schemas-amountValue'
+        currency:
+          $ref: '#/components/schemas/openapi_components-schemas-currencyCode-2'
+        breakdown:
+          $ref: '#/components/schemas/schemas-ResponseAmountBreakdown'
+    softPosTerminalCapability:
+      type: string
+      enum:
+      - contactlessChip
+      - onlinePin
+      - signature
+      - noCvm
+      - oneTap
+    emvData:
+      type: string
+      description: 'This field contains integrated circuit card (ICC) related binary data that is transmitted from the ICC to the card issuer and from the card issuer to the ICC. This field is formatted as 510 hexadecimal characters, which translates to 255 bytes.
+
+        '
+      pattern: ^[A-Fa-f0-9]+$
+      minLength: 1
+      maxLength: 510
+      example: 5F2A0209785F34010082027C008407A0000000093510950500000080009A031104119C01009F02060000000043149F090200029F10120210A780030400009F2100000000000000FF9F1A0202509F26082E3EAB17CEEC500C9F2701809F330360A0409F34034403029F3501229F360200169F3704BC75E9B39F4005A00090F0019F4C089F21B02E0EEAC454
+    openapi_components-schemas-created:
+      type: string
+      description: The date and time this object was created
+      format: iso-8601-date-time
+      readOnly: true
+    isoFieldResponseCode:
+      type: string
+      description: Contents of field 39
+      example: '00'
+    components-schemas-AcceptorResolver:
+      type: object
+      description: 'The resolver is used to select the appropriate merchant acceptor for creating the charge.
+
+        It can accept either a `merchantAcceptorKey` or a combination of `merchantKey` and an optional `route`. If the optional property for `route` is not provided
+
+        the default one generated when creating an acceptor will be used.
+
+        '
+      oneOf:
+      - $ref: '#/components/schemas/components-schemas-ResolverByAcceptorKey'
+      - $ref: '#/components/schemas/schemas-ResolverByMerchant'
+    schemas-mastercardSpecificFields:
+      type: object
+      required:
+      - banknetReference
+      - traceId
+      description: Mastercard specific ISO8583 raw values
+      properties:
+        banknetReference:
+          type: string
+          description: Contents of field 63, subfield 2
+          example: ATSGHX
+        traceId:
+          type: string
+          description: 'The trace ID can be used to refer to the original authorization for subsequent transactions (e.g., reversals, MITs).
+
+
+            The value is constructed from the contents of field 63, subfield 1, field 63, subfield 2, and field 15. The value intentionally ends with two spaces.
+
+            '
+        merchantAdviceCode:
+          type: string
+          description: Contents of field 48, subelement 84
+          example: '01'
+        cvcResult:
+          type: string
+          description: Contents of field 48, subelement 87
+          example: M
+        avsResponse:
+          type: string
+          description: Contents of field 48, subelement 83
+          example: A
+        paymentAccountReference:
+          type: string
+          description: Contents of field 56, subelement 1, subfield 1
+          example: 50020EHB2QT3YBD5KU6OFMSN6BHLU
+        transactionLinkId:
+          type: string
+          description: Contents of field 105, subelement 1
+          example: qtQRrYlsSvSecPJDBzrzYA
+    ValidationError:
+      type: object
+      required:
+      - path
+      - message
+      properties:
+        path:
+          type: string
+          description: A relative path to the error location within the request body.
+        errorCode:
+          type: string
+          description: A code that identifies the error.
+        message:
+          type: string
+          description: A brief description of the validation error.
+    ReferencedEntityNotFoundErrorDetails:
+      type: object
+      required:
+      - type
+      - title
+      - status
+      - detail
+      - instance
+      properties:
+        type:
+          allOf:
+          - $ref: '#/components/schemas/errorType'
+          - enum:
+            - /silverflow/problems/referenced-entity-not-found
+        title:
+          allOf:
+          - $ref: '#/components/schemas/errorTitle'
+          - enum:
+            - Referenced Entity Not Found
+        status:
+          allOf:
+          - $ref: '#/components/schemas/errorStatus'
+          - enum:
+            - 409
+        detail:
+          $ref: '#/components/schemas/errorDetail'
+        instance:
+          $ref: '#/components/schemas/errorInstance'
+    openapi_components-schemas-amountValue:
+      type: integer
+      format: int64
+      minimum: 1
+      maximum: 999999999999
+      description: 'An amount in minor units. For example `$12.34` should be encoded as `1234`.
+
+        '
+      example: 2599
+    components-schemas-intent:
+      description: The intention of the cardholder
+      type: string
+      enum:
+      - purchase
+      - reservation
+      - refund
+    allowPartialApproval:
+      type: boolean
+      default: false
+      description: 'Indicates whether to allow partial approvals for this charge.
+
+        If set to `true` the charge''s and the authorization action''s `amount` field will contain the approved amount.
+
+        It is only implemented for Visa and Mastercard. It will be ignored for other card networks.
+
+        '
+    isoFieldRetrievalReferenceNumber:
+      type: string
+      description: Contents of field 37
+      example: '131608123456'
+    schemas-version:
+      type: integer
+      description: The version of this object
+      format: int64
+      example: 1
+      readOnly: true
+    components-schemas-pan:
+      type: string
+      description: Full digits of a card
+      pattern: ^\d+$
+      minLength: 12
+      maxLength: 19
+      format: password
+      example: '4761070000000905'
+    components-schemas-lastModified:
+      type: string
+      description: The date and time this object was last modified
+      format: iso-8601-date-time
+      readOnly: true
+    NonMatchingIdempotentRequestErrorDetails:
+      type: object
+      required:
+      - type
+      - title
+      - status
+      - detail
+      - instance
+      properties:
+        type:
+          allOf:
+          - $ref: '#/components/schemas/errorType'
+          - enum:
+            - /silverflow/problems/idempotency/request-mismatch
+        title:
+          allOf:
+          - $ref: '#/components/schemas/errorTitle'
+          - enum:
+            - Idempotent Request Mismatch
+        status:
+          allOf:
+          - $ref: '#/components/schemas/errorStatus'
+          - enum:
+            - 409
+        detail:
+          $ref: '#/components/schemas/errorDetail'
+        instance:
+          $ref: '#/components/schemas/errorInstance'
+    terminalAction:
+      description: Indicates if the issuer requests a PIN in Single Tap mode, or switching interface.
+      type: string
+      enum:
+      - requestPin
+      - switchInterface
+    IncompatibleCardErrorDetails:
+      type: object
+      required:
+      - type
+      - title
+      - status
+      - detail
+      - instance
+      properties:
+        type:
+          allOf:
+          - $ref: '#/components/schemas/errorType'
+          - enum:
+            - /silverflow/problems/charge/incompatible-card
+        title:
+          allOf:
+          - $ref: '#/components/schemas/errorTitle'
+          - enum:
+            - Incompatible Card
+        status:
+          allOf:
+          - $ref: '#/components/schemas/errorStatus'
+          - enum:
+            - 409
+        detail:
+          $ref: '#/components/schemas/errorDetail'
+        instance:
+          $ref: '#/components/schemas/errorInstance'
+    errorTitle:
+      type: string
+      description: 'A short, human-readable summary of the problem type. It does not change from occurrence to occurrence of the error.
+
+        '
+    schemas-AuthorizationIsoFields:
+      type: object
+      required:
+      - responseCode
+      - responseCodeDescription
+      - networkCode
+      - systemTraceAuditNumber
+      - retrievalReferenceNumber
+      - eci
+      - networkSpecificFields
+      description: Object containing the raw values from the ISO8583 response message received from the network.
+      properties:
+        responseCode:
+          $ref: '#/components/schemas/isoFieldResponseCode'
+        responseCodeDescription:
+          $ref: '#/components/schemas/isoFieldResponseCodeDescription'
+        authorizationCode:
+          $ref: '#/components/schemas/isoFieldAuthorizationCode'
+        networkCode:
+          $ref: '#/components/schemas/isoFieldNetworkCode'
+        systemTraceAuditNumber:
+          $ref: '#/components/schemas/isoFieldSystemTraceAuditNumber'
+        retrievalReferenceNumber:
+          $ref: '#/components/schemas/isoFieldRetrievalReferenceNumber'
+        eci:
+          type: string
+          enum:
+          - '00'
+        networkSpecificFields:
+          oneOf:
+          - $ref: '#/components/schemas/amexSpecificFields'
+          - $ref: '#/components/schemas/discoverSpecificFields'
+          - $ref: '#/components/schemas/schemas-mastercardSpecificFields'
+          - $ref: '#/components/schemas/schemas-visaSpecificFields'
+    schemas-acceptorRoute:
+      type: string
+      pattern: ^(^$|^[a-zA-Z0-9-_:;.,]+$)
+      minLength: 0
+      maxLength: 255
+      description: 'Route key used to uniquely reference an acceptor when used in combination
+
+        with its card network and merchant key.
+
+        '
+    schemas-RequestAmountBreakdown:
+      allOf:
+      - $ref: '#/components/schemas/schemas-BaseAmountBreakdown'
+      - type: object
+        properties:
+          cashback:
+            allOf:
+            - description: 'The cashback amount included in the total transaction `value` in minor units.
+
+                For example `$12.34` should be encoded as `1234`.
+
+
+                The following requirements apply:
+
+                - `amount.breakdown.cashback` is greater than 0.
+
+                - `type.intent` must be `purchase`.
+
+                - `emvData` must be present and include valid data for tag `9F03`.
+
+                - `partialApproval` is not requested.
+
+
+                **Currently only supported for Visa and Mastercard.**
+
+                '
+            - $ref: '#/components/schemas/openapi_components-schemas-amountValue'
+          gratuity:
+            allOf:
+            - description: 'An optional field specifying the explicit tip or gratuity amount.
+
+
+                The following requirements apply:
+
+                - `amount.breakdown.gratuity` is greater than 0.
+
+                - `type.intent` must be `purchase`.
+
+                '
+            - $ref: '#/components/schemas/openapi_components-schemas-amountValue'
+    isoFieldSystemTraceAuditNumber:
+      type: string
+      description: Contents of field 11
+      example: '123456'
+    discoverSpecificFields:
+      type: object
+      description: Discover specific ISO8583 raw values
+      required:
+      - network
+      properties:
+        network:
+          type: string
+          description: Card network providing these fields
+          enum:
+          - discover
+        avsResponseCode:
+          type: string
+          description: Contents field 44, usage 2, position 1.
+        cidResultCode:
+          type: string
+          description: Contents field 44, usage 2, position 2.
+        networkReferenceId:
+          type: string
+          description: Contents field 48, position 11-25.
+    TerminalCapability:
+      type: string
+      enum:
+      - contactChip
+      - contactlessChip
+      - contactMagStripe
+      - contactlessMagStripe
+      - offlineEncipheredPin
+      - offlinePlaintextPin
+      - onlinePin
+      - signature
+      - keyEntry
+      - noCvm
+      - oneTap
+    schemas-InvalidRequestErrorDetails:
+      type: object
+      required:
+      - type
+      - title
+      - status
+      - detail
+      - instance
+      properties:
+        type:
+          allOf:
+          - $ref: '#/components/schemas/errorType'
+          - enum:
+            - /silverflow/problems/charge/invalid-request
+        title:
+          $ref: '#/components/schemas/errorTitle'
+        status:
+          allOf:
+          - $ref: '#/components/schemas/errorStatus'
+          - enum:
+            - 400
+        detail:
+          $ref: '#/components/schemas/errorDetail'
+        instance:
+          $ref: '#/components/schemas/errorInstance'
+    track2Data:
+      type: string
+      description: 'The information encoded on track 2 of the card magnetic stripe as defined in the ISO 7813 specification, including data element separator but excluding the beginning and ending sentinels and the LRC (Longitudinal Redundancy Check) character.
+
+        This property is mandatory when the `terminalEntryMode` is `chip`, `contactless`,`magstripe` or `magstripe-fallback`.
+
+        '
+      pattern: ^[A-Fa-f0-9]+$
+      minLength: 1
+      maxLength: 37
+      example: 6799995700000004054D25122010875408456
+    MissingPosAddressErrorDetails:
+      type: object
+      required:
+      - type
+      - title
+      - status
+      - detail
+      - instance
+      properties:
+        type:
+          allOf:
+          - $ref: '#/components/schemas/errorType'
+          - enum:
+            - /silverflow/problems/merchant-acceptor/missing-pos-address
+        title:
+          allOf:
+          - $ref: '#/components/schemas/errorTitle'
+          - enum:
+            - Missing Point of Sale Address
+        status:
+          allOf:
+          - $ref: '#/components/schemas/errorStatus'
+          - enum:
+            - 409
+        detail:
+          $ref: '#/components/schemas/errorDetail'
+        instance:
+          $ref: '#/components/schemas/errorInstance'
+    schemas-order:
+      description: The method used to place the order.
+      type: string
+      enum:
+      - counter
+    schemas-IncompatibleCardNetworkErrorDetails:
+      type: object
+      required:
+      - type
+      - title
+      - status
+      - detail
+      - instance
+      properties:
+        type:
+          allOf:
+          - $ref: '#/components/schemas/errorType'
+          - enum:
+            - /silverflow/problems/bin/unexpected-network
+        title:
+          $ref: '#/components/schemas/errorTitle'
+        status:
+          allOf:
+          - $ref: '#/components/schemas/errorStatus'
+          - enum:
+            - 409
+        detail:
+          $ref: '#/components/schemas/errorDetail'
+        instance:
+          $ref: '#/components/schemas/errorInstance'
+    chargeKey:
+      description: Uniquely identifies a charge.
+      type: string
+      pattern: ^chg-[a-zA-Z0-9]+$
+      minLength: 5
+      maxLength: 120
+      example: chg-1e1dAHhgstYTUhlphPzZ
+    ForbiddenErrorDetails:
+      type: object
+      required:
+      - type
+      - title
+      - status
+      - detail
+      - instance
+      properties:
+        type:
+          allOf:
+          - $ref: '#/components/schemas/errorType'
+          - enum:
+            - /silverflow/problems/forbidden
+        title:
+          allOf:
+          - $ref: '#/components/schemas/errorTitle'
+          - enum:
+            - Forbidden
+        status:
+          allOf:
+          - $ref: '#/components/schemas/errorStatus'
+          - enum:
+            - 403
+        detail:
+          $ref: '#/components/schemas/errorDetail'
+        instance:
+          $ref: '#/components/schemas/errorInstance'
+    expiryMonth:
+      type: integer
+      description: 'The month the card expires. January is 1
+
+        '
+      minimum: 1
+      maximum: 12
+    OutputCard:
+      type: object
+      required:
+      - maskedNumber
+      additionalProperties: false
+      description: 'Card data
+
+        '
+      properties:
+        maskedNumber:
+          type: string
+          description: 'The card number used to create this charge, masked according to PCI standards. For card numbers with 16 or more digits, the first 8 and the last 4 digits are visible. For card numbers with 13-15 digits, the first 6 and the last 4 digits are visible. For cards numbers with less than 13 digits, the first 6 and last 2 digits are visible.
+
+            '
+        processorTokenKey:
+          $ref: '#/components/schemas/schemas-processorTokenKey'
+    amexSpecificFields:
+      type: object
+      required:
+      - acquirerReferenceData
+      description: American Express-specific ISO8583 raw values
+      properties:
+        acquirerReferenceData:
+          type: string
+          description: Contents of field 31.
+        cvcResult:
+          type: string
+          description: Contents of field 44, first byte.
+          example: Y
+        avsResult:
+          type: string
+          description: Contents of field 44, second byte.
+          example: Y
+    schemas-clearingMode:
+      type: string
+      enum:
+      - auto
+      - manual
+      description: 'The clearing method for the charge. Charges with `clearingMode` set to `manual` must be manually cleared later.
+
+        '
+      default: auto
+    components-schemas-ResolverByAcceptorKey:
+      type: object
+      additionalProperties: false
+      required:
+      - merchantAcceptorKey
+      description: 'Used to select a merchant acceptor by key.
+
+        '
+      properties:
+        merchantAcceptorKey:
+          $ref: '#/components/schemas/components-schemas-acceptorKey'
+    CannotDetermineCardNetworkErrorDetails:
+      type: object
+      required:
+      - type
+      - title
+      - status
+      - detail
+      - instance
+      properties:
+        type:
+          allOf:
+          - $ref: '#/components/schemas/errorType'
+          - enum:
+            - /silverflow/problems/charge/cannot-determine-card-network-by-card-number
+        title:
+          allOf:
+          - $ref: '#/components/schemas/errorTitle'
+          - enum:
+            - Cannot Determine Card Network By Card Number
+        status:
+          allOf:
+          - $ref: '#/components/schemas/errorStatus'
+          - enum:
+            - 409
+        detail:
+          $ref: '#/components/schemas/errorDetail'
+        instance:
+          $ref: '#/components/schemas/errorInstance'
+    components-schemas-cardEntry:
+      description: The method used to capture the card details.
+      type: string
+      enum:
+      - terminal
+      example: terminal
+    schemas-ResponseAmountBreakdown:
+      allOf:
+      - $ref: '#/components/schemas/schemas-BaseAmountBreakdown'
+      - type: object
+        properties:
+          cashback:
+            allOf:
+            - description: 'The cashback amount included in the total transaction `value` in minor units.
+
+                For example `$12.34` should be encoded as `1234`.
+
+                '
+            - $ref: '#/components/schemas/openapi_components-schemas-amountValue'
+          gratuity:
+            allOf:
+            - description: 'The gratuity amount included in the total transaction `value` in minor units.
+
+                For example `$12.34` should be encoded as `1234`.
+
+                '
+            - $ref: '#/components/schemas/openapi_components-schemas-amountValue'
+    schemas-sequence:
+      description: 'This property indicates that the cardholder has entered Online PIN, when required by the issuer for a Mastercard Single Tap transaction.
+
+        '
+      type: string
+      enum:
+      - subsequent
+    schemas-ResolverByMerchant:
+      type: object
+      additionalProperties: false
+      required:
+      - merchantKey
+      description: 'Used to select a merchant acceptor by merchant key and an optional route.
+
+        '
+      properties:
+        merchantKey:
+          $ref: '#/components/schemas/schemas-merchantKey'
+        route:
+          $ref: '#/components/schemas/schemas-acceptorRoute'
+    schemas-visaSpecificFields:
+      type: object
+      required:
+      - transactionIdentifier
+      description: Visa specific ISO8583 raw values
+      properties:
+        transactionIdentifier:
+          type: string
+          description: Contents of field 62, subfield 2
+          example: '238210000026090'
+        cvv2ResultCode:
+          type: string
+          description: Contents of field 44, subfield 10
+          example: M
+        avsResultCode:
+          type: string
+          description: Contents of field 44, subfield 2
+          example: Y
+        paymentAccountReference:
+          type: string
+          description: Contents of field 56, dataset 1, tag 1
+          example: 50020EHB2QT3YBD5KU6OFMSN6BHLU
+        aniResults:
+          type: object
+          description: Contents of field 34, dataset 4
+          required:
+          - status
+          properties:
+            status:
+              type: string
+              description: Contents of field 34, dataset 4, tag C0
+            fullNameMatch:
+              type: string
+              description: Contents of field 34, dataset 4, tag C4
+            firstNameMatch:
+              type: string
+              description: Contents of field 34, dataset 4, tag CA
+            middleNameMatch:
+              type: string
+              description: Contents of field 34, dataset 4, tag C9
+            lastNameMatch:
+              type: string
+              description: Contents of field 34, dataset 4, tag C8
+        vaaiScore:
+          type: string
+          description: Contents of field 104, dataset 5b, tag 85
+          example: '01'
+    IdempotentRequestIsStillBeingProcessedErrorDetails:
+      type: object
+      required:
+      - type
+      - title
+      - status
+      - detail
+      - instance
+      properties:
+        type:
+          allOf:
+          - $ref: '#/components/schemas/errorType'
+          - enum:
+            - /silverflow/problems/idempotency/request-is-still-being-processed
+        title:
+          allOf:
+          - $ref: '#/components/schemas/errorTitle'
+          - enum:
+            - Request Is Still Being Processed
+        status:
+          allOf:
+          - $ref: '#/components/schemas/errorStatus'
+          - enum:
+            - 409
+        detail:
+          $ref: '#/components/schemas/errorDetail'
+        instance:
+          $ref: '#/components/schemas/errorInstance'
+    BlockedMerchantAcceptorErrorDetails:
+      type: object
+      required:
+      - type
+      - title
+      - status
+      - detail
+      - instance
+      properties:
+        type:
+          allOf:
+          - $ref: '#/components/schemas/errorType'
+          - enum:
+            - /silverflow/problems/merchant-acceptor/blocked
+        title:
+          allOf:
+          - $ref: '#/components/schemas/errorTitle'
+          - enum:
+            - Blocked Merchant Acceptor
+        status:
+          allOf:
+          - $ref: '#/components/schemas/errorStatus'
+          - enum:
+            - 409
+        detail:
+          $ref: '#/components/schemas/errorDetail'
+        instance:
+          $ref: '#/components/schemas/errorInstance'
+    RequestAmount:
+      type: object
+      required:
+      - value
+      - currency
+      additionalProperties: false
+      description: 'The amount encoded as an object with a `value` in minor units and a `currency` code.
+
+
+        An optional `breakdown` can be provided to indicate specific sub-amounts.
+
+        '
+      properties:
+        value:
+          allOf:
+          - description: 'The full transaction amount in minor units. For example `$12.34` should be encoded as `1234`.
+
+
+              If a `breakdown` is provided, it must exactly add up to this `value`.
+
+              '
+          - $ref: '#/components/schemas/openapi_components-schemas-amountValue'
+        currency:
+          $ref: '#/components/schemas/openapi_components-schemas-currencyCode-2'
+        breakdown:
+          $ref: '#/components/schemas/schemas-RequestAmountBreakdown'
+    UnauthorizedErrorDetails:
+      type: object
+      required:
+      - type
+      - title
+      - status
+      - detail
+      - instance
+      properties:
+        type:
+          allOf:
+          - $ref: '#/components/schemas/errorType'
+          - enum:
+            - /silverflow/problems/authentication-required
+        title:
+          allOf:
+          - $ref: '#/components/schemas/errorTitle'
+          - enum:
+            - Authentication Required
+        status:
+          allOf:
+          - $ref: '#/components/schemas/errorStatus'
+          - enum:
+            - 401
+        detail:
+          $ref: '#/components/schemas/errorDetail'
+        instance:
+          $ref: '#/components/schemas/errorInstance'
+    components-schemas-acceptorKey:
+      description: Uniquely identifies a merchant acceptor.
+      type: string
+      pattern: ^mac-[a-zA-Z0-9]+$
+      minLength: 5
+      maxLength: 120
+      example: mac-1eOdAHhgstYTUhlphPFf
+    components-schemas-PinBlock:
+      type: object
+      description: PIN block related data.
+      oneOf:
+      - $ref: '#/components/schemas/schemas-PinBlockIso0Iso1'
+      - $ref: '#/components/schemas/schemas-PinBlockIso4'
+    PinBlockDataIso0Iso1:
+      type: string
+      title: ISO-0/ISO-1 Block
+      description: 'Contains encrypted PIN information, formatted as an `ISO-0`/`ISO-1` block of 16 hexadecimal characters.
+
+        '
+      pattern: ^[A-Fa-f0-9]+$
+      minLength: 16
+      maxLength: 16
+      example: 32CF86E514CB24FE
+    schemas-PinBlockKeyId:
+      type: string
+      pattern: ^[a-zA-Z0-9()+,\-.:=@;$_!*\/?#|]*$
+      minLength: 1
+      maxLength: 128
+      description: Encryption key in the specified zone to use.
+      example: my-encryption-key
+    transactionReference:
+      type: string
+      description: 'Unique ID assigned by the merchant or payment service provider for the transaction. Used to identify the transaction.
+
+        '
+      pattern: ^[a-zA-Z0-9()+,\-.:=@;$_!*\/?|]+$
+      minLength: 1
+      maxLength: 120
+      example: Dz3dIzE74EfH1HeTInyE
+    mPOS:
+      allOf:
+      - type: object
+        required:
+        - type
+        properties:
+          type:
+            type: string
+            enum:
+            - mpos
+      - $ref: '#/components/schemas/BaseTerminal'
+      - type: object
+        required:
+        - attended
+        - capabilities
+        properties:
+          attended:
+            type: boolean
+            enum:
+            - true
+          capabilities:
+            type: array
+            description: 'The capabilities of the terminal. This can be one or multiple, and if more than one is specified it means that it is capable of all of those things.
+
+              '
+            items:
+              $ref: '#/components/schemas/TerminalCapability'
+            example:
+            - contactChip
+            - contactlessChip
+            - contactMagStripe
+            - oneTap
+    InternalServerErrorDetails:
+      type: object
+      required:
+      - type
+      - title
+      - status
+      - detail
+      - instance
+      properties:
+        type:
+          allOf:
+          - $ref: '#/components/schemas/errorType'
+          - enum:
+            - /silverflow/problems/internal-server-error
+        title:
+          allOf:
+          - $ref: '#/components/schemas/errorTitle'
+          - enum:
+            - Internal Server Error
+        status:
+          allOf:
+          - $ref: '#/components/schemas/errorStatus'
+          - enum:
+            - 500
+        detail:
+          $ref: '#/components/schemas/errorDetail'
+        instance:
+          $ref: '#/components/schemas/errorInstance'
+    PinBlockZoneId:
+      type: string
+      pattern: ^[a-zA-Z0-9()+,\-.:=@;$_!*\/?#|]*$
+      minLength: 1
+      maxLength: 128
+      description: ID of the encryption zone.
+      example: my-zone
+    IncompatibleCardNetworkForOperation:
+      type: object
+      required:
+      - type
+      - title
+      - status
+      - detail
+      - instance
+      properties:
+        type:
+          allOf:
+          - $ref: '#/components/schemas/errorType'
+          - enum:
+            - /silverflow/problems/charge/incompatible-card-network-for-operation
+        title:
+          allOf:
+          - $ref: '#/components/schemas/errorTitle'
+          - enum:
+            - Incompatible Network For Operation
+        status:
+          allOf:
+          - $ref: '#/components/schemas/errorStatus'
+          - enum:
+            - 409
+        detail:
+          $ref: '#/components/schemas/errorDetail'
+        instance:
+          $ref: '#/components/schemas/errorInstance'
+    openapi_components-schemas-InvalidInputErrorDetails:
+      type: object
+      required:
+      - type
+      - title
+      - status
+      - detail
+      - instance
+      - validationErrors
+      properties:
+        type:
+          allOf:
+          - $ref: '#/components/schemas/errorType'
+          - enum:
+            - /silverflow/problems/invalid-input
+        title:
+          allOf:
+          - $ref: '#/components/schemas/errorTitle'
+          - enum:
+            - Invalid Input
+        status:
+          allOf:
+          - $ref: '#/components/schemas/errorStatus'
+          - enum:
+            - 400
+        detail:
+          $ref: '#/components/schemas/errorDetail'
+        instance:
+          $ref: '#/components/schemas/errorInstance'
+        validationErrors:
+          type: array
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          description: A list of validation errors.
+    schemas-PinBlockIso0Iso1:
+      type: object
+      title: ISO-0/ISO-1 PIN Block
+      description: PIN block related data in `ISO-0` or `ISO-1` format.
+      additionalProperties: false
+      required:
+      - format
+      - block
+      - zoneId
+      - keyId
+      properties:
+        format:
+          type: string
+          description: Indicates the type of PIN block format used.
+          enum:
+          - ISO-0
+          - ISO-1
+        block:
+          $ref: '#/components/schemas/PinBlockDataIso0Iso1'
+        zoneId:
+          $ref: '#/components/schemas/PinBlockZoneId'
+        keyId:
+          $ref: '#/components/schemas/schemas-PinBlockKeyId'
+    cardSequenceNumber:
+      type: string
+      description: 'Distinguishes among separate cards having the same PAN.
+
+        This is required if EMV tag 5F34 is present/personalized on the card chip.
+
+        '
+      pattern: ^[0-9]+$
+      minLength: 1
+      maxLength: 3
+      example: '001'
+    schemas-merchantKey:
+      description: Uniquely identifies a merchant.
+      type: string
+      pattern: ^mct-[a-zA-Z0-9]+$
+      minLength: 5
+      maxLength: 120
+      example: mct-1234abcdef123
+    UnexpectedMessageSystem:
+      type: object
+      required:
+      - type
+      - title
+      - status
+      - detail
+      - instance
+      properties:
+        type:
+          allOf:
+          - $ref: '#/components/schemas/errorType'
+          - enum:
+            - /silverflow/problems/bin/unexpected-message-system
+        title:
+          allOf:
+          - $ref: '#/components/schemas/errorTitle'
+          - enum:
+            - Unexpected Message System
+        status:
+          allOf:
+          - $ref: '#/components/schemas/errorStatus'
+          - enum:
+            - 409
+        detail:
+          $ref: '#/components/schemas/errorDetail'
+        instance:
+          $ref: '#/components/schemas/errorInstance'
+    errorInstance:
+      type: string
+      description: 'A reference that identifies the specific occurrence of the error. The instance is unique for every error.
+
+        '
+    components-schemas-AcceptorRef:
+      type: object
+      description: Reference key and status of the acceptor
+      required:
+      - key
+      - version
+      properties:
+        key:
+          $ref: '#/components/schemas/components-schemas-acceptorKey'
+        version:
+          $ref: '#/components/schemas/schemas-version'
+    localTransactionDateTime:
+      type: string
+      format: iso-8601-date-time
+      description: Date and time of the transaction in the local timezone.
+    errorStatus:
+      type: integer
+      format: int32
+      description: 'The HTTP status code generated by the origin server for this occurrence
+
+        of the problem.
+
+        '
+    schemas-processorTokenKey:
+      type: string
+      description: The key to a card tokenized in the [Processor Tokenization](#tag/Processor-Tokenization).
+      pattern: ^ptk-[a-zA-Z0-9]+$
+      minLength: 5
+      maxLength: 120
+    openapi_components-schemas-currencyCode-2:
+      type: string
+      enum:
+      - AED
+      - AFN
+      - ALL
+      - AMD
+      - AOA
+      - ARS
+      - AUD
+      - AWG
+      - AZN
+      - BAM
+      - BBD
+      - BDT
+      - BGN
+      - BHD
+      - BIF
+      - BMD
+      - BND
+      - BOB
+      - BRL
+      - BSD
+      - BTN
+      - BWP
+      - BYN
+      - BZD
+      - CAD
+      - CDF
+      - CHF
+      - CLP
+      - CNY
+      - COP
+      - CRC
+      - CUC
+      - CUP
+      - CVE
+      - CZK
+      - DJF
+      - DKK
+      - DOP
+      - DZD
+      - EGP
+      - ERN
+      - ETB
+      - EUR
+      - FJD
+      - FKP
+      - GBP
+      - GEL
+      - GHS
+      - GIP
+      - GMD
+      - GNF
+      - GTQ
+      - GYD
+      - HKD
+      - HNL
+      - HTG
+      - HUF
+      - IDR
+      - ILS
+      - INR
+      - IQD
+      - IRR
+      - ISK
+      - JMD
+      - JOD
+      - JPY
+      - KES
+      - KGS
+      - KHR
+      - KMF
+      - KPW
+      - KRW
+      - KWD
+      - KYD
+      - KZT
+      - LAK
+      - LBP
+      - LKR
+      - LRD
+      - LSL
+      - LYD
+      - MAD
+      - MDL
+      - MGA
+      - MKD
+      - MMK
+      - MNT
+      - MOP
+      - MRU
+      - MUR
+      - MVR
+      - MWK
+      - MXN
+      - MYR
+      - MZN
+      - NAD
+      - NGN
+      - NIO
+      - NOK
+      - NPR
+      - NZD
+      - OMR
+      - PAB
+      - PEN
+      - PGK
+      - PHP
+      - PKR
+      - PLN
+      - PYG
+      - QAR
+      - RON
+      - RSD
+      - RUB
+      - RWF
+      - SAR
+      - SBD
+      - SCR
+      - SDG
+      - SEK
+      - SGD
+      - SHP
+      - SOS
+      - SRD
+      - SSP
+      - STN
+      - SYP
+      - SZL
+      - THB
+      - TJS
+      - TMT
+      - TND
+      - TOP
+      - TRY
+      - TTD
+      - TWD
+      - TZS
+      - UAH
+      - UGX
+      - USD
+      - UYU
+      - UZS
+      - VES
+      - VND
+      - VUV
+      - WST
+      - XAF
+      - XCD
+      - XCG
+      - XOF
+      - XPF
+      - YER
+      - ZAR
+      - ZMW
+      - ZWL
+      description: An alphabetic ISO-4217 currency code.
+      externalDocs:
+        description: Find more info here
+        url: https://www.iso.org/iso-4217-currency-codes.html
+      example: EUR
+    CreateChargeResponse:
+      type: object
+      required:
+      - key
+      - created
+      - status
+      - type
+      - merchantAcceptorRef
+      - authorizationIsoFields
+      - amount
+      - version
+      - card
+      - localTransactionDateTime
+      - terminal
+      description: 'A POS charge
+
+        '
+      properties:
+        key:
+          $ref: '#/components/schemas/chargeKey'
+        merchantAcceptorRef:
+          $ref: '#/components/schemas/components-schemas-AcceptorRef'
+        card:
+          $ref: '#/components/schemas/OutputCard'
+        amount:
+          allOf:
+          - description: The amount encoded as an object with a `value` in minor units and a `currency` code. In case of a (partially) approved charge, this is the authorized amount.
+          - $ref: '#/components/schemas/schemas-ResponseAmount'
+        type:
+          $ref: '#/components/schemas/schemas-ChargeType'
+        status:
+          $ref: '#/components/schemas/schemas-Status'
+        localTransactionDateTime:
+          $ref: '#/components/schemas/localTransactionDateTime'
+        transactionReference:
+          $ref: '#/components/schemas/transactionReference'
+        newEmvData:
+          $ref: '#/components/schemas/newEmvData'
+        terminalAction:
+          $ref: '#/components/schemas/terminalAction'
+        authorizationIsoFields:
+          $ref: '#/components/schemas/schemas-AuthorizationIsoFields'
+        allowPartialApproval:
+          $ref: '#/components/schemas/allowPartialApproval'
+        clearingMode:
+          $ref: '#/components/schemas/schemas-clearingMode'
+        clearAfter:
+          $ref: '#/components/schemas/schemas-clearAfter'
+        terminal:
+          $ref: '#/components/schemas/Terminal'
+        created:
+          $ref: '#/components/schemas/openapi_components-schemas-created'
+        lastModified:
+          $ref: '#/components/schemas/components-schemas-lastModified'
+        version:
+          $ref: '#/components/schemas/schemas-version'
+    TooManyRequestsErrorDetails:
+      type: object
+      required:
+      - type
+      - title
+      - status
+      - detail
+      - instance
+      properties:
+        type:
+          allOf:
+          - $ref: '#/components/schemas/errorType'
+          - enum:
+            - /silverflow/problems/too-many-requests
+        title:
+          allOf:
+          - $ref: '#/components/schemas/errorTitle'
+          - enum:
+            - Too Many Requests
+        status:
+          allOf:
+          - $ref: '#/components/schemas/errorStatus'
+          - enum:
+            - 429
+        detail:
+          $ref: '#/components/schemas/errorDetail'
+        instance:
+          $ref: '#/components/schemas/errorInstance'
+    errorDetail:
+      type: string
+      description: 'A human readable explanation specific to this occurrence of the problem.
+
+        '
+    schemas-AuthorizationStatus:
+      type: string
+      description: Authorization status of the charge
+      enum:
+      - none
+      - approved
+      - declined
+      - reversed
+      example: approved
+    Terminal:
+      type: object
+      description: Details about the terminal.
+      oneOf:
+      - $ref: '#/components/schemas/POS'
+      - $ref: '#/components/schemas/mPOS'
+      - $ref: '#/components/schemas/SoftPOS'
+    schemas-Status:
+      type: object
+      required:
+      - authentication
+      - authorization
+      - clearing
+      description: 'The status property provides a high-level representation of the lifecycle of a charge. For a complete history, the actions should be used.
+
+        '
+      properties:
+        authentication:
+          type: string
+          description: Strong Customer Authentication (SCA) status of the charge
+          enum:
+          - none
+        authorization:
+          $ref: '#/components/schemas/schemas-AuthorizationStatus'
+        clearing:
+          $ref: '#/components/schemas/schemas-ClearingStatus'
+    schemas-terminalEntryMode:
+      description: 'This field indicates the method used for PAN entry on
+
+        the terminal to initiate the transaction.
+
+        '
+      type: string
+      enum:
+      - contactless
+      - manual-entry
+      - chip
+      - magstripe
+      - magstripe-fallback
+    schemas-clearAfter:
+      type: string
+      description: 'If provided, clearing will not occur before this point in time. From August 13, 2025, `clearAfter` may be at most 6 months in the future from when the charge was created.
+
+        '
+      format: iso-8601-date-time
+    errorType:
+      type: string
+      description: 'A relative URI reference, this property can be used to perform automated error handling.
+
+        '
+    UnexpectedCurrencyErrorDetails:
+      type: object
+      required:
+      - type
+      - title
+      - status
+      - detail
+      - instance
+      properties:
+        type:
+          allOf:
+          - $ref: '#/components/schemas/errorType'
+          - enum:
+            - /silverflow/problems/bin/unexpected-currency
+        title:
+          $ref: '#/components/schemas/errorTitle'
+        status:
+          allOf:
+          - $ref: '#/components/schemas/errorStatus'
+          - enum:
+            - 409
+        detail:
+          $ref: '#/components/schemas/errorDetail'
+        instance:
+          $ref: '#/components/schemas/errorInstance'
+    isoFieldNetworkCode:
+      type: string
+      description: Contents of field 63, subfield 1
+      example: '0000'
+    isoFieldAuthorizationCode:
+      type: string
+      description: Contents of field 38
+      example: 4A4316
+  examples:
+    components-examples-InternalServerErrorExample:
+      value:
+        type: /silverflow/problems/internal-server-error
+        title: Internal Server Error
+        status: 500
+        detail: The server encountered an unexpected condition.
+        instance: /silverflow/b045229d-f66d-4ef7-9f5d-d48064a2aa39
+    CannotDetermineCardNetworkErrorExample:
+      value:
+        type: /silverflow/problems/charge/cannot-determine-card-network-by-card-number
+        title: Cannot Determine Card Network By Card Number
+        status: 409
+        detail: Could not determine a card network for the provided `cardNumber`.
+        instance: /silverflow/b0451a9d-f66d-4ef7-9f5d-d48064a2bb3e
+    InvalidRequestErrorExample:
+      value:
+        type: /silverflow/problems/charge/invalid-request
+        title: Invalid Request
+        status: 400
+        detail: Cannot create the charge due to one or more errors in the charge request.
+        instance: /silverflow/b0451a9d-f66d-4ef7-9f5d-d48064a2bb3e
+    components-examples-ReferencedEntityNotFoundErrorExample:
+      value:
+        type: /silverflow/problems/referenced-entity-not-found
+        title: Referenced Entity Not Found
+        status: 409
+        detail: The referenced acceptor with key 'mac-1eOdAHhgstYTUhlphPFf' was not found.
+        instance: /silverflow/b0451a9d-f66d-4ef7-9f5d-d48064a2bb3e
+    BlockedMerchantAcceptorErrorExample:
+      value:
+        type: /silverflow/problems/merchant-acceptor/blocked
+        title: Blocked Merchant Acceptor
+        status: 409
+        detail: The merchant acceptor with key 'mac-1eOdAHhgstYTUhlphPFf' is blocked from creating charges.
+        instance: /silverflow/b0451a9d-f66d-4ef7-9f5d-d48064a2bb3e
+    examples-AuthenticationRequiredExample:
+      value:
+        type: /silverflow/problems/authentication-required
+        title: Authentication Required
+        status: 401
+        detail: Authentication Required
+        instance: /silverflow/8e445b2e-d745-4b38-a38d-781fc998e442
+    NonMatchingIdempotentRequestErrorExample:
+      value:
+        type: /silverflow/problems/idempotency/request-mismatch
+        title: Idempotent Request Mismatch
+        status: 409
+        detail: The retried request does not have the same body or URL as the initial request.
+        instance: /silverflow/b0451a9d-f66d-4ef7-9f5d-d48064a2bb3e
+    IdempotentRequestIsStillBeingProcessedExample:
+      value:
+        type: /silverflow/problems/idempotency/request-is-still-being-processed
+        title: Request Is Still Being Processed
+        status: 409
+        detail: The previous request with idempotency key '28gKCluIEKp8jVboUyr2' is still being processed. Please retry.
+        instance: /silverflow/b0451a9d-f66d-4ef7-9f5d-d48064a2bb3e
+    IncompatibleCardNetworkForOperationExample:
+      value:
+        type: /silverflow/problems/charge/incompatible-card-network-for-operation
+        title: Incompatible Network For Operation
+        status: 409
+        detail: Operation 'reverse' is not supported for network 'bancontact'
+        instance: /silverflow/b045229d-f66d-4ef7-9f5d-d48064a2aa39
+    examples-ForbiddenErrorExample:
+      value:
+        type: /silverflow/problems/forbidden
+        title: Forbidden
+        status: 403
+        detail: 'Authenticated user ''apk-33GjasQdWl4781OsErvi'' is missing the following permission(s): charges:Create.'
+        instance: /silverflow/b0451a9d-f66d-4ef7-9f5d-d48064a2bb3e
+    components-examples-InvalidInputErrorExample:
+      value:
+        type: /silverflow/problems/invalid-input
+        title: Invalid Input
+        status: 400
+        detail: The request does not adhere to the defined API schema.
+        instance: /silverflow/b4cc37a0-ab24-46b4-aa8c-cc2d6eddf1b6
+        validationErrors:
+        - path: /body/card/number
+          message: must have required property 'number'
+          errorCode: required.openapi.validation
+    OnlinePinResponse:
+      summary: Create a charge with online PIN
+      value:
+        key: chg-3pkSK2b2ES9ZTiYM4GWZ
+        merchantAcceptorRef:
+          key: mac-1TQ4EL0rI3Uz06VF2a0f
+          version: 1
+        card:
+          maskedNumber: 52869400****0205
+        amount:
+          value: 2050
+          currency: EUR
+        type:
+          intent: purchase
+          cardEntry: terminal
+          order: counter
+          terminalEntryMode: contactless
+        clearingMode: auto
+        status:
+          authentication: none
+          authorization: approved
+          clearing: pending
+        localTransactionDateTime: '2023-09-20T12:46:05.516Z'
+        authorizationIsoFields:
+          responseCode: '00'
+          responseCodeDescription: Approved
+          authorizationCode: '547158'
+          systemTraceAuditNumber: '665356'
+          retrievalReferenceNumber: '326312665356'
+          eci: '00'
+          networkCode: MCS
+          networkSpecificFields:
+            traceId: 'MCS8428230527  '
+            banknetReference: '842823'
+        terminal:
+          id: 17s2d469
+          type: softpos
+          attended: true
+          capabilities:
+          - contactlessChip
+          - noCvm
+          - onlinePin
+        created: '2023-09-20T12:46:05.516Z'
+        version: 1
+    UnexpectedMessageSystemExample:
+      value:
+        type: /silverflow/problems/bin/unexpected-message-system
+        title: Unexpected Message System
+        status: 409
+        detail: The merchant acceptor uses a BIN with message system 'SMS', expected 'DMS'.
+        instance: /silverflow/b045229d-f66d-4ef7-9f5d-d48064a2aa39
+    IncompatibleCardErrorExample:
+      value:
+        type: /silverflow/problems/charge/incompatible-card
+        title: Incompatible Card
+        status: 409
+        detail: The country code of both the merchant and the card is 'NLD', but the card is a cross-border-only card.
+        instance: /silverflow/b045229d-f66d-4ef7-9f5d-d48064a2aa39
+    UnexpectedCurrencyErrorExample:
+      value:
+        type: /silverflow/problems/bin/unexpected-currency
+        title: Unexpected Currency
+        status: 409
+        detail: Bin 'bin-1iXRhbDjrT2Yxvo0mSZN' only supports currency 'EUR', but the charge request provides 'USD' as 'amount.currency'.
+        instance: /silverflow/b0451a9d-f66d-4ef7-9f5d-d48064a2bb3e
+    MissingPosAddressErrorExample:
+      value:
+        type: /silverflow/problems/merchant-acceptor/missing-pos-address
+        title: Missing Point of Sale Address
+        status: 409
+        detail: The merchant acceptor with key 'mac-34EaiVHSeqwAVuS6Gvd' is missing 'pointOfSaleAddress'.
+        instance: /silverflow/b0451a9d-f66d-4ef7-9f5d-d48064a2bb3e
+    ManualEntryResponse:
+      summary: Create a charge with manual entry
+      value:
+        key: chg-3pkWfhw0Sc3JlIiWiub2
+        merchantAcceptorRef:
+          key: mac-1TQ4EL0rI3Uz06VF2a0f
+          version: 1
+        card:
+          maskedNumber: 52869400****0205
+        amount:
+          value: 2050
+          currency: EUR
+        type:
+          intent: purchase
+          cardEntry: terminal
+          order: counter
+          terminalEntryMode: manual-entry
+        clearingMode: auto
+        status:
+          authentication: none
+          authorization: approved
+          clearing: pending
+        localTransactionDateTime: '2023-09-20T12:55:18.216Z'
+        authorizationIsoFields:
+          responseCode: '00'
+          responseCodeDescription: Approved
+          authorizationCode: 07F3CF
+          systemTraceAuditNumber: '669292'
+          retrievalReferenceNumber: '326312669292'
+          eci: '00'
+          networkCode: MCS
+          networkSpecificFields:
+            traceId: 'MCS7915710527  '
+            banknetReference: '791571'
+        terminal:
+          id: 17s2d469
+          type: softpos
+          attended: true
+          capabilities:
+          - contactlessChip
+          - noCvm
+          - onlinePin
+        created: '2023-09-20T12:55:18.216Z'
+        version: 1
+    examples-IncompatibleCardNetworkErrorExample:
+      value:
+        type: /silverflow/problems/bin/unexpected-network
+        title: Incompatible Card Network
+        status: 409
+        detail: The provided card number is not compatible with the merchant acceptor, expected card number to be of network 'visa'.
+        instance: /silverflow/b0451a9d-f66d-4ef7-9f5d-d48064a2bb3e
+    BlockedBinErrorExample:
+      value:
+        type: /silverflow/problems/merchant-acceptor/blocked
+        title: Blocked Merchant Acceptor
+        status: 409
+        detail: This BIN is not permitted to submit charges.
+        instance: /silverflow/a1451a9d-f66d-4ef7-8f5d-d48564a2bb3a
+    TooManyRequestsErrorExample:
+      value:
+        type: /silverflow/problems/too-many-requests
+        title: Too Many Requests
+        status: 429
+        detail: You have exceeded the rate limit. Please try again after the specified delay.
+        instance: /silverflow/b0451a9d-f66d-4ef7-9f5d-d48064a2bb3e
+  responses:
+    components-responses-TooManyRequestsError:
+      description: Too Many Requests
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/TooManyRequestsErrorDetails'
+          examples:
+            TooManyRequestsErrorExample:
+              $ref: '#/components/examples/TooManyRequestsErrorExample'
+    components-responses-ForbiddenError:
+      description: The authenticated client is forbidden to make the request for the resource identified.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ForbiddenErrorDetails'
+          examples:
+            ForbiddenErrorExample:
+              $ref: '#/components/examples/examples-ForbiddenErrorExample'
+    openapi_components-responses-UnauthorizedError:
+      description: Authentication information is missing or invalid
+      headers:
+        WWW_Authenticate:
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/UnauthorizedErrorDetails'
+          examples:
+            AuthenticationRequired:
+              $ref: '#/components/examples/examples-AuthenticationRequiredExample'
+    responses-InternalServerError:
+      description: Internal Server Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/InternalServerErrorDetails'
+          examples:
+            InternalServerErrorExample:
+              $ref: '#/components/examples/components-examples-InternalServerErrorExample'
+  parameters:
+    IdempotencyKey:
+      in: header
+      name: Idempotency-Key
+      schema:
+        type: string
+        description: 'This key is used to deduplicate requests that are retried. For more information see the section on [Idempotency](https://docs.silverflow.com/guides/idempotency).
+
+          '
+        minLength: 1
+        example: 28gKCluIEKp8jVboUyr2
+      required: false
+  securitySchemes:
+    ApiKey:
+      description: "The primary method of authenticating to the Silverflow API is through API keys.\n\nAPI keys can be created by calling the [createApiKey](#operation/createApiKey) endpoint. You can create up to 40 API keys and also update and delete them, allowing for _credential rotation_.\n\nThe _Agent Activation_ process will generate an initial API Key for you. See [Activate Agent](#section/Getting-Started).\n\nA call to the [createApiKey](#operation/createApiKey) endpoint will return the following structure:\n\n```json\n{\n    \"key\": \"apk-1wtRxni5IsPsSpBLWpwr\",\n    \"status\": \"active\",\n    \"agentKey\": \"cgt-1wtRvFLIjDOyyUR5Q2LB\",\n    \"description\": \"Data lake API key\",\n    \"permissions\": [\n        \"charges:List\",\n        \"reports:All\"\n    ],\n    \"created\": \"2021-06-22T11:21:45.115Z\",\n    \"secret\": \"FWtnOOHAjbD6rNxWWEeVOCj7JXSEPGJQ\",\n    \"version\": 1\n}\n```\n\n> **Important:** The `secret` is only returned once in the response to the `createApiKey` call.\n\nOnce created, the `key` and `secret` fields from the API key must be used in the HTTP `Authorization` header using the `Basic` scheme.\nThe Basic scheme requires a **username** and **password** to be specified, separated by a `:` (colon) and Base64 encoded.\n\nUse the following values from the API key to construct a Basic authentication header:\n\n| Basic field | API key field | Example |\n| ----------- | ------------- | ------- |\n| username | `key` | `apk-1wtRxni5IsPsSpBLWpwr` |\n| password | `secret` | `FWtnOOHAjbD6rNxWWEeVOCj7JXSEPGJQ` |\n\nIn pseudo-code a valid HTTP Basic Authentication header would be constructed as follows:\n\n```ts\nconst apiKeyId = \"apk-1wtRxni5IsPsSpBLWpwr\";\nconst apiKeySecret = \"FWtnOOHAjbD6rNxWWEeVOCj7JXSEPGJQ\";\nconst authnValue = \"Basic \" + base64Encode(apiKeyId + \":\" + apiKeySecret);\nrequest.setHeader(\"Authorization\", authnValue);\n```\n\nUsing the values from the example a valid HTTP request would look like the following:\n\n```http\nGET /v1/agents/current HTTP/1.1\nAccept: application/json\nAuthorization: Basic YXBrLTF3dFJ4bmk1SXNQc1NwQkxXcHdyOkZXdG5PT0hBamJENnJOeFdXRWVWT0NqN0pYU0VQR0pR\n```\n\nMore information on the Basic scheme can be found in [RFC-7617 - The 'Basic' HTTP Authentication Scheme](https://datatracker.ietf.org/doc/html/rfc7617)."
+      type: http
+      scheme: basic
+    BearerToken:
+      description: 'Bearer tokens are temporary security credentials that can be used to authorize ''third parties'' (bearers) access to the Silverflow API on behalf of the agent.
+
+
+        These tokens are created by calling the [createAgentBearerToken](#operation/createAgentBearerToken) endpoint.
+
+
+        Once created the `token` field must be used in the HTTP `Authorization` header using the `Bearer` scheme.
+
+        Here''s an example of an HTTP request with a bearer token:
+
+
+        ```http
+
+        GET /v1/merchants/mct-1hPdFhmgaBzMS191nIbJ HTTP/1.1
+
+        Accept: application/json
+
+        Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...40EFOgxf_3I6mPZ16bXqHd5tUyApgl0mNOAXPm5AhnA
+
+
+        ```
+
+
+        More information on the Bearer scheme can be found in [RFC-6750 - The OAuth 2.0 Authorization Framework: Bearer Token Usage](https://datatracker.ietf.org/doc/html/rfc6750).'
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+    MutualTLS:
+      type: apiKey
+      in: header
+      name: '-'
+      description: 'The client must set up mTLS connection with a valid X.509 client certificate signed by a customer-provided CA (certificate authority) that is registered to a specific agent. The customer-provided CA certificate must be shared and added to Silverflow''s trust store prior to calling endpoints.
+
+
+        Certificate validation happens at the transport layer during TLS handshake. Tenant verification is performed by matching the agent key embedded in the client certificate against the agent key embedded in the trusted CA.
+
+        '
+x-refined-from:
+- silverflow-openapi.yml
+- silverflow-openapi.yml
+x-tagGroups:
+- name: ''
+  tags:
+  - Introduction
+  - Release Notes
+- name: Accounts
+  tags:
+  - Agents
+  - API Keys
+  - Bins
+  - Merchants
+  - Merchant Acceptors
+  - Enrollments
+  - Screenings
+- name: Event Notifications
+  tags:
+  - Event Subscriptions
+  - Charges Events
+  - Disputes Events
+  - Fraud Notification Events
+  - Processor Tokens Events
+  - Network Tokens Events
+  - Report Events
+  - Distribution Events
+  - AMMF Submission Events
+  - Reconciliation Events
+  - Clearing Events
+- name: 3DS Authentication
+  tags:
+  - 3DS Authentication
+- name: BEP Authentication
+  tags:
+  - BEP Authentication
+- name: Tokenization
+  tags:
+  - Processor Tokenization
+  - Network Tokenization
+- name: Charges
+  tags:
+  - Create Charges
+  - Create Recurring
+  - Retrieve Charges
+  - Charge Actions
+- name: Terminal-To-Cloud
+  tags:
+  - Create POS Charges
+  - Retrieve POS Charges
+  - POS Charge Actions
+- name: Card Management
+  tags:
+  - Card Management
+- name: Disputes
+  tags:
+  - Disputes
+  - Documents
+- name: Fraud Notifications
+  tags:
+  - Fraud Notifications
+- name: Card Info
+  tags:
+  - Card Info
+- name: Currency Conversion Rates
+  tags:
+  - Currency Conversion Rates
+- name: Fees
+  tags:
+  - Fees
+- name: Reconciliation
+  tags:
+  - Reconciliation Details
+  - Network Funds Transfers
+- name: Reports
+  tags:
+  - Reconciliation Reports
+  - Settlement Reports
+  - Card Network Reports
+  - Dispute Reports
+  - Fraud Notifications Reports
+  - Charges Reports
+  - Scheme Fee Reports
+  - Retrieve Reports
+  - Report Scheduling
+  - Distributions
+- name: Transaction Risk Assessment
+  tags:
+  - Transaction Risk Assessment
+- name: File Subscriptions
+  tags:
+  - File Subscriptions

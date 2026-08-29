@@ -1,0 +1,4603 @@
+openapi: 3.2.0
+info:
+  title: Silverflow Reconciliation Details API
+  version: 1.417.0
+  contact:
+    name: API Support
+    email: support@silverflow.com
+  license:
+    name: Commercial
+  description: 'Operations tagged Reconciliation Details across 2 of this provider''s published API definitions: silverflow-openapi.yml, silverflow-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://eu-west-1.api.silverflow.com/v1
+  description: Production URL for Europe - Equivalent to https://api.silverflow.co/v1
+- url: https://us-east-2.api.silverflow.com/v1
+  description: Production URL for North America
+- url: https://eu-west-1.api-sbx.silverflow.com/v1
+  description: Sandbox URL - Equivalent to https://api-sbx.silverflow.co/v1
+security:
+- ApiKey: []
+- BearerToken: []
+tags:
+- name: Reconciliation Details
+paths:
+  /reports/reconciliationDetails:
+    get:
+      operationId: getReconciliationDetails
+      summary: List Reconciliation Details
+      description: 'List all reconciliation records for all Merchants in a provided timerange
+
+
+        Requires `reports:SettlementDetails` permission. When no `from` parameter is used, the API will default to a `from` of three months before today. The `to` parameter defaults to now.
+
+        '
+      tags:
+      - Reconciliation Details
+      parameters:
+      - $ref: '#/components/parameters/openapi_components-parameters-from'
+      - $ref: '#/components/parameters/openapi_components-parameters-to'
+      - $ref: '#/components/parameters/sortOrder'
+      - $ref: '#/components/parameters/limit'
+      - $ref: '#/components/parameters/binPageOffsetToken'
+      responses:
+        '200':
+          description: A (paged) list of Reconciliation Details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReconciliationDetailsPage'
+              examples:
+                firstPresentment-dms:
+                  $ref: '#/components/examples/report-reconciliation-details-firstPresentment-dms'
+                firstPresentment-sms:
+                  $ref: '#/components/examples/report-reconciliation-details-firstPresentment-sms'
+                firstPresentment-rtc:
+                  $ref: '#/components/examples/report-reconciliation-details-firstPresentment-RTC'
+                cardNetworkFee:
+                  $ref: '#/components/examples/report-reconciliation-details-cardNetworkFee'
+                firstChargeback-dms:
+                  $ref: '#/components/examples/report-reconciliation-details-firstChargeback-dms'
+                firstChargeback-sms:
+                  $ref: '#/components/examples/report-reconciliation-details-firstChargeback-sms'
+                secondPresentment-dms:
+                  $ref: '#/components/examples/report-reconciliation-details-secondPresentment-dms'
+                preArbitration-dms:
+                  $ref: '#/components/examples/report-reconciliation-details-preArbitration-dms'
+                arbitration-dms:
+                  $ref: '#/components/examples/report-reconciliation-details-arbitration-dms'
+        '400':
+          $ref: '#/components/responses/components-responses-BadRequestError'
+        '401':
+          $ref: '#/components/responses/openapi_components-responses-UnauthorizedError-3'
+        '403':
+          $ref: '#/components/responses/openapi_components-responses-ForbiddenError-2'
+        '429':
+          $ref: '#/components/responses/openapi_components-responses-TooManyRequestsError-2'
+    servers:
+    - url: https://eu-west-1.api.silverflow.com/v1
+      description: Production URL for Europe - Equivalent to https://api.silverflow.co/v1
+    - url: https://us-east-2.api.silverflow.com/v1
+      description: Production URL for North America
+    - url: https://eu-west-1.api-sbx.silverflow.com/v1
+      description: Sandbox URL - Equivalent to https://api-sbx.silverflow.co/v1
+  /reports/reconciliationDetails/fundsTransferDate/{fundsTransferDate}:
+    get:
+      operationId: getReconciliationDetailsFundsTransferDate
+      summary: List Reconciliation Details by Funds Transfer Date
+      description: '
+
+        List all reconciliation records for all Merchants with a specific funds transfer date.
+
+
+        Requires `reports:SettlementDetails` permission.
+
+        '
+      tags:
+      - Reconciliation Details
+      parameters:
+      - $ref: '#/components/parameters/fundsTransferDatePath'
+      - $ref: '#/components/parameters/limit'
+      - $ref: '#/components/parameters/binPageOffsetToken'
+      responses:
+        '200':
+          description: A (paged) list of Reconciliation Details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReconciliationDetailsPage'
+              examples:
+                firstPresentment-dms:
+                  $ref: '#/components/examples/report-reconciliation-details-firstPresentment-dms'
+                firstPresentment-sms:
+                  $ref: '#/components/examples/report-reconciliation-details-firstPresentment-sms'
+                firstPresentment-rtc:
+                  $ref: '#/components/examples/report-reconciliation-details-firstPresentment-RTC'
+                cardNetworkFee:
+                  $ref: '#/components/examples/report-reconciliation-details-cardNetworkFee'
+                firstChargeback-dms:
+                  $ref: '#/components/examples/report-reconciliation-details-firstChargeback-dms'
+                secondPresentment-dms:
+                  $ref: '#/components/examples/report-reconciliation-details-secondPresentment-dms'
+                preArbitration-dms:
+                  $ref: '#/components/examples/report-reconciliation-details-preArbitration-dms'
+                arbitration-dms:
+                  $ref: '#/components/examples/report-reconciliation-details-arbitration-dms'
+        '400':
+          $ref: '#/components/responses/components-responses-BadRequestError'
+        '401':
+          $ref: '#/components/responses/openapi_components-responses-UnauthorizedError-3'
+        '403':
+          $ref: '#/components/responses/openapi_components-responses-ForbiddenError-2'
+        '429':
+          $ref: '#/components/responses/openapi_components-responses-TooManyRequestsError-2'
+    servers:
+    - url: https://eu-west-1.api.silverflow.com/v1
+      description: Production URL for Europe - Equivalent to https://api.silverflow.co/v1
+    - url: https://us-east-2.api.silverflow.com/v1
+      description: Production URL for North America
+    - url: https://eu-west-1.api-sbx.silverflow.com/v1
+      description: Sandbox URL - Equivalent to https://api-sbx.silverflow.co/v1
+  /reports/reconciliationDetails/networkFundsTransferKey/{networkFundsTransferKey}:
+    get:
+      operationId: listReconciliationDetailsByNetworkFundsTransferKey
+      summary: List Reconciliation Details by Network Funds Transfer Key
+      description: 'List all reconciliation records for a specific network funds transfer key.
+
+        Requires `reports:SettlementDetails` permission.
+
+        '
+      tags:
+      - Reconciliation Details
+      parameters:
+      - $ref: '#/components/parameters/networkFundsTransferKey'
+      - $ref: '#/components/parameters/sortOrder'
+      - $ref: '#/components/parameters/limit'
+      - $ref: '#/components/parameters/binPageOffsetToken'
+      responses:
+        '200':
+          description: A (paged) list of Reconciliation Details by Network Funds Transfer Key.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReconciliationDetailsPage'
+              examples:
+                firstPresentment-dms:
+                  $ref: '#/components/examples/report-reconciliation-details-firstPresentment-dms'
+                firstPresentment-sms:
+                  $ref: '#/components/examples/report-reconciliation-details-firstPresentment-sms'
+                firstPresentment-rtc:
+                  $ref: '#/components/examples/report-reconciliation-details-firstPresentment-RTC'
+                cardNetworkFee:
+                  $ref: '#/components/examples/report-reconciliation-details-cardNetworkFee'
+                firstChargeback-dms:
+                  $ref: '#/components/examples/report-reconciliation-details-firstChargeback-dms'
+                secondPresentment-dms:
+                  $ref: '#/components/examples/report-reconciliation-details-secondPresentment-dms'
+                preArbitration-dms:
+                  $ref: '#/components/examples/report-reconciliation-details-preArbitration-dms'
+                arbitration-dms:
+                  $ref: '#/components/examples/report-reconciliation-details-arbitration-dms'
+        '400':
+          $ref: '#/components/responses/components-responses-BadRequestError'
+        '401':
+          $ref: '#/components/responses/openapi_components-responses-UnauthorizedError-3'
+        '403':
+          $ref: '#/components/responses/openapi_components-responses-ForbiddenError-2'
+        '429':
+          $ref: '#/components/responses/openapi_components-responses-TooManyRequestsError-2'
+    servers:
+    - url: https://eu-west-1.api.silverflow.com/v1
+      description: Production URL for Europe - Equivalent to https://api.silverflow.co/v1
+    - url: https://us-east-2.api.silverflow.com/v1
+      description: Production URL for North America
+    - url: https://eu-west-1.api-sbx.silverflow.com/v1
+      description: Sandbox URL - Equivalent to https://api-sbx.silverflow.co/v1
+components:
+  parameters:
+    binPageOffsetToken:
+      name: offsetToken
+      description: The offset token. This token is returned in the response of previous request.
+      in: query
+      required: false
+      schema:
+        $ref: '#/components/schemas/binPageOffsetToken'
+    networkFundsTransferKey:
+      name: networkFundsTransferKey
+      in: path
+      required: true
+      description: 'Uniquely identifies a networkFundsTransfer object.
+
+        '
+      schema:
+        $ref: '#/components/schemas/NetworkFundsTransferKey'
+    openapi_components-parameters-from:
+      name: from
+      description: Include only items that have a created date _greater than or equal to_ the specified date
+      in: query
+      required: false
+      schema:
+        type: string
+        format: date-time
+      example: '{{yesterdayTimestamp}}'
+    fundsTransferDatePath:
+      name: fundsTransferDate
+      description: Includes only items that have a funds transfer date _equal_ to the specified date
+      example: '2021-01-31'
+      in: path
+      required: true
+      schema:
+        type: string
+        format: date
+    sortOrder:
+      name: sortOrder
+      description: The sort order, __asc__ending or __desc__ending
+      in: query
+      required: false
+      schema:
+        type: string
+        enum:
+        - asc
+        - desc
+      example: desc
+    openapi_components-parameters-to:
+      name: to
+      description: Include only items that have a created date _less than_ the specified date
+      in: query
+      required: false
+      schema:
+        type: string
+        format: date-time
+      example: '{{currentTimestamp}}'
+    limit:
+      name: limit
+      description: The number of items to return
+      in: query
+      required: false
+      schema:
+        type: integer
+        format: int32
+        minimum: 1
+        maximum: 100
+        default: 10
+      example: 1
+  schemas:
+    BaseReconciliationDetail:
+      type: object
+      required:
+      - key
+      - groupReference
+      - entry
+      - isCorrection
+      - created
+      - reportingFor
+      - network
+      - netSettlementAmount
+      - fundsTransferDate
+      - fundsTransferBookDate
+      - settlementService
+      properties:
+        key:
+          $ref: '#/components/schemas/reconciliationDetailKey'
+        groupReference:
+          type: string
+          description: Identifies a group of related Reconciliation Details, possibly of different types. For example, a `firstPresentment-dms` has the same `groupReference` as the corresponding `firstChargeback-dms`.
+        entry:
+          type: integer
+          description: The sequence number of a Reconciliation Detail within a series of Reconciliation Details with the same `groupReference` and `type`. Reconciliation Details that are corrections will have the same sequence number as the Detail they are correcting.
+        isCorrection:
+          type: boolean
+          description: Has the value `true` when the Reconciliation Detail is part of a Correction Procedure and serves to nullify a Reconciliation Detail.
+        correctedDetailKey:
+          $ref: '#/components/schemas/correctedReconciliationDetailKey'
+        created:
+          $ref: '#/components/schemas/openapi_components-schemas-created-2'
+        reportingFor:
+          type: string
+          description: This field contains fund transfer level SREs for Visa details and the acquirer ICA for Mastercard details.
+        network:
+          $ref: '#/components/schemas/openapi_components-schemas-cardNetwork'
+        netSettlementAmount:
+          $ref: '#/components/schemas/settlementAmountFloat'
+        fundsTransferDate:
+          $ref: '#/components/schemas/fundsTransferDate'
+        fundsTransferBookDate:
+          $ref: '#/components/schemas/fundsTransferBookDate'
+        settlementService:
+          $ref: '#/components/schemas/SettlementService'
+        networkFundsTransferKey:
+          $ref: '#/components/schemas/reconciliationDetailNetworkFundsTransferKey'
+    PublicInterchangeFeeProgram:
+      type: object
+      description: 'Public Fee Program
+
+        '
+      additionalProperties: false
+      properties:
+        segments:
+          type: object
+          properties:
+            currency:
+              type: string
+            fixed:
+              type: number
+            basisPoints:
+              type: number
+            max:
+              type: number
+            min:
+              type: number
+        designator:
+          type: object
+          oneOf:
+          - $ref: '#/components/schemas/VisaPublicDesignator'
+          - $ref: '#/components/schemas/MastercardPublicDesignator'
+          - $ref: '#/components/schemas/BancontactPublicDesignator'
+    settlementAmountFloat:
+      type: object
+      required:
+      - currency
+      - value
+      - impact
+      properties:
+        currency:
+          $ref: '#/components/schemas/openapi_components-schemas-currencyCode-5'
+        value:
+          $ref: '#/components/schemas/floatAmountValue'
+        impact:
+          enum:
+          - credit
+          - debit
+    components-schemas-actionKey:
+      description: The key of the action corresponding to this reconciliation detail.
+      type: string
+      pattern: ^act-[a-zA-Z0-9]+$
+      minLength: 5
+      maxLength: 120
+      readOnly: true
+      example: act-1e1dA2fgs1YTUhlhyPOp
+    SilverflowRegionality:
+      readOnly: true
+      type: string
+      enum:
+      - domestic
+      - intraregional_eea
+      - intraregional_europe
+      - intraregional_asia_pacific
+      - intraregional_middle_east_and_africa
+      - intraregional_latin_america
+      - interregional
+    reconciliationDetailNetworkFundsTransferKey:
+      description: Uniquely identifies the networkFundsTransfer object that is going to contain the funds corresponding to this reconciliation detail
+      type: string
+      pattern: ^nft-[a-zA-Z0-9]+$
+      readOnly: true
+    VisaPublicDesignator:
+      type: object
+      description: 'Visa Public Designator
+
+        '
+      additionalProperties: false
+      required:
+      - network
+      properties:
+        network:
+          type: string
+          enum:
+          - visa
+        feeProgramIndicator:
+          description: Fee Program Indicator as defined by Visa. This is a 3 character code indicating the Fee Program used. Fee Program Indicators are generally not used for Intra-European transactions.
+          type: string
+        feeDescriptor:
+          description: Fee Descriptor as defined by Visa. This is a short alpha-numeric code indicating the Fee Program used.
+          type: string
+        feeProgramName:
+          description: Human-readable description of the Fee Program.
+          type: string
+        cpsProgram:
+          description: Short name (as defined by Silverflow) of the CPS Program. Custom Payment Service (CPS) Programs are mostly commonly used for US transactions.
+          type: string
+    components-schemas-chargeKey:
+      description: Uniquely identifies a charge
+      type: string
+      pattern: ^chg-[a-zA-Z0-9]+$
+      readOnly: true
+      example: '{{chargeKey}}'
+    components-schemas-acquirerBin:
+      type: string
+      description: Acquirer BIN. The BIN number as assigned by the card network. For Mastercard, this is also referred to as the Acquirer Reference ID.
+      pattern: ^\d{6}$
+    SecondPresentmentDMSReconciliationDetail:
+      allOf:
+      - type: object
+        required:
+        - type
+        - typeSpecific
+        properties:
+          type:
+            type: string
+            enum:
+            - secondPresentment-dms
+          typeSpecific:
+            $ref: '#/components/schemas/SecondPresentmentDMSSpecific'
+      - $ref: '#/components/schemas/BaseReconciliationDetail'
+    SecondPresentmentDMSSpecific:
+      type: object
+      required:
+      - processingDate
+      - bin
+      - arn
+      - grossSettlementAmount
+      - interchangeFeeAmount
+      - acquirerIdCode
+      - transactionType
+      properties:
+        arn:
+          $ref: '#/components/schemas/arn'
+        processingDate:
+          $ref: '#/components/schemas/processingDate'
+        bin:
+          $ref: '#/components/schemas/bin'
+        transactionReference:
+          $ref: '#/components/schemas/components-schemas-transactionReference'
+        merchantAcceptor:
+          $ref: '#/components/schemas/merchantAcceptor'
+        chargeKey:
+          $ref: '#/components/schemas/components-schemas-chargeKey'
+        acquirerIdCode:
+          $ref: '#/components/schemas/components-schemas-acquirerIdCode'
+        authorizationAmount:
+          $ref: '#/components/schemas/settlementAmountInteger'
+        grossSettlementAmount:
+          $ref: '#/components/schemas/settlementAmountFloat'
+        interchangeFeeAmount:
+          $ref: '#/components/schemas/settlementAmountFloat'
+        transactionType:
+          $ref: '#/components/schemas/transactionType'
+        tags:
+          $ref: '#/components/schemas/schemas-Tags'
+    correctedReconciliationDetailKey:
+      description: The key of the reconciliation detail that is being corrected (nullified). This field is only present if `isCorrection` is set to `true`.
+      type: string
+      pattern: ^rcl-[a-zA-Z0-9]{20}$
+      readOnly: true
+      example: '{{reconciliationDetail}}'
+    components-schemas-actionReference:
+      description: Action reference assigned by the agent to the action corresponding to this reconciliation detail. Must not start with "act-".
+      type: string
+      pattern: ^(?!act-)[a-zA-Z0-9-_\.]+$
+      minLength: 1
+      maxLength: 120
+      example: MyRef
+    GenericBadRequestError:
+      allOf:
+      - $ref: '#/components/schemas/openapi_components-schemas-ProblemDetail'
+      - type: object
+        properties:
+          type:
+            enum:
+            - /silverflow/problems/bad-request
+          title:
+            enum:
+            - Bad Request
+    transactionType:
+      type: string
+      enum:
+      - purchase
+      - refund
+      - payout
+      - funding
+    schemas-Tags:
+      type: object
+      description: 'Optional tags provided by the agent to tag the object for maintainability. Tags can be used filtering and sorting on the list views of Disputes. A valid tag-key must:
+
+        - contain only a-z, 0-9, "_" characters
+
+        - first character should be a letter
+
+        - be at least 1 character long
+
+        - be no longer than 24 characters
+
+        - not start with "sf_"
+
+        '
+      additionalProperties:
+        type: string
+        description: Value of the key. A valid value should match with /^.{1,100}$/
+        pattern: ^.{1,100}$
+      example:
+        IamAKey: ThisIsaValue!
+    FirstChargebackSMSSpecific:
+      type: object
+      required:
+      - rrn
+      - processingDate
+      - bin
+      - merchantAcceptor
+      - chargeKey
+      - grossSettlementAmount
+      - interchangeFeeAmount
+      - acquirerIdCode
+      - transactionType
+      - reversal
+      properties:
+        rrn:
+          $ref: '#/components/schemas/rrn'
+        processingDate:
+          $ref: '#/components/schemas/processingDate'
+        bin:
+          $ref: '#/components/schemas/bin'
+        transactionReference:
+          $ref: '#/components/schemas/components-schemas-transactionReference'
+        actionKey:
+          $ref: '#/components/schemas/components-schemas-actionKey'
+        actionReference:
+          $ref: '#/components/schemas/components-schemas-actionReference'
+        merchantAcceptor:
+          $ref: '#/components/schemas/merchantAcceptor'
+        chargeKey:
+          $ref: '#/components/schemas/components-schemas-chargeKey'
+        grossSettlementAmount:
+          $ref: '#/components/schemas/settlementAmountFloatWithRate'
+        interchangeFeeAmount:
+          $ref: '#/components/schemas/settlementAmountFloatWithRate'
+        acquirerIdCode:
+          $ref: '#/components/schemas/components-schemas-acquirerIdCode'
+        transactionType:
+          $ref: '#/components/schemas/transactionType'
+        preDispute:
+          $ref: '#/components/schemas/preDisputeType'
+        reversal:
+          type: boolean
+        tags:
+          $ref: '#/components/schemas/schemas-Tags'
+    FirstPresentmentDMSSpecific:
+      type: object
+      required:
+      - processingDate
+      - bin
+      - arn
+      - clearableTime
+      - merchantAcceptor
+      - chargeKey
+      - authorizationAmount
+      - clearingAmount
+      - grossSettlementAmount
+      - interchangeFeeAmount
+      - acquirerIdCode
+      - transactionType
+      - filename
+      properties:
+        arn:
+          description: The Acquirer Reference Number; Unique identifier assigned by the Silverflow at clearing used to identify the transaction with the card networks.
+          type: string
+          readOnly: true
+        processingDate:
+          type: string
+          format: date
+          description: The processing date
+        bin:
+          $ref: '#/components/schemas/bin'
+        clearableTime:
+          type: string
+          format: date-time
+          description: The DateTime after which a transaction should be cleared.
+        merchantAcceptor:
+          $ref: '#/components/schemas/merchantAcceptor'
+        chargeKey:
+          $ref: '#/components/schemas/components-schemas-chargeKey'
+        authorizationAmount:
+          $ref: '#/components/schemas/settlementAmountInteger'
+        clearingAmount:
+          $ref: '#/components/schemas/settlementAmountInteger'
+        grossSettlementAmount:
+          $ref: '#/components/schemas/settlementAmountFloatWithRate'
+        interchangeFeeAmount:
+          $ref: '#/components/schemas/settlementAmountFloatWithRate'
+        transactionReference:
+          $ref: '#/components/schemas/components-schemas-transactionReference'
+        actionKey:
+          $ref: '#/components/schemas/components-schemas-actionKey'
+        actionReference:
+          $ref: '#/components/schemas/components-schemas-actionReference'
+        filename:
+          type: string
+        acquirerIdCode:
+          $ref: '#/components/schemas/components-schemas-acquirerIdCode'
+        transactionType:
+          $ref: '#/components/schemas/transactionType'
+        tags:
+          $ref: '#/components/schemas/schemas-Tags'
+        cardInfoSummary:
+          $ref: '#/components/schemas/CardInfoSummary'
+        interchangeFeeProgram:
+          $ref: '#/components/schemas/PublicInterchangeFeeProgram'
+        cashbackAmount:
+          allOf:
+          - description: 'The cashback amount, in minor units, included in the `netSettlementAmount`.
+
+              For example `$12.34` is encoded as `1234`. Currently only potentially present for Visa and Mastercard.
+
+              '
+          - $ref: '#/components/schemas/openapi_components-schemas-Amount-2'
+        transactionRegionalitySummary:
+          $ref: '#/components/schemas/TransactionRegionalitySummary'
+    arn:
+      description: The Acquirer Reference Number; Unique identifier assigned by the Silverflow at clearing used to identify the transaction with the card networks.
+      type: string
+      readOnly: true
+    bin:
+      type: object
+      required:
+      - description
+      - acquirerBin
+      - key
+      properties:
+        description:
+          description: Description of the BIN. Combination of acquirer, region and scheme.
+          type: string
+          example: Example Acquirer - Mastercard
+        acquirerBin:
+          oneOf:
+          - $ref: '#/components/schemas/components-schemas-acquirerBin'
+          - $ref: '#/components/schemas/americanExpressAquirerBin'
+        key:
+          $ref: '#/components/schemas/components-schemas-binKey'
+    components-schemas-mid:
+      type: string
+      description: Merchant ID assigned to the merchant (or Payfac) by the acquirer, must be unique for each merchant dba name/location for the BIN
+      pattern: ^[a-zA-Z0-9-_\.]{1,15}$
+    FirstChargebackDMSSpecific:
+      type: object
+      required:
+      - arn
+      - processingDate
+      - bin
+      - grossSettlementAmount
+      - acquirerIdCode
+      - transactionType
+      - interchangeFeeAmount
+      properties:
+        arn:
+          $ref: '#/components/schemas/arn'
+        processingDate:
+          $ref: '#/components/schemas/processingDate'
+        bin:
+          $ref: '#/components/schemas/bin'
+        transactionReference:
+          $ref: '#/components/schemas/components-schemas-transactionReference'
+        merchantAcceptor:
+          $ref: '#/components/schemas/merchantAcceptor'
+        chargeKey:
+          $ref: '#/components/schemas/components-schemas-chargeKey'
+        acquirerIdCode:
+          $ref: '#/components/schemas/components-schemas-acquirerIdCode'
+        authorizationAmount:
+          $ref: '#/components/schemas/settlementAmountInteger'
+        grossSettlementAmount:
+          $ref: '#/components/schemas/settlementAmountFloat'
+        interchangeFeeAmount:
+          $ref: '#/components/schemas/settlementAmountFloat'
+        transactionType:
+          $ref: '#/components/schemas/transactionType'
+        preDispute:
+          $ref: '#/components/schemas/preDisputeType'
+        reversal:
+          type: boolean
+        tags:
+          $ref: '#/components/schemas/schemas-Tags'
+    FirstPresentmentRTCSpecific:
+      type: object
+      required:
+      - processingDate
+      - bin
+      - merchantAcceptor
+      - chargeKey
+      - authorizationAmount
+      - grossSettlementAmount
+      - interchangeFeeAmount
+      - acquirerIdCode
+      - transactionType
+      - switchPeriodNumber
+      - switchPeriodDate
+      properties:
+        rrn:
+          $ref: '#/components/schemas/rrn'
+        processingDate:
+          type: string
+          format: date
+          description: The processing date
+        bin:
+          $ref: '#/components/schemas/bin'
+        transactionReference:
+          $ref: '#/components/schemas/components-schemas-transactionReference'
+        merchantAcceptor:
+          $ref: '#/components/schemas/merchantAcceptor'
+        chargeKey:
+          $ref: '#/components/schemas/components-schemas-chargeKey'
+        authorizationAmount:
+          $ref: '#/components/schemas/settlementAmountInteger'
+        grossSettlementAmount:
+          $ref: '#/components/schemas/settlementAmountFloatWithRate'
+        interchangeFeeAmount:
+          $ref: '#/components/schemas/settlementAmountFloatWithRate'
+        acquirerIdCode:
+          $ref: '#/components/schemas/components-schemas-acquirerIdCode'
+        transactionType:
+          $ref: '#/components/schemas/transactionType'
+        interchangeFeeProgram:
+          $ref: '#/components/schemas/PublicInterchangeFeeProgram'
+        switchPeriodNumber:
+          type: string
+        switchPeriodDate:
+          type: string
+          format: date
+    BancontactPublicDesignator:
+      type: object
+      description: 'Bancontact Public Designator
+
+        '
+      additionalProperties: false
+      required:
+      - network
+      properties:
+        network:
+          type: string
+          enum:
+          - bancontact
+        feeCode:
+          description: Fee Code as defined by Bancontact. This is a short alpha-numeric code indicating the Fee Program used.
+          type: string
+        feeProgramName:
+          description: Human-readable description of the Fee Program.
+          type: string
+    CardNetworkFeeReconciliationDetail:
+      allOf:
+      - type: object
+        required:
+        - type
+        - typeSpecific
+        properties:
+          type:
+            type: string
+            enum:
+            - cardNetworkFee-dms
+          typeSpecific:
+            $ref: '#/components/schemas/CardNetworkFeeSpecific'
+      - $ref: '#/components/schemas/BaseReconciliationDetail'
+    openapi_components-schemas-countryCodeAlpha2:
+      type: string
+      pattern: ^[A-Z]{2}$
+      description: 'The ISO code of the country.
+
+
+        **European ISO Country Codes**
+
+
+        <details>
+
+
+        | Country | Alpha-2 code | Numeric |
+
+        | ------- | ------------ | ------- |
+
+        | Åland Islands | AX | 248 |
+
+        | Andorra | AD | 020 |
+
+        | Austria | AT | 040 |
+
+        | Belgium | BE | 056 |
+
+        | Cyprus | CY | 196 |
+
+        | Estonia | EE | 233 |  |
+
+        | Finland | FI | 246 |
+
+        | France | FR | 250 |
+
+        | French Guiana | GF | 254 |
+
+        | French Southern Territories | TF | 260 |
+
+        | Germany | DE | 280 |
+
+        | Greece | GR | 300 |
+
+        | Guadeloupe | GP | 312 |
+
+        | Ireland | IE | 372 |
+
+        | Italy | IT | 380 |
+
+        | Kosovo, United Nations Mission in Kosovo (UNMIK) | QZ | 900 |
+
+        | Latvia | LV | 428 |
+
+        | Lithuania | LT | 440 |
+
+        | Luxembourg | LU | 442 |
+
+        | Malta | MT | 470 |
+
+        | Martinique | MQ | 474 |
+
+        | Mayotte | YT | 175 |
+
+        | Monaco | MC | 492 |
+
+        | Montenegro | ME | 499 |
+
+        | Netherlands | NL | 528 |
+
+        | Portugal | PT | 620 |
+
+        | Reunion | RE | 638 |
+
+        | Saint Barthélemy | BL | 652 |
+
+        | Saint Martin (French Part) | MF | 663 |
+
+        | San Marino | SM | 674 |
+
+        | Slovakia | SK | 703 |
+
+        | Slovenia | SI | 705 |
+
+        | Spain | ES | 724 |
+
+        | St. Pierre and Miquelon | PM | 666 |
+
+        | Vatican City State (Holy See) | VA | 336 |
+
+
+        </details>
+
+
+        **US ISO Country Codes**
+
+
+        <details>
+
+
+        | Country | Alpha-2 code | Numeric |
+
+        | ------- | ------------ | ------- |
+
+        | American Samoa | AS | 016 |
+
+        | Bonaire, St. Eusasius and Saba | BQ | 535 |
+
+        | British Indian Ocean Territory | IO | 086 |
+
+        | Ecuador | EC | 218 |
+
+        | Guam | GU | 316 |
+
+        | Marshall Islands | MH | 584 |
+
+        | Micronesia, Federated States of | FM | 583 |
+
+        | Northern Mariana Islands | MP | 580 |
+
+        | Palau | PW | 585 |
+
+        | Palestine, State of | PS | 275 |
+
+        | Puerto Rico | PR | 630 |
+
+        | Timor-Leste | TP | 626 |
+
+        | Turks and Caicos Islands | TC | 796 |
+
+        | U.S. Minor Outlying Islands | UM | 581 |
+
+        | United States | US | 840 |
+
+        | Virgin Islands, British | VG | 092 |
+
+        | Virgin Islands, U.S. | VI | 850 |
+
+
+        </details>
+
+
+        **Other ISO Country Codes**
+
+
+        <details>
+
+
+        | Country | Alpha-2 code | Numeric |
+
+        | ------- | ------------ | ------- |
+
+        | Afghanistan | AF | 004 |
+
+        | Albania | AL | 008 |
+
+        | Algeria | DZ | 012 |
+
+        | Angola | AO | 024 |
+
+        | Anguilla | AI | 660 |
+
+        | Antarctica | AQ | 010 |
+
+        | Antigua and Barbuda | AG | 028 |
+
+        | Argentina | AR | 032 |
+
+        | Armenia | AM | 051 |
+
+        | Aruba | AW | 533 |
+
+        | Australia | AU | 036 |
+
+        | Azerbaijan | AZ | 031 |
+
+        | Bahamas | BS | 044 |
+
+        | Bahrain | BH | 048 |
+
+        | Bangladesh | BD | 050 |
+
+        | Barbados | BB | 052 |
+
+        | Belarus | BR | 112 |
+
+        | Belize | BZ | 084 |
+
+        | Benin | BJ | 204 |
+
+        | Bermuda | BM | 060 |
+
+        | Bhutan | BT | 064 |
+
+        | Bolivia, Plurinational State of | BO | 068 |
+
+        | Bosnia and Herzegovina | BA | 070 |
+
+        | Botswana | BW | 072 |
+
+        | Bouvet Island | BV | 074 |
+
+        | Brazil | BR | 076 |
+
+        | Brunei Darussalam | BN | 096 |
+
+        | Bulgaria | BG | 100 |
+
+        | Burkina Faso | BF | 854 |
+
+        | Burundi | BI | 108 |
+
+        | Cambodia | KH | 116 |
+
+        | Cameroon | CM | 120 |
+
+        | Canada | CA | 124 |
+
+        | Cape Verde | CV | 132 |
+
+        | Cayman Islands | KY | 136 |
+
+        | Central African Republic | CF | 140 |
+
+        | Chad | TD | 148 |
+
+        | Chile | CL | 152 |
+
+        | China | CN | 156 |
+
+        | Christmas Island | CX | 162 |
+
+        | Cocos (Keeling) Islands | CC | 166 |
+
+        | Colombia | CO | 170 |
+
+        | Comoros | KM | 174 |
+
+        | Congo | CG | 178 |
+
+        | Cook Islands | CK | 184 |
+
+        | Costa Rica | CR | 188 |
+
+        | Côte D''Ivoire | CI | 384 |
+
+        | Croatia | HR | 191 |
+
+        | Cuba | CU | 192 |
+
+        | Curacao | CW | 531 |
+
+        | Czech Republic | CZ | 203 |
+
+        | Democratic Republic of the Congo | CD | 180 |
+
+        | Denmark | DK | 208 |
+
+        | Djibouti | DJ | 262 |
+
+        | Dominica | DM | 212 |
+
+        | Dominican Republic | DO | 214 |
+
+        | Egypt | EG | 818 |
+
+        | El Salvador | SV | 222 |
+
+        | Equatorial Guinea | GQ | 226 |
+
+        | Eritrea | ER | 232 |
+
+        | Ethiopia | ET | 230 |
+
+        | Falkland Islands (Malvinas) | FK | 238 |
+
+        | Faroe Islands | FO | 234 |
+
+        | Fiji | FJ | 242 |
+
+        | French Polynesia | PF | 258 |
+
+        | Gabon | GA | 266 |
+
+        | Gambia | GM | 270 |
+
+        | Georgia | GE | 268 |
+
+        | Ghana | GH | 288 |
+
+        | Gibraltar | GI | 292 |
+
+        | Greenland | GL | 304 |
+
+        | Grenada | GD | 308 |
+
+        | Guatemala | GT | 320 |
+
+        | Guernsey | GG | 831 |
+
+        | Guinea | GN | 324 |
+
+        | Guinea-Bissau | GW | 624 |
+
+        | Guyana | GY | 328 |
+
+        | Haiti | HT | 332 |
+
+        | Heard and McDonald Islands | HM | 334 |
+
+        | Honduras | HN | 340 |
+
+        | Hong Kong | HK | 344 |
+
+        | Hungary | HU | 348 |
+
+        | Iceland | IS | 352 |
+
+        | India | IN | 356 |
+
+        | Indonesia | ID | 360 |
+
+        | Iraq | IQ | 368 |
+
+        | Isle of Man | IM | 833 |
+
+        | Israel | IL | 376 |
+
+        | Jamaica | JM | 388 |
+
+        | Japan | JP | 392 |
+
+        | Jersey | JE | 832 |
+
+        | Jordan | JO | 400 |
+
+        | Kazakhstan | KZ | 398 |
+
+        | Kenya | KE | 404 |
+
+        | Kiribati | KI | 296 |
+
+        | Korea, Republic of | KR | 410 |
+
+        | Kuwait | KW | 414 |
+
+        | Kyrgyzstan | KG | 417 |
+
+        | Lao People''s Democratic Republic | LA | 418 |
+
+        | Lebanon | LB | 422 |
+
+        | Lesotho | LS | 426 |
+
+        | Liberia | LR | 430 |
+
+        | Libyan Arab Jamahiriya | LY | 434 |
+
+        | Liechtenstein | LI | 438 |
+
+        | Macao | MO | 446 |
+
+        | Macedonia | MK | 807 |
+
+        | Madagascar | MG | 450 |
+
+        | Malawi | MW | 454 |
+
+        | Malaysia | MY | 458 |
+
+        | Maldives | MV | 462 |
+
+        | Mali | ML | 466 |
+
+        | Mauritania | MR | 478 |
+
+        | Mauritius | MU | 480 |
+
+        | Mexico | MX | 484 |
+
+        | Moldova, Republic of | MD | 498 |
+
+        | Mongolia | MN | 496 |
+
+        | Montserrat | MS | 500 |
+
+        | Morocco | MA | 504 |
+
+        | Mozambique | MZ | 508 |
+
+        | Myanmar (effective 1 November 2012) | MM | 104 |
+
+        | Namibia | NA | 516 |
+
+        | Nauru | NR | 520 |
+
+        | Nepal | NP | 524 |
+
+        | Netherlands Antilles | AN | 530 |
+
+        | New Caledonia | NC | 540 |
+
+        | New Zealand | NZ | 554 |
+
+        | Nicaragua | NI | 558 |
+
+        | Niger | NE | 562 |
+
+        | Nigeria | NG | 566 |
+
+        | Niue | NU | 570 |
+
+        | Norfolk Island | NF | 574 |
+
+        | Norway | NO | 578 |
+
+        | Oman | OM | 512 |
+
+        | Pakistan | PK | 586 |
+
+        | Panama | PA | 591 |
+
+        | Papua New Guinea | PG | 598 |
+
+        | Paraguay | PY | 600 |
+
+        | Peru | PE | 604 |
+
+        | Philippines | PH | 608 |
+
+        | Pitcairn | PN | 612 |
+
+        | Poland | PL | 616 |
+
+        | Qatar | QA | 634 |
+
+        | Republic of South Sudan | SS | 728 |
+
+        | Romania | RO | 642 |
+
+        | Russian Federation | RU | 643 |
+
+        | Rwanda | RW | 646 |
+
+        | Samoa | WS | 882 |
+
+        | Sao Tome and Principe | ST | 678 |
+
+        | Saudi Arabia | SA | 682 |
+
+        | Senegal | SN | 686 |
+
+        | Serbia | RS | 688 |
+
+        | Seychelles | SC | 690 |
+
+        | Sierra Leone | SL | 694 |
+
+        | Singapore | SG | 702 |
+
+        | Sint Maarten (Dutch Part) | SX | 534 |
+
+        | Solomon Islands | SB | 090 |
+
+        | Somalia | SO | 706 |
+
+        | South Africa | ZA | 710 |
+
+        | South Georgia and the South Sandwich Islands | GS | 239 |
+
+        | Sri Lanka | LK | 144 |
+
+        | Saint Helena, Ascension and Tristan Da Cunha | SH | 654 |
+
+        | St. Kitts and Nevis | KN | 659 |
+
+        | St. Lucia | LC | 662 |
+
+        | St. Vincent and the Grenadines | VC | 670 |
+
+        | Suriname | SR | 740 |
+
+        | Svalbard and Jan Mayen | SJ | 744 |
+
+        | Swaziland | SZ | 748 |
+
+        | Sweden | SE | 752 |
+
+        | Switzerland | CH | 756 |
+
+        | Taiwan | TW | 158 |
+
+        | Tajikistan | TJ | 762 |
+
+        | Tanzania, United Republic of | TZ | 834 |
+
+        | Thailand | TH | 764 |
+
+        | Togo | TG | 768 |
+
+        | Tokelau | TK | 772 |
+
+        | Tonga | TO | 776 |
+
+        | Trinidad and Tobago | TT | 780 |
+
+        | Tunisia | TN | 788 |
+
+        | Turkey | TR | 792 |
+
+        | Turkmenistan | TM | 795 |
+
+        | Tuvalu | TV | 798 |
+
+        | Uganda | UG | 800 |
+
+        | Ukraine | UA | 804 |
+
+        | United Arab Emirates | AE | 784 |
+
+        | United Kingdom | GB | 826 |
+
+        | Uruguay | UY | 858 |
+
+        | Uzbekistan | UZ | 860 |
+
+        | Vanuatu | VU | 548 |
+
+        | Venezuela, Bolivarian Republic of | VE | 862 |
+
+        | Vietnam | VN | 704 |
+
+        | Wallis and Futuna | WF | 876 |
+
+        | Western Sahara | EH | 732 |
+
+        | Yemen | YE | 886 |
+
+        | Zambia | ZM | 894 |
+
+        | Zimbabwe | ZW | 716 |
+
+
+        </details>'
+      externalDocs:
+        description: Find more info here
+        url: https://www.iso.org/iso-3166-country-codes.html
+      example: NL
+    CardNetworkFeeSpecific:
+      type: object
+      required:
+      - acquirerIdCode
+      - processingDate
+      - type
+      - subType
+      - description
+      properties:
+        acquirerIdCode:
+          $ref: '#/components/schemas/components-schemas-acquirerIdCode'
+        processingDate:
+          $ref: '#/components/schemas/processingDate'
+        type:
+          type: string
+          description: This field contains the type of the Fee.
+        subType:
+          type: string
+          description: This field contains the subType of the Fee.
+        description:
+          type: string
+          description: This field contains a description of the Fee.
+    responseOffsetToken:
+      type: string
+      pattern: ^[a-zA-Z0-9%]+$
+      description: The offset token. Can be used to continue paginating in the next request.
+    americanExpressMid:
+      type: string
+      pattern: ^[a-zA-Z0-9-_\.]{20}$
+    acceptorKey:
+      description: Uniquely identifies a Merchant Acceptor.
+      type: string
+      pattern: ^mac-[a-zA-Z0-9]+$
+      minLength: 5
+      maxLength: 120
+      example: mac-1JRadf2ffdfrdPMf2XrS2
+    FirstChargebackDMSReconciliationDetail:
+      allOf:
+      - type: object
+        required:
+        - type
+        - typeSpecific
+        properties:
+          type:
+            type: string
+            enum:
+            - firstChargeback-dms
+          typeSpecific:
+            $ref: '#/components/schemas/FirstChargebackDMSSpecific'
+      - $ref: '#/components/schemas/BaseReconciliationDetail'
+    components-schemas-doingBusinessAsName:
+      type: string
+      description: Assumed, trade or fictitious name of the merchant, value will be trimmed if greater than 25 (Visa) or 22 (Mastercard) characters by the scheme.
+      minLength: 1
+    PreArbitrationDMSReconciliationDetail:
+      allOf:
+      - type: object
+        required:
+        - type
+        - typeSpecific
+        properties:
+          type:
+            type: string
+            enum:
+            - preArbitration-dms
+          typeSpecific:
+            $ref: '#/components/schemas/PreArbitrationDMSSpecific'
+      - $ref: '#/components/schemas/BaseReconciliationDetail'
+    reconciliationDetailKey:
+      description: Uniquely identifies a Reconciliation Detail
+      type: string
+      pattern: ^rcl-[a-zA-Z0-9]{20}$
+      readOnly: true
+      example: '{{reconciliationDetail}}'
+    AccountFundingSource:
+      type: string
+      enum:
+      - Credit
+      - Debit
+      - Prepaid
+      - Charge
+      - Deferred Debit
+      - Unknown
+      description: The Account Funding Source of the card used in the transaction.
+    FirstPresentmentSMSReconciliationDetail:
+      allOf:
+      - type: object
+        required:
+        - type
+        - typeSpecific
+        properties:
+          type:
+            type: string
+            enum:
+            - firstPresentment-sms
+          typeSpecific:
+            $ref: '#/components/schemas/FirstPresentmentSMSSpecific'
+      - $ref: '#/components/schemas/BaseReconciliationDetail'
+    components-schemas-acquirerIdCode:
+      type: string
+      description: Identifier of the Acquirer as defined by the Card Network (Visa CIB, Mastercard ICA).
+    SettlementService:
+      type: object
+      required:
+      - code
+      - id
+      - name
+      properties:
+        code:
+          type: string
+          description: Identifier of the Settlement Service as defined by the Card Network.
+        name:
+          type: string
+          description: The name of the Settlement Service used
+        id:
+          type: string
+          description: This field contains the code which identifies the Settlement Service used.
+    FirstPresentmentSMSSpecific:
+      type: object
+      required:
+      - rrn
+      - processingDate
+      - bin
+      - merchantAcceptor
+      - chargeKey
+      - authorizationAmount
+      - grossSettlementAmount
+      - interchangeFeeAmount
+      - acquirerIdCode
+      - transactionType
+      properties:
+        rrn:
+          $ref: '#/components/schemas/rrn'
+        processingDate:
+          type: string
+          format: date
+          description: The processing date
+        bin:
+          $ref: '#/components/schemas/bin'
+        transactionReference:
+          $ref: '#/components/schemas/components-schemas-transactionReference'
+        actionKey:
+          $ref: '#/components/schemas/components-schemas-actionKey'
+        actionReference:
+          $ref: '#/components/schemas/components-schemas-actionReference'
+        merchantAcceptor:
+          $ref: '#/components/schemas/merchantAcceptor'
+        chargeKey:
+          $ref: '#/components/schemas/components-schemas-chargeKey'
+        authorizationAmount:
+          $ref: '#/components/schemas/settlementAmountInteger'
+        grossSettlementAmount:
+          $ref: '#/components/schemas/settlementAmountFloatWithRate'
+        interchangeFeeAmount:
+          $ref: '#/components/schemas/settlementAmountFloatWithRate'
+        acquirerIdCode:
+          $ref: '#/components/schemas/components-schemas-acquirerIdCode'
+        transactionType:
+          $ref: '#/components/schemas/transactionType'
+        tags:
+          $ref: '#/components/schemas/schemas-Tags'
+        cardInfoSummary:
+          $ref: '#/components/schemas/CardInfoSummary'
+        interchangeFeeProgram:
+          $ref: '#/components/schemas/PublicInterchangeFeeProgram'
+        transactionRegionalitySummary:
+          $ref: '#/components/schemas/TransactionRegionalitySummary'
+    components-schemas-transactionReference:
+      type: string
+      description: 'Unique ID assigned by the agent to the transaction. Used to identify the transaction.
+
+        '
+      minLength: 1
+      maxLength: 120
+    settlementAmountFloatWithRate:
+      type: object
+      required:
+      - currency
+      - value
+      - impact
+      properties:
+        currency:
+          $ref: '#/components/schemas/openapi_components-schemas-currencyCode-5'
+        value:
+          $ref: '#/components/schemas/floatAmountValue'
+        impact:
+          enum:
+          - credit
+          - debit
+        currencyConversionRates:
+          $ref: '#/components/schemas/CurrencyConversionRates'
+    Rate:
+      type: object
+      properties:
+        date:
+          type: string
+          format: date
+        sourceCurrency:
+          $ref: '#/components/schemas/openapi_components-schemas-currencyCode-5'
+        targetCurrency:
+          $ref: '#/components/schemas/openapi_components-schemas-currencyCode-5'
+        rate:
+          type: number
+        exponent:
+          type: number
+        operation:
+          type: string
+          enum:
+          - multiply
+          - divide
+        type:
+          enum:
+          - buy
+          - sell
+          - mid
+    FirstChargebackSMSReconciliationDetail:
+      allOf:
+      - type: object
+        required:
+        - type
+        - typeSpecific
+        properties:
+          type:
+            type: string
+            enum:
+            - firstChargeback-sms
+          typeSpecific:
+            $ref: '#/components/schemas/FirstChargebackSMSSpecific'
+      - $ref: '#/components/schemas/BaseReconciliationDetail'
+    preDisputeType:
+      type: string
+      description: The type of pre-dispute resolution used for this transaction.
+      enum:
+      - rapidDisputeResolution
+      - collaborationRefund
+    fundsTransferDate:
+      format: date
+      type: string
+      description: The (value) date of the funds transfer.
+    binPageOffsetToken:
+      type: string
+      pattern: ^[_a-zA-Z0-9-]+$
+    rrn:
+      description: The Retrieval Reference Number; Unique identifier used to identify transactions.
+      type: string
+      readOnly: true
+    openapi_components-schemas-countryCodeNumeric:
+      type: string
+      pattern: ^[0-9]{3}$
+      description: 'The ISO code of the country.
+
+
+        **European ISO Country Codes**
+
+
+        <details>
+
+
+        | Country | Alpha-2 code | Numeric |
+
+        | ------- | ------------ | ------- |
+
+        | Åland Islands | AX | 248 |
+
+        | Andorra | AD | 020 |
+
+        | Austria | AT | 040 |
+
+        | Belgium | BE | 056 |
+
+        | Cyprus | CY | 196 |
+
+        | Estonia | EE | 233 |  |
+
+        | Finland | FI | 246 |
+
+        | France | FR | 250 |
+
+        | French Guiana | GF | 254 |
+
+        | French Southern Territories | TF | 260 |
+
+        | Germany | DE | 280 |
+
+        | Greece | GR | 300 |
+
+        | Guadeloupe | GP | 312 |
+
+        | Ireland | IE | 372 |
+
+        | Italy | IT | 380 |
+
+        | Kosovo, United Nations Mission in Kosovo (UNMIK) | QZ | 900 |
+
+        | Latvia | LV | 428 |
+
+        | Lithuania | LT | 440 |
+
+        | Luxembourg | LU | 442 |
+
+        | Malta | MT | 470 |
+
+        | Martinique | MQ | 474 |
+
+        | Mayotte | YT | 175 |
+
+        | Monaco | MC | 492 |
+
+        | Montenegro | ME | 499 |
+
+        | Netherlands | NL | 528 |
+
+        | Portugal | PT | 620 |
+
+        | Reunion | RE | 638 |
+
+        | Saint Barthélemy | BL | 652 |
+
+        | Saint Martin (French Part) | MF | 663 |
+
+        | San Marino | SM | 674 |
+
+        | Slovakia | SK | 703 |
+
+        | Slovenia | SI | 705 |
+
+        | Spain | ES | 724 |
+
+        | St. Pierre and Miquelon | PM | 666 |
+
+        | Vatican City State (Holy See) | VA | 336 |
+
+
+        </details>
+
+
+        **US ISO Country Codes**
+
+
+        <details>
+
+
+        | Country | Alpha-2 code | Numeric |
+
+        | ------- | ------------ | ------- |
+
+        | American Samoa | AS | 016 |
+
+        | Bonaire, St. Eusasius and Saba | BQ | 535 |
+
+        | British Indian Ocean Territory | IO | 086 |
+
+        | Ecuador | EC | 218 |
+
+        | Guam | GU | 316 |
+
+        | Marshall Islands | MH | 584 |
+
+        | Micronesia, Federated States of | FM | 583 |
+
+        | Northern Mariana Islands | MP | 580 |
+
+        | Palau | PW | 585 |
+
+        | Palestine, State of | PS | 275 |
+
+        | Puerto Rico | PR | 630 |
+
+        | Timor-Leste | TP | 626 |
+
+        | Turks and Caicos Islands | TC | 796 |
+
+        | U.S. Minor Outlying Islands | UM | 581 |
+
+        | United States | US | 840 |
+
+        | Virgin Islands, British | VG | 092 |
+
+        | Virgin Islands, U.S. | VI | 850 |
+
+
+        </details>
+
+
+        **Other ISO Country Codes**
+
+
+        <details>
+
+
+        | Country | Alpha-2 code | Numeric |
+
+        | ------- | ------------ | ------- |
+
+        | Afghanistan | AF | 004 |
+
+        | Albania | AL | 008 |
+
+        | Algeria | DZ | 012 |
+
+        | Angola | AO | 024 |
+
+        | Anguilla | AI | 660 |
+
+        | Antarctica | AQ | 010 |
+
+        | Antigua and Barbuda | AG | 028 |
+
+        | Argentina | AR | 032 |
+
+        | Armenia | AM | 051 |
+
+        | Aruba | AW | 533 |
+
+        | Australia | AU | 036 |
+
+        | Azerbaijan | AZ | 031 |
+
+        | Bahamas | BS | 044 |
+
+        | Bahrain | BH | 048 |
+
+        | Bangladesh | BD | 050 |
+
+        | Barbados | BB | 052 |
+
+        | Belarus | BR | 112 |
+
+        | Belize | BZ | 084 |
+
+        | Benin | BJ | 204 |
+
+        | Bermuda | BM | 060 |
+
+        | Bhutan | BT | 064 |
+
+        | Bolivia, Plurinational State of | BO | 068 |
+
+        | Bosnia and Herzegovina | BA | 070 |
+
+        | Botswana | BW | 072 |
+
+        | Bouvet Island | BV | 074 |
+
+        | Brazil | BR | 076 |
+
+        | Brunei Darussalam | BN | 096 |
+
+        | Bulgaria | BG | 100 |
+
+        | Burkina Faso | BF | 854 |
+
+        | Burundi | BI | 108 |
+
+        | Cambodia | KH | 116 |
+
+        | Cameroon | CM | 120 |
+
+        | Canada | CA | 124 |
+
+        | Cape Verde | CV | 132 |
+
+        | Cayman Islands | KY | 136 |
+
+        | Central African Republic | CF | 140 |
+
+        | Chad | TD | 148 |
+
+        | Chile | CL | 152 |
+
+        | China | CN | 156 |
+
+        | Christmas Island | CX | 162 |
+
+        | Cocos (Keeling) Islands | CC | 166 |
+
+        | Colombia | CO | 170 |
+
+        | Comoros | KM | 174 |
+
+        | Congo | CG | 178 |
+
+        | Cook Islands | CK | 184 |
+
+        | Costa Rica | CR | 188 |
+
+        | Côte D''Ivoire | CI | 384 |
+
+        | Croatia | HR | 191 |
+
+        | Cuba | CU | 192 |
+
+        | Curacao | CW | 531 |
+
+        | Czech Republic | CZ | 203 |
+
+        | Democratic Republic of the Congo | CD | 180 |
+
+        | Denmark | DK | 208 |
+
+        | Djibouti | DJ | 262 |
+
+        | Dominica | DM | 212 |
+
+        | Dominican Republic | DO | 214 |
+
+        | Egypt | EG | 818 |
+
+        | El Salvador | SV | 222 |
+
+        | Equatorial Guinea | GQ | 226 |
+
+        | Eritrea | ER | 232 |
+
+        | Ethiopia | ET | 230 |
+
+        | Falkland Islands (Malvinas) | FK | 238 |
+
+        | Faroe Islands | FO | 234 |
+
+        | Fiji | FJ | 242 |
+
+        | French Polynesia | PF | 258 |
+
+        | Gabon | GA | 266 |
+
+        | Gambia | GM | 270 |
+
+        | Georgia | GE | 268 |
+
+        | Ghana | GH | 288 |
+
+        | Gibraltar | GI | 292 |
+
+        | Greenland | GL | 304 |
+
+        | Grenada | GD | 308 |
+
+        | Guatemala | GT | 320 |
+
+        | Guernsey | GG | 831 |
+
+        | Guinea | GN | 324 |
+
+        | Guinea-Bissau | GW | 624 |
+
+        | Guyana | GY | 328 |
+
+        | Haiti | HT | 332 |
+
+        | Heard and McDonald Islands | HM | 334 |
+
+        | Honduras | HN | 340 |
+
+        | Hong Kong | HK | 344 |
+
+        | Hungary | HU | 348 |
+
+        | Iceland | IS | 352 |
+
+        | India | IN | 356 |
+
+        | Indonesia | ID | 360 |
+
+        | Iraq | IQ | 368 |
+
+        | Isle of Man | IM | 833 |
+
+        | Israel | IL | 376 |
+
+        | Jamaica | JM | 388 |
+
+        | Japan | JP | 392 |
+
+        | Jersey | JE | 832 |
+
+        | Jordan | JO | 400 |
+
+        | Kazakhstan | KZ | 398 |
+
+        | Kenya | KE | 404 |
+
+        | Kiribati | KI | 296 |
+
+        | Korea, Republic of | KR | 410 |
+
+        | Kuwait | KW | 414 |
+
+        | Kyrgyzstan | KG | 417 |
+
+        | Lao People''s Democratic Republic | LA | 418 |
+
+        | Lebanon | LB | 422 |
+
+        | Lesotho | LS | 426 |
+
+        | Liberia | LR | 430 |
+
+        | Libyan Arab Jamahiriya | LY | 434 |
+
+        | Liechtenstein | LI | 438 |
+
+        | Macao | MO | 446 |
+
+        | Macedonia | MK | 807 |
+
+        | Madagascar | MG | 450 |
+
+        | Malawi | MW | 454 |
+
+        | Malaysia | MY | 458 |
+
+        | Maldives | MV | 462 |
+
+        | Mali | ML | 466 |
+
+        | Mauritania | MR | 478 |
+
+        | Mauritius | MU | 480 |
+
+        | Mexico | MX | 484 |
+
+        | Moldova, Republic of | MD | 498 |
+
+        | Mongolia | MN | 496 |
+
+        | Montserrat | MS | 500 |
+
+        | Morocco | MA | 504 |
+
+        | Mozambique | MZ | 508 |
+
+        | Myanmar (effective 1 November 2012) | MM | 104 |
+
+        | Namibia | NA | 516 |
+
+        | Nauru | NR | 520 |
+
+        | Nepal | NP | 524 |
+
+        | Netherlands Antilles | AN | 530 |
+
+        | New Caledonia | NC | 540 |
+
+        | New Zealand | NZ | 554 |
+
+        | Nicaragua | NI | 558 |
+
+        | Niger | NE | 562 |
+
+        | Nigeria | NG | 566 |
+
+        | Niue | NU | 570 |
+
+        | Norfolk Island | NF | 574 |
+
+        | Norway | NO | 578 |
+
+        | Oman | OM | 512 |
+
+        | Pakistan | PK | 586 |
+
+        | Panama | PA | 591 |
+
+        | Papua New Guinea | PG | 598 |
+
+        | Paraguay | PY | 600 |
+
+        | Peru | PE | 604 |
+
+        | Philippines | PH | 608 |
+
+        | Pitcairn | PN | 612 |
+
+        | Poland | PL | 616 |
+
+        | Qatar | QA | 634 |
+
+        | Republic of South Sudan | SS | 728 |
+
+        | Romania | RO | 642 |
+
+        | Russian Federation | RU | 643 |
+
+        | Rwanda | RW | 646 |
+
+        | Samoa | WS | 882 |
+
+        | Sao Tome and Principe | ST | 678 |
+
+        | Saudi Arabia | SA | 682 |
+
+        | Senegal | SN | 686 |
+
+        | Serbia | RS | 688 |
+
+        | Seychelles | SC | 690 |
+
+        | Sierra Leone | SL | 694 |
+
+        | Singapore | SG | 702 |
+
+        | Sint Maarten (Dutch Part) | SX | 534 |
+
+        | Solomon Islands | SB | 090 |
+
+        | Somalia | SO | 706 |
+
+        | South Africa | ZA | 710 |
+
+        | South Georgia and the South Sandwich Islands | GS | 239 |
+
+        | Sri Lanka | LK | 144 |
+
+        | Saint Helena, Ascension and Tristan Da Cunha | SH | 654 |
+
+        | St. Kitts and Nevis | KN | 659 |
+
+        | St. Lucia | LC | 662 |
+
+        | St. Vincent and the Grenadines | VC | 670 |
+
+        | Suriname | SR | 740 |
+
+        | Svalbard and Jan Mayen | SJ | 744 |
+
+        | Swaziland | SZ | 748 |
+
+        | Sweden | SE | 752 |
+
+        | Switzerland | CH | 756 |
+
+        | Taiwan | TW | 158 |
+
+        | Tajikistan | TJ | 762 |
+
+        | Tanzania, United Republic of | TZ | 834 |
+
+        | Thailand | TH | 764 |
+
+        | Togo | TG | 768 |
+
+        | Tokelau | TK | 772 |
+
+        | Tonga | TO | 776 |
+
+        | Trinidad and Tobago | TT | 780 |
+
+        | Tunisia | TN | 788 |
+
+        | Turkey | TR | 792 |
+
+        | Turkmenistan | TM | 795 |
+
+        | Tuvalu | TV | 798 |
+
+        | Uganda | UG | 800 |
+
+        | Ukraine | UA | 804 |
+
+        | United Arab Emirates | AE | 784 |
+
+        | United Kingdom | GB | 826 |
+
+        | Uruguay | UY | 858 |
+
+        | Uzbekistan | UZ | 860 |
+
+        | Vanuatu | VU | 548 |
+
+        | Venezuela, Bolivarian Republic of | VE | 862 |
+
+        | Vietnam | VN | 704 |
+
+        | Wallis and Futuna | WF | 876 |
+
+        | Western Sahara | EH | 732 |
+
+        | Yemen | YE | 886 |
+
+        | Zambia | ZM | 894 |
+
+        | Zimbabwe | ZW | 716 |
+
+
+        </details>'
+      externalDocs:
+        description: Find more info here
+        url: https://www.iso.org/iso-3166-country-codes.html
+      example: '528'
+    SilverflowRegion:
+      readOnly: true
+      type: string
+      enum:
+      - eea
+      - europe
+      - united_states
+      - canada
+      - asia_pacific
+      - middle_east_and_africa
+      - latin_america
+    processingDate:
+      type: string
+      format: date
+      description: The processing date
+    FirstPresentmentRTCReconciliationDetail:
+      allOf:
+      - type: object
+        required:
+        - type
+        - typeSpecific
+        properties:
+          type:
+            type: string
+            enum:
+            - firstPresentment-rtc
+          typeSpecific:
+            $ref: '#/components/schemas/FirstPresentmentRTCSpecific'
+      - $ref: '#/components/schemas/BaseReconciliationDetail'
+    ArbitrationDMSReconciliationDetail:
+      allOf:
+      - type: object
+        required:
+        - type
+        - typeSpecific
+        properties:
+          type:
+            type: string
+            enum:
+            - arbitration-dms
+          typeSpecific:
+            $ref: '#/components/schemas/ArbitrationDMSSpecific'
+      - $ref: '#/components/schemas/BaseReconciliationDetail'
+    FirstPresentmentDMSReconciliationDetail:
+      allOf:
+      - type: object
+        required:
+        - type
+        - typeSpecific
+        properties:
+          type:
+            type: string
+            enum:
+            - firstPresentment-dms
+          typeSpecific:
+            $ref: '#/components/schemas/FirstPresentmentDMSSpecific'
+      - $ref: '#/components/schemas/BaseReconciliationDetail'
+    CardInfoSummary:
+      type: object
+      required:
+      - cardCountry
+      - accountFundingSource
+      - productType
+      properties:
+        cardCountry:
+          $ref: '#/components/schemas/schemas-CardCountry'
+        accountFundingSource:
+          $ref: '#/components/schemas/AccountFundingSource'
+        productType:
+          $ref: '#/components/schemas/ProductType'
+    ReconciliationDetail:
+      discriminator:
+        propertyName: type
+        mapping:
+          firstPresentment-dms: '#/components/schemas/FirstPresentmentDMSReconciliationDetail'
+          firstPresentment-sms: '#/components/schemas/FirstPresentmentSMSReconciliationDetail'
+          firstPresentment-rtc: '#/components/schemas/FirstPresentmentRTCReconciliationDetail'
+          cardNetworkFee-dms: '#/components/schemas/CardNetworkFeeReconciliationDetail'
+          firstChargeback-dms: '#/components/schemas/FirstChargebackDMSReconciliationDetail'
+          secondPresentment-dms: '#/components/schemas/SecondPresentmentDMSReconciliationDetail'
+          secondPresentment-sms: '#/components/schemas/SecondPresentmentSMSReconciliationDetail'
+          preArbitration-dms: '#/components/schemas/PreArbitrationDMSReconciliationDetail'
+          arbitration-dms: '#/components/schemas/ArbitrationDMSReconciliationDetail'
+          firstChargeback-sms: '#/components/schemas/FirstChargebackSMSReconciliationDetail'
+      oneOf:
+      - $ref: '#/components/schemas/FirstPresentmentDMSReconciliationDetail'
+      - $ref: '#/components/schemas/FirstPresentmentSMSReconciliationDetail'
+      - $ref: '#/components/schemas/FirstPresentmentRTCReconciliationDetail'
+      - $ref: '#/components/schemas/CardNetworkFeeReconciliationDetail'
+      - $ref: '#/components/schemas/FirstChargebackDMSReconciliationDetail'
+      - $ref: '#/components/schemas/SecondPresentmentDMSReconciliationDetail'
+      - $ref: '#/components/schemas/SecondPresentmentSMSReconciliationDetail'
+      - $ref: '#/components/schemas/PreArbitrationDMSReconciliationDetail'
+      - $ref: '#/components/schemas/ArbitrationDMSReconciliationDetail'
+      - $ref: '#/components/schemas/FirstChargebackSMSReconciliationDetail'
+    merchantAcceptor:
+      type: object
+      required:
+      - legalName
+      - doingBusinessAsName
+      - description
+      - key
+      - mid
+      properties:
+        legalName:
+          type: string
+          minLength: 1
+          description: The legal name of the Merchant
+        doingBusinessAsName:
+          $ref: '#/components/schemas/components-schemas-doingBusinessAsName'
+        description:
+          type: string
+          minLength: 1
+          description: Merchant acceptor description
+        key:
+          $ref: '#/components/schemas/acceptorKey'
+        mid:
+          oneOf:
+          - $ref: '#/components/schemas/components-schemas-mid'
+          - $ref: '#/components/schemas/americanExpressMid'
+    openapi_components-schemas-created-2:
+      type: string
+      description: The date and time this object was created
+      format: date-time
+      readOnly: true
+    schemas-CardCountry:
+      type: object
+      required:
+      - code
+      properties:
+        code:
+          $ref: '#/components/schemas/openapi_components-schemas-CountryCode'
+    ProductType:
+      type: string
+      enum:
+      - Consumer
+      - Commercial
+      - Business
+      - Government
+      - Unknown
+      description: The Product Type of the card used in the transaction.
+    SecondPresentmentSMSSpecific:
+      type: object
+      required:
+      - processingDate
+      - bin
+      - rrn
+      - grossSettlementAmount
+      - interchangeFeeAmount
+      - acquirerIdCode
+      - transactionType
+      properties:
+        rrn:
+          $ref: '#/components/schemas/rrn'
+        processingDate:
+          $ref: '#/components/schemas/processingDate'
+        bin:
+          $ref: '#/components/schemas/bin'
+        transactionReference:
+          $ref: '#/components/schemas/components-schemas-transactionReference'
+        merchantAcceptor:
+          $ref: '#/components/schemas/merchantAcceptor'
+        chargeKey:
+          $ref: '#/components/schemas/components-schemas-chargeKey'
+        acquirerIdCode:
+          $ref: '#/components/schemas/components-schemas-acquirerIdCode'
+        authorizationAmount:
+          $ref: '#/components/schemas/settlementAmountInteger'
+        grossSettlementAmount:
+          $ref: '#/components/schemas/settlementAmountFloat'
+        interchangeFeeAmount:
+          $ref: '#/components/schemas/settlementAmountFloat'
+        transactionType:
+          $ref: '#/components/schemas/transactionType'
+        tags:
+          $ref: '#/components/schemas/schemas-Tags'
+    americanExpressAquirerBin:
+      type: string
+      description: AMEX Acquirer BIN, this field corresponds to the Submitter Id.
+      pattern: ^\d{10}$
+    settlementAmountInteger:
+      type: object
+      required:
+      - currency
+      - value
+      - impact
+      properties:
+        currency:
+          $ref: '#/components/schemas/openapi_components-schemas-currencyCode-5'
+        value:
+          $ref: '#/components/schemas/openapi_components-schemas-amountValue-3'
+        impact:
+          enum:
+          - credit
+          - debit
+    SecondPresentmentSMSReconciliationDetail:
+      allOf:
+      - type: object
+        required:
+        - type
+        - typeSpecific
+        properties:
+          type:
+            type: string
+            enum:
+            - secondPresentment-sms
+          typeSpecific:
+            $ref: '#/components/schemas/SecondPresentmentSMSSpecific'
+      - $ref: '#/components/schemas/BaseReconciliationDetail'
+    MastercardPublicDesignator:
+      type: object
+      description: 'Mastercard Public Designator
+
+        '
+      additionalProperties: false
+      required:
+      - network
+      properties:
+        network:
+          type: string
+          enum:
+          - mastercard
+        ird:
+          description: Interchange Rate Designator as defined by Mastercard. This is a 2 character code.
+          type: string
+        cardProgramIdentifier:
+          description: Card Program Identifier as defined by Mastercard. This is a 3 character code.
+          type: string
+        type:
+          description: Type of the Business Service Arrangement (BSA) as defined by Mastercard.
+          type: string
+        idCode:
+          description: ID Code of the Business Service Arrangement (BSA) as defined by Mastercard.
+          type: string
+        feeProgramName:
+          description: Human-readable description of the Fee Program.
+          type: string
+    openapi_components-schemas-ProblemDetail:
+      type: object
+      description: 'The ''problem detail'' object relays detailed information about the error that occurred. It is defined
+
+        by [RFC 7807 - Problem Details for HTTP APIs](https://tools.ietf.org/html/rfc7807).
+
+
+        Note that additional properties may be used to relay error specific information. For instance,
+
+        A Bad Request error may hold information about the individual validation errors found in the request.
+
+        '
+      properties:
+        type:
+          type: string
+          description: 'An absolute URI that identifies the problem type.
+
+            '
+          example: https://api.silverflow.co/problem/constraint-violation
+        title:
+          type: string
+          description: 'A short, summary of the problem type. Written in english and readable
+
+            for engineers (usually not suited for non technical stakeholders and
+
+            not localized);
+
+            '
+          example: Service Unavailable
+        status:
+          type: integer
+          format: int32
+          description: 'The HTTP status code generated by the origin server for this occurrence
+
+            of the problem.
+
+            '
+          minimum: 100
+          maximum: 599
+          example: 403
+        detail:
+          type: string
+          description: 'A human readable explanation specific to this occurrence of the
+
+            problem.
+
+            '
+          example: Connection to database timed out
+        instance:
+          type: string
+          description: 'An absolute URI that identifies the specific occurrence of the problem.
+
+            It may or may not yield further information if dereferenced.
+
+            '
+      additionalProperties: true
+    PreArbitrationDMSSpecific:
+      type: object
+      required:
+      - arn
+      - processingDate
+      - bin
+      - grossSettlementAmount
+      - acquirerIdCode
+      - transactionType
+      - interchangeFeeAmount
+      - reversal
+      properties:
+        arn:
+          $ref: '#/components/schemas/arn'
+        processingDate:
+          $ref: '#/components/schemas/processingDate'
+        bin:
+          $ref: '#/components/schemas/bin'
+        transactionReference:
+          $ref: '#/components/schemas/components-schemas-transactionReference'
+        merchantAcceptor:
+          $ref: '#/components/schemas/merchantAcceptor'
+        chargeKey:
+          $ref: '#/components/schemas/components-schemas-chargeKey'
+        acquirerIdCode:
+          $ref: '#/components/schemas/components-schemas-acquirerIdCode'
+        authorizationAmount:
+          $ref: '#/components/schemas/settlementAmountInteger'
+        grossSettlementAmount:
+          $ref: '#/components/schemas/settlementAmountFloat'
+        interchangeFeeAmount:
+          $ref: '#/components/schemas/settlementAmountFloat'
+        transactionType:
+          $ref: '#/components/schemas/transactionType'
+        reversal:
+          type: boolean
+        disputeOutcome:
+          type: string
+          enum:
+          - closedLost
+          - closedWon
+        tags:
+          $ref: '#/components/schemas/schemas-Tags'
+    TransactionRegionalitySummary:
+      type: object
+      description: A summary of the regionality of the transaction per Silverflow's definition <a class="experimental-tag-link" href="https://docs.silverflow.com/guides/api-lifecycle#tag/EXPERIMENTAL-Tag"><span class="tag experimental-tag">EXPERIMENTAL</span></a>
+      required:
+      - transactionRegionality
+      - cardRegion
+      - merchantRegion
+      properties:
+        transactionRegionality:
+          allOf:
+          - $ref: '#/components/schemas/SilverflowRegionality'
+          - description: The regionality of the transaction
+        cardRegion:
+          allOf:
+          - $ref: '#/components/schemas/SilverflowRegion'
+          - description: The region of card's country
+        merchantRegion:
+          allOf:
+          - $ref: '#/components/schemas/SilverflowRegion'
+          - description: The region of merchant's country
+    openapi_components-schemas-CountryCode:
+      type: object
+      properties:
+        alpha3:
+          $ref: '#/components/schemas/openapi_components-schemas-countryCodeAlpha3'
+        alpha2:
+          $ref: '#/components/schemas/openapi_components-schemas-countryCodeAlpha2'
+        numeric:
+          $ref: '#/components/schemas/openapi_components-schemas-countryCodeNumeric'
+    openapi_components-schemas-Amount-2:
+      type: object
+      required:
+      - value
+      - currency
+      additionalProperties: false
+      description: 'An amount encoded as an object with a `value` in minor units and a `currency` code.
+
+        '
+      properties:
+        value:
+          $ref: '#/components/schemas/openapi_components-schemas-amountValue-3'
+        currency:
+          $ref: '#/components/schemas/openapi_components-schemas-currencyCode-5'
+    ReconciliationDetailsPage:
+      type: object
+      required:
+      - items
+      - moreItems
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/ReconciliationDetail'
+        moreItems:
+          type: boolean
+        offsetToken:
+          $ref: '#/components/schemas/responseOffsetToken'
+    openapi_components-schemas-countryCodeAlpha3:
+      type: string
+      pattern: ^[A-Z]{3}$
+      description: 'The ISO code of the country.
+
+
+        **European ISO Country Codes**
+
+
+        <details>
+
+
+        | Country | Alpha-2 code | Numeric |
+
+        | ------- | ------------ | ------- |
+
+        | Åland Islands | AX | 248 |
+
+        | Andorra | AD | 020 |
+
+        | Austria | AT | 040 |
+
+        | Belgium | BE | 056 |
+
+        | Cyprus | CY | 196 |
+
+        | Estonia | EE | 233 |  |
+
+        | Finland | FI | 246 |
+
+        | France | FR | 250 |
+
+        | French Guiana | GF | 254 |
+
+        | French Southern Territories | TF | 260 |
+
+        | Germany | DE | 280 |
+
+        | Greece | GR | 300 |
+
+        | Guadeloupe | GP | 312 |
+
+        | Ireland | IE | 372 |
+
+        | Italy | IT | 380 |
+
+        | Kosovo, United Nations Mission in Kosovo (UNMIK) | QZ | 900 |
+
+        | Latvia | LV | 428 |
+
+        | Lithuania | LT | 440 |
+
+        | Luxembourg | LU | 442 |
+
+        | Malta | MT | 470 |
+
+        | Martinique | MQ | 474 |
+
+        | Mayotte | YT | 175 |
+
+        | Monaco | MC | 492 |
+
+        | Montenegro | ME | 499 |
+
+        | Netherlands | NL | 528 |
+
+        | Portugal | PT | 620 |
+
+        | Reunion | RE | 638 |
+
+        | Saint Barthélemy | BL | 652 |
+
+        | Saint Martin (French Part) | MF | 663 |
+
+        | San Marino | SM | 674 |
+
+        | Slovakia | SK | 703 |
+
+        | Slovenia | SI | 705 |
+
+        | Spain | ES | 724 |
+
+        | St. Pierre and Miquelon | PM | 666 |
+
+        | Vatican City State (Holy See) | VA | 336 |
+
+
+        </details>
+
+
+        **US ISO Country Codes**
+
+
+        <details>
+
+
+        | Country | Alpha-2 code | Numeric |
+
+        | ------- | ------------ | ------- |
+
+        | American Samoa | AS | 016 |
+
+        | Bonaire, St. Eusasius and Saba | BQ | 535 |
+
+        | British Indian Ocean Territory | IO | 086 |
+
+        | Ecuador | EC | 218 |
+
+        | Guam | GU | 316 |
+
+        | Marshall Islands | MH | 584 |
+
+        | Micronesia, Federated States of | FM | 583 |
+
+        | Northern Mariana Islands | MP | 580 |
+
+        | Palau | PW | 585 |
+
+        | Palestine, State of | PS | 275 |
+
+        | Puerto Rico | PR | 630 |
+
+        | Timor-Leste | TP | 626 |
+
+        | Turks and Caicos Islands | TC | 796 |
+
+        | U.S. Minor Outlying Islands | UM | 581 |
+
+        | United States | US | 840 |
+
+        | Virgin Islands, British | VG | 092 |
+
+        | Virgin Islands, U.S. | VI | 850 |
+
+
+        </details>
+
+
+        **Other ISO Country Codes**
+
+
+        <details>
+
+
+        | Country | Alpha-2 code | Numeric |
+
+        | ------- | ------------ | ------- |
+
+        | Afghanistan | AF | 004 |
+
+        | Albania | AL | 008 |
+
+        | Algeria | DZ | 012 |
+
+        | Angola | AO | 024 |
+
+        | Anguilla | AI | 660 |
+
+        | Antarctica | AQ | 010 |
+
+        | Antigua and Barbuda | AG | 028 |
+
+        | Argentina | AR | 032 |
+
+        | Armenia | AM | 051 |
+
+        | Aruba | AW | 533 |
+
+        | Australia | AU | 036 |
+
+        | Azerbaijan | AZ | 031 |
+
+        | Bahamas | BS | 044 |
+
+        | Bahrain | BH | 048 |
+
+        | Bangladesh | BD | 050 |
+
+        | Barbados | BB | 052 |
+
+        | Belarus | BR | 112 |
+
+        | Belize | BZ | 084 |
+
+        | Benin | BJ | 204 |
+
+        | Bermuda | BM | 060 |
+
+        | Bhutan | BT | 064 |
+
+        | Bolivia, Plurinational State of | BO | 068 |
+
+        | Bosnia and Herzegovina | BA | 070 |
+
+        | Botswana | BW | 072 |
+
+        | Bouvet Island | BV | 074 |
+
+        | Brazil | BR | 076 |
+
+        | Brunei Darussalam | BN | 096 |
+
+        | Bulgaria | BG | 100 |
+
+        | Burkina Faso | BF | 854 |
+
+        | Burundi | BI | 108 |
+
+        | Cambodia | KH | 116 |
+
+        | Cameroon | CM | 120 |
+
+        | Canada | CA | 124 |
+
+        | Cape Verde | CV | 132 |
+
+        | Cayman Islands | KY | 136 |
+
+        | Central African Republic | CF | 140 |
+
+        | Chad | TD | 148 |
+
+        | Chile | CL | 152 |
+
+        | China | CN | 156 |
+
+        | Christmas Island | CX | 162 |
+
+        | Cocos (Keeling) Islands | CC | 166 |
+
+        | Colombia | CO | 170 |
+
+        | Comoros | KM | 174 |
+
+        | Congo | CG | 178 |
+
+        | Cook Islands | CK | 184 |
+
+        | Costa Rica | CR | 188 |
+
+        | Côte D''Ivoire | CI | 384 |
+
+        | Croatia | HR | 191 |
+
+        | Cuba | CU | 192 |
+
+        | Curacao | CW | 531 |
+
+        | Czech Republic | CZ | 203 |
+
+        | Democratic Republic of the Congo | CD | 180 |
+
+        | Denmark | DK | 208 |
+
+        | Djibouti | DJ | 262 |
+
+        | Dominica | DM | 212 |
+
+        | Dominican Republic | DO | 214 |
+
+        | Egypt | EG | 818 |
+
+        | El Salvador | SV | 222 |
+
+        | Equatorial Guinea | GQ | 226 |
+
+        | Eritrea | ER | 232 |
+
+        | Ethiopia | ET | 230 |
+
+        | Falkland Islands (Malvinas) | FK | 238 |
+
+        | Faroe Islands | FO | 234 |
+
+        | Fiji | FJ | 242 |
+
+        | French Polynesia | PF | 258 |
+
+        | Gabon | GA | 266 |
+
+        | Gambia | GM | 270 |
+
+        | Georgia | GE | 268 |
+
+        | Ghana | GH | 288 |
+
+        | Gibraltar | GI | 292 |
+
+        | Greenland | GL | 304 |
+
+        | Grenada | GD | 308 |
+
+        | Guatemala | GT | 320 |
+
+        | Guernsey | GG | 831 |
+
+        | Guinea | GN | 324 |
+
+        | Guinea-Bissau | GW | 624 |
+
+        | Guyana | GY | 328 |
+
+        | Haiti | HT | 332 |
+
+        | Heard and McDonald Islands | HM | 334 |
+
+        | Honduras | HN | 340 |
+
+        | Hong Kong | HK | 344 |
+
+        | Hungary | HU | 348 |
+
+        | Iceland | IS | 352 |
+
+        | India | IN | 356 |
+
+        | Indonesia | ID | 360 |
+
+        | Iraq | IQ | 368 |
+
+        | Isle of Man | IM | 833 |
+
+        | Israel | IL | 376 |
+
+        | Jamaica | JM | 388 |
+
+        | Japan | JP | 392 |
+
+        | Jersey | JE | 832 |
+
+        | Jordan | JO | 400 |
+
+        | Kazakhstan | KZ | 398 |
+
+        | Kenya | KE | 404 |
+
+        | Kiribati | KI | 296 |
+
+        | Korea, Republic of | KR | 410 |
+
+        | Kuwait | KW | 414 |
+
+        | Kyrgyzstan | KG | 417 |
+
+        | Lao People''s Democratic Republic | LA | 418 |
+
+        | Lebanon | LB | 422 |
+
+        | Lesotho | LS | 426 |
+
+        | Liberia | LR | 430 |
+
+        | Libyan Arab Jamahiriya | LY | 434 |
+
+        | Liechtenstein | LI | 438 |
+
+        | Macao | MO | 446 |
+
+        | Macedonia | MK | 807 |
+
+        | Madagascar | MG | 450 |
+
+        | Malawi | MW | 454 |
+
+        | Malaysia | MY | 458 |
+
+        | Maldives | MV | 462 |
+
+        | Mali | ML | 466 |
+
+        | Mauritania | MR | 478 |
+
+        | Mauritius | MU | 480 |
+
+        | Mexico | MX | 484 |
+
+        | Moldova, Republic of | MD | 498 |
+
+        | Mongolia | MN | 496 |
+
+        | Montserrat | MS | 500 |
+
+        | Morocco | MA | 504 |
+
+        | Mozambique | MZ | 508 |
+
+        | Myanmar (effective 1 November 2012) | MM | 104 |
+
+        | Namibia | NA | 516 |
+
+        | Nauru | NR | 520 |
+
+        | Nepal | NP | 524 |
+
+        | Netherlands Antilles | AN | 530 |
+
+        | New Caledonia | NC | 540 |
+
+        | New Zealand | NZ | 554 |
+
+        | Nicaragua | NI | 558 |
+
+        | Niger | NE | 562 |
+
+        | Nigeria | NG | 566 |
+
+        | Niue | NU | 570 |
+
+        | Norfolk Island | NF | 574 |
+
+        | Norway | NO | 578 |
+
+        | Oman | OM | 512 |
+
+        | Pakistan | PK | 586 |
+
+        | Panama | PA | 591 |
+
+        | Papua New Guinea | PG | 598 |
+
+        | Paraguay | PY | 600 |
+
+        | Peru | PE | 604 |
+
+        | Philippines | PH | 608 |
+
+        | Pitcairn | PN | 612 |
+
+        | Poland | PL | 616 |
+
+        | Qatar | QA | 634 |
+
+        | Republic of South Sudan | SS | 728 |
+
+        | Romania | RO | 642 |
+
+        | Russian Federation | RU | 643 |
+
+        | Rwanda | RW | 646 |
+
+        | Samoa | WS | 882 |
+
+        | Sao Tome and Principe | ST | 678 |
+
+        | Saudi Arabia | SA | 682 |
+
+        | Senegal | SN | 686 |
+
+        | Serbia | RS | 688 |
+
+        | Seychelles | SC | 690 |
+
+        | Sierra Leone | SL | 694 |
+
+        | Singapore | SG | 702 |
+
+        | Sint Maarten (Dutch Part) | SX | 534 |
+
+        | Solomon Islands | SB | 090 |
+
+        | Somalia | SO | 706 |
+
+        | South Africa | ZA | 710 |
+
+        | South Georgia and the South Sandwich Islands | GS | 239 |
+
+        | Sri Lanka | LK | 144 |
+
+        | Saint Helena, Ascension and Tristan Da Cunha | SH | 654 |
+
+        | St. Kitts and Nevis | KN | 659 |
+
+        | St. Lucia | LC | 662 |
+
+        | St. Vincent and the Grenadines | VC | 670 |
+
+        | Suriname | SR | 740 |
+
+        | Svalbard and Jan Mayen | SJ | 744 |
+
+        | Swaziland | SZ | 748 |
+
+        | Sweden | SE | 752 |
+
+        | Switzerland | CH | 756 |
+
+        | Taiwan | TW | 158 |
+
+        | Tajikistan | TJ | 762 |
+
+        | Tanzania, United Republic of | TZ | 834 |
+
+        | Thailand | TH | 764 |
+
+        | Togo | TG | 768 |
+
+        | Tokelau | TK | 772 |
+
+        | Tonga | TO | 776 |
+
+        | Trinidad and Tobago | TT | 780 |
+
+        | Tunisia | TN | 788 |
+
+        | Turkey | TR | 792 |
+
+        | Turkmenistan | TM | 795 |
+
+        | Tuvalu | TV | 798 |
+
+        | Uganda | UG | 800 |
+
+        | Ukraine | UA | 804 |
+
+        | United Arab Emirates | AE | 784 |
+
+        | United Kingdom | GB | 826 |
+
+        | Uruguay | UY | 858 |
+
+        | Uzbekistan | UZ | 860 |
+
+        | Vanuatu | VU | 548 |
+
+        | Venezuela, Bolivarian Republic of | VE | 862 |
+
+        | Vietnam | VN | 704 |
+
+        | Wallis and Futuna | WF | 876 |
+
+        | Western Sahara | EH | 732 |
+
+        | Yemen | YE | 886 |
+
+        | Zambia | ZM | 894 |
+
+        | Zimbabwe | ZW | 716 |
+
+
+        </details>'
+      externalDocs:
+        description: Find more info here
+        url: https://www.iso.org/iso-3166-country-codes.html
+      example: NLD
+    InvalidOffsetTokenError:
+      allOf:
+      - $ref: '#/components/schemas/openapi_components-schemas-ProblemDetail'
+      - type: object
+        properties:
+          type:
+            enum:
+            - /silverflow/problems/invalid-offset-token
+          title:
+            enum:
+            - Invalid Offset Token
+    openapi_components-schemas-currencyCode-5:
+      type: string
+      enum:
+      - EUR
+      - USD
+      - AFN
+      - ALL
+      - DZD
+      - AOA
+      - XCD
+      - ARS
+      - AMD
+      - AWG
+      - AUD
+      - AZN
+      - BSD
+      - BHD
+      - BDT
+      - BBD
+      - BYN
+      - BZD
+      - XOF
+      - BMD
+      - INR
+      - BTN
+      - BOB
+      - BAM
+      - BWP
+      - NOK
+      - BRL
+      - BND
+      - BGN
+      - BIF
+      - CVE
+      - KHR
+      - XAF
+      - CAD
+      - KYD
+      - CLP
+      - CNY
+      - COP
+      - KMF
+      - CDF
+      - NZD
+      - CRC
+      - HRK
+      - CUP
+      - CUC
+      - ANG
+      - CZK
+      - DKK
+      - DJF
+      - DOP
+      - EGP
+      - SVC
+      - ERN
+      - ETB
+      - FKP
+      - FJD
+      - XPF
+      - GMD
+      - GEL
+      - GHS
+      - GIP
+      - GTQ
+      - GBP
+      - GNF
+      - GYD
+      - HTG
+      - HNL
+      - HKD
+      - HUF
+      - ISK
+      - IDR
+      - IRR
+      - IQD
+      - ILS
+      - JMD
+      - JPY
+      - JOD
+      - KZT
+      - KES
+      - KPW
+      - KRW
+      - KWD
+      - KGS
+      - LAK
+      - LBP
+      - LSL
+      - ZAR
+      - LRD
+      - LYD
+      - CHF
+      - MOP
+      - MKD
+      - MGA
+      - MWK
+      - MYR
+      - MVR
+      - MRU
+      - MUR
+      - MXN
+      - MDL
+      - MNT
+      - MAD
+      - MZN
+      - MMK
+      - NAD
+      - NPR
+      - NIO
+      - NGN
+      - OMR
+      - PKR
+      - PAB
+      - PGK
+      - PYG
+      - PEN
+      - PHP
+      - PLN
+      - QAR
+      - RON
+      - RUB
+      - RWF
+      - SHP
+      - WST
+      - STN
+      - SAR
+      - RSD
+      - SCR
+      - SLL
+      - SGD
+      - SBD
+      - SOS
+      - SSP
+      - LKR
+      - SDG
+      - SRD
+      - SZL
+      - SEK
+      - SYP
+      - TWD
+      - TJS
+      - TZS
+      - THB
+      - TOP
+      - TTD
+      - TND
+      - TRY
+      - TMT
+      - UGX
+      - UAH
+      - AED
+      - UYU
+      - UYW
+      - UZS
+      - VUV
+      - VES
+      - VND
+      - YER
+      - ZMW
+      - ZWL
+      description: 'The three-letter ISO code of the currency.
+
+
+
+        **European ISO Currency Codes**
+
+
+        <details>
+
+
+        | Country — Currency | Code | Numeric | Minor Units |
+
+        | ------------------ | ---- | ------- | ----------- |
+
+        | Åland Islands — Euro | EUR | 978 | 2 |
+
+        | Andorra — Euro | EUR | 978 | 2 |
+
+        | Austria — Euro | EUR | 978 | 2 |
+
+        | Belgium — Euro | EUR | 978 | 2 |
+
+        | Cyprus — Euro | EUR | 978 | 2 |
+
+        | Estonia — Euro | EUR | 978 | 2 |
+
+        | European Union — Euro | EUR | 978 | 2 |
+
+        | Finland — Euro | EUR | 978 | 2 |
+
+        | France — Euro | EUR | 978 | 2 |
+
+        | French Guiana — Euro | EUR | 978 | 2 |
+
+        | French Southern Territories (The) — Euro | EUR | 978 | 2 |
+
+        | Germany — Euro | EUR | 978 | 2 |
+
+        | Greece — Euro | EUR | 978 | 2 |
+
+        | Guadeloupe — Euro | EUR | 978 | 2 |
+
+        | Holy See (The) — Euro | EUR | 978 | 2 |
+
+        | Ireland — Euro | EUR | 978 | 2 |
+
+        | Italy — Euro | EUR | 978 | 2 |
+
+        | Latvia — Euro | EUR | 978 | 2 |
+
+        | Lithuania — Euro | EUR | 978 | 2 |
+
+        | Luxembourg — Euro | EUR | 978 | 2 |
+
+        | Malta — Euro | EUR | 978 | 2 |
+
+        | Martinique — Euro | EUR | 978 | 2 |
+
+        | Mayotte — Euro | EUR | 978 | 2 |
+
+        | Monaco — Euro | EUR | 978 | 2 |
+
+        | Montenegro — Euro | EUR | 978 | 2 |
+
+        | Netherlands (The) — Euro | EUR | 978 | 2 |
+
+        | Portugal — Euro | EUR | 978 | 2 |
+
+        | Réunion — Euro | EUR | 978 | 2 |
+
+        | Saint Barthélemy — Euro | EUR | 978 | 2 |
+
+        | Saint Martin (French Part) — Euro | EUR | 978 | 2 |
+
+        | Saint Pierre And Miquelon — Euro | EUR | 978 | 2 |
+
+        | San Marino — Euro | EUR | 978 | 2 |
+
+        | Slovakia — Euro | EUR | 978 | 2 |
+
+        | Slovenia — Euro | EUR | 978 | 2 |
+
+        | Spain — Euro | EUR | 978 | 2 |
+
+
+        </details>
+
+
+        **US ISO Currency Codes**
+
+
+        <details>
+
+
+        | Country — Currency | Code | Numeric | Minor Units |
+
+        | ------------------ | ---- | ------- | ----------- |
+
+        | American Samoa — US Dollar | USD | 840 | 2 |
+
+        | Bonaire, Sint Eustatius And Saba — US Dollar | USD | 840 | 2 |
+
+        | British Indian Ocean Territory (The) — US Dollar | USD | 840 | 2 |
+
+        | Ecuador — US Dollar | USD | 840 | 2 |
+
+        | El Salvador — US Dollar | USD | 840 | 2 |
+
+        | Guam — US Dollar | USD | 840 | 2 |
+
+        | Haiti — US Dollar | USD | 840 | 2 |
+
+        | Marshall Islands (The) — US Dollar | USD | 840 | 2 |
+
+        | Micronesia (Federated States Of) — US Dollar | USD | 840 | 2 |
+
+        | Northern Mariana Islands (The) — US Dollar | USD | 840 | 2 |
+
+        | Palau — US Dollar | USD | 840 | 2 |
+
+        | Panama — US Dollar | USD | 840 | 2 |
+
+        | Puerto Rico — US Dollar | USD | 840 | 2 |
+
+        | Timor-leste — US Dollar | USD | 840 | 2 |
+
+        | Turks And Caicos Islands (The) — US Dollar | USD | 840 | 2 |
+
+        | United States Minor Outlying Islands (The) — US Dollar | USD | 840 | 2 |
+
+        | United States Of America (The) — US Dollar | USD | 840 | 2 |
+
+        | Virgin Islands (British) — US Dollar | USD | 840 | 2 |
+
+        | Virgin Islands (U.s.) — US Dollar | USD | 840 | 2 |
+
+
+        </details>
+
+
+        **Other ISO Currency Codes**
+
+
+        <details>
+
+
+        | Country — Currency | Code | Numeric | Minor Units |
+
+        | ------------------ | ---- | ------- | ----------- |
+
+        | Afghanistan — Afghani | AFN | 971 | 2 |
+
+        | Albania — Lek | ALL | 008 | 2 |
+
+        | Algeria — Algerian Dinar | DZD | 012 | 2 |
+
+        | Angola — Kwanza | AOA | 973 | 2 |
+
+        | Anguilla — East Caribbean Dollar | XCD | 951 | 2 |
+
+        | Antigua And Barbuda — East Caribbean Dollar | XCD | 951 | 2 |
+
+        | Argentina — Argentine Peso | ARS | 032 | 2 |
+
+        | Armenia — Armenian Dram | AMD | 051 | 2 |
+
+        | Aruba — Aruban Florin | AWG | 533 | 2 |
+
+        | Australia — Australian Dollar | AUD | 036 | 2 |
+
+        | Azerbaijan — Azerbaijan Manat | AZN | 944 | 2 |
+
+        | Bahamas (The) — Bahamian Dollar | BSD | 044 | 2 |
+
+        | Bahrain — Bahraini Dinar | BHD | 048 | 3 |
+
+        | Bangladesh — Taka | BDT | 050 | 2 |
+
+        | Barbados — Barbados Dollar | BBD | 052 | 2 |
+
+        | Belarus — Belarusian Ruble | BYN | 933 | 2 |
+
+        | Belize — Belize Dollar | BZD | 084 | 2 |
+
+        | Benin — CFA Franc BCEAO | XOF | 952 | 0 |
+
+        | Bermuda — Bermudian Dollar | BMD | 060 | 2 |
+
+        | Bhutan — Indian Rupee | INR | 356 | 2 |
+
+        | Bhutan — Ngultrum | BTN | 064 | 2 |
+
+        | Bolivia (Plurinational State Of) — Boliviano | BOB | 068 | 2 |
+
+        | Bosnia And Herzegovina — Convertible Mark | BAM | 977 | 2 |
+
+        | Botswana — Pula | BWP | 072 | 2 |
+
+        | Bouvet Island — Norwegian Krone | NOK | 578 | 2 |
+
+        | Brazil — Brazilian Real | BRL | 986 | 2 |
+
+        | Brunei Darussalam — Brunei Dollar | BND | 096 | 2 |
+
+        | Bulgaria — Bulgarian Lev | BGN | 975 | 2 |
+
+        | Burkina Faso — CFA Franc BCEAO | XOF | 952 | 0 |
+
+        | Burundi — Burundi Franc | BIF | 108 | 0 |
+
+        | Cabo Verde — Cabo Verde Escudo | CVE | 132 | 2 |
+
+        | Cambodia — Riel | KHR | 116 | 2 |
+
+        | Cameroon — CFA Franc BEAC | XAF | 950 | 0 |
+
+        | Canada — Canadian Dollar | CAD | 124 | 2 |
+
+        | Cayman Islands (The) — Cayman Islands Dollar | KYD | 136 | 2 |
+
+        | Central African Republic (The) — CFA Franc BEAC | XAF | 950 | 0 |
+
+        | Chad — CFA Franc BEAC | XAF | 950 | 0 |
+
+        | Chile — Chilean Peso | CLP | 152 | 0 |
+
+        | China — Yuan Renminbi | CNY | 156 | 2 |
+
+        | Christmas Island — Australian Dollar | AUD | 036 | 2 |
+
+        | Cocos (Keeling) Islands (The) — Australian Dollar | AUD | 036 | 2 |
+
+        | Colombia — Colombian Peso | COP | 170 | 2 |
+
+        | Comoros (The) — Comorian Franc | KMF | 174 | 0 |
+
+        | Congo (The Democratic Republic Of The) — Congolese Franc | CDF | 976 | 2 |
+
+        | Congo (The) — CFA Franc BEAC | XAF | 950 | 0 |
+
+        | Cook Islands (The) — New Zealand Dollar | NZD | 554 | 2 |
+
+        | Costa Rica — Costa Rican Colon | CRC | 188 | 2 |
+
+        | Côte D''ivoire — CFA Franc BCEAO | XOF | 952 | 0 |
+
+        | Croatia — Kuna | HRK | 191 | 2 |
+
+        | Cuba — Cuban Peso | CUP | 192 | 2 |
+
+        | Cuba — Peso Convertible | CUC | 931 | 2 |
+
+        | Curaçao — Netherlands Antillean Guilder | ANG | 532 | 2 |
+
+        | Czechia — Czech Koruna | CZK | 203 | 2 |
+
+        | Denmark — Danish Krone | DKK | 208 | 2 |
+
+        | Djibouti — Djibouti Franc | DJF | 262 | 0 |
+
+        | Dominica — East Caribbean Dollar | XCD | 951 | 2 |
+
+        | Dominican Republic (The) — Dominican Peso | DOP | 214 | 2 |
+
+        | Egypt — Egyptian Pound | EGP | 818 | 2 |
+
+        | El Salvador — El Salvador Colon | SVC | 222 | 2 |
+
+        | Equatorial Guinea — CFA Franc BEAC | XAF | 950 | 0 |
+
+        | Eritrea — Nakfa | ERN | 232 | 2 |
+
+        | Ethiopia — Ethiopian Birr | ETB | 230 | 2 |
+
+        | Falkland Islands (The) [Malvinas] — Falkland Islands Pound | FKP | 238 | 2 |
+
+        | Faroe Islands (The) — Danish Krone | DKK | 208 | 2 |
+
+        | Fiji — Fiji Dollar | FJD | 242 | 2 |
+
+        | French Polynesia — CFP Franc | XPF | 953 | 0 |
+
+        | Gabon — CFA Franc BEAC | XAF | 950 | 0 |
+
+        | Gambia (The) — Dalasi | GMD | 270 | 2 |
+
+        | Georgia — Lari | GEL | 981 | 2 |
+
+        | Ghana — Ghana Cedi | GHS | 936 | 2 |
+
+        | Gibraltar — Gibraltar Pound | GIP | 292 | 2 |
+
+        | Greenland — Danish Krone | DKK | 208 | 2 |
+
+        | Grenada — East Caribbean Dollar | XCD | 951 | 2 |
+
+        | Guatemala — Quetzal | GTQ | 320 | 2 |
+
+        | Guernsey — Pound Sterling | GBP | 826 | 2 |
+
+        | Guinea — Guinean Franc | GNF | 324 | 0 |
+
+        | Guinea-bissau — CFA Franc BCEAO | XOF | 952 | 0 |
+
+        | Guyana — Guyana Dollar | GYD | 328 | 2 |
+
+        | Haiti — Gourde | HTG | 332 | 2 |
+
+        | Heard Island And Mcdonald Islands — Australian Dollar | AUD | 036 | 2 |
+
+        | Honduras — Lempira | HNL | 340 | 2 |
+
+        | Hong Kong — Hong Kong Dollar | HKD | 344 | 2 |
+
+        | Hungary — Forint | HUF | 348 | 2 |
+
+        | Iceland — Iceland Krona | ISK | 352 | 0 |
+
+        | India — Indian Rupee | INR | 356 | 2 |
+
+        | Indonesia — Rupiah | IDR | 360 | 2 |
+
+        | Iran (Islamic Republic Of) — Iranian Rial | IRR | 364 | 2 |
+
+        | Iraq — Iraqi Dinar | IQD | 368 | 3 |
+
+        | Isle Of Man — Pound Sterling | GBP | 826 | 2 |
+
+        | Israel — New Israeli Sheqel | ILS | 376 | 2 |
+
+        | Jamaica — Jamaican Dollar | JMD | 388 | 2 |
+
+        | Japan — Yen | JPY | 392 | 0 |
+
+        | Jersey — Pound Sterling | GBP | 826 | 2 |
+
+        | Jordan — Jordanian Dinar | JOD | 400 | 3 |
+
+        | Kazakhstan — Tenge | KZT | 398 | 2 |
+
+        | Kenya — Kenyan Shilling | KES | 404 | 2 |
+
+        | Kiribati — Australian Dollar | AUD | 036 | 2 |
+
+        | Korea (The Democratic People’s Republic Of) — North Korean Won | KPW | 408 | 2 |
+
+        | Korea (The Republic Of) — Won | KRW | 410 | 0 |
+
+        | Kuwait — Kuwaiti Dinar | KWD | 414 | 3 |
+
+        | Kyrgyzstan — Som | KGS | 417 | 2 |
+
+        | Lao People’s Democratic Republic (The) — Lao Kip | LAK | 418 | 2 |
+
+        | Lebanon — Lebanese Pound | LBP | 422 | 2 |
+
+        | Lesotho — Loti | LSL | 426 | 2 |
+
+        | Lesotho — Rand | ZAR | 710 | 2 |
+
+        | Liberia — Liberian Dollar | LRD | 430 | 2 |
+
+        | Libya — Libyan Dinar | LYD | 434 | 3 |
+
+        | Liechtenstein — Swiss Franc | CHF | 756 | 2 |
+
+        | Macao — Pataca | MOP | 446 | 2 |
+
+        | Macedonia (The Former Yugoslav Republic Of) — Denar | MKD | 807 | 2 |
+
+        | Madagascar — Malagasy Ariary | MGA | 969 | 2 |
+
+        | Malawi — Malawi Kwacha | MWK | 454 | 2 |
+
+        | Malaysia — Malaysian Ringgit | MYR | 458 | 2 |
+
+        | Maldives — Rufiyaa | MVR | 462 | 2 |
+
+        | Mali — CFA Franc BCEAO | XOF | 952 | 0 |
+
+        | Mauritania — Ouguiya | MRU | 929 | 2 |
+
+        | Mauritius — Mauritius Rupee | MUR | 480 | 2 |
+
+        | Mexico — Mexican Peso | MXN | 484 | 2 |
+
+        | Moldova (The Republic Of) — Moldovan Leu | MDL | 498 | 2 |
+
+        | Mongolia — Tugrik | MNT | 496 | 2 |
+
+        | Montserrat — East Caribbean Dollar | XCD | 951 | 2 |
+
+        | Morocco — Moroccan Dirham | MAD | 504 | 2 |
+
+        | Mozambique — Mozambique Metical | MZN | 943 | 2 |
+
+        | Myanmar — Kyat | MMK | 104 | 2 |
+
+        | Namibia — Namibia Dollar | NAD | 516 | 2 |
+
+        | Namibia — Rand | ZAR | 710 | 2 |
+
+        | Nauru — Australian Dollar | AUD | 036 | 2 |
+
+        | Nepal — Nepalese Rupee | NPR | 524 | 2 |
+
+        | New Caledonia — CFP Franc | XPF | 953 | 0 |
+
+        | New Zealand — New Zealand Dollar | NZD | 554 | 2 |
+
+        | Nicaragua — Cordoba Oro | NIO | 558 | 2 |
+
+        | Niger (The) — CFA Franc BCEAO | XOF | 952 | 0 |
+
+        | Nigeria — Naira | NGN | 566 | 2 |
+
+        | Niue — New Zealand Dollar | NZD | 554 | 2 |
+
+        | Norfolk Island — Australian Dollar | AUD | 036 | 2 |
+
+        | Norway — Norwegian Krone | NOK | 578 | 2 |
+
+        | Oman — Rial Omani | OMR | 512 | 3 |
+
+        | Pakistan — Pakistan Rupee | PKR | 586 | 2 |
+
+        | Panama — Balboa | PAB | 590 | 2 |
+
+        | Papua New Guinea — Kina | PGK | 598 | 2 |
+
+        | Paraguay — Guarani | PYG | 600 | 0 |
+
+        | Peru — Sol | PEN | 604 | 2 |
+
+        | Philippines (The) — Philippine Peso | PHP | 608 | 2 |
+
+        | Pitcairn — New Zealand Dollar | NZD | 554 | 2 |
+
+        | Poland — Zloty | PLN | 985 | 2 |
+
+        | Qatar — Qatari Rial | QAR | 634 | 2 |
+
+        | Romania — Romanian Leu | RON | 946 | 2 |
+
+        | Russian Federation (The) — Russian Ruble | RUB | 643 | 2 |
+
+        | Rwanda — Rwanda Franc | RWF | 646 | 0 |
+
+        | Saint Helena, Ascension And Tristan Da Cunha — Saint Helena Pound | SHP | 654 | 2 |
+
+        | Saint Kitts And Nevis — East Caribbean Dollar | XCD | 951 | 2 |
+
+        | Saint Lucia — East Caribbean Dollar | XCD | 951 | 2 |
+
+        | Saint Vincent And The Grenadines — East Caribbean Dollar | XCD | 951 | 2 |
+
+        | Samoa — Tala | WST | 882 | 2 |
+
+        | Sao Tome And Principe — Dobra | STN | 930 | 2 |
+
+        | Saudi Arabia — Saudi Riyal | SAR | 682 | 2 |
+
+        | Senegal — CFA Franc BCEAO | XOF | 952 | 0 |
+
+        | Serbia — Serbian Dinar | RSD | 941 | 2 |
+
+        | Seychelles — Seychelles Rupee | SCR | 690 | 2 |
+
+        | Sierra Leone — Leone | SLL | 694 | 2 |
+
+        | Singapore — Singapore Dollar | SGD | 702 | 2 |
+
+        | Sint Maarten (Dutch Part) — Netherlands Antillean Guilder | ANG | 532 | 2 |
+
+        | Solomon Islands — Solomon Islands Dollar | SBD | 090 | 2 |
+
+        | Somalia — Somali Shilling | SOS | 706 | 2 |
+
+        | South Africa — Rand | ZAR | 710 | 2 |
+
+        | South Sudan — South Sudanese Pound | SSP | 728 | 2 |
+
+        | Sri Lanka — Sri Lanka Rupee | LKR | 144 | 2 |
+
+        | Sudan (The) — Sudanese Pound | SDG | 938 | 2 |
+
+        | Suriname — Surinam Dollar | SRD | 968 | 2 |
+
+        | Svalbard And Jan Mayen — Norwegian Krone | NOK | 578 | 2 |
+
+        | Eswatini — Lilangeni | SZL | 748 | 2 |
+
+        | Sweden — Swedish Krona | SEK | 752 | 2 |
+
+        | Switzerland — Swiss Franc | CHF | 756 | 2 |
+
+        | Syrian Arab Republic — Syrian Pound | SYP | 760 | 2 |
+
+        | Taiwan (Province Of China) — New Taiwan Dollar | TWD | 901 | 2 |
+
+        | Tajikistan — Somoni | TJS | 972 | 2 |
+
+        | Tanzania, United Republic Of — Tanzanian Shilling | TZS | 834 | 2 |
+
+        | Thailand — Baht | THB | 764 | 2 |
+
+        | Togo — CFA Franc BCEAO | XOF | 952 | 0 |
+
+        | Tokelau — New Zealand Dollar | NZD | 554 | 2 |
+
+        | Tonga — Pa’anga | TOP | 776 | 2 |
+
+        | Trinidad And Tobago — Trinidad and Tobago Dollar | TTD | 780 | 2 |
+
+        | Tunisia — Tunisian Dinar | TND | 788 | 3 |
+
+        | Turkey — Turkish Lira | TRY | 949 | 2 |
+
+        | Turkmenistan — Turkmenistan New Manat | TMT | 934 | 2 |
+
+        | Tuvalu — Australian Dollar | AUD | 036 | 2 |
+
+        | Uganda — Uganda Shilling | UGX | 800 | 0 |
+
+        | Ukraine — Hryvnia | UAH | 980 | 2 |
+
+        | United Arab Emirates (The) — UAE Dirham | AED | 784 | 2 |
+
+        | United Kingdom Of Great Britain And Northern Ireland (The) — Pound Sterling | GBP | 826 | 2 |
+
+        | Uruguay — Peso Uruguayo | UYU | 858 | 2 |
+
+        | Uruguay — Unidad Previsional | UYW | 927 | 4 |
+
+        | Uzbekistan — Uzbekistan Sum | UZS | 860 | 2 |
+
+        | Vanuatu — Vatu | VUV | 548 | 0 |
+
+        | Venezuela (Bolivarian Republic Of) — Bolívar Soberano | VES | 928 | 2 |
+
+        | Viet Nam — Dong | VND | 704 | 0 |
+
+        | Wallis And Futuna — CFP Franc | XPF | 953 | 0 |
+
+        | Western Sahara — Moroccan Dirham | MAD | 504 | 2 |
+
+        | Yemen — Yemeni Rial | YER | 886 | 2 |
+
+        | Zambia — Zambian Kwacha | ZMW | 967 | 2 |
+
+        | Zimbabwe — Zimbabwe Dollar | ZWL | 932 | 2 |
+
+
+        </details>'
+      externalDocs:
+        description: Find more info here
+        url: https://www.iso.org/iso-4217-currency-codes.html
+      example: EUR
+    NetworkFundsTransferKey:
+      description: Uniquely identifies a networkFundsTransfer object
+      type: string
+      pattern: ^nft-[a-zA-Z0-9]+$
+      readOnly: true
+    components-schemas-binKey:
+      description: A key assigned by Silverflow to uniquely identify a BIN.
+      type: string
+      pattern: ^bin-[a-zA-Z0-9]+$
+      readOnly: true
+      example: '{{binKeyVisa}}'
+    fundsTransferBookDate:
+      format: date
+      type: string
+      description: The book date of the funds transfer.
+    floatAmountValue:
+      type: number
+      format: float
+      description: 'The amount in minor units with decimal precision. For example `$0.345` should be encoded as `34.5`. Note that not all
+
+        currencies have 2 minor units. Some have three or zero.
+
+        '
+    ArbitrationDMSSpecific:
+      type: object
+      required:
+      - arn
+      - processingDate
+      - bin
+      - grossSettlementAmount
+      - acquirerIdCode
+      - transactionType
+      - interchangeFeeAmount
+      - reversal
+      properties:
+        arn:
+          $ref: '#/components/schemas/arn'
+        processingDate:
+          $ref: '#/components/schemas/processingDate'
+        bin:
+          $ref: '#/components/schemas/bin'
+        transactionReference:
+          $ref: '#/components/schemas/components-schemas-transactionReference'
+        merchantAcceptor:
+          $ref: '#/components/schemas/merchantAcceptor'
+        chargeKey:
+          $ref: '#/components/schemas/components-schemas-chargeKey'
+        acquirerIdCode:
+          $ref: '#/components/schemas/components-schemas-acquirerIdCode'
+        authorizationAmount:
+          $ref: '#/components/schemas/settlementAmountInteger'
+        grossSettlementAmount:
+          $ref: '#/components/schemas/settlementAmountFloat'
+        interchangeFeeAmount:
+          $ref: '#/components/schemas/settlementAmountFloat'
+        transactionType:
+          $ref: '#/components/schemas/transactionType'
+        reversal:
+          type: boolean
+        disputeOutcome:
+          type: string
+          enum:
+          - closedLost
+          - closedWon
+        tags:
+          $ref: '#/components/schemas/schemas-Tags'
+    openapi_components-schemas-amountValue-3:
+      type: integer
+      format: int64
+      minimum: 0
+      maximum: 900000000
+      description: 'The amount in minor units. For example `$12.34` should be encoded as `1234`. Note that not all
+
+        currencies have 2 minor units; some have three or zero.
+
+        '
+    CurrencyConversionRates:
+      type: array
+      description: Currency rates which are used to convert between amounts in case settlement currency is different than authorization currency. Empty array indicates no conversions applied.
+      items:
+        $ref: '#/components/schemas/Rate'
+    openapi_components-schemas-cardNetwork:
+      type: string
+      description: The card network
+      enum:
+      - mastercard
+      - visa
+      - bancontact
+      - american-express
+      - discover
+      example: mastercard
+  examples:
+    error-bad-request:
+      summary: Generic bad request error
+      value:
+        status: 400
+        type: /silverflow/problems/bad-request
+        title: Bad Request
+        detail: The submitted request was syntactically or semantically invalid
+        instance: /silverflow/dbfaddea-8178-469a-bc23-c5af05a3fa00
+    error-invalid-offset-token:
+      summary: Invalid offset token error
+      value:
+        status: 400
+        type: /silverflow/problems/invalid-offset-token
+        title: Invalid Offset Token
+        detail: The provided offset token is invalid.
+        instance: /silverflow/dbfaddea-8178-469a-bc23-c5af05a3fb48
+    report-reconciliation-details-firstChargeback-sms:
+      summary: Example of a reconciliation detail of type firstChargeback-sms
+      value:
+        offsetToken: eyJjcmVhdGVkIjoiMjAyMy0wNC0xM1QxMDoxNjoyNC44NzNaIiwiZW50aXR5IjoiZmlyc3RQcmVzZW50bWVudCNmYWxzZSNkbXMjMSIsImlkIjoidmlzYS0yMTIzNDU4MzEwMzM2MDAwMDAxMzUyNyIsImFnZW50S2V5IjoiY2d0LTFKTDMyR2hoM2tHWXNhNzRXYnFqIn0
+        moreItems: true
+        items:
+        - key: rcl-5oyukhjuy2t7ga3hafej
+          groupReference: visa-594518973459
+          type: firstChargeback-sms
+          created: '2023-03-23T12:53:08.666Z'
+          entry: 1
+          isCorrection: false
+          reportingFor: '123456'
+          network: visa
+          fundsTransferDate: '2025-08-19'
+          fundsTransferBookDate: '2025-08-19'
+          networkFundsTransferKey: nft-5aKhISSAKrbPeEMHJQ5
+          netSettlementAmount:
+            value: 3498.473
+            currency: EUR
+            impact: debit
+          settlementService:
+            code: 080
+            id: 080-EUR
+            name: Euro Area Net Settlement Service
+          typeSpecific:
+            rrn: visa-594518973459
+            processingDate: '2023-01-30'
+            bin:
+              key: bin-1ugugl0NlKtuTTEkr1bJ
+              description: silverflow-visa
+              acquirerBin: '728027'
+            transactionReference: abc1
+            actionKey: act-123gjkjg7t7t87
+            actionReference: actionRef766rjh
+            merchantAcceptor:
+              legalName: Silverflow Merchant B.V.
+              doingBusinessAsName: Silverflow Merchant B.V.
+              description: Test Merchant Visa
+              mid: '123456789'
+              key: mac-5a7486yhe0ru9gwe9yha
+            chargeKey: chg-5Ef8a4wtasnd623tpehj
+            grossSettlementAmount:
+              value: 3509
+              currency: EUR
+              impact: debit
+            interchangeFeeAmount:
+              value: 10.527
+              currency: EUR
+              impact: credit
+            acquirerIdCode: '123456'
+            transactionType: payout
+            reversal: false
+            tags:
+              IamAKey: ThisIsaValue!
+    report-reconciliation-details-firstPresentment-sms:
+      summary: Example of a reconciliation detail of type firstPresentment-sms
+      value:
+        offsetToken: eyJjcmVhdGVkIjoiMjAyMy0wNC0xM1QxMDoxNjoyNC44NzNaIiwiZW50aXR5IjoiZmlyc3RQcmVzZW50bWVudCNmYWxzZSNkbXMjMSIsImlkIjoidmlzYS0yMTIzNDU4MzEwMzM2MDAwMDAxMzUyNyIsImFnZW50S2V5IjoiY2d0LTFKTDMyR2hoM2tHWXNhNzRXYnFqIn0
+        moreItems: true
+        items:
+        - key: rcl-6r6yyukhjuy2t7ghafej
+          groupReference: visa-594518973459
+          type: firstPresentment-sms
+          created: '2023-03-23T12:53:08.666Z'
+          entry: 1
+          isCorrection: false
+          reportingFor: '123456'
+          network: visa
+          fundsTransferDate: '2023-01-30'
+          fundsTransferBookDate: '2023-01-30'
+          networkFundsTransferKey: nft-3aKhISSAKrbPeEMHJQ5
+          netSettlementAmount:
+            value: 3498.473
+            currency: EUR
+            impact: credit
+          settlementService:
+            code: 080
+            id: 080-EUR
+            name: Euro Area Net Settlement Service
+          typeSpecific:
+            rrn: visa-594518973459
+            processingDate: '2023-01-30'
+            bin:
+              key: bin-1ugugl0NlKtuTTEkr1bJ
+              description: silverflow-visa
+              acquirerBin: '728027'
+            transactionReference: abc1
+            actionKey: act-123gjkjg7t7t87
+            actionReference: actionRef766rjh
+            merchantAcceptor:
+              legalName: Silverflow Merchant B.V.
+              doingBusinessAsName: Silverflow Merchant B.V.
+              description: Test Merchant Visa
+              mid: '123456789'
+              key: mac-5a7486yhe0ru9gwe9yha
+            chargeKey: chg-5Ef8a4wtasnd623tpehj
+            authorizationAmount:
+              value: 3509
+              currency: EUR
+              impact: credit
+            grossSettlementAmount:
+              value: 3509
+              currency: EUR
+              impact: credit
+            interchangeFeeAmount:
+              value: 10.527
+              currency: EUR
+              impact: debit
+            acquirerIdCode: '123456'
+            transactionType: payout
+            tags:
+              IamAKey: ThisIsaValue!
+            cardInfoSummary:
+              cardCountry:
+                code:
+                  alpha2: US
+                  alpha3: USA
+                  numeric: '840'
+              accountFundingSource: Credit
+              productType: Commercial
+    report-reconciliation-details-firstChargeback-dms:
+      summary: Example of a reconciliation detail of type firstChargeback-dms
+      value:
+        offsetToken: eyJjcmVhdGVkIjoiMjAyMy0wNC0xM1QxMDoxNjoyNC44NzNaIiwiZW50aXR5IjoiZmlyc3RQcmVzZW50bWVudCNmYWxzZSNkbXMjMSIsImlkIjoidmlzYS0yMTIzNDU4MzEwMzM2MDAwMDAxMzUyNyIsImFnZW50S2V5IjoiY2d0LTFKTDMyR2hoM2tHWXNhNzRXYnFqIn0
+        moreItems: true
+        items:
+        - key: rcl-6r6yyukhjuy2t7ghafej
+          groupReference: visa-02708273027680000003485
+          type: firstChargeback-dms
+          created: '2023-03-23T12:53:08.666Z'
+          entry: 1
+          isCorrection: false
+          reportingFor: '123456'
+          network: visa
+          fundsTransferDate: '2023-01-30'
+          fundsTransferBookDate: '2023-01-30'
+          networkFundsTransferKey: nft-jv4Og3CCLwE4uph5PII8
+          netSettlementAmount:
+            value: 3498.473
+            currency: EUR
+            impact: credit
+          settlementService:
+            code: 080
+            id: 080-EUR
+            name: Euro Area Net Settlement Service
+          typeSpecific:
+            arn: visa-72802773027680000003485
+            processingDate: '2023-01-30'
+            bin:
+              key: bin-1ugugl0NlKtuTTEkr1bJ
+              description: silverflow-visa
+              acquirerBin: '728027'
+            transactionReference: abc1
+            merchantAcceptor:
+              legalName: Silverflow Merchant B.V.
+              doingBusinessAsName: Silverflow Merchant B.V.
+              description: Test Merchant Visa
+              mid: '123456789'
+              key: mac-037486yhe0ru9gwe9yha
+            chargeKey: chg-91f8a4wtasnd623tpehj
+            authorizationAmount:
+              value: 3509
+              currency: EUR
+              impact: credit
+            grossSettlementAmount:
+              value: 3509
+              currency: EUR
+              impact: credit
+            interchangeFeeAmount:
+              value: 10.527
+              currency: EUR
+              impact: debit
+            acquirerIdCode: '123456'
+            transactionType: purchase
+            preDispute: rapidDisputeResolution
+            reversal: false
+    report-reconciliation-details-cardNetworkFee:
+      summary: Example of a reconciliation detail of type cardNetworkFee
+      value:
+        offsetToken: eyJjcmVhdGVkIjoiMjAyMy0wNC0xM1QxMDoxNjoyNC44NzNaIiwiZW50aXR5IjoiZmlyc3RQcmVzZW50bWVudCNmYWxzZSNkbXMjMSIsImlkIjoidmlzYS0yMTIzNDU4MzEwMzM2MDAwMDAxMzUyNyIsImFnZW50S2V5IjoiY2d0LTFKTDMyR2hoM2tHWXNhNzRXYnFqIn0
+        moreItems: true
+        items:
+        - key: rcl-6r6yyukhjuy2t7ghafej
+          groupReference: mastercard-02708273027680000003485
+          type: cardNetworkFee-dms
+          created: '2023-03-23T12:53:08.666Z'
+          entry: 1
+          isCorrection: false
+          reportingFor: '123456'
+          network: mastercard
+          fundsTransferDate: '2023-01-30'
+          fundsTransferBookDate: '2023-01-30'
+          networkFundsTransferKey: nft-aTrKhISSAKrbPeEMHJQ5
+          netSettlementAmount:
+            value: 3498.473
+            currency: EUR
+            impact: credit
+          settlementService:
+            code: EU00000008
+            id: EU00000008-EUR
+            name: EUR - Deutsche Bank, Frankfurt
+          typeSpecific:
+            acquirerIdCode: '123456'
+            processingDate: '2023-01-30'
+            type: Clearing System-generated
+            subType: EDP Adjustment Amount
+            description: INTERCHANGE EDP ADJUSTMENT FOR PROCESS DATE 23/01/27
+    report-reconciliation-details-firstPresentment-dms:
+      summary: Example of a reconciliation detail of type firstPresentment-dms
+      value:
+        offsetToken: eyJjcmVhdGVkIjoiMjAyMy0wNC0xM1QxMDoxNjoyNC44NzNaIiwiZW50aXR5IjoiZmlyc3RQcmVzZW50bWVudCNmYWxzZSNkbXMjMSIsImlkIjoidmlzYS0yMTIzNDU4MzEwMzM2MDAwMDAxMzUyNyIsImFnZW50S2V5IjoiY2d0LTFKTDMyR2hoM2tHWXNhNzRXYnFqIn0
+        moreItems: true
+        items:
+        - key: rcl-6r6yyukhjuy2t7ghafej
+          groupReference: mastercard-02708273027680000003485
+          type: firstPresentment-dms
+          created: '2023-03-23T12:53:08.666Z'
+          entry: 1
+          isCorrection: false
+          reportingFor: '123456'
+          network: mastercard
+          fundsTransferDate: '2023-01-30'
+          fundsTransferBookDate: '2023-01-30'
+          networkFundsTransferKey: nft-aTrKhISSAKrbPeEMHJQ5
+          netSettlementAmount:
+            value: 3498.473
+            currency: EUR
+            impact: credit
+          settlementService:
+            code: EU00000008
+            id: EU00000008-EUR
+            name: EUR - Deutsche Bank, Frankfurt
+          typeSpecific:
+            arn: mastercard-72802773027680000003485
+            processingDate: '2023-01-30'
+            bin:
+              key: bin-1ugugl0NlKtuTTEkr1bJ
+              description: silverflow-mastercard
+              acquirerBin: '728027'
+            transactionReference: abc1
+            actionKey: act-123gjkjg7t7t87
+            actionReference: actionRef766rjh
+            clearableTime: '2023-01-30T05:58:32.598Z'
+            filename: 123456-230130-00016
+            merchantAcceptor:
+              legalName: Silverflow Merchant B.V.
+              doingBusinessAsName: Silverflow Merchant B.V.
+              description: Test Merchant Mastercard
+              mid: '123456789'
+              key: mac-037486yhe0ru9gwe9yha
+            chargeKey: chg-91f8a4wtasnd623tpehj
+            authorizationAmount:
+              value: 3509
+              currency: EUR
+              impact: credit
+            cashbackAmount:
+              value: 10
+              currency: EUR
+            clearingAmount:
+              value: 3509
+              currency: EUR
+              impact: credit
+            grossSettlementAmount:
+              value: 3509
+              currency: EUR
+              impact: credit
+            interchangeFeeAmount:
+              value: 10.527
+              currency: EUR
+              impact: debit
+            acquirerIdCode: '123456'
+            transactionType: purchase
+            tags:
+              IamAKey: ThisIsaValue!
+            cardInfoSummary:
+              cardCountry:
+                code:
+                  alpha2: NL
+                  alpha3: NLD
+                  numeric: '528'
+              accountFundingSource: Debit
+              productType: Consumer
+    report-reconciliation-details-arbitration-dms:
+      summary: Example of a reconciliation detail of type arbitration-dms
+      value:
+        offsetToken: eyJjcmVhdGVkIjoiMjAyMy0wNC0xM1QxMDoxNjoyNC44NzNaIiwiZW50aXR5IjoiZmlyc3RQcmVzZW50bWVudCNmYWxzZSNkbXMjMSIsImlkIjoidmlzYS0yMTIzNDU4MzEwMzM2MDAwMDAxMzUyNyIsImFnZW50S2V5IjoiY2d0LTFKTDMyR2hoM2tHWXNhNzRXYnFqIn0
+        moreItems: true
+        items:
+        - key: rcl-6r6yyukhjuy2t7ghafej
+          groupReference: mastercard-02708273027680000003485
+          type: arbitration-dms
+          created: '2023-03-23T12:53:08.666Z'
+          entry: 1
+          isCorrection: false
+          reportingFor: '123456'
+          network: mastercard
+          fundsTransferDate: '2023-01-30'
+          fundsTransferBookDate: '2023-01-30'
+          networkFundsTransferKey: nft-aTrKhISSAKrbPeEMHJQ5
+          netSettlementAmount:
+            value: 3498.473
+            currency: EUR
+            impact: credit
+          settlementService:
+            code: EU00000008
+            id: EU00000008-EUR
+            name: EUR - Deutsche Bank, Frankfurt
+          typeSpecific:
+            arn: mastercard-72802773027680000003485
+            processingDate: '2023-01-30'
+            bin:
+              key: bin-1ugugl0NlKtuTTEkr1bJ
+              description: silverflow-mastercard
+              acquirerBin: '728027'
+            transactionReference: abc1
+            merchantAcceptor:
+              legalName: Silverflow Merchant B.V.
+              doingBusinessAsName: Silverflow Merchant B.V.
+              description: Test Merchant Mastercard
+              mid: '123456789'
+              key: mac-037486yhe0ru9gwe9yha
+            chargeKey: chg-91f8a4wtasnd623tpehj
+            authorizationAmount:
+              value: 3509
+              currency: EUR
+              impact: credit
+            grossSettlementAmount:
+              value: 3509
+              currency: EUR
+              impact: credit
+            interchangeFeeAmount:
+              value: 10.527
+              currency: EUR
+              impact: debit
+            acquirerIdCode: '123456'
+            transactionType: purchase
+            disputeOutcome: closedLost
+            reversal: true
+    report-reconciliation-details-firstPresentment-RTC:
+      summary: Example of a reconciliation detail of type firstPresentment-rtc
+      value:
+        offsetToken: eyJjcmVhdGVkIjoiMjAyMy0wNC0xM1QxMDoxNjoyNC44NzNaIiwiZW50aXR5IjoiZmlyc3RQcmVzZW50bWVudCNmYWxzZSNkbXMjMSIsImlkIjoidmlzYS0yMTIzNDU4MzEwMzM2MDAwMDAxMzUyNyIsImFnZW50S2V5IjoiY2d0LTFKTDMyR2hoM2tHWXNhNzRXYnFqIn0
+        moreItems: true
+        items:
+        - key: rcl-6ryukhj0823tgtghafej
+          groupReference: bancontact-954174321573
+          type: firstPresentment-rtc
+          created: '2023-10-23T12:53:08.666Z'
+          entry: 1
+          isCorrection: false
+          reportingFor: '123456'
+          network: bancontact
+          fundsTransferDate: '2023-10-23'
+          fundsTransferBookDate: '2023-10-23'
+          networkFundsTransferKey: nft-aTrKhdgwAKrbPeEMHJQ5
+          netSettlementAmount:
+            value: 350924
+            currency: EUR
+            impact: credit
+          settlementService:
+            code: EU
+            id: EU-EUR
+            name: BancontactSettlement
+          typeSpecific:
+            rrn: bancontact-954174321573
+            processingDate: '2023-10-21'
+            bin:
+              key: bin-1ug53l0NlKtuTTEkr1bJ
+              description: Silverflow Bancontact
+              acquirerBin: '700000'
+            transactionReference: abc1
+            merchantAcceptor:
+              legalName: Silverflow Merchant B.V.
+              doingBusinessAsName: Silverflow Merchant B.V.
+              description: Test Merchant Mastercard
+              mid: '123456789'
+              key: mac-037486yhe0ru9gwe9yha
+            chargeKey: chg-91f8a4wtasnd623tpehj
+            authorizationAmount:
+              value: 350924
+              currency: EUR
+              impact: credit
+            grossSettlementAmount:
+              value: 350924
+              currency: EUR
+              impact: credit
+            interchangeFeeAmount:
+              value: 5
+              currency: EUR
+              impact: debit
+            acquirerIdCode: '800000'
+            transactionType: purchase
+            switchPeriodDate: '2023-10-21'
+            switchPeriodNumber: '7274'
+    report-reconciliation-details-preArbitration-dms:
+      summary: Example of a reconciliation detail of type preArbitration-dms
+      value:
+        offsetToken: eyJjcmVhdGVkIjoiMjAyMy0wNC0xM1QxMDoxNjoyNC44NzNaIiwiZW50aXR5IjoiZmlyc3RQcmVzZW50bWVudCNmYWxzZSNkbXMjMSIsImlkIjoidmlzYS0yMTIzNDU4MzEwMzM2MDAwMDAxMzUyNyIsImFnZW50S2V5IjoiY2d0LTFKTDMyR2hoM2tHWXNhNzRXYnFqIn0
+        moreItems: true
+        items:
+        - key: rcl-6r6yyukhjuy2t7ghafej
+          groupReference: mastercard-02708273027680000003485
+          type: preArbitration-dms
+          created: '2023-03-23T12:53:08.666Z'
+          entry: 1
+          isCorrection: false
+          reportingFor: '123456'
+          network: mastercard
+          fundsTransferDate: '2023-01-30'
+          fundsTransferBookDate: '2023-01-30'
+          networkFundsTransferKey: nft-aTrKhISSAKrbPeEMHJQ5
+          netSettlementAmount:
+            value: 3498.473
+            currency: EUR
+            impact: credit
+          settlementService:
+            code: EU00000008
+            id: EU00000008-EUR
+            name: EUR - Deutsche Bank, Frankfurt
+          typeSpecific:
+            arn: mastercard-72802773027680000003485
+            processingDate: '2023-01-30'
+            bin:
+              key: bin-1ugugl0NlKtuTTEkr1bJ
+              description: silverflow-mastercard
+              acquirerBin: '728027'
+            transactionReference: abc1
+            merchantAcceptor:
+              legalName: Silverflow Merchant B.V.
+              doingBusinessAsName: Silverflow Merchant B.V.
+              description: Test Merchant Mastercard
+              mid: '123456789'
+              key: mac-037486yhe0ru9gwe9yha
+            chargeKey: chg-91f8a4wtasnd623tpehj
+            authorizationAmount:
+              value: 3509
+              currency: EUR
+              impact: credit
+            grossSettlementAmount:
+              value: 3509
+              currency: EUR
+              impact: credit
+            interchangeFeeAmount:
+              value: 10.527
+              currency: EUR
+              impact: debit
+            acquirerIdCode: '123456'
+            transactionType: purchase
+            disputeOutcome: closedLost
+            reversal: false
+    report-reconciliation-details-secondPresentment-dms:
+      summary: Example of a reconciliation detail of type secondPresentment-dms
+      value:
+        offsetToken: eyJjcmVhdGVkIjoiMjAyMy0wNC0xM1QxMDoxNjoyNC44NzNaIiwiZW50aXR5IjoiZmlyc3RQcmVzZW50bWVudCNmYWxzZSNkbXMjMSIsImlkIjoidmlzYS0yMTIzNDU4MzEwMzM2MDAwMDAxMzUyNyIsImFnZW50S2V5IjoiY2d0LTFKTDMyR2hoM2tHWXNhNzRXYnFqIn0
+        moreItems: true
+        items:
+        - key: rcl-6r6yyukhjuy2t7ghafej
+          groupReference: mastercard-02708273027680000003485
+          type: secondPresentment-dms
+          created: '2023-03-23T12:53:08.666Z'
+          entry: 1
+          isCorrection: false
+          reportingFor: '123456'
+          network: mastercard
+          fundsTransferDate: '2023-01-30'
+          fundsTransferBookDate: '2023-01-30'
+          networkFundsTransferKey: nft-aTrKhISSAKrbPeEMHJQ5
+          netSettlementAmount:
+            value: 3498.473
+            currency: EUR
+            impact: credit
+          settlementService:
+            code: EU00000008
+            id: EU00000008-EUR
+            name: EUR - Deutsche Bank, Frankfurt
+          typeSpecific:
+            arn: mastercard-72802773027680000003485
+            processingDate: '2023-01-30'
+            bin:
+              key: bin-1ugugl0NlKtuTTEkr1bJ
+              description: silverflow-mastercard
+              acquirerBin: '728027'
+            transactionReference: abc1
+            merchantAcceptor:
+              legalName: Silverflow Merchant B.V.
+              doingBusinessAsName: Silverflow Merchant B.V.
+              description: Test Merchant Mastercard
+              mid: '123456789'
+              key: mac-037486yhe0ru9gwe9yha
+            chargeKey: chg-91f8a4wtasnd623tpehj
+            authorizationAmount:
+              value: 3509
+              currency: EUR
+              impact: credit
+            grossSettlementAmount:
+              value: 3509
+              currency: EUR
+              impact: credit
+            interchangeFeeAmount:
+              value: 10.527
+              currency: EUR
+              impact: debit
+            acquirerIdCode: '123456'
+            transactionType: purchase
+  responses:
+    openapi_components-responses-ForbiddenError-2:
+      description: The authenticated client is forbidden to make the request for the resource identified.
+      content:
+        application/json:
+          schema:
+            allOf:
+            - $ref: '#/components/schemas/openapi_components-schemas-ProblemDetail'
+            - type: object
+              properties:
+                type:
+                  enum:
+                  - /silverflow/problems/forbidden
+                title:
+                  enum:
+                  - Forbidden
+          example:
+            summary: Forbidden error
+            value:
+              status: 403
+              type: /silverflow/problems/forbidden
+              title: Forbidden
+              detail: 'Authenticated user ''apk-33GjasQdWl4781OsErvi'' is missing the following permission(s): charges:Create.'
+              instance: /silverflow/b0451a9d-f66d-4ef7-9f5d-d48064a2bb3e
+    components-responses-BadRequestError:
+      description: The request was malformed. See the response body for details
+      content:
+        application/json:
+          schema:
+            oneOf:
+            - $ref: '#/components/schemas/GenericBadRequestError'
+            - $ref: '#/components/schemas/InvalidOffsetTokenError'
+          examples:
+            genericBadRequestError:
+              $ref: '#/components/examples/error-bad-request'
+            invalidOffsetTokenError:
+              $ref: '#/components/examples/error-invalid-offset-token'
+    openapi_components-responses-UnauthorizedError-3:
+      description: Authentication information is missing or invalid
+      headers:
+        WWW_Authenticate:
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            allOf:
+            - $ref: '#/components/schemas/openapi_components-schemas-ProblemDetail'
+            - type: object
+              properties:
+                type:
+                  enum:
+                  - /silverflow/problems/authentication-required
+                title:
+                  enum:
+                  - Authentication Required
+          example:
+            summary: Authentication Required Error
+            value:
+              status: 401
+              type: /silverflow/problems/authentication-required
+              title: Authentication Required
+              detail: Authentication Required
+              instance: /silverflow/RjLFu5Sund7ryJFNhZpFRGFsMzeuMym2BNoIxjvXTfxjtGZZlEpFnQ==
+    openapi_components-responses-TooManyRequestsError-2:
+      description: The number of requests (per minute) has exceeded the configured maximum
+      content:
+        application/json:
+          schema:
+            allOf:
+            - $ref: '#/components/schemas/openapi_components-schemas-ProblemDetail'
+            - type: object
+              properties:
+                type:
+                  enum:
+                  - /silverflow/problems/authentication-required
+                title:
+                  enum:
+                  - Authentication Required
+          example:
+            summary: Too many requests error
+            value:
+              status: 429
+              type: /silverflow/problems/too-many-requests
+              title: Too Many Requests
+              detail: The number of requests performed by the client has exceeded the configured maximum for a given period
+              instance: /silverflow/b68c4b1e-a40a-467f-afa3-095f8eb451d2
+  securitySchemes:
+    ApiKey:
+      description: "The primary method of authenticating to the Silverflow API is through API keys.\n\nAPI keys can be created by calling the [createApiKey](#operation/createApiKey) endpoint. You can create up to 40 API keys and also update and delete them, allowing for _credential rotation_.\n\nThe _Agent Activation_ process will generate an initial API Key for you. See [Activate Agent](#section/Getting-Started).\n\nA call to the [createApiKey](#operation/createApiKey) endpoint will return the following structure:\n\n```json\n{\n    \"key\": \"apk-1wtRxni5IsPsSpBLWpwr\",\n    \"status\": \"active\",\n    \"agentKey\": \"cgt-1wtRvFLIjDOyyUR5Q2LB\",\n    \"description\": \"Data lake API key\",\n    \"permissions\": [\n        \"charges:List\",\n        \"reports:All\"\n    ],\n    \"created\": \"2021-06-22T11:21:45.115Z\",\n    \"secret\": \"FWtnOOHAjbD6rNxWWEeVOCj7JXSEPGJQ\",\n    \"version\": 1\n}\n```\n\n> **Important:** The `secret` is only returned once in the response to the `createApiKey` call.\n\nOnce created, the `key` and `secret` fields from the API key must be used in the HTTP `Authorization` header using the `Basic` scheme.\nThe Basic scheme requires a **username** and **password** to be specified, separated by a `:` (colon) and Base64 encoded.\n\nUse the following values from the API key to construct a Basic authentication header:\n\n| Basic field | API key field | Example |\n| ----------- | ------------- | ------- |\n| username | `key` | `apk-1wtRxni5IsPsSpBLWpwr` |\n| password | `secret` | `FWtnOOHAjbD6rNxWWEeVOCj7JXSEPGJQ` |\n\nIn pseudo-code a valid HTTP Basic Authentication header would be constructed as follows:\n\n```ts\nconst apiKeyId = \"apk-1wtRxni5IsPsSpBLWpwr\";\nconst apiKeySecret = \"FWtnOOHAjbD6rNxWWEeVOCj7JXSEPGJQ\";\nconst authnValue = \"Basic \" + base64Encode(apiKeyId + \":\" + apiKeySecret);\nrequest.setHeader(\"Authorization\", authnValue);\n```\n\nUsing the values from the example a valid HTTP request would look like the following:\n\n```http\nGET /v1/agents/current HTTP/1.1\nAccept: application/json\nAuthorization: Basic YXBrLTF3dFJ4bmk1SXNQc1NwQkxXcHdyOkZXdG5PT0hBamJENnJOeFdXRWVWT0NqN0pYU0VQR0pR\n```\n\nMore information on the Basic scheme can be found in [RFC-7617 - The 'Basic' HTTP Authentication Scheme](https://datatracker.ietf.org/doc/html/rfc7617)."
+      type: http
+      scheme: basic
+    BearerToken:
+      description: 'Bearer tokens are temporary security credentials that can be used to authorize ''third parties'' (bearers) access to the Silverflow API on behalf of the agent.
+
+
+        These tokens are created by calling the [createAgentBearerToken](#operation/createAgentBearerToken) endpoint.
+
+
+        Once created the `token` field must be used in the HTTP `Authorization` header using the `Bearer` scheme.
+
+        Here''s an example of an HTTP request with a bearer token:
+
+
+        ```http
+
+        GET /v1/merchants/mct-1hPdFhmgaBzMS191nIbJ HTTP/1.1
+
+        Accept: application/json
+
+        Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...40EFOgxf_3I6mPZ16bXqHd5tUyApgl0mNOAXPm5AhnA
+
+
+        ```
+
+
+        More information on the Bearer scheme can be found in [RFC-6750 - The OAuth 2.0 Authorization Framework: Bearer Token Usage](https://datatracker.ietf.org/doc/html/rfc6750).'
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+    MutualTLS:
+      type: apiKey
+      in: header
+      name: '-'
+      description: 'The client must set up mTLS connection with a valid X.509 client certificate signed by a customer-provided CA (certificate authority) that is registered to a specific agent. The customer-provided CA certificate must be shared and added to Silverflow''s trust store prior to calling endpoints.
+
+
+        Certificate validation happens at the transport layer during TLS handshake. Tenant verification is performed by matching the agent key embedded in the client certificate against the agent key embedded in the trusted CA.
+
+        '
+x-refined-from:
+- silverflow-openapi.yml
+- silverflow-openapi.yml
+x-tagGroups:
+- name: ''
+  tags:
+  - Introduction
+  - Release Notes
+- name: Accounts
+  tags:
+  - Agents
+  - API Keys
+  - Bins
+  - Merchants
+  - Merchant Acceptors
+  - Enrollments
+  - Screenings
+- name: Event Notifications
+  tags:
+  - Event Subscriptions
+  - Charges Events
+  - Disputes Events
+  - Fraud Notification Events
+  - Processor Tokens Events
+  - Network Tokens Events
+  - Report Events
+  - Distribution Events
+  - AMMF Submission Events
+  - Reconciliation Events
+  - Clearing Events
+- name: 3DS Authentication
+  tags:
+  - 3DS Authentication
+- name: BEP Authentication
+  tags:
+  - BEP Authentication
+- name: Tokenization
+  tags:
+  - Processor Tokenization
+  - Network Tokenization
+- name: Charges
+  tags:
+  - Create Charges
+  - Create Recurring
+  - Retrieve Charges
+  - Charge Actions
+- name: Terminal-To-Cloud
+  tags:
+  - Create POS Charges
+  - Retrieve POS Charges
+  - POS Charge Actions
+- name: Card Management
+  tags:
+  - Card Management
+- name: Disputes
+  tags:
+  - Disputes
+  - Documents
+- name: Fraud Notifications
+  tags:
+  - Fraud Notifications
+- name: Card Info
+  tags:
+  - Card Info
+- name: Currency Conversion Rates
+  tags:
+  - Currency Conversion Rates
+- name: Fees
+  tags:
+  - Fees
+- name: Reconciliation
+  tags:
+  - Reconciliation Details
+  - Network Funds Transfers
+- name: Reports
+  tags:
+  - Reconciliation Reports
+  - Settlement Reports
+  - Card Network Reports
+  - Dispute Reports
+  - Fraud Notifications Reports
+  - Charges Reports
+  - Scheme Fee Reports
+  - Retrieve Reports
+  - Report Scheduling
+  - Distributions
+- name: Transaction Risk Assessment
+  tags:
+  - Transaction Risk Assessment
+- name: File Subscriptions
+  tags:
+  - File Subscriptions

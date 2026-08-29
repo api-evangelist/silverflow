@@ -1,0 +1,2059 @@
+openapi: 3.2.0
+info:
+  title: Silverflow Report Scheduling API
+  version: 1.417.0
+  contact:
+    name: API Support
+    email: support@silverflow.com
+  license:
+    name: Commercial
+  description: 'Operations tagged Report Scheduling across 2 of this provider''s published API definitions: silverflow-openapi.yml, silverflow-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://eu-west-1.api.silverflow.com/v1
+  description: Production URL for Europe - Equivalent to https://api.silverflow.co/v1
+- url: https://us-east-2.api.silverflow.com/v1
+  description: Production URL for North America
+- url: https://eu-west-1.api-sbx.silverflow.com/v1
+  description: Sandbox URL - Equivalent to https://api-sbx.silverflow.co/v1
+security:
+- ApiKey: []
+- BearerToken: []
+tags:
+- name: Report Scheduling
+paths:
+  /reportSchedules:
+    post:
+      operationId: createReportSchedule
+      summary: Create a Report Schedule
+      description: 'Creates a new report schedule for generating various types of reports.
+
+
+        It requires the `reportSchedules:Create` permission in the API key.
+
+
+        The date range for the report is based on the `trigger` configuration and uses the standard UTC format for all times and timestamps.
+
+        However, to ensure completeness, the report schedule may execute with a slight delay.
+
+        This delay allows the system to capture any last-minute records and ensure accurate and comprehensive data.
+
+
+        Once the report schedule is executed, a new report will be created, and can be retrieved by calling the [List Reports](#operation/listReport) or [Get Report](#operation/getReport) endpoint.
+
+
+        To be notified of the creation of these reports, you can subscribe to the reports events using the `eventSource` `https://silverflow.com/reports` on [`POST /v1/eventSubscriptions`](#operation/createEventSubscription).
+
+
+        When a scheduled report is completed, if it has one of more related distribution objects, it will trigger the distribution to the specified targets.
+
+        '
+      tags:
+      - Report Scheduling
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateReportScheduleRequest'
+            examples:
+              Scheme Fee Details - Hourly Interval:
+                $ref: '#/components/examples/HourlySchemeFeeDetails'
+              Scheme Fee Details - Daily Interval:
+                $ref: '#/components/examples/DailySchemeFeeDetails'
+              Scheme Fee Details - Daily with distributions:
+                $ref: '#/components/examples/DailySchemeFeeDetailsWithDistributions'
+              Merchant Payout:
+                $ref: '#/components/examples/MerchantPayoutRequest'
+              Settlement Details - Hourly Interval:
+                $ref: '#/components/examples/HourlySettlementDetails'
+              Settlement Details - Daily Interval:
+                $ref: '#/components/examples/DailySettlementDetails'
+              AMMF - Monthly Interval:
+                $ref: '#/components/examples/AmmfRequest'
+      responses:
+        '201':
+          description: The newly created report schedule object
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReportScheduleResponse'
+              examples:
+                Scheme Fee Details - Hourly Interval:
+                  $ref: '#/components/examples/Hourly'
+                Scheme Fee Details - Daily Interval:
+                  $ref: '#/components/examples/Daily'
+                Scheme Fee Details - Daily with distributions:
+                  $ref: '#/components/examples/DailyWithDistributions'
+                Merchant Payout:
+                  $ref: '#/components/examples/MerchantPayoutResponse'
+                Settlement Details - Hourly Interval:
+                  $ref: '#/components/examples/settlement-details_Hourly'
+                Settlement Details - Daily Interval:
+                  $ref: '#/components/examples/settlement-details_Daily'
+                AMMF - Monthly Interval:
+                  $ref: '#/components/examples/AmmfResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                oneOf:
+                - $ref: '#/components/schemas/InputValidationError'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotAuthorizedErrorDetails'
+        '403':
+          $ref: '#/components/responses/openapi_components-responses-ForbiddenError-3'
+        '409':
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                oneOf:
+                - $ref: '#/components/schemas/EntityAlreadyExistsErrorDetails'
+                - $ref: '#/components/schemas/schemas-ReferencedEntityNotFoundErrorDetails'
+                - $ref: '#/components/schemas/ReferencedEntityArchivedErrorDetails'
+              examples:
+                EntityAlreadyExistsErrorDetails:
+                  $ref: '#/components/examples/EntityAlreadyExistsErrorExample'
+                ReferencedEntityNotFoundErrorDetails:
+                  $ref: '#/components/examples/openapi_components-examples-ReferencedEntityNotFoundErrorExample'
+                ReferencedEntityArchivedErrorDetails:
+                  $ref: '#/components/examples/ReferencedEntityArchivedErrorExample'
+        '429':
+          $ref: '#/components/responses/openapi_components-responses-TooManyRequestsError-3'
+    get:
+      operationId: listReportSchedules
+      summary: List Report Schedules
+      description: 'Lists all active report schedules.
+
+
+        It requires the `reportSchedules:List` permission in the API key.
+
+        '
+      tags:
+      - Report Scheduling
+      parameters:
+      - $ref: '#/components/parameters/reportName'
+      - $ref: '#/components/parameters/parameters-limit'
+      - $ref: '#/components/parameters/openapi_components-parameters-offsetToken-3'
+      - $ref: '#/components/parameters/components-parameters-sortOrder'
+      responses:
+        '200':
+          description: The report schedules
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListReportSchedulesResponse'
+              example:
+                items:
+                - reportName: SchemeFeeDetails
+                  trigger:
+                    type: interval
+                    cadence: hourly
+                  mimeType: application/json
+                  key: rsk-1e1dAHhgstYTUhlphPzZ
+                  status: active
+                  agentKey: cgt-1e1dAHhgstYTUhlphPzZ
+                  created: '2019-08-24T14:15:22Z'
+                  lastModified: '2019-08-25T14:15:22Z'
+                  version: 2
+                  reference: Report Reference
+                - reportName: NetworkFundsTransfers
+                  trigger:
+                    type: interval
+                    cadence: daily
+                    hour: 15
+                  mimeType: text/csv
+                  key: rsk-1e1dAHhgstYTUhlphPzZ
+                  status: active
+                  agentKey: cgt-1e1dAHhgstYTUhlphPzZ
+                  created: '2019-08-24T14:15:22Z'
+                  lastModified: '2019-08-25T14:15:22Z'
+                  version: 2
+                  reference: Report Reference
+                moreItems: true
+                offsetToken: eyJMaXN0SW5kZXhLZXkiOiJjZ3QtMTIzNDU2IiwiTGlzdEluZGV4U29ydEtleSI6IjIwMjMtMTEtMTdUMTQ6NDA6MjcuOTcwWiIsIlR5cGVLZXkiOiJSZXBvcnQiLCJPYmplY3RLZXkiOiJyZXAtMTIzNDU2In0
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                oneOf:
+                - $ref: '#/components/schemas/InputValidationError'
+                - $ref: '#/components/schemas/schemas-InvalidOffsetTokenError'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotAuthorizedErrorDetails'
+        '403':
+          $ref: '#/components/responses/openapi_components-responses-ForbiddenError-3'
+        '429':
+          $ref: '#/components/responses/openapi_components-responses-TooManyRequestsError-3'
+    servers:
+    - url: https://eu-west-1.api.silverflow.com/v1
+      description: Production URL for Europe - Equivalent to https://api.silverflow.co/v1
+    - url: https://us-east-2.api.silverflow.com/v1
+      description: Production URL for North America
+    - url: https://eu-west-1.api-sbx.silverflow.com/v1
+      description: Sandbox URL - Equivalent to https://api-sbx.silverflow.co/v1
+  /reportSchedules/{reportScheduleKey}:
+    get:
+      operationId: getReportSchedule
+      summary: Get Report Schedule
+      description: "Retrieves a specific report schedule identified by its `reportScheduleKey`.\n\nRequirements:\n  - The API key must include the `reportSchedules:Get` permission.\n"
+      tags:
+      - Report Scheduling
+      parameters:
+      - in: path
+        name: reportScheduleKey
+        required: true
+        schema:
+          $ref: '#/components/schemas/reportScheduleKey'
+      responses:
+        '200':
+          description: Successfully retrieved the report schedule.
+          content:
+            application/json:
+              schema:
+                oneOf:
+                - $ref: '#/components/schemas/SchemeFeeDetailsReportSchedule'
+                - $ref: '#/components/schemas/NetworkFundsTransferReportSchedule'
+                - $ref: '#/components/schemas/MerchantPayoutReportSchedule'
+                - $ref: '#/components/schemas/ReconciliationDetailsReportSchedule'
+                - $ref: '#/components/schemas/SettlementDetailsReportSchedule'
+                - $ref: '#/components/schemas/AmmfReportSchedule'
+              example:
+                reportName: SchemeFeeDetails
+                trigger:
+                  type: interval
+                  cadence: hourly
+                mimeType: application/json
+                key: rsk-1e1dAHhgstYTUhlphPzZ
+                status: active
+                agentKey: cgt-1e1dAHhgstYTUhlphPzZ
+                created: '2019-08-24T14:15:22Z'
+                lastModified: '2019-08-25T14:15:22Z'
+                version: 2
+                reference: Report Reference
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                oneOf:
+                - $ref: '#/components/schemas/InputValidationError'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotAuthorizedErrorDetails'
+        '403':
+          $ref: '#/components/responses/openapi_components-responses-ForbiddenError-3'
+        '404':
+          description: Report schedule not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReportScheduleNotFoundErrorDetails'
+              example:
+                type: /silverflow/problems/report/report-schedule-not-found
+                title: Report schedule not found
+                status: 404
+                detail: The report schedule rsk-1e1dAHhgstYTUhlphPzZ is not found
+                instance: /silverflow/b4cc37a0-ab24-46b4-aa8c-cc2d6eddf1b6
+        '429':
+          $ref: '#/components/responses/openapi_components-responses-TooManyRequestsError-3'
+    delete:
+      operationId: archiveReportSchedule
+      summary: Archive a Report Schedule
+      description: 'Archives a report schedule, meaning it will no longer be generating reports.
+
+
+        It requires the `reportSchedules:Archive` permission in the API key.
+
+        '
+      tags:
+      - Report Scheduling
+      parameters:
+      - in: path
+        name: reportScheduleKey
+        required: true
+        schema:
+          $ref: '#/components/schemas/reportScheduleKey'
+      responses:
+        '204':
+          description: Successfully archived report schedule
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                oneOf:
+                - $ref: '#/components/schemas/InputValidationError'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotAuthorizedErrorDetails'
+        '403':
+          $ref: '#/components/responses/openapi_components-responses-ForbiddenError-3'
+        '404':
+          description: Report schedule not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReportScheduleNotFoundErrorDetails'
+              example:
+                type: /silverflow/problems/report/report-schedule-not-found
+                title: Report schedule not found
+                status: 404
+                detail: The report schedule rsk-1e1dAHhgstYTUhlphPzZ is not found
+                instance: /silverflow/b4cc37a0-ab24-46b4-aa8c-cc2d6eddf1b6
+        '429':
+          $ref: '#/components/responses/openapi_components-responses-TooManyRequestsError-3'
+    patch:
+      operationId: updateReportSchedule
+      summary: Update a Report Schedule
+      description: 'Updates an existing report schedule configuration.
+
+
+        It requires the `reportSchedules:Update` permission in the API key.
+
+
+        Only active report schedules can be updated. If the schedule is already deleted or archived, the request will result in an error.
+
+        '
+      tags:
+      - Report Scheduling
+      parameters:
+      - in: path
+        name: reportScheduleKey
+        required: true
+        schema:
+          $ref: '#/components/schemas/reportScheduleKey'
+      requestBody:
+        required: true
+        content:
+          application/merge-patch+json:
+            schema:
+              $ref: '#/components/schemas/UpdateReportScheduleRequest'
+            examples:
+              UpdateReportSchedule:
+                $ref: '#/components/examples/UpdateReportSchedule'
+      responses:
+        '200':
+          description: The report schedule updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReportScheduleResponse'
+              example:
+                reportName: SchemeFeeDetails
+                key: rsk-1e1dAHhgstYTUhlphPzZ
+                status: active
+                agentKey: cgt-1UF2NafdfrdPMf2XrS2
+                created: '2019-08-24T14:15:22Z'
+                lastModified: '2019-08-24T14:15:22Z'
+                version: 0
+                reference: string
+                distributions:
+                - dst-1e1dAHhgstYTUhlphPzZ
+                mimeType: application/json
+                trigger:
+                  type: interval
+                  cadence: hourly
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                oneOf:
+                - $ref: '#/components/schemas/InputValidationError'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotAuthorizedErrorDetails'
+        '403':
+          $ref: '#/components/responses/openapi_components-responses-ForbiddenError-3'
+        '404':
+          description: Report schedule not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReportScheduleNotFoundErrorDetails'
+              example:
+                type: /silverflow/problems/report/report-schedule-not-found
+                title: Report schedule not found
+                status: 404
+                detail: The report schedule rsk-1e1dAHhgstYTUhlphPzZ is not found
+                instance: /silverflow/b4cc37a0-ab24-46b4-aa8c-cc2d6eddf1b6
+        '409':
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                oneOf:
+                - $ref: '#/components/schemas/EntityAlreadyExistsErrorDetails'
+                - $ref: '#/components/schemas/schemas-ReferencedEntityNotFoundErrorDetails'
+                - $ref: '#/components/schemas/ReferencedEntityArchivedErrorDetails'
+              examples:
+                EntityAlreadyExistsErrorDetails:
+                  $ref: '#/components/examples/EntityAlreadyExistsErrorExample'
+                ReferencedEntityNotFoundErrorDetails:
+                  $ref: '#/components/examples/openapi_components-examples-ReferencedEntityNotFoundErrorExample'
+                ReferencedEntityArchivedErrorDetails:
+                  $ref: '#/components/examples/ReferencedEntityArchivedErrorExample'
+        '415':
+          description: Unsupported mimeType
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnsupportedMimeTypeErrorDetails'
+              example:
+                type: /silverflow/problems/report/unsupported-mime-type
+                title: Unsupported mimeType
+                status: 415
+                detail: Unsupported mimeType 'text/csv'
+                instance: /silverflow/b4cc37a0-ab24-46b4-aa8c-cc2d6eddf1b6
+        '429':
+          $ref: '#/components/responses/openapi_components-responses-TooManyRequestsError-3'
+    servers:
+    - url: https://eu-west-1.api.silverflow.com/v1
+      description: Production URL for Europe - Equivalent to https://api.silverflow.co/v1
+    - url: https://us-east-2.api.silverflow.com/v1
+      description: Production URL for North America
+    - url: https://eu-west-1.api-sbx.silverflow.com/v1
+      description: Sandbox URL - Equivalent to https://api-sbx.silverflow.co/v1
+components:
+  parameters:
+    components-parameters-sortOrder:
+      in: query
+      name: sortOrder
+      required: false
+      description: 'The sort order in which reports should be sorted. Based on the entity creation time.
+
+
+        `asc` for ascending order, `desc` for descending order.
+
+        '
+      schema:
+        type: string
+        default: asc
+        enum:
+        - asc
+        - desc
+      example: asc
+    openapi_components-parameters-offsetToken-3:
+      in: query
+      name: offsetToken
+      required: false
+      schema:
+        $ref: '#/components/schemas/components-schemas-offsetToken'
+      description: Token representing the offset for paginated results. Use the token from the last response to retrieve the next set of items.
+    parameters-limit:
+      in: query
+      name: limit
+      required: false
+      description: The maximum number of reports to retrieve in a single request.
+      schema:
+        type: integer
+        format: int32
+        minimum: 1
+        maximum: 100
+        default: 10
+      example: 1
+    reportName:
+      name: reportName
+      description: The report name to filter on
+      in: query
+      required: false
+      schema:
+        oneOf:
+        - $ref: '#/components/schemas/SchemeFeeDetailsReportName'
+  examples:
+    openapi_components-examples-ReferencedEntityNotFoundErrorExample:
+      summary: A referenced entity was not found
+      value:
+        type: /silverflow/problems/report/referenced-entity-not-found
+        title: Referenced Entity Not Found
+        status: 409
+        detail: The referenced distribution key 'dst-1eOdAHhgstYTUhlphPFf' was not found.
+        instance: /silverflow/b0451a9d-f66d-4ef7-9f5d-d48064a2bb3e
+    MerchantPayoutRequest:
+      value:
+        reportName: MerchantPayout
+        reference: Report Reference
+        trigger:
+          type: interval
+          cadence: daily
+          hour: 5
+        mimeType: text/csv
+        parameters:
+          type: Standardized
+    DailySettlementDetails:
+      value:
+        reportName: SettlementDetails
+        reference: Report Reference
+        trigger:
+          type: interval
+          cadence: daily
+          hour: 5
+        mimeType: text/csv
+    UpdateReportSchedule:
+      value:
+        reference: Distributed Report Reference
+        trigger:
+          type: interval
+          cadence: hourly
+        mimeType: application/json
+        distributions:
+        - dst-1e1dAHhgstYTUhlphPzZ
+    AmmfResponse:
+      value:
+        key: rsk-9f9dAHhgstYTUhlphKsm
+        reportName: AmmfReport
+        trigger:
+          type: interval
+          cadence: monthly
+          hour: 5
+          day: 28
+        parameters:
+          acquirerIdCode: '123456'
+          directSubmission: false
+        mimeType: application/vnd.ms-excel
+        status: active
+        agentKey: cgt-1UF2NafdfrdPMf2XrS2
+        created: '2026-06-01T08:00:00Z'
+        lastModified: '2026-06-01T10:00:00Z'
+        version: 1
+        reference: AMMF Report Reference
+    MerchantPayoutResponse:
+      value:
+        reportName: SchemeFeeDetails
+        trigger:
+          type: interval
+          cadence: daily
+          hour: 12
+        mimeType: text/csv
+        key: rsk-9f9dAHhgstYTUhlphKsm
+        status: active
+        agentKey: cgt-1UF2NafdfrdPMf2XrS2
+        created: '2024-10-28T08:00:00Z'
+        lastModified: '2024-10-28T10:00:00Z'
+        version: 1
+        reference: Merchant Payout Report
+        parameters:
+          type: Standardized
+    Hourly:
+      value:
+        reportName: SchemeFeeDetails
+        trigger:
+          cadence: hourly
+          type: interval
+        mimeType: application/json
+        key: rsk-9f9dAHhgstYTUhlphKsm
+        status: active
+        agentKey: cgt-1UF2NafdfrdPMf2XrS2
+        created: '2024-10-28T08:00:00Z'
+        lastModified: '2024-10-28T09:00:00Z'
+        version: 1
+        reference: Report Reference
+    ReferencedEntityArchivedErrorExample:
+      summary: A referenced entity is archived
+      value:
+        type: /silverflow/problems/report/referenced-entity-archived
+        title: Referenced Entity Archived
+        status: 409
+        detail: The referenced distribution with key 'dst-1eOdAHhgstYTUhlphPFf' is archived.
+        instance: /silverflow/b0451a9d-f66d-4ef7-9f5d-d48064a2bb3e
+    DailySchemeFeeDetailsWithDistributions:
+      value:
+        reportName: SchemeFeeDetails
+        reference: Distributed Report Reference
+        trigger:
+          type: interval
+          cadence: daily
+          hour: 12
+        mimeType: text/csv
+        distributions:
+        - dst-1e1dAHhgstYTUhlphPzZ
+        - dst-1JRadf2ffdfrdPMf2XrS2
+    DailyWithDistributions:
+      value:
+        reportName: SchemeFeeDetails
+        trigger:
+          type: interval
+          cadence: daily
+          hour: 12
+        mimeType: text/csv
+        key: rsk-9f9dAHhgstYTUhlphKsm
+        status: active
+        agentKey: cgt-1UF2NafdfrdPMf2XrS2
+        created: '2024-10-28T08:00:00Z'
+        lastModified: '2024-10-28T10:00:00Z'
+        version: 1
+        reference: Distributed Report Reference
+        distributions:
+        - dst-1e1dAHhgstYTUhlphPzZ
+        - dst-1JRadf2ffdfrdPMf2XrS2
+    settlement-details_Hourly:
+      value:
+        reportName: SettlementDetails
+        trigger:
+          cadence: hourly
+          type: interval
+        mimeType: text/csv
+        key: rsk-9f9dAHhgstYTUhlphKsm
+        status: active
+        agentKey: cgt-1UF2NafdfrdPMf2XrS2
+        created: '2024-10-28T08:00:00Z'
+        lastModified: '2024-10-28T09:00:00Z'
+        version: 1
+        reference: Report Reference
+    HourlySettlementDetails:
+      value:
+        reportName: SettlementDetails
+        reference: Report Reference
+        trigger:
+          type: interval
+          cadence: hourly
+        mimeType: text/csv
+    EntityAlreadyExistsErrorExample:
+      summary: A scheduled report with the passed values already exist
+      value:
+        type: /silverflow/problems/report/entity-already-exists
+        title: Entity Already Exists
+        status: 409
+        detail: A report schedule with the passed values already exists.
+        instance: /silverflow/b0451a9d-f66d-4ef7-9f5d-d48064a2bb3e
+    DailySchemeFeeDetails:
+      value:
+        reportName: SchemeFeeDetails
+        reference: Report Reference
+        trigger:
+          type: interval
+          cadence: daily
+          hour: 5
+        mimeType: application/json
+    settlement-details_Daily:
+      value:
+        reportName: SettlementDetails
+        trigger:
+          type: interval
+          cadence: daily
+          hour: 14
+        mimeType: text/csv
+        key: rsk-9f9dAHhgstYTUhlphKsm
+        status: active
+        agentKey: cgt-1UF2NafdfrdPMf2XrS2
+        created: '2024-10-28T08:00:00Z'
+        lastModified: '2024-10-28T10:00:00Z'
+        version: 1
+        reference: Report Reference
+    AmmfRequest:
+      value:
+        reportName: AmmfReport
+        reference: AMMF Report Reference
+        trigger:
+          type: interval
+          cadence: monthly
+          hour: 5
+          day: 28
+        parameters:
+          acquirerIdCode: '123456'
+          directSubmission: false
+        mimeType: application/vnd.ms-excel
+    HourlySchemeFeeDetails:
+      value:
+        reportName: SchemeFeeDetails
+        reference: Report Reference
+        trigger:
+          type: interval
+          cadence: hourly
+        mimeType: application/json
+    Daily:
+      value:
+        reportName: SchemeFeeDetails
+        trigger:
+          type: interval
+          cadence: daily
+          hour: 14
+        mimeType: application/json
+        key: rsk-9f9dAHhgstYTUhlphKsm
+        status: active
+        agentKey: cgt-1UF2NafdfrdPMf2XrS2
+        created: '2024-10-28T08:00:00Z'
+        lastModified: '2024-10-28T10:00:00Z'
+        version: 1
+        reference: Report Reference
+  schemas:
+    components-schemas-version:
+      type: integer
+      description: The version of this object
+      format: int64
+      readOnly: true
+    AMMFReportScheduleParameters:
+      type: object
+      description: The parameters used for creating a merchant payout report schedule.
+      required:
+      - acquirerIdCode
+      additionalProperties: false
+      properties:
+        acquirerIdCode:
+          $ref: '#/components/schemas/ammfAcquirerIdCode'
+        directSubmission:
+          $ref: '#/components/schemas/ammfDirectSubmission'
+    schemeFeeDetailsReportMimeType:
+      type: string
+      description: The mime-type in which the scheme fee details report is available.
+      enum:
+      - application/json
+      - application/x-ndjson
+      - text/csv
+    BaseCreateReportScheduleRequest:
+      type: object
+      description: The base report scheduling fields
+      properties:
+        reference:
+          $ref: '#/components/schemas/components-schemas-reference'
+        distributions:
+          $ref: '#/components/schemas/distributions'
+    components-schemas-offsetToken:
+      type: string
+      pattern: ^[a-zA-Z0-9%]+$
+      minLength: 1
+      maxLength: 2048
+      example: LUtyr0s918rNZ5WuWDYh5FNzqAli6HqKHpPDatcfdsaVlibrlO49BKcOdz9YccUOtDSoyLtc4kAiOLkmjSW5zLa8OCnOXXBRja2rDYh5FNzqAli6HqKHpPDatcfdsaVlibrlO49BKcOdz9Yc
+    disputeHistoryEventsScheduleTrigger:
+      type: object
+      description: The trigger conditions for the Dispute History Events report schedule.
+      oneOf:
+      - $ref: '#/components/schemas/hourlyCadence'
+      - $ref: '#/components/schemas/dailyCadence'
+    ReconciliationDetailsReportSchedule:
+      allOf:
+      - type: object
+        required:
+        - reportName
+        properties:
+          reportName:
+            $ref: '#/components/schemas/ReconciliationDetailsReportName'
+      - $ref: '#/components/schemas/BaseReportSchedule'
+      - type: object
+        required:
+        - trigger
+        - mimeType
+        properties:
+          mimeType:
+            $ref: '#/components/schemas/reconciliationDetailsReportMimeType'
+          trigger:
+            $ref: '#/components/schemas/reconciliationDetailsScheduleTrigger'
+    CreateReportScheduleRequest:
+      type: object
+      discriminator:
+        propertyName: reportName
+        mapping:
+          SchemeFeeDetails: '#/components/schemas/CreateSchemeFeeDetailsScheduleRequest'
+          NetworkFundsTransfers: '#/components/schemas/CreateNetworkFundsTransfersScheduleRequest'
+          MerchantPayout: '#/components/schemas/CreateMerchantPayoutScheduleRequest'
+          ReconciliationDetails: '#/components/schemas/CreateReconciliationDetailScheduleRequest'
+          Charges: '#/components/schemas/CreateChargesScheduleRequest'
+          DisputeHistoryEvents: '#/components/schemas/CreateDisputeHistoryEventsScheduleRequest'
+          FraudNotifications: '#/components/schemas/CreateFraudNotificationsScheduleRequest'
+          SettlementDetails: '#/components/schemas/CreateSettlementDetailsScheduleRequest'
+          AmmfReport: '#/components/schemas/CreateAmmfReportScheduleRequest'
+      oneOf:
+      - $ref: '#/components/schemas/CreateSchemeFeeDetailsScheduleRequest'
+      - $ref: '#/components/schemas/CreateNetworkFundsTransfersScheduleRequest'
+      - $ref: '#/components/schemas/CreateMerchantPayoutScheduleRequest'
+      - $ref: '#/components/schemas/CreateReconciliationDetailScheduleRequest'
+      - $ref: '#/components/schemas/CreateChargesScheduleRequest'
+      - $ref: '#/components/schemas/CreateDisputeHistoryEventsScheduleRequest'
+      - $ref: '#/components/schemas/CreateFraudNotificationsScheduleRequest'
+      - $ref: '#/components/schemas/CreateSettlementDetailsScheduleRequest'
+      - $ref: '#/components/schemas/CreateAmmfReportScheduleRequest'
+    CreateMerchantPayoutScheduleRequest:
+      allOf:
+      - type: object
+        description: A schedule for Merchant Payout reports
+        required:
+        - reportName
+        - trigger
+        - mimeType
+        - parameters
+        properties:
+          reportName:
+            $ref: '#/components/schemas/MerchantPayoutReportName'
+          mimeType:
+            $ref: '#/components/schemas/MerchantPayoutReportMimeType'
+          trigger:
+            $ref: '#/components/schemas/MerchantPayoutScheduleTrigger'
+          parameters:
+            $ref: '#/components/schemas/MerchantPayoutReportScheduleParameters'
+      - $ref: '#/components/schemas/BaseCreateReportScheduleRequest'
+    schemas-moreItems:
+      type: boolean
+      description: Boolean indicating if there are more items to retrieve
+    NotAuthorizedErrorDetails:
+      type: object
+      required:
+      - type
+      - title
+      - status
+      - detail
+      - instance
+      properties:
+        type:
+          allOf:
+          - $ref: '#/components/schemas/errorType'
+          - enum:
+            - /silverflow/problems/report/not-authorized
+        title:
+          allOf:
+          - $ref: '#/components/schemas/errorTitle'
+          - enum:
+            - Not authorized
+        status:
+          allOf:
+          - $ref: '#/components/schemas/errorStatus'
+          - enum:
+            - 401
+        detail:
+          $ref: '#/components/schemas/errorDetail'
+        instance:
+          $ref: '#/components/schemas/errorInstance'
+    AgentKey:
+      description: Uniquely identifies an Agent
+      type: string
+      pattern: ^cgt-[a-zA-Z0-9]+|current$
+      readOnly: true
+      example: cgt-1UF2NafdfrdPMf2XrS2
+    disputeHistoryEventsReportMimeType:
+      type: string
+      description: The mime-type in which the disputes report is available.
+      enum:
+      - text/csv
+      - application/json
+      - application/x-ndjson
+    UpdateFraudNotificationsScheduleRequest:
+      type: object
+      description: A schedule for Fraud Notifications reports
+      additionalProperties: false
+      properties:
+        mimeType:
+          $ref: '#/components/schemas/fraudNotificationsReportMimeType'
+        trigger:
+          $ref: '#/components/schemas/fraudNotificationsScheduleTrigger'
+        reference:
+          $ref: '#/components/schemas/components-schemas-reference'
+        distributions:
+          $ref: '#/components/schemas/distributions'
+    AmmfReportScheduleTrigger:
+      type: object
+      description: The trigger conditions for the AMMF Report schedule.
+      oneOf:
+      - $ref: '#/components/schemas/monthlyCadence'
+    AMMFReportName:
+      type: string
+      description: The name of the report.
+      enum:
+      - AmmfReport
+    ChargesReportSchedule:
+      allOf:
+      - type: object
+        required:
+        - reportName
+        properties:
+          reportName:
+            $ref: '#/components/schemas/ChargesReportName'
+      - $ref: '#/components/schemas/BaseReportSchedule'
+      - type: object
+        required:
+        - trigger
+        - mimeType
+        properties:
+          mimeType:
+            $ref: '#/components/schemas/chargesReportMimeType'
+          trigger:
+            $ref: '#/components/schemas/chargesScheduleTrigger'
+    dailyCadence:
+      allOf:
+      - $ref: '#/components/schemas/intervalTrigger'
+      - type: object
+        description: Configuration for daily-triggered reports, specifying the hour.
+        required:
+        - cadence
+        - hour
+        properties:
+          cadence:
+            type: string
+            description: The cadence of this interval trigger.
+            enum:
+            - daily
+          hour:
+            $ref: '#/components/schemas/hour'
+    UpdateSchemeFeeDetailsScheduleRequest:
+      type: object
+      description: A schedule for Scheme Fee Details reports
+      additionalProperties: false
+      properties:
+        mimeType:
+          $ref: '#/components/schemas/schemeFeeDetailsReportMimeType'
+        trigger:
+          $ref: '#/components/schemas/SchemeFeeDetailsTrigger'
+        reference:
+          $ref: '#/components/schemas/components-schemas-reference'
+        distributions:
+          $ref: '#/components/schemas/distributions'
+    UpdateMerchantPayoutScheduleRequest:
+      type: object
+      description: A schedule for Merchant Payout reports
+      additionalProperties: false
+      properties:
+        mimeType:
+          $ref: '#/components/schemas/MerchantPayoutReportMimeType'
+        trigger:
+          $ref: '#/components/schemas/MerchantPayoutScheduleTrigger'
+        reference:
+          $ref: '#/components/schemas/components-schemas-reference'
+        distributions:
+          $ref: '#/components/schemas/distributions'
+    NetworkFundsTransferReportSchedule:
+      allOf:
+      - type: object
+        required:
+        - reportName
+        properties:
+          reportName:
+            $ref: '#/components/schemas/NetworkFundsTransfersReportName'
+      - $ref: '#/components/schemas/BaseReportSchedule'
+      - type: object
+        required:
+        - trigger
+        - mimeType
+        properties:
+          mimeType:
+            $ref: '#/components/schemas/networkFundsTransfersReportMimeType'
+          trigger:
+            $ref: '#/components/schemas/NetworkFundsTransfersTrigger'
+    UpdateReportScheduleRequest:
+      type: object
+      anyOf:
+      - $ref: '#/components/schemas/UpdateSchemeFeeDetailsScheduleRequest'
+      - $ref: '#/components/schemas/UpdateNetworkFundsTransfersScheduleRequest'
+      - $ref: '#/components/schemas/UpdateMerchantPayoutScheduleRequest'
+      - $ref: '#/components/schemas/UpdateReconciliationDetailScheduleRequest'
+      - $ref: '#/components/schemas/UpdateChargesScheduleRequest'
+      - $ref: '#/components/schemas/UpdateDisputeHistoryEventsScheduleRequest'
+      - $ref: '#/components/schemas/UpdateFraudNotificationsScheduleRequest'
+      - $ref: '#/components/schemas/UpdateSettlementDetailsScheduleRequest'
+      - $ref: '#/components/schemas/UpdateAmmfReportScheduleRequest'
+    errorTitle:
+      type: string
+      description: 'A short, human-readable summary of the problem type. It does not change from occurrence to occurrence of the error.
+
+        '
+    ReportScheduleNotFoundErrorDetails:
+      type: object
+      required:
+      - type
+      - title
+      - status
+      - detail
+      - instance
+      properties:
+        type:
+          allOf:
+          - $ref: '#/components/schemas/errorType'
+          - enum:
+            - /silverflow/problems/report/report-schedule-not-found
+        title:
+          allOf:
+          - $ref: '#/components/schemas/errorTitle'
+          - enum:
+            - Report schedule not found
+        status:
+          allOf:
+          - $ref: '#/components/schemas/errorStatus'
+          - enum:
+            - 404
+        detail:
+          $ref: '#/components/schemas/errorDetail'
+        instance:
+          $ref: '#/components/schemas/errorInstance'
+    ReportScheduleResponse:
+      type: object
+      oneOf:
+      - $ref: '#/components/schemas/SchemeFeeDetailsReportSchedule'
+      - $ref: '#/components/schemas/NetworkFundsTransferReportSchedule'
+      - $ref: '#/components/schemas/MerchantPayoutReportSchedule'
+      - $ref: '#/components/schemas/ReconciliationDetailsReportSchedule'
+      - $ref: '#/components/schemas/ChargesReportSchedule'
+      - $ref: '#/components/schemas/DisputeHistoryEventsReportSchedule'
+      - $ref: '#/components/schemas/FraudNotificationsReportSchedule'
+      - $ref: '#/components/schemas/SettlementDetailsReportSchedule'
+      - $ref: '#/components/schemas/AmmfReportSchedule'
+    SettlementDetailsReportName:
+      type: string
+      description: The name of the report.
+      enum:
+      - SettlementDetails
+    schemas-ReferencedEntityNotFoundErrorDetails:
+      allOf:
+      - $ref: '#/components/schemas/BaseConflictError'
+      - type: object
+        required:
+        - type
+        - title
+        properties:
+          type:
+            allOf:
+            - $ref: '#/components/schemas/errorType'
+            - enum:
+              - /silverflow/problems/report/referenced-entity-not-found
+          title:
+            allOf:
+            - $ref: '#/components/schemas/errorTitle'
+            - enum:
+              - Referenced Entity Not Found
+    schemas-InvalidOffsetTokenError:
+      type: object
+      required:
+      - type
+      - title
+      - status
+      - detail
+      - instance
+      properties:
+        type:
+          allOf:
+          - $ref: '#/components/schemas/errorType'
+          - enum:
+            - /silverflow/problems/report/invalid-offset-token
+        title:
+          allOf:
+          - $ref: '#/components/schemas/errorTitle'
+          - enum:
+            - Invalid Offset Token
+        status:
+          allOf:
+          - $ref: '#/components/schemas/errorStatus'
+          - enum:
+            - 400
+        detail:
+          $ref: '#/components/schemas/errorDetail'
+        instance:
+          $ref: '#/components/schemas/errorInstance'
+    ammfAcquirerIdCode:
+      type: string
+      description: the Acquirer Institution ID. For Visa, this is the BIC. It should be a 6-digit numeric value.
+      pattern: ^\d{6}$
+    UpdateDisputeHistoryEventsScheduleRequest:
+      type: object
+      description: A schedule for Dispute History Events reports
+      additionalProperties: false
+      properties:
+        mimeType:
+          $ref: '#/components/schemas/disputeHistoryEventsReportMimeType'
+        trigger:
+          $ref: '#/components/schemas/disputeHistoryEventsScheduleTrigger'
+        reference:
+          $ref: '#/components/schemas/components-schemas-reference'
+        distributions:
+          $ref: '#/components/schemas/distributions'
+    SettlementDetailsScheduleTrigger:
+      type: object
+      description: The trigger conditions for the SettlementDetails schedule.
+      oneOf:
+      - $ref: '#/components/schemas/hourlyCadence'
+      - $ref: '#/components/schemas/dailyCadence'
+    ListReportSchedulesResponse:
+      type: object
+      required:
+      - moreItems
+      - items
+      properties:
+        moreItems:
+          $ref: '#/components/schemas/schemas-moreItems'
+        offsetToken:
+          $ref: '#/components/schemas/components-schemas-offsetToken'
+        items:
+          type: array
+          description: List of report schedules
+          items:
+            anyOf:
+            - $ref: '#/components/schemas/SchemeFeeDetailsReportSchedule'
+            - $ref: '#/components/schemas/NetworkFundsTransferReportSchedule'
+            - $ref: '#/components/schemas/MerchantPayoutReportSchedule'
+            - $ref: '#/components/schemas/ReconciliationDetailsReportSchedule'
+            - $ref: '#/components/schemas/ChargesReportSchedule'
+            - $ref: '#/components/schemas/DisputeHistoryEventsReportSchedule'
+            - $ref: '#/components/schemas/FraudNotificationsReportSchedule'
+            - $ref: '#/components/schemas/SettlementDetailsReportSchedule'
+            - $ref: '#/components/schemas/AmmfReportSchedule'
+    DisputeHistoryEventsReportSchedule:
+      allOf:
+      - type: object
+        required:
+        - reportName
+        properties:
+          reportName:
+            $ref: '#/components/schemas/DisputeHistoryEventsReportName'
+      - $ref: '#/components/schemas/BaseReportSchedule'
+      - type: object
+        required:
+        - trigger
+        - mimeType
+        properties:
+          mimeType:
+            $ref: '#/components/schemas/disputeHistoryEventsReportMimeType'
+          trigger:
+            $ref: '#/components/schemas/disputeHistoryEventsScheduleTrigger'
+    hour:
+      type: integer
+      description: 'The hour of the day (in 24-hour format) for the report trigger.
+
+        - Must be between 0 and 23.
+
+        '
+      format: int32
+      minimum: 0
+      maximum: 23
+    SchemeFeeDetailsTrigger:
+      type: object
+      description: The trigger conditions for the scheme fee details report schedule.
+      oneOf:
+      - $ref: '#/components/schemas/hourlyCadence'
+      - $ref: '#/components/schemas/dailyCadence'
+    chargesReportMimeType:
+      type: string
+      description: The mime-type in which the Charges report is available.
+      enum:
+      - text/csv
+    CreateFraudNotificationsScheduleRequest:
+      allOf:
+      - type: object
+        description: A schedule for Fraud Notifications reports
+        required:
+        - reportName
+        - trigger
+        - mimeType
+        properties:
+          reportName:
+            $ref: '#/components/schemas/FraudNotificationsReportName'
+          mimeType:
+            $ref: '#/components/schemas/fraudNotificationsReportMimeType'
+          trigger:
+            $ref: '#/components/schemas/fraudNotificationsScheduleTrigger'
+      - $ref: '#/components/schemas/BaseCreateReportScheduleRequest'
+    ammfReportMimeType:
+      type: string
+      description: The mime-type in which the AMMF Report is available.
+      enum:
+      - application/vnd.ms-excel
+    openapi_components-schemas-ProblemDetail-2:
+      type: object
+      description: 'The ''problem detail'' object relays detailed information about the error that occurred. It is defined
+
+        by [RFC 7807 - Problem Details for HTTP APIs](https://tools.ietf.org/html/rfc7807).
+
+
+        Note that additional properties may be used to relay error specific information. For instance,
+
+        A Bad Request error may hold information about the individual validation errors found in the request.
+
+        '
+      properties:
+        type:
+          type: string
+          description: 'An absolute URI that identifies the problem type.
+
+            '
+          default: about:blank
+          example: https://api.silverflow.co/problem/constraint-violation
+        title:
+          type: string
+          description: 'A short, summary of the problem type. Written in english and readable
+
+            for engineers (usually not suited for non technical stakeholders and
+
+            not localized);
+
+            '
+          example: Service Unavailable
+        status:
+          type: integer
+          format: int32
+          description: 'The HTTP status code generated by the origin server for this occurrence
+
+            of the problem.
+
+            '
+          minimum: 100
+          maximum: 599
+          example: 503
+        detail:
+          type: string
+          description: 'A human readable explanation specific to this occurrence of the
+
+            problem.
+
+            '
+          example: Connection to database timed out
+        instance:
+          type: string
+          description: 'An absolute URI that identifies the specific occurrence of the problem.
+
+            It may or may not yield further information if dereferenced.
+
+            '
+      additionalProperties: true
+      example:
+        type: https://api.silverflow.co/problem/bad-request
+        title: Bad Request
+        status: 400
+        detail: The request could not be processed as it contained an invalid request entity
+        instance: https://api.silverflow.co/v1/reports/rep-1hPdFqhgstYTUhlphPDp
+        validationErrors:
+        - The value of property 'status' should be one of 'idle', 'active' or 'archived'
+        - The value of property 'tags.0.businessId' must not be longer than 255 characters
+    NetworkFundsTransfersReportName:
+      type: string
+      description: The name of the report.
+      enum:
+      - NetworkFundsTransfers
+    CreateDisputeHistoryEventsScheduleRequest:
+      allOf:
+      - type: object
+        description: A schedule for Dispute History Events reports
+        required:
+        - reportName
+        - trigger
+        - mimeType
+        properties:
+          reportName:
+            $ref: '#/components/schemas/DisputeHistoryEventsReportName'
+          mimeType:
+            $ref: '#/components/schemas/disputeHistoryEventsReportMimeType'
+          trigger:
+            $ref: '#/components/schemas/disputeHistoryEventsScheduleTrigger'
+      - $ref: '#/components/schemas/BaseCreateReportScheduleRequest'
+    BaseConflictError:
+      type: object
+      required:
+      - status
+      - detail
+      - instance
+      properties:
+        status:
+          allOf:
+          - $ref: '#/components/schemas/errorStatus'
+          - enum:
+            - 409
+        detail:
+          $ref: '#/components/schemas/errorDetail'
+        instance:
+          $ref: '#/components/schemas/errorInstance'
+    openapi_components-schemas-lastModified:
+      type: string
+      description: The date and time this object was last modified
+      format: date-time
+      readOnly: true
+    UnsupportedMimeTypeErrorDetails:
+      type: object
+      required:
+      - type
+      - title
+      - status
+      - detail
+      - instance
+      properties:
+        type:
+          allOf:
+          - $ref: '#/components/schemas/errorType'
+          - enum:
+            - /silverflow/problems/report/unsupported-mime-type
+        title:
+          allOf:
+          - $ref: '#/components/schemas/errorTitle'
+          - enum:
+            - Unsupported mimeType
+        status:
+          allOf:
+          - $ref: '#/components/schemas/errorStatus'
+          - enum:
+            - 415
+        detail:
+          $ref: '#/components/schemas/errorDetail'
+        instance:
+          $ref: '#/components/schemas/errorInstance'
+    UpdateChargesScheduleRequest:
+      type: object
+      description: A schedule for Charges reports
+      additionalProperties: false
+      properties:
+        mimeType:
+          $ref: '#/components/schemas/chargesReportMimeType'
+        trigger:
+          $ref: '#/components/schemas/chargesScheduleTrigger'
+        reference:
+          $ref: '#/components/schemas/components-schemas-reference'
+        distributions:
+          $ref: '#/components/schemas/distributions'
+    monthlyCadence:
+      allOf:
+      - $ref: '#/components/schemas/intervalTrigger'
+      - type: object
+        description: Configuration for monthly-triggered reports, specifying the day of the month and hour the report should be scheduled.
+        required:
+        - cadence
+        - day
+        - hour
+        properties:
+          cadence:
+            type: string
+            enum:
+            - monthly
+          day:
+            $ref: '#/components/schemas/dayOfMonth'
+          hour:
+            $ref: '#/components/schemas/hour'
+    SettlementDetailsReportSchedule:
+      allOf:
+      - type: object
+        required:
+        - reportName
+        properties:
+          reportName:
+            $ref: '#/components/schemas/SettlementDetailsReportName'
+      - $ref: '#/components/schemas/BaseReportSchedule'
+      - type: object
+        required:
+        - trigger
+        - mimeType
+        properties:
+          mimeType:
+            $ref: '#/components/schemas/SettlementDetailsReportMimeType'
+          trigger:
+            $ref: '#/components/schemas/SettlementDetailsScheduleTrigger'
+    FraudNotificationsReportSchedule:
+      allOf:
+      - type: object
+        required:
+        - reportName
+        properties:
+          reportName:
+            $ref: '#/components/schemas/FraudNotificationsReportName'
+      - $ref: '#/components/schemas/BaseReportSchedule'
+      - type: object
+        required:
+        - trigger
+        - mimeType
+        properties:
+          mimeType:
+            $ref: '#/components/schemas/fraudNotificationsReportMimeType'
+          trigger:
+            $ref: '#/components/schemas/fraudNotificationsScheduleTrigger'
+    networkFundsTransfersReportMimeType:
+      type: string
+      description: The mime-type in which the network funds transfers report is available.
+      enum:
+      - text/csv
+      - application/json
+      - application/x-ndjson
+    CreateReconciliationDetailScheduleRequest:
+      allOf:
+      - type: object
+        description: A schedule for Reconciliation Details reports
+        required:
+        - reportName
+        - trigger
+        - mimeType
+        properties:
+          reportName:
+            $ref: '#/components/schemas/ReconciliationDetailsReportName'
+          mimeType:
+            $ref: '#/components/schemas/reconciliationDetailsReportMimeType'
+          trigger:
+            $ref: '#/components/schemas/reconciliationDetailsScheduleTrigger'
+      - $ref: '#/components/schemas/BaseCreateReportScheduleRequest'
+    CreateSchemeFeeDetailsScheduleRequest:
+      allOf:
+      - type: object
+        description: A schedule for Scheme Fee Details reports
+        required:
+        - reportName
+        - trigger
+        - mimeType
+        properties:
+          reportName:
+            $ref: '#/components/schemas/SchemeFeeDetailsReportName'
+          mimeType:
+            $ref: '#/components/schemas/schemeFeeDetailsReportMimeType'
+          trigger:
+            $ref: '#/components/schemas/SchemeFeeDetailsTrigger'
+      - $ref: '#/components/schemas/BaseCreateReportScheduleRequest'
+    SchemeFeeDetailsReportName:
+      type: string
+      description: The name of the report.
+      enum:
+      - SchemeFeeDetails
+    dayOfMonth:
+      type: integer
+      description: 'The day of the month for the report trigger.
+
+        - Must be between 1 and 28.
+
+        '
+      format: int32
+      minimum: 1
+      maximum: 28
+    InputValidationError:
+      type: object
+      required:
+      - type
+      - title
+      - status
+      - detail
+      - instance
+      - validationErrors
+      properties:
+        type:
+          allOf:
+          - $ref: '#/components/schemas/errorType'
+          - enum:
+            - /silverflow/problems/invalid-input
+        title:
+          allOf:
+          - $ref: '#/components/schemas/errorTitle'
+          - enum:
+            - Invalid Input
+        status:
+          allOf:
+          - $ref: '#/components/schemas/errorStatus'
+          - enum:
+            - 400
+        detail:
+          allOf:
+          - $ref: '#/components/schemas/errorDetail'
+          - enum:
+            - The request does not adhere to the defined API schema.
+        instance:
+          $ref: '#/components/schemas/errorInstance'
+        validationErrors:
+          type: array
+          items:
+            $ref: '#/components/schemas/openapi_components-schemas-ValidationError'
+          description: A list of validation errors.
+    FraudNotificationsReportName:
+      type: string
+      description: The name of the report.
+      enum:
+      - FraudNotifications
+    UpdateSettlementDetailsScheduleRequest:
+      type: object
+      description: A schedule for SettlementDetails reports
+      additionalProperties: false
+      properties:
+        mimeType:
+          $ref: '#/components/schemas/SettlementDetailsReportMimeType'
+        trigger:
+          $ref: '#/components/schemas/SettlementDetailsScheduleTrigger'
+        reference:
+          $ref: '#/components/schemas/components-schemas-reference'
+        distributions:
+          $ref: '#/components/schemas/distributions'
+    ChargesReportName:
+      type: string
+      description: The name of the report.
+      enum:
+      - Charges
+    UpdateReconciliationDetailScheduleRequest:
+      type: object
+      description: A schedule for Reconciliation Details reports
+      additionalProperties: false
+      properties:
+        mimeType:
+          $ref: '#/components/schemas/reconciliationDetailsReportMimeType'
+        trigger:
+          $ref: '#/components/schemas/reconciliationDetailsScheduleTrigger'
+        reference:
+          $ref: '#/components/schemas/components-schemas-reference'
+        distributions:
+          $ref: '#/components/schemas/distributions'
+    reconciliationDetailsScheduleTrigger:
+      type: object
+      description: The trigger conditions for the reconciliation details schedule.
+      oneOf:
+      - $ref: '#/components/schemas/hourlyCadence'
+      - $ref: '#/components/schemas/dailyCadence'
+    BaseReportSchedule:
+      type: object
+      required:
+      - key
+      - status
+      - agentKey
+      - created
+      - version
+      - trigger
+      - mimeType
+      properties:
+        key:
+          $ref: '#/components/schemas/reportScheduleKey'
+        status:
+          $ref: '#/components/schemas/components-schemas-status'
+        agentKey:
+          $ref: '#/components/schemas/AgentKey'
+        created:
+          $ref: '#/components/schemas/openapi_components-schemas-created-2'
+        lastModified:
+          $ref: '#/components/schemas/openapi_components-schemas-lastModified'
+        version:
+          $ref: '#/components/schemas/components-schemas-version'
+        reference:
+          $ref: '#/components/schemas/components-schemas-reference'
+        distributions:
+          $ref: '#/components/schemas/distributions'
+    CreateChargesScheduleRequest:
+      allOf:
+      - type: object
+        description: A schedule for Charges reports
+        required:
+        - reportName
+        - trigger
+        - mimeType
+        properties:
+          reportName:
+            $ref: '#/components/schemas/ChargesReportName'
+          mimeType:
+            $ref: '#/components/schemas/chargesReportMimeType'
+          trigger:
+            $ref: '#/components/schemas/chargesScheduleTrigger'
+      - $ref: '#/components/schemas/BaseCreateReportScheduleRequest'
+    AmmfReportSchedule:
+      allOf:
+      - type: object
+        required:
+        - reportName
+        properties:
+          reportName:
+            $ref: '#/components/schemas/AMMFReportName'
+      - $ref: '#/components/schemas/BaseReportSchedule'
+      - type: object
+        required:
+        - trigger
+        - parameters
+        - mimeType
+        properties:
+          mimeType:
+            $ref: '#/components/schemas/ammfReportMimeType'
+          parameters:
+            $ref: '#/components/schemas/AMMFReportScheduleParameters'
+          trigger:
+            $ref: '#/components/schemas/AmmfReportScheduleTrigger'
+    fraudNotificationsReportMimeType:
+      type: string
+      description: The mime-type in which the fraud notifications report is available.
+      enum:
+      - text/csv
+      - application/json
+      - application/x-ndjson
+    openapi_components-schemas-created-2:
+      type: string
+      description: The date and time this object was created
+      format: date-time
+      readOnly: true
+    CreateNetworkFundsTransfersScheduleRequest:
+      allOf:
+      - type: object
+        description: A schedule for Network Funds Transfer reports
+        required:
+        - reportName
+        - trigger
+        - mimeType
+        properties:
+          reportName:
+            $ref: '#/components/schemas/NetworkFundsTransfersReportName'
+          mimeType:
+            $ref: '#/components/schemas/networkFundsTransfersReportMimeType'
+          trigger:
+            $ref: '#/components/schemas/NetworkFundsTransfersTrigger'
+      - $ref: '#/components/schemas/BaseCreateReportScheduleRequest'
+    SettlementDetailsReportMimeType:
+      type: string
+      description: The mime-type in which the SettlementDetails report is available.
+      enum:
+      - text/csv
+      - application/x-ndjson
+    intervalTrigger:
+      type: object
+      required:
+      - type
+      properties:
+        type:
+          type: string
+          description: A trigger type, which is based on a time-interval.
+          enum:
+          - interval
+    openapi_components-schemas-ValidationError:
+      type: object
+      required:
+      - path
+      - errorCode
+      - message
+      properties:
+        path:
+          type: string
+          description: The path to the error location in the request params or body.
+        errorCode:
+          type: string
+          description: The error code identifying the error type.
+        message:
+          type: string
+          description: The error message.
+    chargesScheduleTrigger:
+      type: object
+      description: The trigger conditions for the Charges report schedule.
+      oneOf:
+      - $ref: '#/components/schemas/hourlyCadence'
+      - $ref: '#/components/schemas/dailyCadence'
+    components-schemas-status:
+      description: "Current state of the report schedule. \n\n- **active**: Schedule is currently enabled and will trigger as per configuration.\n- **archived**: Schedule is disabled and will not trigger.\n"
+      type: string
+      enum:
+      - active
+      - archived
+    ammfDirectSubmission:
+      type: boolean
+      description: set to `true` to indicate that the AMMF report should be directly submitted to Visa's AMMF service
+    MerchantPayoutReportMimeType:
+      type: string
+      description: The mime-type in which the MerchantPayout report is available.
+      enum:
+      - text/csv
+    reportScheduleKey:
+      description: Uniquely identifies a report schedule object
+      type: string
+      pattern: ^rsk-[a-zA-Z0-9]+$
+      minLength: 10
+      maxLength: 120
+      example: rsk-1e1dAHhgstYTUhlphPzZ
+    EntityAlreadyExistsErrorDetails:
+      allOf:
+      - $ref: '#/components/schemas/BaseConflictError'
+      - type: object
+        required:
+        - type
+        - title
+        properties:
+          type:
+            allOf:
+            - $ref: '#/components/schemas/errorType'
+            - enum:
+              - /silverflow/problems/report/entity-already-exists
+          title:
+            allOf:
+            - $ref: '#/components/schemas/errorTitle'
+            - enum:
+              - Entity Already Exists
+    errorInstance:
+      type: string
+      description: 'A reference that identifies the specific occurrence of the error. The instance is unique for every error.
+
+        '
+    components-schemas-reference:
+      type: string
+      description: Unique ID used to identify a report.
+      maxLength: 120
+    hourlyCadence:
+      allOf:
+      - $ref: '#/components/schemas/intervalTrigger'
+      - type: object
+        required:
+        - cadence
+        description: Configuration for hourly-triggered reports.
+        properties:
+          cadence:
+            type: string
+            description: The cadence of this interval trigger.
+            enum:
+            - hourly
+    errorStatus:
+      type: integer
+      format: int32
+      description: 'The HTTP status code generated by the origin server for this occurrence
+
+        of the problem.
+
+        '
+    MerchantPayoutReportType:
+      type: string
+      enum:
+      - Standardized
+    MerchantPayoutReportSchedule:
+      allOf:
+      - type: object
+        required:
+        - reportName
+        properties:
+          reportName:
+            $ref: '#/components/schemas/MerchantPayoutReportName'
+      - $ref: '#/components/schemas/BaseReportSchedule'
+      - type: object
+        required:
+        - reportName
+        - trigger
+        - mimeType
+        - parameters
+        properties:
+          reportName:
+            $ref: '#/components/schemas/MerchantPayoutReportName'
+          mimeType:
+            $ref: '#/components/schemas/MerchantPayoutReportMimeType'
+          trigger:
+            $ref: '#/components/schemas/MerchantPayoutScheduleTrigger'
+          parameters:
+            $ref: '#/components/schemas/MerchantPayoutReportScheduleParameters'
+    MerchantPayoutScheduleTrigger:
+      type: object
+      description: The trigger conditions for the merchant payout schedule.
+      oneOf:
+      - $ref: '#/components/schemas/dailyCadence'
+    MerchantPayoutReportName:
+      type: string
+      description: The name of the report.
+      enum:
+      - MerchantPayout
+    ReconciliationDetailsReportName:
+      type: string
+      description: The name of the report.
+      enum:
+      - ReconciliationDetails
+    NetworkFundsTransfersTrigger:
+      type: object
+      description: The trigger conditions for the network funds transfer report schedule.
+      oneOf:
+      - $ref: '#/components/schemas/dailyCadence'
+    UpdateAmmfReportScheduleRequest:
+      type: object
+      additionalProperties: false
+      properties:
+        trigger:
+          $ref: '#/components/schemas/AmmfReportScheduleTrigger'
+        reference:
+          $ref: '#/components/schemas/components-schemas-reference'
+        mimeType:
+          $ref: '#/components/schemas/ammfReportMimeType'
+        distributions:
+          $ref: '#/components/schemas/distributions'
+    distributionKey:
+      description: Uniquely identifies a distribution object
+      type: string
+      pattern: ^dst-[a-zA-Z0-9]+$
+      minLength: 10
+      maxLength: 120
+      example: dst-1e1dAHhgstYTUhlphPzZ
+    errorDetail:
+      type: string
+      description: 'A human readable explanation specific to this occurrence of the problem.
+
+        '
+    DisputeHistoryEventsReportName:
+      type: string
+      description: The name of the report.
+      enum:
+      - DisputeHistoryEvents
+    UpdateNetworkFundsTransfersScheduleRequest:
+      type: object
+      description: A schedule for Network Funds Transfer reports
+      additionalProperties: false
+      properties:
+        mimeType:
+          $ref: '#/components/schemas/networkFundsTransfersReportMimeType'
+        trigger:
+          $ref: '#/components/schemas/NetworkFundsTransfersTrigger'
+        reference:
+          $ref: '#/components/schemas/components-schemas-reference'
+        distributions:
+          $ref: '#/components/schemas/distributions'
+    SchemeFeeDetailsReportSchedule:
+      allOf:
+      - type: object
+        required:
+        - reportName
+        properties:
+          reportName:
+            $ref: '#/components/schemas/SchemeFeeDetailsReportName'
+      - $ref: '#/components/schemas/BaseReportSchedule'
+      - type: object
+        required:
+        - trigger
+        - mimeType
+        properties:
+          mimeType:
+            $ref: '#/components/schemas/schemeFeeDetailsReportMimeType'
+          trigger:
+            $ref: '#/components/schemas/SchemeFeeDetailsTrigger'
+    MerchantPayoutReportScheduleParameters:
+      type: object
+      description: The parameters used for creating a merchant payout report schedule.
+      required:
+      - type
+      properties:
+        type:
+          $ref: '#/components/schemas/MerchantPayoutReportType'
+    CreateSettlementDetailsScheduleRequest:
+      allOf:
+      - type: object
+        description: A schedule for SettlementDetails reports
+        required:
+        - reportName
+        - trigger
+        - mimeType
+        properties:
+          reportName:
+            $ref: '#/components/schemas/SettlementDetailsReportName'
+          mimeType:
+            $ref: '#/components/schemas/SettlementDetailsReportMimeType'
+          trigger:
+            $ref: '#/components/schemas/SettlementDetailsScheduleTrigger'
+      - $ref: '#/components/schemas/BaseCreateReportScheduleRequest'
+    errorType:
+      type: string
+      description: 'A relative URI reference, this property can be used to perform automated error handling.
+
+        '
+    fraudNotificationsScheduleTrigger:
+      type: object
+      description: The trigger conditions for the Fraud Notifications report schedule.
+      oneOf:
+      - $ref: '#/components/schemas/hourlyCadence'
+      - $ref: '#/components/schemas/dailyCadence'
+    reconciliationDetailsReportMimeType:
+      type: string
+      description: The mime-type in which the reconciliation details report is available.
+      enum:
+      - text/csv
+      - application/json
+      - application/x-ndjson
+    distributions:
+      description: 'The distribution objects'' keys.
+
+
+        If passed, the report will be distributed when generation is completed.
+
+        '
+      type: array
+      items:
+        $ref: '#/components/schemas/distributionKey'
+    ReferencedEntityArchivedErrorDetails:
+      allOf:
+      - $ref: '#/components/schemas/BaseConflictError'
+      - type: object
+        required:
+        - type
+        - title
+        properties:
+          type:
+            allOf:
+            - $ref: '#/components/schemas/errorType'
+            - enum:
+              - /silverflow/problems/report/referenced-entity-archived
+          title:
+            allOf:
+            - $ref: '#/components/schemas/errorTitle'
+            - enum:
+              - Referenced Entity Archived
+    CreateAmmfReportScheduleRequest:
+      allOf:
+      - type: object
+        required:
+        - reportName
+        - parameters
+        - mimeType
+        - trigger
+        additionalProperties: false
+        properties:
+          reportName:
+            $ref: '#/components/schemas/AMMFReportName'
+          trigger:
+            $ref: '#/components/schemas/AmmfReportScheduleTrigger'
+          parameters:
+            $ref: '#/components/schemas/AMMFReportScheduleParameters'
+          reference:
+            $ref: '#/components/schemas/components-schemas-reference'
+          mimeType:
+            $ref: '#/components/schemas/ammfReportMimeType'
+          distributions:
+            $ref: '#/components/schemas/distributions'
+      - $ref: '#/components/schemas/BaseCreateReportScheduleRequest'
+  responses:
+    openapi_components-responses-ForbiddenError-3:
+      description: The authenticated client is forbidden to make the request for the resource identified.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/openapi_components-schemas-ProblemDetail-2'
+          example:
+            type: /silverflow/problems/forbidden
+            title: Forbidden
+            status: 403
+            detail: 'Authenticated user ''apk-33GjasQdWl4781OsErvi'' is missing the following permission(s): reports:List'
+            instance: /silverflow/b0451a9d-f66d-4ef7-9f5d-d48064a2bb3e
+    openapi_components-responses-TooManyRequestsError-3:
+      description: The number of requests (per minute) has exceeded the configured maximum
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/openapi_components-schemas-ProblemDetail-2'
+          example:
+            type: /silverflow/problems/too-many-requests
+            title: Too Many Requests
+            status: 429
+            detail: You have exceeded the rate limit. Please try again after the specified delay.
+            instance: /silverflow/b0451a9d-f66d-4ef7-9f5d-d48064a2bb3e
+  securitySchemes:
+    ApiKey:
+      description: "The primary method of authenticating to the Silverflow API is through API keys.\n\nAPI keys can be created by calling the [createApiKey](#operation/createApiKey) endpoint. You can create up to 40 API keys and also update and delete them, allowing for _credential rotation_.\n\nThe _Agent Activation_ process will generate an initial API Key for you. See [Activate Agent](#section/Getting-Started).\n\nA call to the [createApiKey](#operation/createApiKey) endpoint will return the following structure:\n\n```json\n{\n    \"key\": \"apk-1wtRxni5IsPsSpBLWpwr\",\n    \"status\": \"active\",\n    \"agentKey\": \"cgt-1wtRvFLIjDOyyUR5Q2LB\",\n    \"description\": \"Data lake API key\",\n    \"permissions\": [\n        \"charges:List\",\n        \"reports:All\"\n    ],\n    \"created\": \"2021-06-22T11:21:45.115Z\",\n    \"secret\": \"FWtnOOHAjbD6rNxWWEeVOCj7JXSEPGJQ\",\n    \"version\": 1\n}\n```\n\n> **Important:** The `secret` is only returned once in the response to the `createApiKey` call.\n\nOnce created, the `key` and `secret` fields from the API key must be used in the HTTP `Authorization` header using the `Basic` scheme.\nThe Basic scheme requires a **username** and **password** to be specified, separated by a `:` (colon) and Base64 encoded.\n\nUse the following values from the API key to construct a Basic authentication header:\n\n| Basic field | API key field | Example |\n| ----------- | ------------- | ------- |\n| username | `key` | `apk-1wtRxni5IsPsSpBLWpwr` |\n| password | `secret` | `FWtnOOHAjbD6rNxWWEeVOCj7JXSEPGJQ` |\n\nIn pseudo-code a valid HTTP Basic Authentication header would be constructed as follows:\n\n```ts\nconst apiKeyId = \"apk-1wtRxni5IsPsSpBLWpwr\";\nconst apiKeySecret = \"FWtnOOHAjbD6rNxWWEeVOCj7JXSEPGJQ\";\nconst authnValue = \"Basic \" + base64Encode(apiKeyId + \":\" + apiKeySecret);\nrequest.setHeader(\"Authorization\", authnValue);\n```\n\nUsing the values from the example a valid HTTP request would look like the following:\n\n```http\nGET /v1/agents/current HTTP/1.1\nAccept: application/json\nAuthorization: Basic YXBrLTF3dFJ4bmk1SXNQc1NwQkxXcHdyOkZXdG5PT0hBamJENnJOeFdXRWVWT0NqN0pYU0VQR0pR\n```\n\nMore information on the Basic scheme can be found in [RFC-7617 - The 'Basic' HTTP Authentication Scheme](https://datatracker.ietf.org/doc/html/rfc7617)."
+      type: http
+      scheme: basic
+    BearerToken:
+      description: 'Bearer tokens are temporary security credentials that can be used to authorize ''third parties'' (bearers) access to the Silverflow API on behalf of the agent.
+
+
+        These tokens are created by calling the [createAgentBearerToken](#operation/createAgentBearerToken) endpoint.
+
+
+        Once created the `token` field must be used in the HTTP `Authorization` header using the `Bearer` scheme.
+
+        Here''s an example of an HTTP request with a bearer token:
+
+
+        ```http
+
+        GET /v1/merchants/mct-1hPdFhmgaBzMS191nIbJ HTTP/1.1
+
+        Accept: application/json
+
+        Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...40EFOgxf_3I6mPZ16bXqHd5tUyApgl0mNOAXPm5AhnA
+
+
+        ```
+
+
+        More information on the Bearer scheme can be found in [RFC-6750 - The OAuth 2.0 Authorization Framework: Bearer Token Usage](https://datatracker.ietf.org/doc/html/rfc6750).'
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+    MutualTLS:
+      type: apiKey
+      in: header
+      name: '-'
+      description: 'The client must set up mTLS connection with a valid X.509 client certificate signed by a customer-provided CA (certificate authority) that is registered to a specific agent. The customer-provided CA certificate must be shared and added to Silverflow''s trust store prior to calling endpoints.
+
+
+        Certificate validation happens at the transport layer during TLS handshake. Tenant verification is performed by matching the agent key embedded in the client certificate against the agent key embedded in the trusted CA.
+
+        '
+x-refined-from:
+- silverflow-openapi.yml
+- silverflow-openapi.yml
+x-tagGroups:
+- name: ''
+  tags:
+  - Introduction
+  - Release Notes
+- name: Accounts
+  tags:
+  - Agents
+  - API Keys
+  - Bins
+  - Merchants
+  - Merchant Acceptors
+  - Enrollments
+  - Screenings
+- name: Event Notifications
+  tags:
+  - Event Subscriptions
+  - Charges Events
+  - Disputes Events
+  - Fraud Notification Events
+  - Processor Tokens Events
+  - Network Tokens Events
+  - Report Events
+  - Distribution Events
+  - AMMF Submission Events
+  - Reconciliation Events
+  - Clearing Events
+- name: 3DS Authentication
+  tags:
+  - 3DS Authentication
+- name: BEP Authentication
+  tags:
+  - BEP Authentication
+- name: Tokenization
+  tags:
+  - Processor Tokenization
+  - Network Tokenization
+- name: Charges
+  tags:
+  - Create Charges
+  - Create Recurring
+  - Retrieve Charges
+  - Charge Actions
+- name: Terminal-To-Cloud
+  tags:
+  - Create POS Charges
+  - Retrieve POS Charges
+  - POS Charge Actions
+- name: Card Management
+  tags:
+  - Card Management
+- name: Disputes
+  tags:
+  - Disputes
+  - Documents
+- name: Fraud Notifications
+  tags:
+  - Fraud Notifications
+- name: Card Info
+  tags:
+  - Card Info
+- name: Currency Conversion Rates
+  tags:
+  - Currency Conversion Rates
+- name: Fees
+  tags:
+  - Fees
+- name: Reconciliation
+  tags:
+  - Reconciliation Details
+  - Network Funds Transfers
+- name: Reports
+  tags:
+  - Reconciliation Reports
+  - Settlement Reports
+  - Card Network Reports
+  - Dispute Reports
+  - Fraud Notifications Reports
+  - Charges Reports
+  - Scheme Fee Reports
+  - Retrieve Reports
+  - Report Scheduling
+  - Distributions
+- name: Transaction Risk Assessment
+  tags:
+  - Transaction Risk Assessment
+- name: File Subscriptions
+  tags:
+  - File Subscriptions

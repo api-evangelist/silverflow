@@ -1,0 +1,3666 @@
+openapi: 3.2.0
+info:
+  title: Silverflow Disputes API
+  version: 1.417.0
+  contact:
+    name: API Support
+    email: support@silverflow.com
+  license:
+    name: Commercial
+  description: 'Operations tagged Disputes across 2 of this provider''s published API definitions: silverflow-openapi.yml, silverflow-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://eu-west-1.api.silverflow.com/v1
+  description: Production URL for Europe - Equivalent to https://api.silverflow.co/v1
+- url: https://us-east-2.api.silverflow.com/v1
+  description: Production URL for North America
+- url: https://eu-west-1.api-sbx.silverflow.com/v1
+  description: Sandbox URL - Equivalent to https://api-sbx.silverflow.co/v1
+security:
+- ApiKey: []
+- BearerToken: []
+tags:
+- name: Disputes
+paths:
+  /disputes:
+    get:
+      operationId: getDisputes
+      summary: List Disputes
+      description: 'This operation returns a (paged) list of all Disputes for the authenticated Agent.
+
+
+        Requires `disputes:List` permission.
+
+        '
+      tags:
+      - Disputes
+      parameters:
+      - $ref: '#/components/parameters/disputesSort'
+      - $ref: '#/components/parameters/amountFrom'
+      - $ref: '#/components/parameters/amountTo'
+      - $ref: '#/components/parameters/disputeDateFrom'
+      - $ref: '#/components/parameters/disputeDateTo'
+      - $ref: '#/components/parameters/actionDueDateFrom'
+      - $ref: '#/components/parameters/actionDueDateTo'
+      - $ref: '#/components/parameters/disputeStatuses'
+      - $ref: '#/components/parameters/disputeStages'
+      - $ref: '#/components/parameters/networkQps'
+      - $ref: '#/components/parameters/parameters-merchantKeyQs'
+      - $ref: '#/components/parameters/acceptorKeyQp'
+      - $ref: '#/components/parameters/searchKeyword'
+      - $ref: '#/components/parameters/closed'
+      - $ref: '#/components/parameters/actionRequired'
+      - $ref: '#/components/parameters/limit'
+      - $ref: '#/components/parameters/components-parameters-offsetToken'
+      responses:
+        '200':
+          description: A (paged) list of Disputes
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DisputesPage'
+        '401':
+          $ref: '#/components/responses/responses-UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/responses-ForbiddenError'
+        '429':
+          $ref: '#/components/responses/responses-TooManyRequestsError'
+    servers:
+    - url: https://eu-west-1.api.silverflow.com/v1
+      description: Production URL for Europe - Equivalent to https://api.silverflow.co/v1
+    - url: https://us-east-2.api.silverflow.com/v1
+      description: Production URL for North America
+    - url: https://eu-west-1.api-sbx.silverflow.com/v1
+      description: Sandbox URL - Equivalent to https://api-sbx.silverflow.co/v1
+  /disputes/{disputeKey}:
+    get:
+      operationId: getDispute
+      summary: Get Dispute
+      description: 'This operations returns the Dispute identified by the specified key.
+
+
+        Requires `disputes:Get` permission.
+
+        '
+      tags:
+      - Disputes
+      parameters:
+      - $ref: '#/components/parameters/disputeKey'
+      responses:
+        '200':
+          description: The referenced Dispute
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Dispute'
+              examples:
+                received-dispute:
+                  $ref: '#/components/examples/visa-dispute-received'
+                dispute-liability-accepted:
+                  $ref: '#/components/examples/dispute-liability-accepted'
+                dispute-expires:
+                  $ref: '#/components/examples/dispute-expires'
+                dispute-won:
+                  $ref: '#/components/examples/dispute-closedWon'
+                dispute-awaiting-response:
+                  $ref: '#/components/examples/dispute-awaiting-response'
+        '401':
+          $ref: '#/components/responses/responses-UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/responses-ForbiddenError'
+        '404':
+          $ref: '#/components/responses/responses-NotFoundError'
+        '429':
+          $ref: '#/components/responses/responses-TooManyRequestsError'
+    servers:
+    - url: https://eu-west-1.api.silverflow.com/v1
+      description: Production URL for Europe - Equivalent to https://api.silverflow.co/v1
+    - url: https://us-east-2.api.silverflow.com/v1
+      description: Production URL for North America
+    - url: https://eu-west-1.api-sbx.silverflow.com/v1
+      description: Sandbox URL - Equivalent to https://api-sbx.silverflow.co/v1
+  /disputes/{disputeKey}/documents:
+    get:
+      operationId: getDisputeDocumentsMetadata
+      summary: List Dispute Documents
+      description: 'This operation returns a (paged) list of (active) Documents (metadata) for a Dispute.
+
+
+        Requires `disputes:ListDocuments` permission.
+
+        '
+      tags:
+      - Disputes
+      parameters:
+      - $ref: '#/components/parameters/disputeKey'
+      - $ref: '#/components/parameters/parameters-sortOrder'
+      - $ref: '#/components/parameters/limit'
+      - $ref: '#/components/parameters/components-parameters-offsetToken'
+      - $ref: '#/components/parameters/owner'
+      - $ref: '#/components/parameters/status'
+      responses:
+        '200':
+          description: A (paged) list of Documents (metadata)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DisputeDocumentsPage'
+        '401':
+          $ref: '#/components/responses/responses-UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/responses-ForbiddenError'
+        '404':
+          $ref: '#/components/responses/responses-NotFoundError'
+        '429':
+          $ref: '#/components/responses/responses-TooManyRequestsError'
+    post:
+      operationId: addDisputeDocumentsMetadata
+      summary: Add Dispute Document
+      description: 'This operations adds a new Document (metadata) for the associated Dispute.
+
+
+        The maximum file size is **10MB** and the maximum combined size of all documents uploaded for a Dispute is **14.5MB**.
+
+
+        Requires `disputes:AddDocument` permission.
+
+        '
+      tags:
+      - Disputes
+      parameters:
+      - $ref: '#/components/parameters/disputeKey'
+      requestBody:
+        description: 'The request body allows to set metadata information for the Dispute document.
+
+          '
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DocumentCreate'
+            examples:
+              create-dispute-document:
+                $ref: '#/components/examples/create-dispute-document'
+      responses:
+        '200':
+          description: A document metadata object.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DisputeDocumentWithoutFile'
+        '401':
+          $ref: '#/components/responses/responses-UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/responses-ForbiddenError'
+        '404':
+          $ref: '#/components/responses/responses-NotFoundError'
+        '429':
+          $ref: '#/components/responses/responses-TooManyRequestsError'
+    servers:
+    - url: https://eu-west-1.api.silverflow.com/v1
+      description: Production URL for Europe - Equivalent to https://api.silverflow.co/v1
+    - url: https://us-east-2.api.silverflow.com/v1
+      description: Production URL for North America
+    - url: https://eu-west-1.api-sbx.silverflow.com/v1
+      description: Sandbox URL - Equivalent to https://api-sbx.silverflow.co/v1
+  /disputes/{disputeKey}/accept:
+    post:
+      operationId: acceptDispute
+      summary: Accept Dispute
+      description: 'This operation is to accept liability of a dispute.
+
+
+        Requires `disputes:Accept` permission.
+
+        '
+      tags:
+      - Disputes
+      parameters:
+      - $ref: '#/components/parameters/disputeKey'
+      - $ref: '#/components/parameters/ifMatch'
+      responses:
+        '200':
+          description: The accepted dispute
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Dispute'
+        '400':
+          $ref: '#/components/responses/responses-BadRequestError'
+        '401':
+          $ref: '#/components/responses/responses-UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/responses-ForbiddenError'
+        '404':
+          $ref: '#/components/responses/responses-NotFoundError'
+        '409':
+          $ref: '#/components/responses/responses-ConflictError'
+        '412':
+          $ref: '#/components/responses/responses-PreconditionFailedError'
+        '429':
+          $ref: '#/components/responses/responses-TooManyRequestsError'
+    servers:
+    - url: https://eu-west-1.api.silverflow.com/v1
+      description: Production URL for Europe - Equivalent to https://api.silverflow.co/v1
+    - url: https://us-east-2.api.silverflow.com/v1
+      description: Production URL for North America
+    - url: https://eu-west-1.api-sbx.silverflow.com/v1
+      description: Sandbox URL - Equivalent to https://api-sbx.silverflow.co/v1
+  /disputes/{disputeKey}/submitEvidence:
+    post:
+      operationId: submitEvidence
+      summary: Submit Evidence
+      description: 'Evidence submission is required to defend a Dispute. Evidence can be submitted if the Dispute is in `received`, `evidenceRejected` or `defenseFailed` status.
+
+
+        Requires `disputes:submitEvidence` permission.
+
+        '
+      tags:
+      - Disputes
+      parameters:
+      - $ref: '#/components/parameters/disputeKey'
+      - $ref: '#/components/parameters/ifMatch'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SubmitEvidence'
+      responses:
+        '200':
+          description: The dispute
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Dispute'
+        '400':
+          $ref: '#/components/responses/responses-BadRequestError'
+        '401':
+          $ref: '#/components/responses/responses-UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/responses-ForbiddenError'
+        '404':
+          $ref: '#/components/responses/responses-NotFoundError'
+        '409':
+          $ref: '#/components/responses/responses-ConflictError'
+        '412':
+          $ref: '#/components/responses/responses-PreconditionFailedError'
+        '429':
+          $ref: '#/components/responses/responses-TooManyRequestsError'
+    servers:
+    - url: https://eu-west-1.api.silverflow.com/v1
+      description: Production URL for Europe - Equivalent to https://api.silverflow.co/v1
+    - url: https://us-east-2.api.silverflow.com/v1
+      description: Production URL for North America
+    - url: https://eu-west-1.api-sbx.silverflow.com/v1
+      description: Sandbox URL - Equivalent to https://api-sbx.silverflow.co/v1
+  /disputes/{disputeKey}/rejectEvidence:
+    post:
+      operationId: rejectEvidence
+      summary: Reject Evidence
+      description: 'Evidence rejection will move the Dispute to `evidenceRejected` status to allow the Merchant or Acquirer to update their defense.
+
+
+        Requires `disputes:rejectEvidence` permission.
+
+        '
+      tags:
+      - Disputes
+      parameters:
+      - $ref: '#/components/parameters/disputeKey'
+      - $ref: '#/components/parameters/ifMatch'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RejectDispute'
+      responses:
+        '200':
+          description: The dispute
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Dispute'
+        '400':
+          $ref: '#/components/responses/responses-BadRequestError'
+        '401':
+          $ref: '#/components/responses/responses-UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/responses-ForbiddenError'
+        '404':
+          $ref: '#/components/responses/responses-NotFoundError'
+        '409':
+          $ref: '#/components/responses/responses-ConflictError'
+        '412':
+          $ref: '#/components/responses/responses-PreconditionFailedError'
+        '429':
+          $ref: '#/components/responses/responses-TooManyRequestsError'
+    servers:
+    - url: https://eu-west-1.api.silverflow.com/v1
+      description: Production URL for Europe - Equivalent to https://api.silverflow.co/v1
+    - url: https://us-east-2.api.silverflow.com/v1
+      description: Production URL for North America
+    - url: https://eu-west-1.api-sbx.silverflow.com/v1
+      description: Sandbox URL - Equivalent to https://api-sbx.silverflow.co/v1
+  /disputes/{disputeKey}/defend:
+    post:
+      operationId: defendDispute
+      summary: Defend Dispute
+      description: 'Defending a Dispute will publish all documents that have been uploaded. Disputes in `received`, `evidenceSubmitted` or `defenseFailed` status can be defended, `actionRequired` flag will be true for these Disputes.
+
+        It is possible to submit evidence while defending a Dispute. In that case the required information needs to be send in the body.
+
+
+        Requires `disputes:Defend` permission.
+
+        '
+      tags:
+      - Disputes
+      parameters:
+      - $ref: '#/components/parameters/disputeKey'
+      - $ref: '#/components/parameters/ifMatch'
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DisputeDefense'
+      responses:
+        '200':
+          description: The defended dispute
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Dispute'
+        '400':
+          $ref: '#/components/responses/responses-BadRequestError'
+        '401':
+          $ref: '#/components/responses/responses-UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/responses-ForbiddenError'
+        '404':
+          $ref: '#/components/responses/responses-NotFoundError'
+        '409':
+          $ref: '#/components/responses/responses-ConflictError'
+        '412':
+          $ref: '#/components/responses/responses-PreconditionFailedError'
+        '429':
+          $ref: '#/components/responses/responses-TooManyRequestsError'
+    servers:
+    - url: https://eu-west-1.api.silverflow.com/v1
+      description: Production URL for Europe - Equivalent to https://api.silverflow.co/v1
+    - url: https://us-east-2.api.silverflow.com/v1
+      description: Production URL for North America
+    - url: https://eu-west-1.api-sbx.silverflow.com/v1
+      description: Sandbox URL - Equivalent to https://api-sbx.silverflow.co/v1
+  /disputes/{disputeKey}/eventHistory:
+    get:
+      operationId: getDisputeEventHistory
+      summary: List Dispute History Events
+      description: 'This operation returns a (paged) Dispute History Events for a Dispute.
+
+
+        Requires `disputes:ListHistory` permission.
+
+        '
+      tags:
+      - Disputes
+      parameters:
+      - $ref: '#/components/parameters/disputeKey'
+      - $ref: '#/components/parameters/parameters-sortOrder'
+      - $ref: '#/components/parameters/limit'
+      - $ref: '#/components/parameters/components-parameters-offsetToken'
+      - $ref: '#/components/parameters/initiator'
+      - name: status
+        description: The status of a Dispute Document. [Removal date is 06.12.2026]
+        in: query
+        deprecated: true
+        required: false
+        schema:
+          type: string
+          enum:
+          - pending
+          - active
+          - archived
+      responses:
+        '200':
+          description: A (paged) list of Dispute History Events
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DisputeEventHistoryPage'
+        '401':
+          $ref: '#/components/responses/responses-UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/responses-ForbiddenError'
+        '404':
+          $ref: '#/components/responses/responses-NotFoundError'
+        '429':
+          $ref: '#/components/responses/responses-TooManyRequestsError'
+    servers:
+    - url: https://eu-west-1.api.silverflow.com/v1
+      description: Production URL for Europe - Equivalent to https://api.silverflow.co/v1
+    - url: https://us-east-2.api.silverflow.com/v1
+      description: Production URL for North America
+    - url: https://eu-west-1.api-sbx.silverflow.com/v1
+      description: Sandbox URL - Equivalent to https://api-sbx.silverflow.co/v1
+  /disputes/eventHistory/{eventHistoryKey}:
+    get:
+      operationId: getEventHistory
+      summary: Get Dispute History Event
+      description: 'Returns the Dispute History Event identified by the specified key.
+
+
+        Requires `disputes:GetHistory` permission.
+
+        '
+      tags:
+      - Disputes
+      parameters:
+      - $ref: '#/components/parameters/eventHistoryKey'
+      responses:
+        '200':
+          description: The referenced Dispute History Event
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DisputeEventHistory'
+              examples:
+                defenseSuccessfullyProcessedMastercard:
+                  $ref: '#/components/examples/mc-defense-successfully-processed'
+                defenseSuccessfullyProcessedVisa:
+                  $ref: '#/components/examples/visa-defense-successfully-processed'
+                disputeExpirerAcquirerSide:
+                  $ref: '#/components/examples/dispute-expires-acquirer-side'
+                disputeWon:
+                  $ref: '#/components/examples/dispute-won'
+                liabilityAccepted:
+                  $ref: '#/components/examples/liability-accepted'
+                mastercardChargebackReceived:
+                  $ref: '#/components/examples/mc-chargeback-received'
+                mastercardCollaborationRequestReceived:
+                  $ref: '#/components/examples/collaboration-request-received'
+                mastercardPrearbitrationReceived:
+                  $ref: '#/components/examples/mc-prearbitration-received'
+                visaChargebackReceived:
+                  $ref: '#/components/examples/visa-chargeback-received'
+                visaPrearbitrationReceived:
+                  $ref: '#/components/examples/visa-prearbitration-received'
+                visaPrearbitrationResponseReceived:
+                  $ref: '#/components/examples/prearbitration-response-received'
+        '401':
+          $ref: '#/components/responses/responses-UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/responses-ForbiddenError'
+        '404':
+          $ref: '#/components/responses/responses-NotFoundError'
+        '429':
+          $ref: '#/components/responses/responses-TooManyRequestsError'
+    servers:
+    - url: https://eu-west-1.api.silverflow.com/v1
+      description: Production URL for Europe - Equivalent to https://api.silverflow.co/v1
+    - url: https://us-east-2.api.silverflow.com/v1
+      description: Production URL for North America
+    - url: https://eu-west-1.api-sbx.silverflow.com/v1
+      description: Sandbox URL - Equivalent to https://api-sbx.silverflow.co/v1
+components:
+  schemas:
+    DisputeEventHistory:
+      type: object
+      required:
+      - key
+      - agentKey
+      - merchantKey
+      - merchantAcceptorKey
+      - disputeStatus
+      - disputeStage
+      - disputeAmount
+      - created
+      - eventDate
+      - disputeKey
+      - initiator
+      - disputeVersion
+      - status
+      description: 'A Dispute
+
+        '
+      properties:
+        key:
+          $ref: '#/components/schemas/DisputeEventHistoryKey'
+        agentKey:
+          $ref: '#/components/schemas/components-schemas-agentKey'
+        merchantAcceptorKey:
+          $ref: '#/components/schemas/openapi_components-schemas-acceptorKey'
+        merchantKey:
+          $ref: '#/components/schemas/components-schemas-merchantKey'
+        disputeStatus:
+          $ref: '#/components/schemas/disputeStatus'
+        disputeStage:
+          $ref: '#/components/schemas/disputeStage'
+        disputeAmount:
+          $ref: '#/components/schemas/openapi_components-schemas-Amount'
+        disputeReason:
+          $ref: '#/components/schemas/Reason'
+        created:
+          $ref: '#/components/schemas/openapi_components-schemas-created-3'
+        eventDate:
+          $ref: '#/components/schemas/eventDate'
+        comment:
+          description: Comment from initiator
+          type: string
+        files:
+          $ref: '#/components/schemas/EventFiles'
+        disputeKey:
+          $ref: '#/components/schemas/disputeKey'
+        initiator:
+          $ref: '#/components/schemas/schema'
+        status:
+          $ref: '#/components/schemas/common_status'
+        disputeVersion:
+          $ref: '#/components/schemas/openapi_components-schemas-version'
+        submittedDefense:
+          $ref: '#/components/schemas/submittedDefense'
+        eventDetails:
+          $ref: '#/components/schemas/EventDetails'
+    disputeHandling:
+      description: Represents the disputesHandling options set on the merchant acceptor by the time dispute has been received.
+      type: object
+      additionalProperties: false
+      properties:
+        autoDefense:
+          type: boolean
+    DisputeDocumentWithoutFile:
+      allOf:
+      - $ref: '#/components/schemas/DocumentWithoutFile'
+      - type: object
+        required:
+        - disputeKey
+        - disputeStage
+        properties:
+          disputeKey:
+            $ref: '#/components/schemas/disputeKey'
+          disputeStage:
+            $ref: '#/components/schemas/disputeStage'
+    filename:
+      description: UUID formatted file name.
+      type: string
+      readOnly: false
+    DisputeEventHistoryPage:
+      allOf:
+      - $ref: '#/components/schemas/components-schemas-PageWithMoreItems'
+      - type: object
+        required:
+        - events
+        properties:
+          events:
+            type: array
+            items:
+              $ref: '#/components/schemas/DisputeEventHistory'
+    disputeResponseReasonIdMastercardCollaboration:
+      description: Unique code of a `disputeResponseReason`
+      type: string
+      enum:
+      - E
+    clearingDateTime:
+      type: string
+      description: Clearing datetime of the disputed authorization.
+      format: date-time
+      example: '2021-05-27T10:57:52Z'
+    DisputeEventHistoryKey:
+      description: Uniquely identifies a dispute history event
+      type: string
+      pattern: ^deh-[a-zA-Z0-9]+$
+      minLength: 1
+      maxLength: 120
+      readOnly: false
+      example: deh-1UF2NafdfrdPMf2XrS2
+    documents_status:
+      description: The current status of the document.
+      type: string
+      enum:
+      - pending
+      - active
+      - archived
+    schemas-cardNetwork:
+      type: string
+      description: The card network
+      enum:
+      - mastercard
+      - visa
+      - american-express
+    components-schemas-offsetToken:
+      type: string
+      pattern: ^[a-zA-Z0-9%]+$
+      minLength: 1
+      maxLength: 2048
+      example: LUtyr0s918rNZ5WuWDYh5FNzqAli6HqKHpPDatcfdsaVlibrlO49BKcOdz9YccUOtDSoyLtc4kAiOLkmjSW5zLa8OCnOXXBRja2rDYh5FNzqAli6HqKHpPDatcfdsaVlibrlO49BKcOdz9Yc
+    openapi_components-schemas-version:
+      type: integer
+      description: The version of this object
+      format: int64
+      minimum: 1
+      maximum: 1000
+      example: 1
+      readOnly: false
+    disputeStages:
+      description: The list of stages of a Dispute
+      type: array
+      items:
+        $ref: '#/components/schemas/disputeStage'
+    disputeStatuses:
+      description: The list of (flow)statuses of a Dispute
+      type: array
+      items:
+        $ref: '#/components/schemas/disputeStatus'
+    schemas-status:
+      description: The status of a Dispute.
+      type: string
+      enum:
+      - active
+      - archived
+    disputeResponseReasonIdMastercard:
+      description: Unique code of a `disputeResponseReason`
+      type: string
+      enum:
+      - '2700'
+      - '2011'
+      - '2001'
+      - '2002'
+      - '2004'
+      - '2701'
+      - '2702'
+      - '2704'
+      - '2709'
+      - '2710'
+      - '2713'
+      - '2008'
+      - '2870'
+      - '2871'
+      - '2003'
+      - '2707'
+    partialDefenseAmountValue:
+      type: integer
+      format: int64
+      minimum: 1
+      description: "The partial defense amount in minor units. Must be at least 1 and less than the total dispute amount. \nFor example, `$12.34` should be represented as `1234`.\n"
+      example: 1234
+    disputeDate:
+      type: string
+      description: Datetime of Dispute submission in [date time string format](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date#date_time_string_format).
+      format: date-time
+      example: '2021-05-27T10:57:52Z'
+    disputeSubResponseReasonId:
+      description: Unique code of a `disputeSubResponseReason`.
+      type: string
+      enum:
+      - CE01
+      - CE02
+      - CE03
+      - CE05
+      - CE06
+      - CE07
+      - CE08
+      - CE11
+      - CE12
+      - CE14
+      - CE15
+      - CE17
+      - CE18
+      - IDRA1
+      - IDRA2
+      - IDRA3
+      - IDRA4
+      - IDRA5
+      - IDRA6
+      - IDRA7
+      - IDRP1
+      - IDRP2
+      - IDRP3
+      - IDRP4
+      - IDRC1
+      - IDRC2
+      - IDRC3
+      - IDRC4
+      - IDRC5
+      - IDRC6
+      - IDRC7
+      - IDRC8
+      - IDRC9
+      - IDRC10
+      - IDRC11
+      - IDRC12
+      - IDRC13
+      - IDRC14
+      - IDRC15
+      - IDRC16
+      - IDRC17
+      - IDRC18
+      - IDRC19
+      - IDRC20
+      - IDRC21
+      - IDRC22
+      - IDRC23
+      - IDRC24
+      - IDRC25
+    schemas-mid:
+      type: string
+      description: 'Merchant ID assigned to the merchant (or Payfac) by the acquirer.
+
+        Acceptors that use the same BIN, Doing Business As name, and location must have the same `mid`.
+
+        Acceptors that use the same BIN cannot share a `mid` if they have a different Doing Business As name or location.
+
+        '
+      pattern: ^[a-zA-Z0-9-_\.]+$
+      minLength: 1
+      maxLength: 15
+    defenseOptions:
+      description: Represents the possible defense options when the Dispute is in a defendable status.
+      type: array
+      additionalProperties: false
+      items:
+        $ref: '#/components/schemas/defenseOption'
+    PageWithMoreAndTotalItems:
+      type: object
+      properties:
+        moreItems:
+          $ref: '#/components/schemas/moreItems'
+        offsetToken:
+          $ref: '#/components/schemas/components-schemas-offsetToken'
+        totalItems:
+          $ref: '#/components/schemas/totalItems'
+    DisputesPage:
+      allOf:
+      - $ref: '#/components/schemas/PageWithMoreAndTotalItems'
+      - type: object
+        required:
+        - disputes
+        properties:
+          disputes:
+            type: array
+            items:
+              $ref: '#/components/schemas/Dispute'
+    schemas-localTransactionDateTime:
+      type: string
+      description: The date and time of the transaction
+      format: date-time
+      readOnly: false
+      example: '2021-05-27T10:57:52Z'
+    submittedDefense:
+      description: Represents the most recent defense evidence, submitted by an Acquirer or a Merchant. `submittedEvidence` is filled when defense is initiated (dispute status = `defenseInitiated`) and removed when it is in `awaitingResponse` status.
+      type: object
+      additionalProperties: false
+      properties:
+        messageText:
+          type: string
+        elaboration:
+          type: string
+        disputeResponseReasonId:
+          $ref: '#/components/schemas/disputeResponseReasonId'
+        disputeSubResponseReasonId:
+          $ref: '#/components/schemas/disputeSubResponseReasonId'
+        creditOrReversalDetail:
+          $ref: '#/components/schemas/creditOrReversalDetail'
+        partialDefenseAmount:
+          $ref: '#/components/schemas/openapi_components-schemas-Amount'
+        isPartialDefense:
+          $ref: '#/components/schemas/isPartialDefense'
+        responseText:
+          $ref: '#/components/schemas/amexResponseText'
+        refundAmount:
+          $ref: '#/components/schemas/openapi_components-schemas-Amount'
+        files:
+          type: array
+          additionalProperties: false
+          items:
+            $ref: '#/components/schemas/EventFile'
+    DefendVisaPreArbitration:
+      type: object
+      additionalProperties: false
+      properties:
+        elaboration:
+          $ref: '#/components/schemas/elaborationVisa'
+    schemas-fraudLiability:
+      description: Identifies whether the acquirer or issuer has the liability of the dispute.
+      type: string
+      readOnly: false
+      enum:
+      - acquirer
+      - issuer
+    RejectDispute:
+      type: object
+      additionalProperties: false
+      required:
+      - rejectReason
+      properties:
+        rejectReason:
+          $ref: '#/components/schemas/schemas-FreeTextField'
+    lastEventDate:
+      description: The datetime of the last event in card network.
+      type: string
+      format: date
+      example: '2019-08-24T14:15:11'
+    eventDate:
+      description: Datetime of an action mentioned in the history record. (e.g. dispute acceptance date)
+      format: date-time
+      readOnly: false
+      example: '2021-05-27T10:57:52Z'
+    isPartial:
+      description: Flag to indicate whether the Dispute was issued for the entire purchase amount.
+      type: boolean
+      readOnly: false
+    totalItems:
+      type: number
+      format: int64
+      minLength: 0
+      example: '1'
+    SubmitEvidenceAmexChargeback:
+      allOf:
+      - $ref: '#/components/schemas/DefendAmexChargeback'
+    chargeInfo:
+      description: Charge related information
+      type: object
+      required:
+      - arn
+      - amount
+      - fraudLiability
+      properties:
+        networkReference:
+          $ref: '#/components/schemas/networkReference'
+        arn:
+          $ref: '#/components/schemas/acquirerReferenceNumber'
+        localTransactionDateTime:
+          $ref: '#/components/schemas/schemas-localTransactionDateTime'
+        amount:
+          $ref: '#/components/schemas/openapi_components-schemas-Amount'
+        chargeKey:
+          $ref: '#/components/schemas/schemas-chargeKey'
+        transactionReference:
+          $ref: '#/components/schemas/schemas-transactionReference'
+        fraudLiability:
+          $ref: '#/components/schemas/schemas-fraudLiability'
+        clearingDateTime:
+          $ref: '#/components/schemas/clearingDateTime'
+        crn:
+          $ref: '#/components/schemas/clearingReferenceNumber'
+    DisputeDocument:
+      allOf:
+      - $ref: '#/components/schemas/Document'
+      - type: object
+        required:
+        - disputeKey
+        - disputeStage
+        properties:
+          disputeKey:
+            $ref: '#/components/schemas/disputeKey'
+          disputeStage:
+            $ref: '#/components/schemas/disputeStage'
+    defenseOption:
+      type: object
+      additionalProperties: false
+      properties:
+        disputeResponseReason:
+          $ref: '#/components/schemas/disputeResponseReason'
+        disputeSubResponseReason:
+          type: array
+          additionalProperties: false
+          items:
+            $ref: '#/components/schemas/disputeSubResponseReason'
+    SubmitEvidenceMastercardChargeback:
+      type: object
+      additionalProperties: false
+      properties:
+        messageText:
+          $ref: '#/components/schemas/messageText'
+        disputeResponseReasonId:
+          $ref: '#/components/schemas/disputeResponseReasonIdMastercard'
+        partialDefenseAmount:
+          $ref: '#/components/schemas/partialDefenseAmountValue'
+    disputeResponseReasonIdAmexRFI:
+      description: Unique code of a `disputeResponseReason`.
+      type: string
+      enum:
+      - '02'
+      - '03'
+      - '04'
+      - '05'
+      - '06'
+      - '07'
+      - 08
+      - 09
+      - '10'
+      - '11'
+      - '12'
+      - '13'
+      - '14'
+      - '15'
+      - '16'
+      - '17'
+      - '18'
+      - '19'
+      - '20'
+      - '21'
+      - '22'
+      - '23'
+      - '24'
+      - '25'
+      - '40'
+      - '41'
+      - '42'
+      - '43'
+      - '44'
+      - '45'
+      - '46'
+      - '47'
+      - '48'
+      - '49'
+      - '50'
+      - '51'
+      - '52'
+      - '53'
+      - '70'
+      - '71'
+      - '72'
+      - '73'
+      - '74'
+    EventFile:
+      type: object
+      required:
+      - contentLength
+      - contentType
+      - filename
+      - originalFilename
+      - disputeStage
+      - owner
+      - key
+      description: 'Object containing summarized information of a document
+
+        '
+      properties:
+        contentLength:
+          type: number
+        contentType:
+          $ref: '#/components/schemas/contentType'
+        filename:
+          $ref: '#/components/schemas/filename'
+        originalFilename:
+          $ref: '#/components/schemas/originalFilename'
+        key:
+          $ref: '#/components/schemas/documentKey'
+        disputeStage:
+          $ref: '#/components/schemas/disputeStage'
+        owner:
+          $ref: '#/components/schemas/owner'
+        description:
+          type: string
+    Dispute:
+      type: object
+      required:
+      - key
+      - agentKey
+      - merchantKey
+      - merchantAcceptorKey
+      - chargeInfo
+      - cardInfo
+      - isPartial
+      - disputeReference
+      - disputeStatus
+      - disputeStage
+      - mid
+      - acquirerBin
+      - reason
+      - disputeAmount
+      - disputeDate
+      - network
+      - status
+      - created
+      - lastEventDate
+      - version
+      - networkDisputeId
+      - closed
+      - actionRequired
+      description: 'A Dispute
+
+        '
+      properties:
+        key:
+          $ref: '#/components/schemas/disputeKey'
+        disputeReference:
+          $ref: '#/components/schemas/disputeReference'
+        chargeInfo:
+          $ref: '#/components/schemas/chargeInfo'
+        cardInfo:
+          $ref: '#/components/schemas/cardInfo'
+        isPartial:
+          $ref: '#/components/schemas/isPartial'
+        merchantAcceptorKey:
+          $ref: '#/components/schemas/openapi_components-schemas-acceptorKey'
+        merchantKey:
+          $ref: '#/components/schemas/components-schemas-merchantKey'
+        mid:
+          $ref: '#/components/schemas/schemas-mid'
+        acquirerBin:
+          $ref: '#/components/schemas/schemas-acquirerBin'
+        actionDueDate:
+          $ref: '#/components/schemas/actionDueDate'
+        reason:
+          $ref: '#/components/schemas/Reason'
+        disputeAmount:
+          $ref: '#/components/schemas/openapi_components-schemas-Amount'
+        reconciliationAmount:
+          $ref: '#/components/schemas/openapi_components-schemas-Amount'
+        disputeDate:
+          $ref: '#/components/schemas/disputeDate'
+        network:
+          $ref: '#/components/schemas/schemas-cardNetwork'
+        created:
+          $ref: '#/components/schemas/openapi_components-schemas-created-3'
+        lastModified:
+          $ref: '#/components/schemas/openapi_components-schemas-lastModified-2'
+        version:
+          $ref: '#/components/schemas/openapi_components-schemas-version'
+        agentKey:
+          $ref: '#/components/schemas/components-schemas-agentKey'
+        disputeStatus:
+          $ref: '#/components/schemas/disputeStatus'
+        disputeStatusReason:
+          $ref: '#/components/schemas/disputeStatusReason'
+        disputeStage:
+          $ref: '#/components/schemas/disputeStage'
+        status:
+          $ref: '#/components/schemas/schemas-status'
+        networkDisputeId:
+          $ref: '#/components/schemas/networkDisputeId'
+        lastEventDate:
+          $ref: '#/components/schemas/lastEventDate'
+        actionRequired:
+          $ref: '#/components/schemas/actionRequired'
+        closed:
+          $ref: '#/components/schemas/closed'
+        defenseOptions:
+          $ref: '#/components/schemas/defenseOptions'
+        submittedDefense:
+          $ref: '#/components/schemas/submittedDefense'
+        disputeHandling:
+          $ref: '#/components/schemas/disputeHandling'
+    messageText:
+      type: string
+      description: 'This field is passed on to element DE72 (Data Record) in the second presentment
+
+        clearing file. Mastercard chargeback rules prescribe how to fill this field depending on the type of representment.
+
+        Please refer to the Mastercard chargeback manual for more information.
+
+        '
+      pattern: ^[\w +-=.,:;!?$@()]+$
+      minLength: 1
+      maxLength: 100
+    DefendVisaChargeback:
+      type: object
+      additionalProperties: false
+      required:
+      - disputeResponseReasonId
+      properties:
+        elaboration:
+          $ref: '#/components/schemas/elaborationVisa'
+        disputeResponseReasonId:
+          $ref: '#/components/schemas/disputeResponseReasonIdVisa'
+        disputeSubResponseReasonId:
+          $ref: '#/components/schemas/disputeSubResponseReasonId'
+        creditOrReversalDetail:
+          $ref: '#/components/schemas/creditOrReversalDetail'
+        partialDefenseAmount:
+          $ref: '#/components/schemas/partialDefenseAmountValue'
+    closed:
+      type: boolean
+      description: 'Indicates if a Dispute has one of the final statuses: `closedAccepted, closedWon, closedLost`.'
+    disputeSubResponseReason:
+      description: Represents the reason a Dispute is claimed invalid.
+      type: object
+      required:
+      - description
+      - id
+      properties:
+        description:
+          description: Description of the invalid dispute reason
+          type: string
+        id:
+          description: unique code
+          type: string
+    amexResponseText:
+      type: string
+      description: 'Free text field which can be used to provide extra guidance with the Dispute.
+
+        '
+      pattern: ^[\w +-=.,:;!?$@()]+$
+      minLength: 1
+      maxLength: 1500
+    actionDueDate:
+      type: string
+      description: Due date for the next action in "YYYY-MM-DD" format.
+      format: date
+      example: '2021-05-27'
+    acquirerReferenceNumber:
+      description: Unique identifier assigned by the acquirer at clearing. Used to identify the transaction with the card networks.
+      type: string
+      pattern: ^\d+$
+      minLength: 23
+      maxLength: 23
+      readOnly: false
+      example: '12345678901234567890123'
+    owner:
+      description: The owner of a Dispute Document
+      type: string
+      enum:
+      - issuer
+      - acquirer
+      - merchant
+      - card-network
+    documentKey:
+      description: Uniquely identifies a document
+      type: string
+      pattern: ^dok-[a-zA-Z0-9]+$
+      minLength: 1
+      maxLength: 120
+      readOnly: false
+      example: dok-1UF2NafdfrdPMf2XrS2
+    DisputeDocumentsPage:
+      allOf:
+      - $ref: '#/components/schemas/components-schemas-PageWithMoreItems'
+      - type: object
+        required:
+        - documents
+        properties:
+          documents:
+            type: array
+            items:
+              $ref: '#/components/schemas/DisputeDocument'
+    openapi_components-schemas-lastModified-2:
+      type: string
+      description: The date and time this object was last modified
+      format: date-time
+      readOnly: false
+    SubmitEvidenceAmexRFI:
+      allOf:
+      - $ref: '#/components/schemas/DefendAmexRFI'
+    openapi_components-schemas-acceptorKey:
+      description: Uniquely identifies a Merchant Acceptor.
+      type: string
+      pattern: ^mac-[a-zA-Z0-9]+$
+      minLength: 1
+      maxLength: 120
+      readOnly: false
+      example: mac-1JRadf2ffdfrdPMf2XrS2
+    moreItems:
+      type: boolean
+    EventFiles:
+      type: array
+      items:
+        $ref: '#/components/schemas/EventFile'
+    refundAmountValue:
+      type: integer
+      format: int64
+      minimum: 0
+      maximum: 900000000
+      description: 'Optional amount that was or will be refunded to the customer (AMEX RFI only).
+
+        The amount should be provided in minor units. For example `$12.34` should be encoded as `1234`. Note that not all
+
+        currencies have 2 minor units. Some have three or zero.
+
+        '
+      example: 2599
+    common_status:
+      type: string
+      description: The status of the object
+      enum:
+      - active
+      - archived
+    openapi_components-schemas-Amount:
+      type: object
+      required:
+      - value
+      - currency
+      additionalProperties: false
+      description: 'An amount encoded as an object with a `value` in minor units and a `currency` code.
+
+        '
+      properties:
+        value:
+          $ref: '#/components/schemas/openapi_components-schemas-amountValue-2'
+        currency:
+          $ref: '#/components/schemas/openapi_components-schemas-currencyCode-3'
+    creditOrReversalDetail:
+      description: Mandatory for Visa Disputes when defense response reason is `Credit or reversal processed`. Represents the credit or reversal details.
+      type: object
+      required:
+      - creditAmount
+      - creditDate
+      - creditARN
+      properties:
+        creditDate:
+          type: string
+          format: date
+          example: '2021-12-01'
+        creditAmount:
+          $ref: '#/components/schemas/openapi_components-schemas-Amount'
+        creditARN:
+          type: string
+          pattern: ^\d+$
+          minLength: 23
+          maxLength: 23
+    DisputeDefense:
+      oneOf:
+      - $ref: '#/components/schemas/DefendMastercardCollaboration'
+      - $ref: '#/components/schemas/DefendVisaChargeback'
+      - $ref: '#/components/schemas/DefendMastercardChargeback'
+      - $ref: '#/components/schemas/DefendMastercardPreArbitration'
+      - $ref: '#/components/schemas/DefendVisaPreArbitration'
+      - $ref: '#/components/schemas/DefendAmexRFI'
+      - $ref: '#/components/schemas/DefendAmexChargeback'
+    Document:
+      type: object
+      required:
+      - key
+      - agentKey
+      - originalFilename
+      - owner
+      - status
+      - created
+      - version
+      description: 'A Document
+
+        '
+      properties:
+        key:
+          $ref: '#/components/schemas/documentKey'
+        agentKey:
+          $ref: '#/components/schemas/components-schemas-agentKey'
+        merchantKey:
+          $ref: '#/components/schemas/components-schemas-merchantKey'
+        disputeKey:
+          $ref: '#/components/schemas/disputeKey'
+        disputeStage:
+          $ref: '#/components/schemas/disputeStage'
+        originalFilename:
+          $ref: '#/components/schemas/originalFilename'
+        filename:
+          type: string
+        contentLength:
+          type: number
+        contentType:
+          $ref: '#/components/schemas/contentType'
+        owner:
+          $ref: '#/components/schemas/owner'
+        description:
+          $ref: '#/components/schemas/schemas-FreeTextField'
+        status:
+          $ref: '#/components/schemas/documents_status'
+        created:
+          $ref: '#/components/schemas/openapi_components-schemas-created-3'
+        lastModified:
+          $ref: '#/components/schemas/openapi_components-schemas-lastModified-2'
+        version:
+          $ref: '#/components/schemas/openapi_components-schemas-version'
+    cardInfo:
+      description: Card related information
+      type: object
+      required:
+      - last4
+      properties:
+        last4:
+          $ref: '#/components/schemas/schemas-last4'
+        maskedNumber:
+          $ref: '#/components/schemas/maskedNumber'
+        issuerName:
+          type: string
+          readOnly: false
+    DisputeCategory:
+      type: string
+      enum:
+      - Fraud
+      - Authorization
+      - Processing Error
+      - Cardholder Disputes
+      - PreChargeback
+      - Retrieval Chargeback
+      readOnly: false
+    actionRequired:
+      type: boolean
+      description: Indicates if a Dispute is in a status where it can be accepted or defended by the acquirer.
+    DefendMastercardChargeback:
+      type: object
+      additionalProperties: false
+      required:
+      - disputeResponseReasonId
+      properties:
+        messageText:
+          $ref: '#/components/schemas/messageText'
+        disputeResponseReasonId:
+          $ref: '#/components/schemas/disputeResponseReasonIdMastercard'
+        partialDefenseAmount:
+          $ref: '#/components/schemas/partialDefenseAmountValue'
+    schemas-last4:
+      type: string
+      deprecated: true
+      description: The last 4 digits of the card. **This property will be removed on 24 September 2025. Use `maskedNumber` instead.**
+      readOnly: false
+      pattern: ^\d+$
+      minLength: 4
+      maxLength: 4
+      example: 0905
+    components-schemas-merchantKey:
+      description: Uniquely identifies a Merchant
+      type: string
+      pattern: ^mct-[a-zA-Z0-9]+$
+      minLength: 1
+      maxLength: 120
+      readOnly: false
+      example: mct-123dinkqFqfq3q2f2adfa
+    maskedNumber:
+      type: string
+      description: The card number used to create this charge, masked according to PCI standards. For card numbers with 16 or more digits, the first 8 and the last 4 digits are visible. For card numbers with 13-15 digits, the first 6 and the last 4 digits are visible. For cards numbers with less than 13 digits, the first 6 and last 2 digits are visible.
+    components-schemas-agentKey:
+      description: Uniquely identifies an Agent
+      type: string
+      pattern: ^cgt-[a-zA-Z0-9]+|current$
+      minLength: 1
+      maxLength: 120
+      readOnly: false
+      example: cgt-1UF2NafdfrdPMf2XrS2
+    Reason:
+      description: Object containing dispute reason category, code and description.
+      type: object
+      required:
+      - code
+      - category
+      properties:
+        category:
+          $ref: '#/components/schemas/DisputeCategory'
+        code:
+          description: Dispute reason code
+          type: string
+          readOnly: false
+        description:
+          type: string
+          readOnly: false
+          $ref: '#/components/schemas/schemas-FreeTextField'
+    elaborationVisa:
+      description: Free text field which can be used to provide extra guidance with the Dispute.
+      type: string
+      pattern: ^[\w +-=.,:;!?$@()]+$
+      minLength: 1
+      maxLength: 5000
+    EventDetails:
+      type: object
+      description: Most fields are network-specific and are only returned in events for specific stage/status combinations.
+      properties:
+        messageText:
+          type: string
+          description: Mastercard-specific. This field is passed on to element DE72 (Data Record) in the second presentment clearing file. Mastercard chargeback rules prescribe how to fill this field depending on the type of representment. Please refer to the Mastercard chargeback manual for more information.
+        elaboration:
+          type: string
+          description: Free text field that is used to provide extra guidance with the dispute.
+        issuerQuestionnaire:
+          type: object
+          description: Visa-specific field for a dispute in 'chargeback' stage and 'received' status.
+          additionalProperties: true
+        responseReason:
+          type: string
+          description: Scheme-specific response reason code for the defense
+        subResponseReason:
+          type: string
+          description: Visa-specific sub-response reason code
+        creditOrReversalDetails:
+          type: object
+          $ref: '#/components/schemas/creditOrReversalDetail'
+        rejectReason:
+          type: string
+          $ref: '#/components/schemas/schemas-FreeTextField'
+        intendedDisputeReason:
+          type: string
+          description: American-Express specific intended dispute reason
+        partialDefenseAmount:
+          $ref: '#/components/schemas/openapi_components-schemas-Amount'
+        isPartialDefense:
+          $ref: '#/components/schemas/isPartialDefense'
+        reversalReason:
+          type: string
+          description: Free text field to provide reversal reason
+        responseText:
+          $ref: '#/components/schemas/amexResponseText'
+        refundAmount:
+          $ref: '#/components/schemas/openapi_components-schemas-Amount'
+      additionalProperties: true
+    SubmitEvidenceMastercardPreArbitration:
+      type: object
+      additionalProperties: false
+      properties:
+        messageText:
+          $ref: '#/components/schemas/messageText'
+    schemas-FreeTextField:
+      type: string
+      pattern: ^[\w +-=.,:;!?$@()]+$
+      minLength: 1
+      maxLength: 160
+    schemas-acquirerBin:
+      type: string
+      description: Acquirer BIN. The BIN number as assigned by the card network. For Mastercard, this is also referred to as the Acquirer Reference ID.
+      pattern: ^\d+$
+      minLength: 6
+      maxLength: 6
+    DefendAmexRFI:
+      type: object
+      additionalProperties: false
+      required:
+      - disputeResponseReasonId
+      - responseText
+      properties:
+        disputeResponseReasonId:
+          $ref: '#/components/schemas/disputeResponseReasonIdAmexRFI'
+        responseText:
+          $ref: '#/components/schemas/amexResponseText'
+        refundAmount:
+          $ref: '#/components/schemas/refundAmountValue'
+    schema:
+      type: string
+      enum:
+      - issuer
+      - acquirer
+      - card-network
+    disputeKey:
+      description: Uniquely identifies a Dispute.
+      type: string
+      pattern: ^dsp-[a-zA-Z0-9]+$
+      minLength: 1
+      maxLength: 120
+      readOnly: false
+      example: dsp-1JRadf2ffdfrdPMf2XrS2
+    DefendAmexChargeback:
+      type: object
+      additionalProperties: false
+      required:
+      - responseText
+      properties:
+        responseText:
+          $ref: '#/components/schemas/amexResponseText'
+    clearingReferenceNumber:
+      description: Silverflow generated unique clearing identifier.  Only present for American Express since it has the same value as the ARN for Visa and Mastercard.
+      type: string
+    networkReference:
+      type: string
+      description: 'Unique ID assigned by the network when authorizing. This ID is returned in the response of the authorization.
+
+        '
+      pattern: ^[a-zA-Z0-9()+,\-.:=@;$_!*\/?#|]+$
+      minLength: 1
+      maxLength: 120
+    openapi_components-schemas-created-3:
+      type: string
+      description: The date and time this object was created
+      format: date-time
+      readOnly: false
+    disputeResponseReasonIdVisa:
+      description: Unique code of a `disputeResponseReason`.
+      type: string
+      enum:
+      - CNLD
+      - CP
+      - NL
+      - ID
+      - CE
+      - ND
+    DefendMastercardPreArbitration:
+      type: object
+      additionalProperties: false
+      properties:
+        messageText:
+          $ref: '#/components/schemas/messageText'
+    components-schemas-PageWithMoreItems:
+      type: object
+      properties:
+        moreItems:
+          $ref: '#/components/schemas/moreItems'
+        offsetToken:
+          $ref: '#/components/schemas/components-schemas-offsetToken'
+    schemas-transactionReference:
+      type: string
+      description: 'Unique ID used to identify the transaction that is assigned by the merchant or payment service provider.
+
+        '
+      pattern: ^[a-zA-Z0-9()+,\-.:=@;$_!*\/?|]+$
+      minLength: 1
+      maxLength: 120
+      example: Dz3dIzE74EfH1HeTInyE
+    openapi_components-schemas-amountValue-2:
+      type: integer
+      format: int64
+      minimum: 0
+      maximum: 900000000
+      description: 'The amount in minor units. For example `$12.34` should be encoded as `1234`. Note that not all
+
+        currencies have 2 minor units. Some have three or zero.
+
+        '
+      example: 2599
+    SubmitEvidenceVisaPreArbitration:
+      type: object
+      additionalProperties: false
+      properties:
+        elaboration:
+          $ref: '#/components/schemas/elaborationVisa'
+    disputeStatusReason:
+      type: string
+    SubmitEvidence:
+      oneOf:
+      - $ref: '#/components/schemas/SubmitEvidenceVisaChargeback'
+      - $ref: '#/components/schemas/SubmitEvidenceMastercardChargeback'
+      - $ref: '#/components/schemas/SubmitEvidenceMastercardPreArbitration'
+      - $ref: '#/components/schemas/SubmitEvidenceVisaPreArbitration'
+      - $ref: '#/components/schemas/SubmitEvidenceAmexRFI'
+      - $ref: '#/components/schemas/SubmitEvidenceAmexChargeback'
+    disputeReference:
+      description: Unique identifier assigned by the card networks.
+      type: string
+      readOnly: false
+    DefendMastercardCollaboration:
+      type: object
+      additionalProperties: false
+      required:
+      - messageText
+      - disputeResponseReasonId
+      properties:
+        messageText:
+          $ref: '#/components/schemas/messageText'
+        disputeResponseReasonId:
+          $ref: '#/components/schemas/disputeResponseReasonIdMastercardCollaboration'
+    disputeResponseReasonId:
+      allOf:
+      - $ref: '#/components/schemas/disputeResponseReasonIdAmexRFI'
+      - $ref: '#/components/schemas/disputeResponseReasonIdMastercard'
+      - $ref: '#/components/schemas/disputeResponseReasonIdMastercardCollaboration'
+      - $ref: '#/components/schemas/disputeResponseReasonIdVisa'
+    originalFilenameInput:
+      description: Name of the file. Allows letters, numbers, whitespaces and characters _()
+      type: string
+      pattern: ^([\w() ])+(.jpg|.jpeg|.pdf|.tiff|.tif)$
+      readOnly: false
+      minLength: 1
+      maxLength: 32
+    disputeStage:
+      description: The current stage of a Dispute
+      type: string
+      enum:
+      - rapidDisputeResolution
+      - collaboration
+      - requestForInformation
+      - requestForInformationResponse
+      - collaborationResponse
+      - chargeback
+      - chargebackResponse
+      - preArbitration
+      - preArbitrationResponse
+      - arbitration
+    SubmitEvidenceVisaChargeback:
+      type: object
+      additionalProperties: false
+      properties:
+        elaboration:
+          $ref: '#/components/schemas/elaborationVisa'
+        disputeResponseReasonId:
+          $ref: '#/components/schemas/disputeResponseReasonIdVisa'
+        disputeSubResponseReasonId:
+          $ref: '#/components/schemas/disputeSubResponseReasonId'
+        creditOrReversalDetail:
+          $ref: '#/components/schemas/creditOrReversalDetail'
+        partialDefenseAmount:
+          $ref: '#/components/schemas/partialDefenseAmountValue'
+    originalFilename:
+      description: Name of the file. Allows letters, numbers, whitespaces and characters _()
+      type: string
+      pattern: ^([\w() ])+(.jpg|.jpeg|.pdf|.tiff|.tif)$
+      readOnly: false
+    networkDisputeId:
+      description: Uniquely identifies a Dispute within a card network.
+      type: string
+    schemas-ProblemDetail:
+      type: object
+      description: 'The ''problem detail'' object relays detailed information about the error that occurred. It is defined
+
+        by [RFC 7807 - Problem Details for HTTP APIs](https://tools.ietf.org/html/rfc7807).
+
+
+        Note that additional properties may be used to relay error specific information. For instance,
+
+        A Bad Request error may hold information about the individual validation errors found in the request.
+
+        '
+      properties:
+        type:
+          type: string
+          description: 'An absolute URI that identifies the problem type.
+
+            '
+          default: about:blank
+          example: https://api.silverflow.co/problem/constraint-violation
+        title:
+          type: string
+          description: 'A short, summary of the problem type. Written in english and readable
+
+            for engineers (usually not suited for non technical stakeholders and
+
+            not localized);
+
+            '
+          example: Service Unavailable
+        status:
+          type: integer
+          format: int32
+          description: 'The HTTP status code generated by the origin server for this occurrence
+
+            of the problem.
+
+            '
+          minimum: 100
+          maximum: 599
+          example: 503
+        detail:
+          type: string
+          description: 'A human readable explanation specific to this occurrence of the
+
+            problem.
+
+            '
+          example: Connection to database timed out
+        instance:
+          type: string
+          description: 'An absolute URI that identifies the specific occurrence of the problem.
+
+            It may or may not yield further information if dereferenced.
+
+            '
+      additionalProperties: true
+      example:
+        type: https://api.silverflow.co/problem/bad-request
+        title: Bad Request
+        status: 400
+        detail: The request could not be processed as it contained an invalid request entity
+        instance: https://api.silverflow.co/v1/merchants/mct-1hPdFqhgstYTUhlphPDp
+        validationErrors:
+        - The value of property 'status' should be one of 'idle', 'active' or 'archived'
+        - The value of property 'tags.0.businessId' must not be longer than 255 characters
+    isPartialDefense:
+      description: Flag to indicate whether the Dispute was partially defended (should be set to true if the defense amount is lower than the dispute amount).
+      type: boolean
+    disputeResponseReason:
+      description: Represents the reason a Dispute is being defended.
+      type: object
+      required:
+      - description
+      - id
+      properties:
+        description:
+          description: Description of the reason
+          type: string
+          $ref: '#/components/schemas/schemas-FreeTextField'
+        id:
+          description: unique code
+          type: string
+    disputeStatus:
+      description: The current (flow)status of a Dispute
+      type: string
+      enum:
+      - acceptanceInitiated
+      - acceptanceFailed
+      - defenseInitiated
+      - defenseFailed
+      - received
+      - awaitingResponse
+      - evidenceSubmitted
+      - evidenceRejected
+      - closedAccepted
+      - closedWon
+      - closedLost
+      - reversed
+      - withdrawn
+    contentType:
+      description: 'Accepted Content-Types
+
+        '
+      type: string
+      enum:
+      - image/jpeg
+      - application/pdf
+      - image/tiff
+    DocumentCreate:
+      type: object
+      required:
+      - originalFilename
+      description: 'A Document
+
+        '
+      properties:
+        originalFilename:
+          $ref: '#/components/schemas/originalFilenameInput'
+        description:
+          $ref: '#/components/schemas/schemas-FreeTextField'
+    openapi_components-schemas-currencyCode-3:
+      type: string
+      enum:
+      - AED
+      - AFN
+      - ALL
+      - AMD
+      - ANG
+      - AOA
+      - ARS
+      - AUD
+      - AWG
+      - AZN
+      - BAM
+      - BBD
+      - BDT
+      - BGN
+      - BHD
+      - BIF
+      - BMD
+      - BND
+      - BOB
+      - BRL
+      - BSD
+      - BTN
+      - BWP
+      - BYN
+      - BZD
+      - CAD
+      - CDF
+      - CHF
+      - CLP
+      - CNH
+      - CNY
+      - COP
+      - CRC
+      - CUC
+      - CUP
+      - CVE
+      - CZK
+      - DJF
+      - DKK
+      - DOP
+      - DZD
+      - EGP
+      - ERN
+      - ETB
+      - EUR
+      - FJD
+      - FKP
+      - GBP
+      - GEL
+      - GHS
+      - GIP
+      - GMD
+      - GNF
+      - GTQ
+      - GYD
+      - HKD
+      - HNL
+      - HRK
+      - HTG
+      - HUF
+      - IDR
+      - ILS
+      - INR
+      - IQD
+      - IRR
+      - ISK
+      - JMD
+      - JOD
+      - JPY
+      - KES
+      - KGS
+      - KHR
+      - KMF
+      - KPW
+      - KRW
+      - KWD
+      - KYD
+      - KZT
+      - LAK
+      - LBP
+      - LKR
+      - LRD
+      - LSL
+      - LYD
+      - MAD
+      - MDL
+      - MGA
+      - MKD
+      - MMK
+      - MNT
+      - MOP
+      - MRU
+      - MUR
+      - MVR
+      - MWK
+      - MXN
+      - MYR
+      - MZN
+      - NAD
+      - NGN
+      - NIO
+      - NOK
+      - NPR
+      - NZD
+      - OMR
+      - PAB
+      - PEN
+      - PGK
+      - PHP
+      - PKR
+      - PLN
+      - PYG
+      - QAR
+      - RON
+      - RSD
+      - RUB
+      - RWF
+      - SAR
+      - SBD
+      - SCR
+      - SDG
+      - SEK
+      - SGD
+      - SHP
+      - SLE
+      - SLL
+      - SOS
+      - SRD
+      - SSP
+      - STN
+      - SVC
+      - SYP
+      - SZL
+      - THB
+      - TJS
+      - TMT
+      - TND
+      - TOP
+      - TRY
+      - TTD
+      - TWD
+      - TZS
+      - UAH
+      - UGX
+      - USD
+      - UYU
+      - UYW
+      - UZS
+      - VES
+      - VND
+      - VUV
+      - WST
+      - XAF
+      - XCD
+      - XCG
+      - XOF
+      - XPF
+      - YER
+      - ZAR
+      - ZMW
+      - ZWL
+      description: 'The three-letter ISO code of the currency.
+
+
+        **European ISO Currency Codes**
+
+
+        <details>
+
+
+        | Country — Currency                       | Code | Numeric | Minor Units |
+
+        | ---------------------------------------- | ---- | ------- | ----------- |
+
+        | Åland Islands — Euro                     | EUR  | 978     | 2           |
+
+        | Andorra — Euro                           | EUR  | 978     | 2           |
+
+        | Austria — Euro                           | EUR  | 978     | 2           |
+
+        | Belgium — Euro                           | EUR  | 978     | 2           |
+
+        | Cyprus — Euro                            | EUR  | 978     | 2           |
+
+        | Estonia — Euro                           | EUR  | 978     | 2           |
+
+        | European Union — Euro                    | EUR  | 978     | 2           |
+
+        | Finland — Euro                           | EUR  | 978     | 2           |
+
+        | France — Euro                            | EUR  | 978     | 2           |
+
+        | French Guiana — Euro                     | EUR  | 978     | 2           |
+
+        | French Southern Territories (The) — Euro | EUR  | 978     | 2           |
+
+        | Germany — Euro                           | EUR  | 978     | 2           |
+
+        | Greece — Euro                            | EUR  | 978     | 2           |
+
+        | Guadeloupe — Euro                        | EUR  | 978     | 2           |
+
+        | Holy See (The) — Euro                    | EUR  | 978     | 2           |
+
+        | Ireland — Euro                           | EUR  | 978     | 2           |
+
+        | Italy — Euro                             | EUR  | 978     | 2           |
+
+        | Latvia — Euro                            | EUR  | 978     | 2           |
+
+        | Lithuania — Euro                         | EUR  | 978     | 2           |
+
+        | Luxembourg — Euro                        | EUR  | 978     | 2           |
+
+        | Malta — Euro                             | EUR  | 978     | 2           |
+
+        | Martinique — Euro                        | EUR  | 978     | 2           |
+
+        | Mayotte — Euro                           | EUR  | 978     | 2           |
+
+        | Monaco — Euro                            | EUR  | 978     | 2           |
+
+        | Montenegro — Euro                        | EUR  | 978     | 2           |
+
+        | Netherlands (The) — Euro                 | EUR  | 978     | 2           |
+
+        | Portugal — Euro                          | EUR  | 978     | 2           |
+
+        | Réunion — Euro                           | EUR  | 978     | 2           |
+
+        | Saint Barthélemy — Euro                  | EUR  | 978     | 2           |
+
+        | Saint Martin (French Part) — Euro        | EUR  | 978     | 2           |
+
+        | Saint Pierre And Miquelon — Euro         | EUR  | 978     | 2           |
+
+        | San Marino — Euro                        | EUR  | 978     | 2           |
+
+        | Slovakia — Euro                          | EUR  | 978     | 2           |
+
+        | Slovenia — Euro                          | EUR  | 978     | 2           |
+
+        | Spain — Euro                             | EUR  | 978     | 2           |
+
+
+        </details>
+
+
+        **US ISO Currency Codes**
+
+
+        <details>
+
+
+        | Country — Currency                                     | Code | Numeric | Minor Units |
+
+        | ------------------------------------------------------ | ---- | ------- | ----------- |
+
+        | American Samoa — US Dollar                             | USD  | 840     | 2           |
+
+        | Bonaire, Sint Eustatius And Saba — US Dollar           | USD  | 840     | 2           |
+
+        | British Indian Ocean Territory (The) — US Dollar       | USD  | 840     | 2           |
+
+        | Ecuador — US Dollar                                    | USD  | 840     | 2           |
+
+        | El Salvador — US Dollar                                | USD  | 840     | 2           |
+
+        | Guam — US Dollar                                       | USD  | 840     | 2           |
+
+        | Haiti — US Dollar                                      | USD  | 840     | 2           |
+
+        | Marshall Islands (The) — US Dollar                     | USD  | 840     | 2           |
+
+        | Micronesia (Federated States Of) — US Dollar           | USD  | 840     | 2           |
+
+        | Northern Mariana Islands (The) — US Dollar             | USD  | 840     | 2           |
+
+        | Palau — US Dollar                                      | USD  | 840     | 2           |
+
+        | Panama — US Dollar                                     | USD  | 840     | 2           |
+
+        | Puerto Rico — US Dollar                                | USD  | 840     | 2           |
+
+        | Timor-leste — US Dollar                                | USD  | 840     | 2           |
+
+        | Turks And Caicos Islands (The) — US Dollar             | USD  | 840     | 2           |
+
+        | United States Minor Outlying Islands (The) — US Dollar | USD  | 840     | 2           |
+
+        | United States Of America (The) — US Dollar             | USD  | 840     | 2           |
+
+        | Virgin Islands (British) — US Dollar                   | USD  | 840     | 2           |
+
+        | Virgin Islands (U.s.) — US Dollar                      | USD  | 840     | 2           |
+
+
+        </details>
+
+
+        **Other ISO Currency Codes**
+
+
+        <details>
+
+
+        | Country — Currency                                                          | Code | Numeric | Minor Units |
+
+        | --------------------------------------------------------------------------- | ---- | ------- | ----------- |
+
+        | Afghanistan — Afghani                                                       | AFN  | 971     | 2           |
+
+        | Albania — Lek                                                               | ALL  | 008     | 2           |
+
+        | Algeria — Algerian Dinar                                                    | DZD  | 012     | 2           |
+
+        | Angola — Kwanza                                                             | AOA  | 973     | 2           |
+
+        | Anguilla — East Caribbean Dollar                                            | XCD  | 951     | 2           |
+
+        | Antigua And Barbuda — East Caribbean Dollar                                 | XCD  | 951     | 2           |
+
+        | Argentina — Argentine Peso                                                  | ARS  | 032     | 2           |
+
+        | Armenia — Armenian Dram                                                     | AMD  | 051     | 2           |
+
+        | Aruba — Aruban Florin                                                       | AWG  | 533     | 2           |
+
+        | Australia — Australian Dollar                                               | AUD  | 036     | 2           |
+
+        | Azerbaijan — Azerbaijan Manat                                               | AZN  | 944     | 2           |
+
+        | Bahamas (The) — Bahamian Dollar                                             | BSD  | 044     | 2           |
+
+        | Bahrain — Bahraini Dinar                                                    | BHD  | 048     | 3           |
+
+        | Bangladesh — Taka                                                           | BDT  | 050     | 2           |
+
+        | Barbados — Barbados Dollar                                                  | BBD  | 052     | 2           |
+
+        | Belarus — Belarusian Ruble                                                  | BYN  | 933     | 2           |
+
+        | Belize — Belize Dollar                                                      | BZD  | 084     | 2           |
+
+        | Benin — CFA Franc BCEAO                                                     | XOF  | 952     | 0           |
+
+        | Bermuda — Bermudian Dollar                                                  | BMD  | 060     | 2           |
+
+        | Bhutan — Indian Rupee                                                       | INR  | 356     | 2           |
+
+        | Bhutan — Ngultrum                                                           | BTN  | 064     | 2           |
+
+        | Bolivia (Plurinational State Of) — Boliviano                                | BOB  | 068     | 2           |
+
+        | Bosnia And Herzegovina — Convertible Mark                                   | BAM  | 977     | 2           |
+
+        | Botswana — Pula                                                             | BWP  | 072     | 2           |
+
+        | Bouvet Island — Norwegian Krone                                             | NOK  | 578     | 2           |
+
+        | Brazil — Brazilian Real                                                     | BRL  | 986     | 2           |
+
+        | Brunei Darussalam — Brunei Dollar                                           | BND  | 096     | 2           |
+
+        | Bulgaria — Bulgarian Lev                                                    | BGN  | 975     | 2           |
+
+        | Burkina Faso — CFA Franc BCEAO                                              | XOF  | 952     | 0           |
+
+        | Burundi — Burundi Franc                                                     | BIF  | 108     | 0           |
+
+        | Cabo Verde — Cabo Verde Escudo                                              | CVE  | 132     | 2           |
+
+        | Cambodia — Riel                                                             | KHR  | 116     | 2           |
+
+        | Cameroon — CFA Franc BEAC                                                   | XAF  | 950     | 0           |
+
+        | Canada — Canadian Dollar                                                    | CAD  | 124     | 2           |
+
+        | Cayman Islands (The) — Cayman Islands Dollar                                | KYD  | 136     | 2           |
+
+        | Central African Republic (The) — CFA Franc BEAC                             | XAF  | 950     | 0           |
+
+        | Chad — CFA Franc BEAC                                                       | XAF  | 950     | 0           |
+
+        | Chile — Chilean Peso                                                        | CLP  | 152     | 0           |
+
+        | China — Yuan Renminbi                                                       | CNY  | 156     | 2           |
+
+        | Christmas Island — Australian Dollar                                        | AUD  | 036     | 2           |
+
+        | Cocos (Keeling) Islands (The) — Australian Dollar                           | AUD  | 036     | 2           |
+
+        | Colombia — Colombian Peso                                                   | COP  | 170     | 2           |
+
+        | Comoros (The) — Comorian Franc                                              | KMF  | 174     | 0           |
+
+        | Congo (The Democratic Republic Of The) — Congolese Franc                    | CDF  | 976     | 2           |
+
+        | Congo (The) — CFA Franc BEAC                                                | XAF  | 950     | 0           |
+
+        | Cook Islands (The) — New Zealand Dollar                                     | NZD  | 554     | 2           |
+
+        | Costa Rica — Costa Rican Colon                                              | CRC  | 188     | 2           |
+
+        | Côte D''ivoire — CFA Franc BCEAO                                             | XOF  | 952     | 0           |
+
+        | Croatia — Kuna                                                              | HRK  | 191     | 2           |
+
+        | Cuba — Cuban Peso                                                           | CUP  | 192     | 2           |
+
+        | Cuba — Peso Convertible                                                     | CUC  | 931     | 2           |
+
+        | Curaçao — Netherlands Antillean Guilder                                     | ANG  | 532     | 2           |
+
+        | Czechia — Czech Koruna                                                      | CZK  | 203     | 2           |
+
+        | Denmark — Danish Krone                                                      | DKK  | 208     | 2           |
+
+        | Djibouti — Djibouti Franc                                                   | DJF  | 262     | 0           |
+
+        | Dominica — East Caribbean Dollar                                            | XCD  | 951     | 2           |
+
+        | Dominican Republic (The) — Dominican Peso                                   | DOP  | 214     | 2           |
+
+        | Egypt — Egyptian Pound                                                      | EGP  | 818     | 2           |
+
+        | El Salvador — El Salvador Colon                                             | SVC  | 222     | 2           |
+
+        | Equatorial Guinea — CFA Franc BEAC                                          | XAF  | 950     | 0           |
+
+        | Eritrea — Nakfa                                                             | ERN  | 232     | 2           |
+
+        | Ethiopia — Ethiopian Birr                                                   | ETB  | 230     | 2           |
+
+        | Falkland Islands (The) [Malvinas] — Falkland Islands Pound                  | FKP  | 238     | 2           |
+
+        | Faroe Islands (The) — Danish Krone                                          | DKK  | 208     | 2           |
+
+        | Fiji — Fiji Dollar                                                          | FJD  | 242     | 2           |
+
+        | French Polynesia — CFP Franc                                                | XPF  | 953     | 0           |
+
+        | Gabon — CFA Franc BEAC                                                      | XAF  | 950     | 0           |
+
+        | Gambia (The) — Dalasi                                                       | GMD  | 270     | 2           |
+
+        | Georgia — Lari                                                              | GEL  | 981     | 2           |
+
+        | Ghana — Ghana Cedi                                                          | GHS  | 936     | 2           |
+
+        | Gibraltar — Gibraltar Pound                                                 | GIP  | 292     | 2           |
+
+        | Greenland — Danish Krone                                                    | DKK  | 208     | 2           |
+
+        | Grenada — East Caribbean Dollar                                             | XCD  | 951     | 2           |
+
+        | Guatemala — Quetzal                                                         | GTQ  | 320     | 2           |
+
+        | Guernsey — Pound Sterling                                                   | GBP  | 826     | 2           |
+
+        | Guinea — Guinean Franc                                                      | GNF  | 324     | 0           |
+
+        | Guinea-bissau — CFA Franc BCEAO                                             | XOF  | 952     | 0           |
+
+        | Guyana — Guyana Dollar                                                      | GYD  | 328     | 2           |
+
+        | Haiti — Gourde                                                              | HTG  | 332     | 2           |
+
+        | Heard Island And Mcdonald Islands — Australian Dollar                       | AUD  | 036     | 2           |
+
+        | Honduras — Lempira                                                          | HNL  | 340     | 2           |
+
+        | Hong Kong — Hong Kong Dollar                                                | HKD  | 344     | 2           |
+
+        | Hungary — Forint                                                            | HUF  | 348     | 2           |
+
+        | Iceland — Iceland Krona                                                     | ISK  | 352     | 0           |
+
+        | India — Indian Rupee                                                        | INR  | 356     | 2           |
+
+        | Indonesia — Rupiah                                                          | IDR  | 360     | 2           |
+
+        | Iran (Islamic Republic Of) — Iranian Rial                                   | IRR  | 364     | 2           |
+
+        | Iraq — Iraqi Dinar                                                          | IQD  | 368     | 3           |
+
+        | Isle Of Man — Pound Sterling                                                | GBP  | 826     | 2           |
+
+        | Israel — New Israeli Sheqel                                                 | ILS  | 376     | 2           |
+
+        | Jamaica — Jamaican Dollar                                                   | JMD  | 388     | 2           |
+
+        | Japan — Yen                                                                 | JPY  | 392     | 0           |
+
+        | Jersey — Pound Sterling                                                     | GBP  | 826     | 2           |
+
+        | Jordan — Jordanian Dinar                                                    | JOD  | 400     | 3           |
+
+        | Kazakhstan — Tenge                                                          | KZT  | 398     | 2           |
+
+        | Kenya — Kenyan Shilling                                                     | KES  | 404     | 2           |
+
+        | Kiribati — Australian Dollar                                                | AUD  | 036     | 2           |
+
+        | Korea (The Democratic People’s Republic Of) — North Korean Won              | KPW  | 408     | 2           |
+
+        | Korea (The Republic Of) — Won                                               | KRW  | 410     | 0           |
+
+        | Kuwait — Kuwaiti Dinar                                                      | KWD  | 414     | 3           |
+
+        | Kyrgyzstan — Som                                                            | KGS  | 417     | 2           |
+
+        | Lao People’s Democratic Republic (The) — Lao Kip                            | LAK  | 418     | 2           |
+
+        | Lebanon — Lebanese Pound                                                    | LBP  | 422     | 2           |
+
+        | Lesotho — Loti                                                              | LSL  | 426     | 2           |
+
+        | Lesotho — Rand                                                              | ZAR  | 710     | 2           |
+
+        | Liberia — Liberian Dollar                                                   | LRD  | 430     | 2           |
+
+        | Libya — Libyan Dinar                                                        | LYD  | 434     | 3           |
+
+        | Liechtenstein — Swiss Franc                                                 | CHF  | 756     | 2           |
+
+        | Macao — Pataca                                                              | MOP  | 446     | 2           |
+
+        | Macedonia (The Former Yugoslav Republic Of) — Denar                         | MKD  | 807     | 2           |
+
+        | Madagascar — Malagasy Ariary                                                | MGA  | 969     | 2           |
+
+        | Malawi — Malawi Kwacha                                                      | MWK  | 454     | 2           |
+
+        | Malaysia — Malaysian Ringgit                                                | MYR  | 458     | 2           |
+
+        | Maldives — Rufiyaa                                                          | MVR  | 462     | 2           |
+
+        | Mali — CFA Franc BCEAO                                                      | XOF  | 952     | 0           |
+
+        | Mauritania — Ouguiya                                                        | MRU  | 929     | 2           |
+
+        | Mauritius — Mauritius Rupee                                                 | MUR  | 480     | 2           |
+
+        | Mexico — Mexican Peso                                                       | MXN  | 484     | 2           |
+
+        | Moldova (The Republic Of) — Moldovan Leu                                    | MDL  | 498     | 2           |
+
+        | Mongolia — Tugrik                                                           | MNT  | 496     | 2           |
+
+        | Montserrat — East Caribbean Dollar                                          | XCD  | 951     | 2           |
+
+        | Morocco — Moroccan Dirham                                                   | MAD  | 504     | 2           |
+
+        | Mozambique — Mozambique Metical                                             | MZN  | 943     | 2           |
+
+        | Myanmar — Kyat                                                              | MMK  | 104     | 2           |
+
+        | Namibia — Namibia Dollar                                                    | NAD  | 516     | 2           |
+
+        | Namibia — Rand                                                              | ZAR  | 710     | 2           |
+
+        | Nauru — Australian Dollar                                                   | AUD  | 036     | 2           |
+
+        | Nepal — Nepalese Rupee                                                      | NPR  | 524     | 2           |
+
+        | New Caledonia — CFP Franc                                                   | XPF  | 953     | 0           |
+
+        | New Zealand — New Zealand Dollar                                            | NZD  | 554     | 2           |
+
+        | Nicaragua — Cordoba Oro                                                     | NIO  | 558     | 2           |
+
+        | Niger (The) — CFA Franc BCEAO                                               | XOF  | 952     | 0           |
+
+        | Nigeria — Naira                                                             | NGN  | 566     | 2           |
+
+        | Niue — New Zealand Dollar                                                   | NZD  | 554     | 2           |
+
+        | Norfolk Island — Australian Dollar                                          | AUD  | 036     | 2           |
+
+        | Norway — Norwegian Krone                                                    | NOK  | 578     | 2           |
+
+        | Oman — Rial Omani                                                           | OMR  | 512     | 3           |
+
+        | Pakistan — Pakistan Rupee                                                   | PKR  | 586     | 2           |
+
+        | Panama — Balboa                                                             | PAB  | 590     | 2           |
+
+        | Papua New Guinea — Kina                                                     | PGK  | 598     | 2           |
+
+        | Paraguay — Guarani                                                          | PYG  | 600     | 0           |
+
+        | Peru — Sol                                                                  | PEN  | 604     | 2           |
+
+        | Philippines (The) — Philippine Peso                                         | PHP  | 608     | 2           |
+
+        | Pitcairn — New Zealand Dollar                                               | NZD  | 554     | 2           |
+
+        | Poland — Zloty                                                              | PLN  | 985     | 2           |
+
+        | Qatar — Qatari Rial                                                         | QAR  | 634     | 2           |
+
+        | Romania — Romanian Leu                                                      | RON  | 946     | 2           |
+
+        | Russian Federation (The) — Russian Ruble                                    | RUB  | 643     | 2           |
+
+        | Rwanda — Rwanda Franc                                                       | RWF  | 646     | 0           |
+
+        | Saint Helena, Ascension And Tristan Da Cunha — Saint Helena Pound           | SHP  | 654     | 2           |
+
+        | Saint Kitts And Nevis — East Caribbean Dollar                               | XCD  | 951     | 2           |
+
+        | Saint Lucia — East Caribbean Dollar                                         | XCD  | 951     | 2           |
+
+        | Saint Vincent And The Grenadines — East Caribbean Dollar                    | XCD  | 951     | 2           |
+
+        | Samoa — Tala                                                                | WST  | 882     | 2           |
+
+        | Sao Tome And Principe — Dobra                                               | STN  | 930     | 2           |
+
+        | Saudi Arabia — Saudi Riyal                                                  | SAR  | 682     | 2           |
+
+        | Senegal — CFA Franc BCEAO                                                   | XOF  | 952     | 0           |
+
+        | Serbia — Serbian Dinar                                                      | RSD  | 941     | 2           |
+
+        | Seychelles — Seychelles Rupee                                               | SCR  | 690     | 2           |
+
+        | Sierra Leone — Leone                                                        | SLL  | 694     | 2           |
+
+        | Singapore — Singapore Dollar                                                | SGD  | 702     | 2           |
+
+        | Sint Maarten (Dutch Part) — Netherlands Antillean Guilder                   | ANG  | 532     | 2           |
+
+        | Solomon Islands — Solomon Islands Dollar                                    | SBD  | 090     | 2           |
+
+        | Somalia — Somali Shilling                                                   | SOS  | 706     | 2           |
+
+        | South Africa — Rand                                                         | ZAR  | 710     | 2           |
+
+        | South Sudan — South Sudanese Pound                                          | SSP  | 728     | 2           |
+
+        | Sri Lanka — Sri Lanka Rupee                                                 | LKR  | 144     | 2           |
+
+        | Sudan (The) — Sudanese Pound                                                | SDG  | 938     | 2           |
+
+        | Suriname — Surinam Dollar                                                   | SRD  | 968     | 2           |
+
+        | Svalbard And Jan Mayen — Norwegian Krone                                    | NOK  | 578     | 2           |
+
+        | Eswatini — Lilangeni                                                        | SZL  | 748     | 2           |
+
+        | Sweden — Swedish Krona                                                      | SEK  | 752     | 2           |
+
+        | Switzerland — Swiss Franc                                                   | CHF  | 756     | 2           |
+
+        | Syrian Arab Republic — Syrian Pound                                         | SYP  | 760     | 2           |
+
+        | Taiwan (Province Of China) — New Taiwan Dollar                              | TWD  | 901     | 2           |
+
+        | Tajikistan — Somoni                                                         | TJS  | 972     | 2           |
+
+        | Tanzania, United Republic Of — Tanzanian Shilling                           | TZS  | 834     | 2           |
+
+        | Thailand — Baht                                                             | THB  | 764     | 2           |
+
+        | Togo — CFA Franc BCEAO                                                      | XOF  | 952     | 0           |
+
+        | Tokelau — New Zealand Dollar                                                | NZD  | 554     | 2           |
+
+        | Tonga — Pa’anga                                                             | TOP  | 776     | 2           |
+
+        | Trinidad And Tobago — Trinidad and Tobago Dollar                            | TTD  | 780     | 2           |
+
+        | Tunisia — Tunisian Dinar                                                    | TND  | 788     | 3           |
+
+        | Turkey — Turkish Lira                                                       | TRY  | 949     | 2           |
+
+        | Turkmenistan — Turkmenistan New Manat                                       | TMT  | 934     | 2           |
+
+        | Tuvalu — Australian Dollar                                                  | AUD  | 036     | 2           |
+
+        | Uganda — Uganda Shilling                                                    | UGX  | 800     | 0           |
+
+        | Ukraine — Hryvnia                                                           | UAH  | 980     | 2           |
+
+        | United Arab Emirates (The) — UAE Dirham                                     | AED  | 784     | 2           |
+
+        | United Kingdom Of Great Britain And Northern Ireland (The) — Pound Sterling | GBP  | 826     | 2           |
+
+        | Uruguay — Peso Uruguayo                                                     | UYU  | 858     | 2           |
+
+        | Uruguay — Unidad Previsional                                                | UYW  | 927     | 4           |
+
+        | Uzbekistan — Uzbekistan Sum                                                 | UZS  | 860     | 2           |
+
+        | Vanuatu — Vatu                                                              | VUV  | 548     | 0           |
+
+        | Venezuela (Bolivarian Republic Of) — Bolívar Soberano                       | VES  | 928     | 2           |
+
+        | Viet Nam — Dong                                                             | VND  | 704     | 0           |
+
+        | Wallis And Futuna — CFP Franc                                               | XPF  | 953     | 0           |
+
+        | Western Sahara — Moroccan Dirham                                            | MAD  | 504     | 2           |
+
+        | Yemen — Yemeni Rial                                                         | YER  | 886     | 2           |
+
+        | Zambia — Zambian Kwacha                                                     | ZMW  | 967     | 2           |
+
+        | Zimbabwe — Zimbabwe Dollar                                                  | ZWL  | 932     | 2           |
+
+
+        </details>
+
+        '
+      externalDocs:
+        description: Find more info here
+        url: https://www.iso.org/iso-4217-currency-codes.html
+      example: EUR
+    schemas-chargeKey:
+      description: Uniquely identifies a charge.
+      type: string
+      pattern: ^chg-[a-zA-Z0-9]+$
+      minLength: 1
+      maxLength: 120
+      readOnly: false
+      example: chg-1e1dAHhgstYTUhlphPzZ
+    DocumentWithoutFile:
+      type: object
+      required:
+      - key
+      - agentKey
+      - originalFilename
+      - owner
+      - status
+      - created
+      - version
+      properties:
+        key:
+          $ref: '#/components/schemas/documentKey'
+        agentKey:
+          $ref: '#/components/schemas/components-schemas-agentKey'
+        merchantKey:
+          $ref: '#/components/schemas/components-schemas-merchantKey'
+        disputeKey:
+          $ref: '#/components/schemas/disputeKey'
+        disputeStage:
+          $ref: '#/components/schemas/disputeStage'
+        originalFilename:
+          $ref: '#/components/schemas/originalFilename'
+        owner:
+          $ref: '#/components/schemas/owner'
+        description:
+          $ref: '#/components/schemas/schemas-FreeTextField'
+        status:
+          type: string
+          enum:
+          - pending
+        created:
+          $ref: '#/components/schemas/openapi_components-schemas-created-3'
+        version:
+          $ref: '#/components/schemas/openapi_components-schemas-version'
+  parameters:
+    components-parameters-offsetToken:
+      name: offsetToken
+      description: The offset token. This token is returned in the response of previous request.
+      in: query
+      required: false
+      schema:
+        $ref: '#/components/schemas/components-schemas-offsetToken'
+    actionDueDateFrom:
+      name: actionDueDateFrom
+      description: Include only items that have action due date _greater or equal_ to the specified date
+      in: query
+      required: false
+      schema:
+        type: string
+        format: date
+      example: '2021-12-01'
+    searchKeyword:
+      name: text
+      description: 'Keyword to search in a dispute. Keyword will be searched in text fields and ``dispute amount``. Date formatted fields are excluded from text search.
+
+        - ``recei`` matches ``received`` (dispute status)
+
+        - ``REC`` matches ``received`` (dispute status)
+
+        - 50 matches 50 and 500 (dispute amount)
+
+        - 9845 matches 98.45 (dispute amount in minor units)
+
+        '
+      in: query
+      required: false
+      schema:
+        type: string
+        minLength: 0
+        maxLength: 64
+        pattern: ^[a-zA-Z0-9- .]+$
+        example: received
+    actionDueDateTo:
+      name: actionDueDateTo
+      description: Include only items that have action due date _less than_ the specified date
+      in: query
+      required: false
+      schema:
+        type: string
+        format: date
+      example: '2021-12-31'
+    closed:
+      name: closed
+      in: query
+      required: false
+      schema:
+        $ref: '#/components/schemas/closed'
+    acceptorKeyQp:
+      name: acceptorKey
+      description: 'Immutable, unique identifier of the merchant acceptor
+
+        '
+      in: query
+      required: false
+      schema:
+        $ref: '#/components/schemas/openapi_components-schemas-acceptorKey'
+    parameters-sortOrder:
+      name: sortOrder
+      description: The sort order (ascending or descending)
+      in: query
+      required: false
+      schema:
+        type: string
+        enum:
+        - asc
+        - desc
+      example: desc
+    parameters-merchantKeyQs:
+      name: merchantKey
+      description: 'Immutable, unique identifier of the merchant
+
+        '
+      in: query
+      required: false
+      schema:
+        $ref: '#/components/schemas/components-schemas-merchantKey'
+    networkQps:
+      name: network
+      description: 'The card networks. Example: `network[]=visa`.
+
+        '
+      in: query
+      style: form
+      schema:
+        type: array
+        items:
+          $ref: '#/components/schemas/schemas-cardNetwork'
+    eventHistoryKey:
+      name: eventHistoryKey
+      description: Uniquely identifies a dispute history event
+      in: path
+      required: true
+      schema:
+        $ref: '#/components/schemas/DisputeEventHistoryKey'
+    actionRequired:
+      name: actionRequired
+      in: query
+      required: false
+      schema:
+        $ref: '#/components/schemas/actionRequired'
+    disputesSort:
+      name: sort
+      description: 'Orders a list by __disputeDate__, __actionDueDate__, __amount__ (ascending or descending).
+
+        '
+      in: query
+      required: false
+      schema:
+        type: object
+        properties:
+          disputeDate:
+            type: string
+            enum:
+            - asc
+            - desc
+          actionDueDate:
+            type: string
+            enum:
+            - asc
+            - desc
+          amount:
+            type: string
+            enum:
+            - asc
+            - desc
+    disputeKey:
+      name: disputeKey
+      in: path
+      required: true
+      description: 'Uniquely identifies a Dispute.
+
+        '
+      schema:
+        $ref: '#/components/schemas/disputeKey'
+    disputeStatuses:
+      name: disputeStatus
+      description: 'The list (flow)status of a Dispute.
+
+        Example: `disputeStatus=acceptanceInitiated&disputeStatus=defenseInitiated`
+
+        '
+      in: query
+      required: false
+      schema:
+        minItems: 0
+        maxItems: 7
+        type: array
+        $ref: '#/components/schemas/disputeStatuses'
+      example:
+      - acceptanceInitiated
+      - defenseInitiated
+    amountTo:
+      name: amountTo
+      description: 'The max amount in minor units. For example `$12.34` should be encoded as `1234`. Note that not all
+
+        currencies have 2 minor units. Some have three or zero.
+
+        '
+      in: query
+      required: false
+      schema:
+        $ref: '#/components/schemas/openapi_components-schemas-amountValue-2'
+    status:
+      name: status
+      description: The status of a Dispute Document
+      in: query
+      required: false
+      schema:
+        type: string
+        enum:
+        - pending
+        - active
+        - archived
+    owner:
+      name: owner
+      description: The owner of a Dispute Document
+      in: query
+      required: false
+      schema:
+        type: string
+        enum:
+        - issuer
+        - acquirer
+        - merchant
+        - card-network
+    amountFrom:
+      name: amountFrom
+      description: 'The min amount in minor units. For example `$12.34` should be encoded as `1234`. Note that not all
+
+        currencies have 2 minor units. Some have three or zero.
+
+        '
+      in: query
+      required: false
+      schema:
+        $ref: '#/components/schemas/openapi_components-schemas-amountValue-2'
+    disputeStages:
+      name: disputeStage
+      description: 'The stage of a Dispute.
+
+        Example: `disputeStage=preArbitrationResponded&disputeStage=chargebackResponded`
+
+        '
+      in: query
+      style: form
+      required: false
+      schema:
+        maxItems: 5
+        $ref: '#/components/schemas/disputeStages'
+      example:
+      - preArbitrationResponse
+      - chargebackResponse
+    ifMatch:
+      name: If-Match
+      description: The request condition
+      in: header
+      required: false
+      schema:
+        type: integer
+        format: int32
+    disputeDateFrom:
+      name: disputeDateFrom
+      description: Include only items that have dispute date _greater or equal_ to the specified date
+      in: query
+      required: false
+      schema:
+        type: string
+        format: date
+      example: '2021-12-01'
+    initiator:
+      name: initiator
+      description: The owner of a dispute event
+      in: query
+      required: false
+      schema:
+        type: string
+        enum:
+        - issuer
+        - acquirer
+        - card-network
+    limit:
+      name: limit
+      description: The number of items to return
+      in: query
+      required: false
+      schema:
+        type: integer
+        format: int32
+        minimum: 1
+        maximum: 100
+        default: 10
+      example: 1
+    disputeDateTo:
+      name: disputeDateTo
+      description: Include only items that have dispute date _less than_ the specified date
+      in: query
+      required: false
+      schema:
+        type: string
+        format: date
+      example: '2021-12-31'
+  responses:
+    responses-ConflictError:
+      description: The request could not be completed due to a conflict with the current state of the resources involved in the request.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/schemas-ProblemDetail'
+    responses-ForbiddenError:
+      description: The authenticated client is forbidden to make the request for the resource identified.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/schemas-ProblemDetail'
+          example:
+            type: https://datatracker.ietf.org/doc/html/rfc2616#section-10.4.4
+            title: Forbidden
+            status: 403
+            detail: The server is refusing to execute the request for the current authenticated user
+            instance: https://api.silverflow.co/v1/merchants/mct-1hPdFqhgstYTUhlphPDp
+    responses-BadRequestError:
+      description: The request was malformed. See the response body for details
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/schemas-ProblemDetail'
+          example:
+            type: https://datatracker.ietf.org/doc/html/rfc2616#section-10.4.1
+            title: Bad Request
+            status: 400
+            detail: The request could not be processed as it contained an invalid request entity
+            instance: https://api.silverflow.co/v1/merchants/mct-1hPdFqhgstYTUhlphPDp
+            validationErrors:
+            - The value of property 'status' should be one of 'idle', 'active' or 'archived'
+            - The value of property 'tags.0.businessId' must not be longer than 255 characters
+    responses-TooManyRequestsError:
+      description: The number of requests (per minute) has exceeded the configured maximum
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/schemas-ProblemDetail'
+          example:
+            type: https://api.silverflow.co/problem/too-many-requests
+            title: Too Many Requests
+            status: 429
+            detail: The number of requests performed by the client has exceeded the configured maximum for a given period
+    responses-PreconditionFailedError:
+      description: The conditions specified in the HTTP headers of the request were not met.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/schemas-ProblemDetail'
+          example:
+            type: https://datatracker.ietf.org/doc/html/rfc2616#section-10.4.13
+            title: Precondition failed
+            status: 412
+            detail: The version of the entity did not match the required version specified in the precondition of the request
+            instance: https://api.silverflow.co/v1/merchants/mct-1hPdFqhgstYTUhlphPDp
+            preconditionVersion: 3
+            actualVersion: 4
+    responses-UnauthorizedError:
+      description: Authentication information is missing or invalid
+      headers:
+        WWW_Authenticate:
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/schemas-ProblemDetail'
+          example:
+            type: https://datatracker.ietf.org/doc/html/rfc2616#section-10.4.2
+            title: Unauthorized
+            status: 401
+            detail: The credentials supplied in the request are either missing, invalid, or not applicable in the current scope
+    responses-NotFoundError:
+      description: The requested resource was not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/schemas-ProblemDetail'
+          example:
+            type: https://datatracker.ietf.org/doc/html/rfc2616#section-10.4.5
+            title: Not Found
+            status: 404
+            detail: The entity referenced in the request could not be found
+            instance: https://api.silverflow.co/v1/merchants/mct-1hPdFqhgstYTUhlphPDp
+  examples:
+    visa-dispute-received:
+      summary: Chargeback received
+      value:
+        key: dsp-34fgyu17u8JyvJhc4444
+        agentKey: cgt-EFG67b4yPre23ZDrLX
+        merchantKey: mct-24456D7DFGlslSen4578
+        merchantAcceptorKey: mac-24456D7DFGlslSen4578
+        chargeInfo:
+          amount:
+            value: 12824
+            currency: USD
+          arn: '56123667134444000009999'
+          localTransactionDateTime: '2023-08-17T00:00:00+00:00'
+          networkReference: '28543746470772988'
+          transactionReference: 3255TYG562324D0000772988
+          fraudLiability: acquirer
+          chargeKey: chg-EFG67b4yPre23ZDrLX
+          clearingDateTime: '2023-08-18T00:13:00.000Z'
+        cardInfo:
+          last4: '1058'
+          issuerName: Banco Mercantil
+        isPartial: false
+        disputeReference: '4547847279'
+        disputeStatus: received
+        disputeStage: chargeback
+        mid: UO2344SDDAUOGS
+        acquirerBin: '567854'
+        actionDueDate: '2023-11-17'
+        reason:
+          code: '10.4'
+          description: Card Absent Environment
+          category: Fraud
+        disputeAmount:
+          value: 12824
+          currency: USD
+        reconciliationAmount:
+          value: 12824
+          currency: USD
+        disputeDate: '2023-10-18T00:00:00.000Z'
+        network: visa
+        status: active
+        created: '2023-10-17T23:35:24.652Z'
+        version: 1
+        lastEventDate: '2023-10-17T23:23:59+00:00'
+        networkDisputeId: '437596139'
+        closed: false
+        actionRequired: true
+        disputeHandling:
+          autoDefense: false
+        defenseOptions:
+        - disputeResponseReason:
+            id: ND
+            description: Cardholder No Longer Disputes
+        - disputeResponseReason:
+            id: CP
+            description: Credit Or Reversal Processed
+        - disputeResponseReason:
+            id: ID
+            description: Invalid Dispute
+          disputeSubResponseReason:
+          - id: IDRA7
+            description: Not Listed above
+        - disputeResponseReason:
+            id: CE
+            description: Compelling Evidence
+          disputeSubResponseReason:
+          - id: CE01
+            description: Documentation to prove the cardholder is in possession of and/or using the merchandise
+          - id: CE02
+            description: Signed Delivery form, or copy of/details of identification from cardholder as proof goods were picked up at merchant location
+          - id: CE03
+            description: AVS or Y or M and proof of delivery (date and time)
+          - id: CE05
+            description: Delivery to cardholder at place of employment
+          - id: CE06
+            description: T and E Loyalty transactions related to purchase
+          - id: CE07
+            description: T and E Subsequent purchases made throughout service period
+          - id: CE08
+            description: Passenger Transport proof ticket was received, scanned at gate or other transaction related to original (e.g. frequent flyer miles)
+          - id: CE11
+            description: Signed Mail Order/Phone Order form
+          - id: CE12
+            description: Legitimate spend across multiple payment types for same merchandise
+          - id: CE14
+            description: Signer is member of cardholders household
+          - id: CE15
+            description: Flight Manifest with corresponding purchase itinerary record
+    dispute-liability-accepted:
+      summary: Liability accepted for Dispute
+      value:
+        key: dsp-34fgyu17u8JyvJhc4444
+        agentKey: cgt-EFG67b4yPre23ZDrLX
+        merchantKey: mct-24456D7DFGlslSen4578
+        merchantAcceptorKey: mac-24456D7DFGlslSen4578
+        chargeInfo:
+          amount:
+            value: 12824
+            currency: USD
+          arn: 08123667134444000009999
+          localTransactionDateTime: '2023-08-17T00:00:00+00:00'
+          networkReference: '28543746470772988'
+          transactionReference: 3255TYG562324D0000772988
+          fraudLiability: acquirer
+          chargeKey: chg-EFG67b4yPre23ZDrLX
+          clearingDateTime: '2023-08-18T00:13:00.000Z'
+        cardInfo:
+          last4: '1058'
+          issuerName: Banco Mercantil
+        isPartial: false
+        disputeReference: '4547847279'
+        disputeStatus: closedAccepted
+        disputeStage: chargeback
+        mid: UO2344SDDAUOGS
+        acquirerBin: '567854'
+        actionDueDate: '2023-11-17'
+        reason:
+          code: '4853'
+          description: Cardholder Disputes
+          category: Cardholder Disputes
+        disputeAmount:
+          value: 12824
+          currency: USD
+        reconciliationAmount:
+          value: 12824
+          currency: USD
+        disputeDate: '2023-10-18T00:00:00.000Z'
+        network: mastercard
+        status: active
+        created: '2023-10-17T23:35:24.652Z'
+        version: 4
+        lastEventDate: '2023-10-18T23:23:59+00:00'
+        networkDisputeId: '437596139'
+        closed: true
+        actionRequired: false
+        disputeHandling:
+          autoDefense: false
+        defenseOptions:
+        - disputeResponseReason:
+            id: '2700'
+            description: 2700 - See Corresponding Documentation/Chargeback Remedied
+        - disputeResponseReason:
+            id: '2011'
+            description: 2011 - Credit Previously Issued
+        - disputeResponseReason:
+            id: '2001'
+            description: 2001 - Invalid Acquirer Reference Data
+        - disputeResponseReason:
+            id: '2002'
+            description: 2002 - Non-receipt of Required Documentation to Support Chargeback
+        - disputeResponseReason:
+            id: '2004'
+            description: 2004 - Invalid Acquirer Reference Data on Chargeback
+        - disputeResponseReason:
+            id: '2701'
+            description: 2701 - Duplicate Chargeback
+        - disputeResponseReason:
+            id: '2702'
+            description: 2702 - Past Chargeback Time Limit
+        - disputeResponseReason:
+            id: '2704'
+            description: 2704 - Invalid Data Record Text
+        - disputeResponseReason:
+            id: '2709'
+            description: 2709 - Documentation Received was Illegible
+        - disputeResponseReason:
+            id: '2710'
+            description: 2710 - Unrelated Documents or Partial Scan
+        - disputeResponseReason:
+            id: '2713'
+            description: 2713 - Invalid Chargeback
+    dispute-expires:
+      summary: Dispute expires (acquirer side)
+      value:
+        key: dsp-34fgyu17u8JyvJhc4444
+        agentKey: cgt-EFG67b4yPre23ZDrLX
+        merchantKey: mct-24456D7DFGlslSen4578
+        merchantAcceptorKey: mac-24456D7DFGlslSen4578
+        chargeInfo:
+          amount:
+            value: 12824
+            currency: USD
+          arn: '56123667134444000009999'
+          localTransactionDateTime: '2023-08-17T00:00:00+00:00'
+          networkReference: '28543746470772988'
+          transactionReference: 3255TYG562324D0000772988
+          fraudLiability: acquirer
+          chargeKey: chg-EFG67b4yPre23ZDrLX
+          clearingDateTime: '2023-08-18T00:13:00.000Z'
+        cardInfo:
+          last4: '1058'
+          issuerName: Banco Mercantil
+        isPartial: false
+        disputeReference: '4547847279'
+        disputeStatus: closedLost
+        disputeStage: chargeback
+        mid: UO2344SDDAUOGS
+        acquirerBin: '567854'
+        actionDueDate: '2023-11-17'
+        reason:
+          code: '13.7'
+          description: Cancelled Merchandise/Services
+          category: Cardholder Disputes
+        disputeAmount:
+          value: 12824
+          currency: USD
+        reconciliationAmount:
+          value: 12824
+          currency: USD
+        disputeDate: '2023-10-18T00:00:00.000Z'
+        network: visa
+        status: active
+        created: '2023-10-17T23:35:24.652Z'
+        lastModified: '2023-11-17T23:59:00.000Z'
+        version: 4
+        lastEventDate: '2023-10-18T10:11:00+00:00'
+        disputeStatusReason: ''
+        networkDisputeId: '437596139'
+        closed: true
+        actionRequired: false
+        submittedDefense: {}
+        disputeHandling:
+          autoDefense: false
+        defenseOptions:
+        - disputeResponseReason:
+            id: CNLD
+            description: Cardholder No Longer Disputes
+        - disputeResponseReason:
+            id: NL
+            description: Not Listed
+        - disputeResponseReason:
+            id: CP
+            description: Credit Or Reversal Processed
+        - disputeResponseReason:
+            id: ID
+            description: Invalid Dispute
+          disputeSubResponseReason:
+          - id: IDRC1
+            description: Services or merchandise were provided prior to cancellation date
+          - id: IDRC9
+            description: Disputed amount is due to Value Added Tax
+          - id: IDRC10
+            description: Returned Merchandise is being held in a custom agency outside the merchant's country
+          - id: IDRC18
+            description: Merchant properly disclosed a limited return or cancellation policy at the time of the transaction
+          - id: IDRC19
+            description: Cardholder received merchant cancellation or return policy and did not cancel according to policy
+          - id: IDRC23
+            description: Dispute is for quality
+          - id: IDRC24
+            description: Cardholder did not attempt to return merchandise
+          - id: IDRC25
+            description: Not listed above
+    mc-chargeback-received:
+      summary: 'Mastercard: A chargeback has been received'
+      value:
+        key: deh-3jdAyQ5ELRqpuxpO8SaA
+        agentKey: cgt-24OJ9rv4u6x5jEu3MP91
+        merchantKey: mct-3xrcuvGUx8ORqnx3347e
+        merchantAcceptorKey: mac-3C1j58SixdfARL5qmmlx
+        disputeStatus: received
+        disputeStage: chargeback
+        disputeAmount:
+          value: 1234
+          currency: EUR
+        disputeReason:
+          code: '4853'
+          description: Cardholder Disputes
+          category: Cardholder Disputes
+        files:
+        - filename: mastercom-123456789.pdf
+          originalFilename: 00AABBCCDDEEFF.pdf
+          contentType: application/pdf
+          contentLength: 1234567
+          owner: issuer
+          disputeStage: chargeback
+          key: dok-3qB1HcvH56pKlDj1lnob
+        created: '2023-08-01T11:20:42.340Z'
+        eventDate: '2023-08-01T11:20:40.000Z'
+        disputeKey: dsp-2WfYI0z3Y1N58H07MVKr
+        initiator: issuer
+        disputeVersion: 2
+        status: active
+        eventDetails:
+          messageText: 9189690734CARDHOLDER DID NOT AUTHORISE
+    dispute-awaiting-response:
+      summary: Defense successfully processed
+      value:
+        key: dsp-34fgyu17u8JyvJhc4444
+        agentKey: cgt-EFG67b4yPre23ZDrLX
+        merchantKey: mct-24456D7DFGlslSen4578
+        merchantAcceptorKey: mac-24456D7DFGlslSen4578
+        chargeInfo:
+          amount:
+            value: 12824
+            currency: USD
+          arn: '56123667134444000009999'
+          localTransactionDateTime: '2023-08-17T00:00:00+00:00'
+          networkReference: '28543746470772988'
+          transactionReference: 3255TYG562324D0000772988
+          fraudLiability: acquirer
+          chargeKey: chg-EFG67b4yPre23ZDrLX
+          clearingDateTime: '2023-08-18T00:13:00.000Z'
+        cardInfo:
+          last4: '1058'
+          issuerName: Banco Mercantil
+        isPartial: false
+        disputeReference: '4547847279'
+        disputeStatus: awaitingResponse
+        disputeStage: chargeback
+        mid: UO2344SDDAUOGS
+        acquirerBin: '567854'
+        actionDueDate: '2023-11-17'
+        reason:
+          code: '13.1'
+          description: Merchandise/Services Not Received
+          category: Cardholder Disputes
+        disputeAmount:
+          value: 12824
+          currency: USD
+        reconciliationAmount:
+          value: 12824
+          currency: USD
+        disputeDate: '2023-10-18T00:00:00.000Z'
+        network: visa
+        status: active
+        created: '2023-10-17T23:35:24.652Z'
+        lastModified: '2023-10-25T21:12:23.652Z'
+        version: 4
+        lastEventDate: '2023-10-25T21:12:23+00:00'
+        disputeStatusReason: ''
+        networkDisputeId: '437596139'
+        closed: false
+        actionRequired: false
+        submittedDefense: {}
+        disputeHandling:
+          autoDefense: false
+    visa-prearbitration-received:
+      summary: 'Visa: A prearbitration was received'
+      value:
+        key: deh-3jdAyQ5ELRqpuxpO8SaA
+        agentKey: cgt-24OJ9rv4u6x5jEu3MP91
+        merchantKey: mct-3xrcuvGUx8ORqnx3347e
+        merchantAcceptorKey: mac-3C1j58SixdfARL5qmmlx
+        disputeStatus: received
+        disputeStage: preArbitration
+        disputeAmount:
+          value: 1234
+          currency: EUR
+        disputeReason:
+          code: '13.1'
+          description: Merchandise/Services Not Received
+          category: Cardholder Disputes
+        files:
+        - filename: vrol-9876543210-1234567890.pdf
+          originalFilename: 1234567890.pdf
+          contentType: application/pdf
+          contentLength: 85833
+          owner: issuer
+          disputeStage: chargebackResponse
+          key: dok-3CubbFcp9HRtaHFiEav5
+        created: '2023-08-01T11:20:42.340Z'
+        eventDate: '2023-08-01T11:20:40.000Z'
+        disputeKey: dsp-2WfYI0z3Y1N58H07MVKr
+        initiator: issuer
+        disputeVersion: 5
+        status: active
+        eventDetails: {}
+    visa-chargeback-received:
+      summary: 'Visa: Chargeback received'
+      value:
+        key: deh-3jdAyQ5ELRqpuxpO8SaA
+        agentKey: cgt-24OJ9rv4u6x5jEu3MP91
+        merchantKey: mct-3xrcuvGUx8ORqnx3347e
+        merchantAcceptorKey: mac-3C1j58SixdfARL5qmmlx
+        disputeStatus: received
+        disputeStage: chargeback
+        disputeAmount:
+          value: 1234
+          currency: EUR
+        disputeReason:
+          code: '13.1'
+          description: Merchandise/Services Not Received
+          category: Cardholder Disputes
+        files:
+        - filename: vrol-9876543210-1234567890.pdf
+          originalFilename: 1234567890.pdf
+          contentType: application/pdf
+          contentLength: 234567
+          owner: issuer
+          disputeStage: chargeback
+          key: dok-3qB1HcvH56pKlDj1lnob
+        - filename: vrol-9876543210-1234567891.pdf
+          originalFilename: 1234567891.pdf
+          contentType: application/pdf
+          contentLength: 345678
+          owner: issuer
+          disputeStage: chargeback
+          key: dok-3CubbFcp9HRtaHFiEav5
+        created: '2023-08-01T11:20:42.340Z'
+        eventDate: '2023-08-01T11:20:40.000Z'
+        disputeKey: dsp-2WfYI0z3Y1N58H07MVKr
+        initiator: issuer
+        disputeVersion: 1
+        status: active
+        eventDetails:
+          issuerQuestionnaire:
+            DisputeDueTo: NR
+            CardholderAttemptToResolve: Y
+            WhatWasNotReceived: S
+            ThirdPartyGiftCardInd: N
+            PurchasedInfo: THE CARDHOLDER HAS PAID FOR THE SERVICE. THE AMOUNT WAS WITHDRAWN FROM THE CARD, BUT NO SERVICE WAS PROVIDED TO THE CARDHOLDER. THE CARDHOLDER TRIED TO COMMUNICATE WITH THE MERCHANT BUT DID NOT GET ANY RESULTS. THE CARDHOLDER WANTS TO GET THE AMOUNT BACK.
+            ExpectedReceiptDate: '2023-09-20'
+            ExpectedReceiptTime: 20.09.2023
+            DidCardholderCancelPriorExpectedDate: N
+    collaboration-request-received:
+      summary: 'Mastercard: A collaboration request has been received'
+      value:
+        key: deh-3jdAyQ5ELRqpuxpO8SaA
+        agentKey: cgt-24OJ9rv4u6x5jEu3MP91
+        merchantKey: mct-3xrcuvGUx8ORqnx3347e
+        merchantAcceptorKey: mac-3C1j58SixdfARL5qmmlx
+        disputeStatus: received
+        disputeStage: collaboration
+        disputeAmount:
+          value: 1234
+          currency: EUR
+        disputeReason:
+          code: '4853'
+          description: Cardholder Disputes
+          category: Cardholder Disputes
+        created: '2023-08-01T11:20:42.340Z'
+        eventDate: '2023-08-01T11:20:40.000Z'
+        disputeKey: dsp-2WfYI0z3Y1N58H07MVKr
+        initiator: issuer
+        disputeVersion: 1
+        status: active
+        eventDetails:
+          elaboration: ISSUER MEMO
+    prearbitration-response-received:
+      summary: 'Visa: Prearbitration response received'
+      value:
+        key: deh-3jdAyQ5ELRqpuxpO8SaA
+        agentKey: cgt-24OJ9rv4u6x5jEu3MP91
+        merchantKey: mct-3xrcuvGUx8ORqnx3347e
+        merchantAcceptorKey: mac-3C1j58SixdfARL5qmmlx
+        disputeStatus: received
+        disputeStage: preArbitrationResponse
+        disputeAmount:
+          value: 1234
+          currency: EUR
+        disputeReason:
+          code: '13.1'
+          description: Merchandise/Services Not Received
+          category: Cardholder Disputes
+        created: '2023-08-01T11:20:42.340Z'
+        eventDate: '2023-08-01T11:20:40.000Z'
+        disputeKey: dsp-2WfYI0z3Y1N58H07MVKr
+        initiator: issuer
+        disputeVersion: 17
+        status: active
+        eventDetails:
+          elaboration: Invalid pre arbitration, after presenting cardholder with the information and documentation received in your pre arbitration, cardholder still denies authorizing or participating in this transaction.
+    mc-prearbitration-received:
+      summary: 'Mastercard: A prearbitration was received'
+      value:
+        key: deh-3jdAyQ5ELRqpuxpO8SaA
+        agentKey: cgt-24OJ9rv4u6x5jEu3MP91
+        merchantKey: mct-3xrcuvGUx8ORqnx3347e
+        merchantAcceptorKey: mac-3C1j58SixdfARL5qmmlx
+        disputeStatus: received
+        disputeStage: preArbitration
+        disputeAmount:
+          value: 1234
+          currency: EUR
+        disputeReason:
+          code: '4853'
+          description: Cardholder Disputes
+          category: Cardholder Disputes
+        files: []
+        created: '2023-08-01T11:20:42.340Z'
+        eventDate: '2023-08-01T11:20:40.000Z'
+        disputeKey: dsp-2WfYI0z3Y1N58H07MVKr
+        initiator: issuer
+        disputeVersion: 6
+        status: active
+        eventDetails:
+          elaboration: 'The Reason for Filing:
+
+            PRE-ARBITRATION ATTEMPT'
+    mc-defense-successfully-processed:
+      summary: 'Mastercard: A defense was successfully processed'
+      value:
+        key: deh-3jdAyQ5ELRqpuxpO8SaA
+        agentKey: cgt-24OJ9rv4u6x5jEu3MP91
+        merchantKey: mct-3xrcuvGUx8ORqnx3347e
+        merchantAcceptorKey: mac-3C1j58SixdfARL5qmmlx
+        disputeStatus: awaitingResponse
+        disputeStage: chargebackResponse
+        disputeAmount:
+          value: 1234
+          currency: EUR
+        disputeReason:
+          code: '4853'
+          description: Cardholder Disputes
+          category: Cardholder Disputes
+        created: '2023-08-01T11:20:42.340Z'
+        eventDate: '2023-08-01T11:20:40.000Z'
+        disputeKey: dsp-2WfYI0z3Y1N58H07MVKr
+        initiator: issuer
+        files: []
+        disputeVersion: 3
+        status: active
+        eventDetails:
+          messageText: please refer to the attachment
+          responseReason: '2713'
+    visa-defense-successfully-processed:
+      summary: 'Visa: A defense was successfully processed'
+      value:
+        key: deh-3jdAyQ5ELRqpuxpO8SaA
+        agentKey: cgt-24OJ9rv4u6x5jEu3MP91
+        merchantKey: mct-3xrcuvGUx8ORqnx3347e
+        merchantAcceptorKey: mac-3C1j58SixdfARL5qmmlx
+        disputeStatus: awaitingResponse
+        disputeStage: chargebackResponse
+        disputeAmount:
+          value: 1234
+          currency: EUR
+        disputeReason:
+          code: '13.1'
+          description: Merchandise/Services Not Received
+          category: Cardholder Disputes
+        created: '2023-08-01T11:20:42.340Z'
+        eventDate: '2023-08-01T11:20:40.000Z'
+        disputeKey: dsp-2WfYI0z3Y1N58H07MVKr
+        initiator: acquirer
+        disputeVersion: 4
+        status: active
+        eventDetails: {}
+    liability-accepted:
+      summary: Liability for a dispute has been accepted
+      value:
+        key: deh-3jdAyQ5ELRqpuxpO8SaA
+        agentKey: cgt-24OJ9rv4u6x5jEu3MP91
+        merchantKey: mct-3xrcuvGUx8ORqnx3347e
+        merchantAcceptorKey: mac-3C1j58SixdfARL5qmmlx
+        disputeStatus: closedAccepted
+        disputeStage: chargeback
+        disputeAmount:
+          value: 1234
+          currency: EUR
+        disputeReason:
+          code: '13.1'
+          description: Merchandise/Services Not Received
+          category: Cardholder Disputes
+        comment: This dispute was closed as the Acquirer accepted liability.
+        created: '2023-08-01T11:20:42.340Z'
+        eventDate: '2023-08-01T11:20:40.000Z'
+        disputeKey: dsp-2WfYI0z3Y1N58H07MVKr
+        initiator: issuer
+        disputeVersion: 1
+        status: active
+    dispute-expires-acquirer-side:
+      summary: A dispute was lost
+      value:
+        key: deh-3jdAyQ5ELRqpuxpO8SaA
+        agentKey: cgt-24OJ9rv4u6x5jEu3MP91
+        merchantKey: mct-3xrcuvGUx8ORqnx3347e
+        merchantAcceptorKey: mac-3C1j58SixdfARL5qmmlx
+        disputeStatus: closedLost
+        disputeStage: chargeback
+        disputeAmount:
+          value: 1234
+          currency: EUR
+        disputeReason:
+          code: '13.1'
+          description: Merchandise/Services Not Received
+          category: Cardholder Disputes
+        comment: This dispute was lost because it either expired or the card network ruled in favour of the Issuer.
+        created: '2023-08-01T11:20:42.340Z'
+        eventDate: '2023-08-01T11:20:40.000Z'
+        disputeKey: dsp-2WfYI0z3Y1N58H07MVKr
+        initiator: issuer
+        disputeVersion: 2
+        status: active
+    dispute-closedWon:
+      summary: Dispute is won
+      value:
+        key: dsp-34fgyu17u8JyvJhc4444
+        agentKey: cgt-EFG67b4yPre23ZDrLX
+        merchantKey: mct-24456D7DFGlslSen4578
+        merchantAcceptorKey: mac-24456D7DFGlslSen4578
+        chargeInfo:
+          amount:
+            value: 12824
+            currency: USD
+          arn: '56123667134444000009999'
+          localTransactionDateTime: '2023-08-17T00:00:00+00:00'
+          networkReference: '28543746470772988'
+          transactionReference: 3255TYG562324D0000772988
+          fraudLiability: acquirer
+          chargeKey: chg-EFG67b4yPre23ZDrLX
+          clearingDateTime: '2023-08-18T00:13:00.000Z'
+        cardInfo:
+          last4: '1058'
+          issuerName: Banco Mercantil
+        isPartial: false
+        disputeReference: '4547847279'
+        disputeStatus: closedWon
+        disputeStage: chargebackResponse
+        mid: UO2344SDDAUOGS
+        acquirerBin: '567854'
+        actionDueDate: '2023-11-17'
+        reason:
+          code: '13.1'
+          description: Merchandise/Services Not Received
+          category: Cardholder Disputes
+        disputeAmount:
+          value: 12824
+          currency: USD
+        reconciliationAmount:
+          value: 12824
+          currency: USD
+        disputeDate: '2023-10-18T00:00:00.000Z'
+        network: visa
+        status: active
+        created: '2023-10-17T23:35:24.652Z'
+        lastModified: '2023-10-25T23:35:24.652Z'
+        version: 4
+        lastEventDate: '2023-10-22T23:23:59+00:00'
+        disputeStatusReason: ''
+        networkDisputeId: '437596139'
+        closed: true
+        actionRequired: false
+        submittedDefense: {}
+        disputeHandling:
+          autoDefense: false
+    create-dispute-document:
+      summary: Example request body of a dispute document
+      value:
+        originalFilename: bright.jpeg
+        description: This shipping receipt proved of that purchased items were delivered on time.
+    dispute-won:
+      summary: A dispute was won
+      value:
+        key: deh-3jdAyQ5ELRqpuxpO8SaA
+        agentKey: cgt-24OJ9rv4u6x5jEu3MP91
+        merchantKey: mct-3xrcuvGUx8ORqnx3347e
+        merchantAcceptorKey: mac-3C1j58SixdfARL5qmmlx
+        disputeStatus: closedWon
+        disputeStage: chargeback
+        disputeAmount:
+          value: 1234
+          currency: EUR
+        disputeReason:
+          code: '13.1'
+          description: Merchandise/Services Not Received
+          category: Cardholder Disputes
+        created: '2023-08-01T11:20:42.340Z'
+        eventDate: '2023-08-01T11:20:40.000Z'
+        disputeKey: dsp-2WfYI0z3Y1N58H07MVKr
+        initiator: issuer
+        disputeVersion: 1
+        status: active
+  securitySchemes:
+    ApiKey:
+      description: "The primary method of authenticating to the Silverflow API is through API keys.\n\nAPI keys can be created by calling the [createApiKey](#operation/createApiKey) endpoint. You can create up to 40 API keys and also update and delete them, allowing for _credential rotation_.\n\nThe _Agent Activation_ process will generate an initial API Key for you. See [Activate Agent](#section/Getting-Started).\n\nA call to the [createApiKey](#operation/createApiKey) endpoint will return the following structure:\n\n```json\n{\n    \"key\": \"apk-1wtRxni5IsPsSpBLWpwr\",\n    \"status\": \"active\",\n    \"agentKey\": \"cgt-1wtRvFLIjDOyyUR5Q2LB\",\n    \"description\": \"Data lake API key\",\n    \"permissions\": [\n        \"charges:List\",\n        \"reports:All\"\n    ],\n    \"created\": \"2021-06-22T11:21:45.115Z\",\n    \"secret\": \"FWtnOOHAjbD6rNxWWEeVOCj7JXSEPGJQ\",\n    \"version\": 1\n}\n```\n\n> **Important:** The `secret` is only returned once in the response to the `createApiKey` call.\n\nOnce created, the `key` and `secret` fields from the API key must be used in the HTTP `Authorization` header using the `Basic` scheme.\nThe Basic scheme requires a **username** and **password** to be specified, separated by a `:` (colon) and Base64 encoded.\n\nUse the following values from the API key to construct a Basic authentication header:\n\n| Basic field | API key field | Example |\n| ----------- | ------------- | ------- |\n| username | `key` | `apk-1wtRxni5IsPsSpBLWpwr` |\n| password | `secret` | `FWtnOOHAjbD6rNxWWEeVOCj7JXSEPGJQ` |\n\nIn pseudo-code a valid HTTP Basic Authentication header would be constructed as follows:\n\n```ts\nconst apiKeyId = \"apk-1wtRxni5IsPsSpBLWpwr\";\nconst apiKeySecret = \"FWtnOOHAjbD6rNxWWEeVOCj7JXSEPGJQ\";\nconst authnValue = \"Basic \" + base64Encode(apiKeyId + \":\" + apiKeySecret);\nrequest.setHeader(\"Authorization\", authnValue);\n```\n\nUsing the values from the example a valid HTTP request would look like the following:\n\n```http\nGET /v1/agents/current HTTP/1.1\nAccept: application/json\nAuthorization: Basic YXBrLTF3dFJ4bmk1SXNQc1NwQkxXcHdyOkZXdG5PT0hBamJENnJOeFdXRWVWT0NqN0pYU0VQR0pR\n```\n\nMore information on the Basic scheme can be found in [RFC-7617 - The 'Basic' HTTP Authentication Scheme](https://datatracker.ietf.org/doc/html/rfc7617)."
+      type: http
+      scheme: basic
+    BearerToken:
+      description: 'Bearer tokens are temporary security credentials that can be used to authorize ''third parties'' (bearers) access to the Silverflow API on behalf of the agent.
+
+
+        These tokens are created by calling the [createAgentBearerToken](#operation/createAgentBearerToken) endpoint.
+
+
+        Once created the `token` field must be used in the HTTP `Authorization` header using the `Bearer` scheme.
+
+        Here''s an example of an HTTP request with a bearer token:
+
+
+        ```http
+
+        GET /v1/merchants/mct-1hPdFhmgaBzMS191nIbJ HTTP/1.1
+
+        Accept: application/json
+
+        Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...40EFOgxf_3I6mPZ16bXqHd5tUyApgl0mNOAXPm5AhnA
+
+
+        ```
+
+
+        More information on the Bearer scheme can be found in [RFC-6750 - The OAuth 2.0 Authorization Framework: Bearer Token Usage](https://datatracker.ietf.org/doc/html/rfc6750).'
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+    MutualTLS:
+      type: apiKey
+      in: header
+      name: '-'
+      description: 'The client must set up mTLS connection with a valid X.509 client certificate signed by a customer-provided CA (certificate authority) that is registered to a specific agent. The customer-provided CA certificate must be shared and added to Silverflow''s trust store prior to calling endpoints.
+
+
+        Certificate validation happens at the transport layer during TLS handshake. Tenant verification is performed by matching the agent key embedded in the client certificate against the agent key embedded in the trusted CA.
+
+        '
+x-refined-from:
+- silverflow-openapi.yml
+- silverflow-openapi.yml
+x-tagGroups:
+- name: ''
+  tags:
+  - Introduction
+  - Release Notes
+- name: Accounts
+  tags:
+  - Agents
+  - API Keys
+  - Bins
+  - Merchants
+  - Merchant Acceptors
+  - Enrollments
+  - Screenings
+- name: Event Notifications
+  tags:
+  - Event Subscriptions
+  - Charges Events
+  - Disputes Events
+  - Fraud Notification Events
+  - Processor Tokens Events
+  - Network Tokens Events
+  - Report Events
+  - Distribution Events
+  - AMMF Submission Events
+  - Reconciliation Events
+  - Clearing Events
+- name: 3DS Authentication
+  tags:
+  - 3DS Authentication
+- name: BEP Authentication
+  tags:
+  - BEP Authentication
+- name: Tokenization
+  tags:
+  - Processor Tokenization
+  - Network Tokenization
+- name: Charges
+  tags:
+  - Create Charges
+  - Create Recurring
+  - Retrieve Charges
+  - Charge Actions
+- name: Terminal-To-Cloud
+  tags:
+  - Create POS Charges
+  - Retrieve POS Charges
+  - POS Charge Actions
+- name: Card Management
+  tags:
+  - Card Management
+- name: Disputes
+  tags:
+  - Disputes
+  - Documents
+- name: Fraud Notifications
+  tags:
+  - Fraud Notifications
+- name: Card Info
+  tags:
+  - Card Info
+- name: Currency Conversion Rates
+  tags:
+  - Currency Conversion Rates
+- name: Fees
+  tags:
+  - Fees
+- name: Reconciliation
+  tags:
+  - Reconciliation Details
+  - Network Funds Transfers
+- name: Reports
+  tags:
+  - Reconciliation Reports
+  - Settlement Reports
+  - Card Network Reports
+  - Dispute Reports
+  - Fraud Notifications Reports
+  - Charges Reports
+  - Scheme Fee Reports
+  - Retrieve Reports
+  - Report Scheduling
+  - Distributions
+- name: Transaction Risk Assessment
+  tags:
+  - Transaction Risk Assessment
+- name: File Subscriptions
+  tags:
+  - File Subscriptions

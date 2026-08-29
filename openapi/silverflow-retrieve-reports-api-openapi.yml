@@ -1,0 +1,2385 @@
+openapi: 3.2.0
+info:
+  title: Silverflow Retrieve Reports API
+  version: 1.417.0
+  contact:
+    name: API Support
+    email: support@silverflow.com
+  license:
+    name: Commercial
+  description: 'Operations tagged Retrieve Reports across 2 of this provider''s published API definitions: silverflow-openapi.yml, silverflow-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://eu-west-1.api.silverflow.com/v1
+  description: Production URL for Europe - Equivalent to https://api.silverflow.co/v1
+- url: https://us-east-2.api.silverflow.com/v1
+  description: Production URL for North America
+- url: https://eu-west-1.api-sbx.silverflow.com/v1
+  description: Sandbox URL - Equivalent to https://api-sbx.silverflow.co/v1
+security:
+- ApiKey: []
+- BearerToken: []
+tags:
+- name: Retrieve Reports
+paths:
+  /reports:
+    get:
+      operationId: listReport
+      summary: List Reports
+      description: 'Returns a list of reports.
+
+
+        Requires the `reports:List` permission.
+
+        '
+      tags:
+      - Retrieve Reports
+      parameters:
+      - $ref: '#/components/parameters/createdFrom'
+      - $ref: '#/components/parameters/createdTo'
+      - $ref: '#/components/parameters/parameters-limit'
+      - $ref: '#/components/parameters/openapi_components-parameters-offsetToken-3'
+      - $ref: '#/components/parameters/components-parameters-sortOrder'
+      responses:
+        '200':
+          description: List of reports
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListReportResponse'
+              example:
+                items:
+                - reportName: SchemeFeeDetails
+                  parameters:
+                    bookDateFrom: '2019-08-24T14:15:22Z'
+                    bookDateTo: '2019-08-24T14:15:22Z'
+                  mimeType: application/json
+                  key: rep-1e1dAHhgstYTUhlphPzZ
+                  agentKey: cgt-1e1dAHhgstYTUhlphPzZ
+                  reference: Report Reference
+                  status: completed
+                  result:
+                    size: 1337
+                    lastToken: ZfDH6YfTwPU2TweAN6a5Rk6cLZ1Xxyms
+                  created: '2019-08-24T14:15:22Z'
+                  lastModified: '2019-08-25T14:15:22Z'
+                  version: 2
+                moreItems: true
+                offsetToken: eyJMaXN0SW5kZXhLZXkiOiJjZ3QtMTIzNDU2IiwiTGlzdEluZGV4U29ydEtleSI6IjIwMjMtMTEtMTdUMTQ6NDA6MjcuOTcwWiIsIlR5cGVLZXkiOiJSZXBvcnQiLCJPYmplY3RLZXkiOiJyZXAtMTIzNDU2In0
+        '204':
+          description: No report found
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                oneOf:
+                - $ref: '#/components/schemas/InputValidationError'
+                - $ref: '#/components/schemas/schemas-InvalidOffsetTokenError'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotAuthorizedErrorDetails'
+              example:
+                type: /silverflow/problems/report/not-authorized
+                title: Not authorized
+                status: 401
+                detail: The agent is not authorized to perform this action
+                instance: /silverflow/8e445b2e-d745-4b38-a38d-781fc998e442
+        '403':
+          $ref: '#/components/responses/openapi_components-responses-ForbiddenError-3'
+        '429':
+          $ref: '#/components/responses/openapi_components-responses-TooManyRequestsError-3'
+    servers:
+    - url: https://eu-west-1.api.silverflow.com/v1
+      description: Production URL for Europe - Equivalent to https://api.silverflow.co/v1
+    - url: https://us-east-2.api.silverflow.com/v1
+      description: Production URL for North America
+    - url: https://eu-west-1.api-sbx.silverflow.com/v1
+      description: Sandbox URL - Equivalent to https://api-sbx.silverflow.co/v1
+  /reports/{reportKey}:
+    get:
+      operationId: getReport
+      summary: Get Report
+      description: "Returns a report.\n\nRequires the `reports:Get` permission\n\nFor the **SchemeFeeDetails** and **ReconciliationDetails** reports, their respective permissions are also accepted as alternatives to `reports:Get`.\n  - `reports:GetSchemeFeeDetails`\n  - `reports:GetReconciliationDetails`\n"
+      tags:
+      - Retrieve Reports
+      parameters:
+      - in: path
+        name: reportKey
+        required: true
+        schema:
+          $ref: '#/components/schemas/reportKey'
+      responses:
+        '200':
+          description: A report object
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Report'
+              examples:
+                schemeFeeDetails:
+                  $ref: '#/components/examples/SchemeFeeDetailsReport'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                oneOf:
+                - $ref: '#/components/schemas/InputValidationError'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotAuthorizedErrorDetails'
+              example:
+                type: /silverflow/problems/report/not-authorized
+                title: Not authorized
+                status: 401
+                detail: The agent is not authorized to perform this action
+                instance: /silverflow/8e445b2e-d745-4b38-a38d-781fc998e442
+        '403':
+          $ref: '#/components/responses/openapi_components-responses-ForbiddenError-3'
+        '404':
+          description: Report not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReportNotFoundErrorDetails'
+              example:
+                type: /silverflow/problems/report/report-not-found
+                title: Report not found
+                status: 404
+                detail: The report rep-1e1dAHhgstYTUhlphPzZ is not found
+                instance: /silverflow/b4cc37a0-ab24-46b4-aa8c-cc2d6eddf1b6
+        '429':
+          $ref: '#/components/responses/openapi_components-responses-TooManyRequestsError-3'
+    servers:
+    - url: https://eu-west-1.api.silverflow.com/v1
+      description: Production URL for Europe - Equivalent to https://api.silverflow.co/v1
+    - url: https://us-east-2.api.silverflow.com/v1
+      description: Production URL for North America
+    - url: https://eu-west-1.api-sbx.silverflow.com/v1
+      description: Sandbox URL - Equivalent to https://api-sbx.silverflow.co/v1
+  /reports/{reportKey}/file:
+    get:
+      operationId: getReportFile
+      summary: Get Report File
+      description: "Returns the Report data as a downloadable file. This will return a `307` (redirect) status code, redirecting the request to the location of the file.\n\nTo optimize the file download, the contents are `gzip` encoded. The Response contents need to be unzipped.\n\nNot every report is in `application/json` format, thus there aren't response schema's available for every report type.\n\nThe file URL the request is redirected to, will remain **available for 1 hour**. After this time, you need to call this endpoint to generate a new URL. Make sure your HTTP client is configured to follow redirects, so you can correctly obtain the file.\n\nRequires one of the following permissions depending on the report:\n  - `reports:Download`\n  - `reports:DownloadSchemeFeeDetails`\n  - `reports:DownloadReconciliationDetails`\n  - `reports:DownloadQuarterlySchemeReport`\n  - `reports:DownloadNetworkFundsTransfers`\n  - `reports:DownloadCharges`\n  - `reports:DownloadFraudNotifications`\n  - `reports:DownloadDisputeHistoryEvents`\n"
+      tags:
+      - Retrieve Reports
+      parameters:
+      - in: path
+        name: reportKey
+        required: true
+        schema:
+          $ref: '#/components/schemas/reportKey'
+      responses:
+        '204':
+          description: The report is not available to download yet
+        '307':
+          description: Report file
+          content:
+            application/json:
+              schema:
+                oneOf:
+                - $ref: '#/components/schemas/SchemeFeeDetailsReportFile'
+              examples:
+                schemeFeeDetailsReport:
+                  $ref: '#/components/examples/JSON'
+            application/x-ndjson:
+              schema:
+                oneOf:
+                - type: string
+                  title: SchemeFeeDetails
+              examples:
+                schemeFeeDetailsReport:
+                  $ref: '#/components/examples/NDJSON'
+            text/csv:
+              schema:
+                type: string
+              examples:
+                schemeFeeDetailsReport:
+                  $ref: '#/components/examples/CSV'
+            application/vnd.ms-excel:
+              schema:
+                oneOf:
+                - type: string
+                  title: VisaQuarterlySchemeReport
+                - type: string
+                  title: MastercardQuarterlySchemeReport
+          headers:
+            Content-Disposition:
+              schema:
+                type: string
+                enum:
+                - attachment
+            Content-Encoding:
+              schema:
+                type: string
+                enum:
+                - gzip
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                oneOf:
+                - $ref: '#/components/schemas/InputValidationError'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotAuthorizedErrorDetails'
+              example:
+                type: /silverflow/problems/report/not-authorized
+                title: Not authorized
+                status: 401
+                detail: The agent is not authorized to perform this action
+                instance: /silverflow/8e445b2e-d745-4b38-a38d-781fc998e442
+        '403':
+          $ref: '#/components/responses/openapi_components-responses-ForbiddenError-3'
+        '404':
+          description: Report not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReportNotFoundErrorDetails'
+              example:
+                type: /silverflow/problems/report/report-not-found
+                title: Report not found
+                status: 404
+                detail: The report rep-1e1dAHhgstYTUhlphPzZ is not found
+                instance: /silverflow/b4cc37a0-ab24-46b4-aa8c-cc2d6eddf1b6
+        '415':
+          description: Unsupported mimeType
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnsupportedMimeTypeErrorDetails'
+              example:
+                type: /silverflow/problems/report/unsupported-mime-type
+                title: Unsupported mimeType
+                status: 415
+                detail: Unsupported mimeType 'text/csv'
+                instance: /silverflow/b4cc37a0-ab24-46b4-aa8c-cc2d6eddf1b6
+        '429':
+          $ref: '#/components/responses/openapi_components-responses-TooManyRequestsError-3'
+    servers:
+    - url: https://eu-west-1.api.silverflow.com/v1
+      description: Production URL for Europe - Equivalent to https://api.silverflow.co/v1
+    - url: https://us-east-2.api.silverflow.com/v1
+      description: Production URL for North America
+    - url: https://eu-west-1.api-sbx.silverflow.com/v1
+      description: Sandbox URL - Equivalent to https://api-sbx.silverflow.co/v1
+components:
+  schemas:
+    sourceAmountValue:
+      type: string
+      pattern: ^\d+(\.\d+)?$
+      minLength: 1
+      description: 'The source amount value, encoded as string. If this value holds a fraction,
+
+        it will use a `.` "dot" as _decimal separator_. Note that it may hold up to 11 decimals.
+
+        Use a _platform specific number parser_ to convert this string into a numeric value
+
+        without loosing precision.
+
+        '
+    chargesReportParameters:
+      type: object
+      description: The query parameters used for a report.
+      required:
+      - createdFrom
+      - createdTo
+      additionalProperties: false
+      properties:
+        createdFrom:
+          type: string
+          format: date-time
+          description: Include only items that have a created date greater than or equal to the specified date
+        createdTo:
+          type: string
+          format: date-time
+          description: Include only items that have a created date less than or equal to the specified date
+    merchantAcceptorKey:
+      type: string
+      pattern: ^mac-[a-zA-Z0-9]+$
+      minLength: 24
+      maxLength: 120
+      description: The unique ID of the _Merchant Acceptor_ for which this fee has been calculated.
+    schemas-NonTieredBillingAmountTier:
+      title: Non-Tiered Billing Amount Tier
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/schemas-BaseBillingAmountTier'
+    components-schemas-version:
+      type: integer
+      description: The version of this object
+      format: int64
+      readOnly: true
+    reportName:
+      type: string
+      oneOf:
+      - $ref: '#/components/schemas/SchemeFeeDetailsReportName'
+      - $ref: '#/components/schemas/ReconciliationDetailsReportName'
+      - $ref: '#/components/schemas/FraudNotificationsReportName'
+      - $ref: '#/components/schemas/NetworkFundsTransfersReportName'
+      - $ref: '#/components/schemas/DisputeHistoryEventsReportName'
+      - $ref: '#/components/schemas/ChargesReportName'
+      - $ref: '#/components/schemas/VisaQuarterlySchemeReportName'
+      - $ref: '#/components/schemas/MastercardQuarterlySchemeReportName'
+      - $ref: '#/components/schemas/MerchantPayoutReportName'
+      - $ref: '#/components/schemas/InterchangeFeeDowngradeAdvicesReportName'
+      - $ref: '#/components/schemas/TransactionFeesReportName'
+    schemas-TieredFee:
+      title: Tiered Fee
+      description: A tiered scheme fee estimate. A _tiered_ fee defines multiple fee rates. When `tiering` is set to `count` the applicable tier is selected based on the total number of fees in a given period. When `tiering` is set to `volume` the applicable tier is selected based on the total source amount (denominated in the `feeRate` currency) of the fees in a given period. Tier applicability is determined by the `upToIncluding` and `above` values. For a fee with `tiering` set to `count`, these properties hold the thresholds for the total number of fees in the defined period. Conversely, for a fee with `tiering` set to `volume` these properties define the threshold for the total source amount (denominated in the `feeRate` currency). The aggregation period is defined by the `billingFrequency` field.
+      type: object
+      required:
+      - tiering
+      - numberOfTiers
+      properties:
+        tiering:
+          $ref: '#/components/schemas/volumeCountTiering'
+        numberOfTiers:
+          $ref: '#/components/schemas/schemas-numberOfTiers'
+        feeRate:
+          $ref: '#/components/schemas/schemas-TieredFeeRate'
+        billingAmount:
+          $ref: '#/components/schemas/schemas-TieredBillingAmount'
+      allOf:
+      - $ref: '#/components/schemas/schemas-BaseFee'
+    openapi_components-schemas-merchantKey:
+      type: string
+      pattern: ^mct-[a-zA-Z0-9]+$
+      minLength: 24
+      maxLength: 120
+      description: The unique ID of the _Merchant_ for which this fee has been calculated.
+    Fee:
+      title: Fee
+      description: 'A scheme fee estimate.
+
+        '
+      type: object
+      required:
+      - tiering
+      oneOf:
+      - $ref: '#/components/schemas/schemas-TieredFee'
+      - $ref: '#/components/schemas/schemas-NonTieredFee'
+    reconciliationDetailsReportByCreatedTimeParameters:
+      type: object
+      required:
+      - createdFrom
+      - createdTo
+      description: The query parameters used for a report.
+      additionalProperties: false
+      properties:
+        createdFrom:
+          type: string
+          format: date-time
+          description: Include only items that have a created date greater than or equal to the specified date.
+        createdTo:
+          type: string
+          format: date-time
+          description: Include only items that have a created date less than or equal to the specified date.
+    schemeFeeDetailsReportMimeType:
+      type: string
+      description: The mime-type in which the scheme fee details report is available.
+      enum:
+      - application/json
+      - application/x-ndjson
+      - text/csv
+    VisaQuarterlySchemeReport:
+      type: object
+      required:
+      - reportName
+      - parameters
+      - mimeType
+      description: A Visa Quarterly Scheme report
+      allOf:
+      - $ref: '#/components/schemas/PublicReport'
+      properties:
+        reportName:
+          $ref: '#/components/schemas/VisaQuarterlySchemeReportName'
+        parameters:
+          $ref: '#/components/schemas/VisaQuarterlySchemeReportParameters'
+        mimeType:
+          $ref: '#/components/schemas/quarterlySchemeReportMimeType'
+    above:
+      type: integer
+      minimum: 0
+      description: 'This field indicates the value above which this _tier_ applies.
+
+        If `tiering` is set to `volume`, this value indicates the total `sourceAmount`
+
+        (in `feeRate` currency). If `tiering` is set to `count`, this value indicates the
+
+        total number of fees.
+
+        '
+    components-schemas-offsetToken:
+      type: string
+      pattern: ^[a-zA-Z0-9%]+$
+      minLength: 1
+      maxLength: 2048
+      example: LUtyr0s918rNZ5WuWDYh5FNzqAli6HqKHpPDatcfdsaVlibrlO49BKcOdz9YccUOtDSoyLtc4kAiOLkmjSW5zLa8OCnOXXBRja2rDYh5FNzqAli6HqKHpPDatcfdsaVlibrlO49BKcOdz9Yc
+    currency:
+      type: string
+      description: Specifies the currency in which the report will be generated.
+      enum:
+      - USD
+      - EUR
+      - SGD
+      - GBP
+      - PLN
+      - THB
+      - MYR
+      - SEK
+    schemeFeeDetailsReportParameters:
+      type: object
+      description: The query parameters used for a report.
+      required:
+      - bookDateFrom
+      additionalProperties: false
+      properties:
+        bookDateFrom:
+          $ref: '#/components/schemas/bookDateFrom'
+        bookDateTo:
+          $ref: '#/components/schemas/bookDateTo'
+    ConversionRates:
+      title: Conversion Rates
+      description: 'A list of conversion rates, used to convert the `sourceAmount` into the `convertedSourceAmount`.
+
+        This list is only present if currency conversion was applied. Currency conversion is only applied
+
+        if the `feeRate` currency is different from the `sourceAmount` currency. Note that for certain
+
+        currency conversions there is no single rate available. In such a case, multiple conversions are
+
+        applied to convert the source amount into the fee rate currency.
+
+        '
+      type: array
+      items:
+        $ref: '#/components/schemas/schemas-ConversionRate'
+      minItems: 1
+    schemas-moreItems:
+      type: boolean
+      description: Boolean indicating if there are more items to retrieve
+    SettlementDetailsReportByNftKeyParameters:
+      type: object
+      description: The query parameters used for a report.
+      additionalProperties: false
+      required:
+      - networkFundsTransferKey
+      properties:
+        networkFundsTransferKey:
+          $ref: '#/components/schemas/networkFundsTransferKey'
+    schemas-numberOfTiers:
+      type: integer
+      minimum: 2
+      description: 'The number of tiers defined for this fee.
+
+        '
+    upToIncluding:
+      type: integer
+      minimum: 0
+      description: 'This field indicates the value up to (including) which this _tier_ applies.
+
+        If `tiering` is set to `volume`, this value indicates the total `sourceAmount`
+
+        (in `feeRate` currency). If `tiering` is set to `count`, this value indicates the
+
+        total number of fees.
+
+        '
+    bookDateTo:
+      type: string
+      format: date-time
+      description: Include all scheme fees that have been created earlier than and including from the date specified.
+    NotAuthorizedErrorDetails:
+      type: object
+      required:
+      - type
+      - title
+      - status
+      - detail
+      - instance
+      properties:
+        type:
+          allOf:
+          - $ref: '#/components/schemas/errorType'
+          - enum:
+            - /silverflow/problems/report/not-authorized
+        title:
+          allOf:
+          - $ref: '#/components/schemas/errorTitle'
+          - enum:
+            - Not authorized
+        status:
+          allOf:
+          - $ref: '#/components/schemas/errorStatus'
+          - enum:
+            - 401
+        detail:
+          $ref: '#/components/schemas/errorDetail'
+        instance:
+          $ref: '#/components/schemas/errorInstance'
+    sourceAmountImpact:
+      type: string
+      enum:
+      - debit
+      - credit
+      description: "The impact of the source amount. This value has no relation to the the _direction_ of the funds\nof the transaction. By default every amount will have the impact set to `debit`. Only _corrections_ \nwill have a value set to `credit`. Note that corrections are not yet supported.\n"
+    AgentKey:
+      description: Uniquely identifies an Agent
+      type: string
+      pattern: ^cgt-[a-zA-Z0-9]+|current$
+      readOnly: true
+      example: cgt-1UF2NafdfrdPMf2XrS2
+    disputeHistoryEventsReportMimeType:
+      type: string
+      description: The mime-type in which the disputes report is available.
+      enum:
+      - text/csv
+      - application/json
+      - application/x-ndjson
+    schemas-TieredFeeRate:
+      title: Tiered Fee Rate
+      description: 'A _tiered_ fee rate defines multiple fee rates or _tiers_. Tier applicability is determined by the `upToIncluding`
+
+        and `above` values. For a fee with `tiering` set to `count`, these properties hold the thresholds for the
+
+        total number of fees in the defined period. Conversely, for a fee with `tiering` set to `volume` these
+
+        properties define the threshold for the total source amount (denominated in the `feeRate` currency). The
+
+        aggregation period is defined by the `billingFrequency` field.
+
+        '
+      type: object
+      required:
+      - tiers
+      properties:
+        tiers:
+          description: 'A list of tiers. Each _tier_ defines a fee rate `value` and a threshold value (`upToIncluding` or
+
+            `above`) to which it applies.
+
+            '
+          type: array
+          items:
+            $ref: '#/components/schemas/schemas-TieredFeeRateTier'
+          minItems: 2
+      allOf:
+      - $ref: '#/components/schemas/schemas-BaseFeeRate'
+    ListReportResponse:
+      type: object
+      required:
+      - items
+      - moreItems
+      properties:
+        items:
+          type: array
+          description: List of reports
+          items:
+            $ref: '#/components/schemas/Report'
+        moreItems:
+          $ref: '#/components/schemas/schemas-moreItems'
+        offsetToken:
+          $ref: '#/components/schemas/components-schemas-offsetToken'
+    schemas-BaseBillingAmount:
+      type: object
+      required:
+      - currency
+      properties:
+        currency:
+          $ref: '#/components/schemas/scheme-fee-details_currency'
+    AMMFReportName:
+      type: string
+      description: The name of the report.
+      enum:
+      - AmmfReport
+    NetworkFundsTransfersReport:
+      type: object
+      required:
+      - reportName
+      - parameters
+      - mimeType
+      description: A network funds transfers report.
+      allOf:
+      - $ref: '#/components/schemas/PublicReport'
+      properties:
+        reportName:
+          $ref: '#/components/schemas/NetworkFundsTransfersReportName'
+        parameters:
+          $ref: '#/components/schemas/networkFundsTransfersReportParameters'
+        mimeType:
+          $ref: '#/components/schemas/networkFundsTransfersReportMimeType'
+        distributions:
+          type: array
+          items:
+            $ref: '#/components/schemas/distributionKey'
+    feeDescription:
+      type: string
+      pattern: ^[a-zA-Z0-9-\/ \.—&()]+$
+      minLength: 1
+      maxLength: 120
+      description: 'The Mastercard _"Event description"_ or the Visa _"Description"_, as they appear on the corresponding
+
+        invoices.
+
+        '
+    openapi_components-schemas-actionReference:
+      type: string
+      pattern: ^[a-zA-Z0-9()+,\-.:=@;$_!*\/?|]+$
+      minLength: 1
+      maxLength: 120
+      description: 'The action reference of the action for which this fee has been calculated.
+
+        Only present if a `reference` field was specified on the _Charge action_ API call.
+
+        '
+    bookDate:
+      type: string
+      format: date-time
+      description: 'The timestamp of which the scheme fee estimate was booked.
+
+        '
+    networkFundsTransferKey:
+      description: Uniquely identifies a Networks Funds Transfer
+      type: string
+      pattern: ^nft-[a-zA-Z0-9]+$
+      minLength: 10
+      maxLength: 120
+      example: nft-1e1dAHhgstYTUhlphPzZ
+    MastercardQuarterlySchemeReportName:
+      type: string
+      enum:
+      - MastercardQuarterlySchemeReport
+    schemas-tierId:
+      type: string
+      pattern: ^[A-Z0-9-]+$
+      minLength: 1
+      maxLength: 120
+      description: 'The (optional) Mastercard _"Tier ID"_ for this fee, as it appears on the Mastercard invoice.
+
+        Note that the presence of this field does not indicate if this fee has multiple _tiers_.
+
+        See the `tiering` field.
+
+        '
+    fraudNotificationsReportParameters:
+      type: object
+      description: The query parameters used for a report.
+      additionalProperties: false
+      properties:
+        createdFrom:
+          type: string
+          format: date-time
+          description: Include only items that have a created date greater than or equal to the specified date
+        createdTo:
+          type: string
+          format: date-time
+          description: Include only items that have a created date less than or equal to the specified date
+    errorTitle:
+      type: string
+      description: 'A short, human-readable summary of the problem type. It does not change from occurrence to occurrence of the error.
+
+        '
+    networkFundsTransfersReportParameters:
+      type: object
+      required:
+      - fundsTransferDate
+      description: The query parameters used for a report.
+      additionalProperties: false
+      properties:
+        fundsTransferDate:
+          type: string
+          format: date
+          description: Include only items that have a created date greater than or equal to the specified date
+    noTiering:
+      type: string
+      enum:
+      - none
+      description: 'The type of tiering. The value `none` indicates that this fee is not tiered.
+
+        '
+    SettlementDetailsReportName:
+      type: string
+      description: The name of the report.
+      enum:
+      - SettlementDetails
+    schemas-InvalidOffsetTokenError:
+      type: object
+      required:
+      - type
+      - title
+      - status
+      - detail
+      - instance
+      properties:
+        type:
+          allOf:
+          - $ref: '#/components/schemas/errorType'
+          - enum:
+            - /silverflow/problems/report/invalid-offset-token
+        title:
+          allOf:
+          - $ref: '#/components/schemas/errorTitle'
+          - enum:
+            - Invalid Offset Token
+        status:
+          allOf:
+          - $ref: '#/components/schemas/errorStatus'
+          - enum:
+            - 400
+        detail:
+          $ref: '#/components/schemas/errorDetail'
+        instance:
+          $ref: '#/components/schemas/errorInstance'
+    ammfAcquirerIdCode:
+      type: string
+      description: the Acquirer Institution ID. For Visa, this is the BIC. It should be a 6-digit numeric value.
+      pattern: ^\d{6}$
+    schemas-TieredFeeRateTier:
+      title: Tiered Fee Rate Tier
+      type: object
+      required:
+      - tierNumber
+      properties:
+        tierNumber:
+          $ref: '#/components/schemas/schemas-tierNumber'
+        upToIncluding:
+          $ref: '#/components/schemas/upToIncluding'
+        above:
+          $ref: '#/components/schemas/above'
+      allOf:
+      - $ref: '#/components/schemas/schemas-BaseFeeRateTier'
+    schemas-bin:
+      type: string
+      pattern: ^\d+$
+      minLength: 6
+      maxLength: 6
+      description: The value of the _BIN_ for which this fee has been calculated.
+    schemas-NonTieredFee:
+      title: Non-tiered Fee
+      description: A non-tiered scheme fee estimate.
+      type: object
+      required:
+      - tiering
+      properties:
+        tiering:
+          $ref: '#/components/schemas/noTiering'
+        feeRate:
+          $ref: '#/components/schemas/schemas-NonTieredFeeRate'
+        billingAmount:
+          $ref: '#/components/schemas/schemas-NonTieredBillingAmount'
+      allOf:
+      - $ref: '#/components/schemas/schemas-BaseFee'
+    ReportNotFoundErrorDetails:
+      type: object
+      required:
+      - type
+      - title
+      - status
+      - detail
+      - instance
+      properties:
+        type:
+          allOf:
+          - $ref: '#/components/schemas/errorType'
+          - enum:
+            - /silverflow/problems/report/report-not-found
+        title:
+          allOf:
+          - $ref: '#/components/schemas/errorTitle'
+          - enum:
+            - Report not found
+        status:
+          allOf:
+          - $ref: '#/components/schemas/errorStatus'
+          - enum:
+            - 404
+        detail:
+          $ref: '#/components/schemas/errorDetail'
+        instance:
+          $ref: '#/components/schemas/errorInstance'
+    AMMFReportParameters:
+      type: object
+      description: The parameters used for the AMMF Report.
+      required:
+      - date
+      - acquirerIdCode
+      additionalProperties: false
+      properties:
+        acquirerIdCode:
+          $ref: '#/components/schemas/ammfAcquirerIdCode'
+        date:
+          type: string
+          format: date
+          description: 'The end date of the AMMF reporting period. The report covers the one-month period ending on this date.
+
+            We recommend using a date in the past to ensure all data for the period has been written.
+
+            '
+        directSubmission:
+          $ref: '#/components/schemas/ammfDirectSubmission'
+    SettlementDetailsReport:
+      type: object
+      required:
+      - reportName
+      - parameters
+      - mimeType
+      description: A SettlementDetails report.
+      allOf:
+      - $ref: '#/components/schemas/PublicReport'
+      properties:
+        reportName:
+          $ref: '#/components/schemas/SettlementDetailsReportName'
+        parameters:
+          $ref: '#/components/schemas/SettlementDetailsReportParameters'
+        mimeType:
+          $ref: '#/components/schemas/SettlementDetailsReportMimeType'
+    chargesReportMimeType:
+      type: string
+      description: The mime-type in which the Charges report is available.
+      enum:
+      - text/csv
+    chargeActionKey:
+      type: string
+      pattern: ^act-[a-zA-Z0-9]+$
+      minLength: 24
+      maxLength: 120
+      description: 'The unique ID of the _Charge Action_ for which this fee has been calculated. Only present if
+
+        `category` is set to `authorization` or `clearing`.
+
+        '
+    feeRateImpact:
+      type: string
+      enum:
+      - debit
+      - credit
+      description: The impact of the fee.
+    ammfReportMimeType:
+      type: string
+      description: The mime-type in which the AMMF Report is available.
+      enum:
+      - application/vnd.ms-excel
+    openapi_components-schemas-ProblemDetail-2:
+      type: object
+      description: 'The ''problem detail'' object relays detailed information about the error that occurred. It is defined
+
+        by [RFC 7807 - Problem Details for HTTP APIs](https://tools.ietf.org/html/rfc7807).
+
+
+        Note that additional properties may be used to relay error specific information. For instance,
+
+        A Bad Request error may hold information about the individual validation errors found in the request.
+
+        '
+      properties:
+        type:
+          type: string
+          description: 'An absolute URI that identifies the problem type.
+
+            '
+          default: about:blank
+          example: https://api.silverflow.co/problem/constraint-violation
+        title:
+          type: string
+          description: 'A short, summary of the problem type. Written in english and readable
+
+            for engineers (usually not suited for non technical stakeholders and
+
+            not localized);
+
+            '
+          example: Service Unavailable
+        status:
+          type: integer
+          format: int32
+          description: 'The HTTP status code generated by the origin server for this occurrence
+
+            of the problem.
+
+            '
+          minimum: 100
+          maximum: 599
+          example: 503
+        detail:
+          type: string
+          description: 'A human readable explanation specific to this occurrence of the
+
+            problem.
+
+            '
+          example: Connection to database timed out
+        instance:
+          type: string
+          description: 'An absolute URI that identifies the specific occurrence of the problem.
+
+            It may or may not yield further information if dereferenced.
+
+            '
+      additionalProperties: true
+      example:
+        type: https://api.silverflow.co/problem/bad-request
+        title: Bad Request
+        status: 400
+        detail: The request could not be processed as it contained an invalid request entity
+        instance: https://api.silverflow.co/v1/reports/rep-1hPdFqhgstYTUhlphPDp
+        validationErrors:
+        - The value of property 'status' should be one of 'idle', 'active' or 'archived'
+        - The value of property 'tags.0.businessId' must not be longer than 255 characters
+    NetworkFundsTransfersReportName:
+      type: string
+      description: The name of the report.
+      enum:
+      - NetworkFundsTransfers
+    schemas-NonTieredFeeRateTier:
+      title: Non-Tiered Fee Rate Tier
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/schemas-BaseFeeRateTier'
+    currencyRateValue:
+      type: string
+      pattern: ^\d+(\.\d+)?$
+      minLength: 1
+      description: 'The currency rate (decimal) value, encoded as string. If this value holds a fraction,
+
+        it will use a `.` "dot" as _decimal separator_. Note that it may hold up to 11 decimals.
+
+        Use a _platform specific number parser_ to convert this string into a numeric value
+
+        without loosing precision.
+
+        '
+    schemas-NonTieredFeeRate:
+      title: Non Tiered Fee Rate
+      description: 'A _(non-tiered)_ fee rate.
+
+        '
+      type: object
+      required:
+      - tiers
+      properties:
+        tiers:
+          type: array
+          items:
+            $ref: '#/components/schemas/schemas-NonTieredFeeRateTier'
+          minItems: 1
+          maxItems: 1
+      allOf:
+      - $ref: '#/components/schemas/schemas-BaseFeeRate'
+    schemas-BaseBillingAmountTier:
+      title: Base Billing Amount Tier
+      type: object
+      required:
+      - impact
+      - value
+      properties:
+        impact:
+          $ref: '#/components/schemas/billingAmountImpact'
+        value:
+          $ref: '#/components/schemas/billingAmountValue'
+    billingAmountImpact:
+      type: string
+      enum:
+      - debit
+      - credit
+      description: The impact of the billing amount.
+    openapi_components-schemas-lastModified:
+      type: string
+      description: The date and time this object was last modified
+      format: date-time
+      readOnly: true
+    reportStatus:
+      description: The status of the report.
+      type: string
+      enum:
+      - completed
+      - archived
+      - failed
+      - scheduled
+    SettlementDetailsReportByCreatedTimeParameters:
+      type: object
+      description: The query parameters used for a report.
+      additionalProperties: false
+      required:
+      - createdFrom
+      properties:
+        createdFrom:
+          type: string
+          format: date-time
+          description: Include only items that have a created date greater than or equal to the specified date
+        createdTo:
+          type: string
+          format: date-time
+          description: Include only items that have a created date less than or equal to the specified date
+    schemas-TieredBillingAmountTier:
+      title: Tiered Billing Amount Tier
+      type: object
+      required:
+      - tierNumber
+      properties:
+        tierNumber:
+          $ref: '#/components/schemas/schemas-tierNumber'
+        upToIncluding:
+          $ref: '#/components/schemas/upToIncluding'
+        above:
+          $ref: '#/components/schemas/above'
+      allOf:
+      - $ref: '#/components/schemas/schemas-BaseBillingAmountTier'
+    UnsupportedMimeTypeErrorDetails:
+      type: object
+      required:
+      - type
+      - title
+      - status
+      - detail
+      - instance
+      properties:
+        type:
+          allOf:
+          - $ref: '#/components/schemas/errorType'
+          - enum:
+            - /silverflow/problems/report/unsupported-mime-type
+        title:
+          allOf:
+          - $ref: '#/components/schemas/errorTitle'
+          - enum:
+            - Unsupported mimeType
+        status:
+          allOf:
+          - $ref: '#/components/schemas/errorStatus'
+          - enum:
+            - 415
+        detail:
+          $ref: '#/components/schemas/errorDetail'
+        instance:
+          $ref: '#/components/schemas/errorInstance'
+    key:
+      type: string
+      pattern: ^sfb-[a-zA-Z0-9]+$
+      minLength: 24
+      maxLength: 120
+      description: The unique ID of this scheme fee estimate.
+    TransactionFeesReportName:
+      type: string
+      description: The name of the report.
+      enum:
+      - TransactionFees
+    FraudNotificationsReport:
+      type: object
+      required:
+      - reportName
+      - parameters
+      - mimeType
+      description: A fraud notifications report.
+      allOf:
+      - $ref: '#/components/schemas/PublicReport'
+      properties:
+        reportName:
+          allOf:
+          - $ref: '#/components/schemas/reportName'
+          - enum:
+            - FraudNotifications
+        parameters:
+          $ref: '#/components/schemas/fraudNotificationsReportParameters'
+        mimeType:
+          $ref: '#/components/schemas/fraudNotificationsReportMimeType'
+    SchemeFeeDetailsReport:
+      type: object
+      required:
+      - reportName
+      - parameters
+      - mimeType
+      description: A scheme fee details report.
+      allOf:
+      - $ref: '#/components/schemas/PublicReport'
+      properties:
+        reportName:
+          $ref: '#/components/schemas/SchemeFeeDetailsReportName'
+        parameters:
+          $ref: '#/components/schemas/schemeFeeDetailsReportParameters'
+        mimeType:
+          $ref: '#/components/schemas/schemeFeeDetailsReportMimeType'
+    MastercardQuarterlySchemeReport:
+      type: object
+      required:
+      - reportName
+      - parameters
+      - mimeType
+      description: A Mastercard Quarterly Scheme report
+      allOf:
+      - $ref: '#/components/schemas/PublicReport'
+      properties:
+        reportName:
+          $ref: '#/components/schemas/MastercardQuarterlySchemeReportName'
+        parameters:
+          $ref: '#/components/schemas/MastercardQuarterlySchemeReportParameters'
+        mimeType:
+          $ref: '#/components/schemas/quarterlySchemeReportMimeType'
+    year:
+      type: integer
+      description: The year for which the report is being generated. It should be a four-digit number (e.g., 2023).
+    VisaQuarterlySchemeReportName:
+      type: string
+      enum:
+      - VisaQuarterlySchemeReport
+    schemas-BaseFee:
+      title: Base Fee
+      type: object
+      required:
+      - key
+      - agentKey
+      - cardNetwork
+      - binKey
+      - bin
+      - acquirerIdCode
+      - merchantAcceptorKey
+      - merchantKey
+      - mid
+      - billingFrequency
+      - feeId
+      - feeDescription
+      - feeDate
+      - sourceAmount
+      - bookDate
+      properties:
+        key:
+          $ref: '#/components/schemas/key'
+        agentKey:
+          $ref: '#/components/schemas/openapi_components-schemas-agentKey'
+        cardNetwork:
+          $ref: '#/components/schemas/openapi_components-schemas-cardNetwork-2'
+        binKey:
+          $ref: '#/components/schemas/openapi_components-schemas-binKey'
+        bin:
+          $ref: '#/components/schemas/schemas-bin'
+        acquirerIdCode:
+          $ref: '#/components/schemas/openapi_components-schemas-acquirerIdCode'
+        merchantAcceptorKey:
+          $ref: '#/components/schemas/merchantAcceptorKey'
+        merchantKey:
+          $ref: '#/components/schemas/openapi_components-schemas-merchantKey'
+        mid:
+          $ref: '#/components/schemas/openapi_components-schemas-mid'
+        threeDsKey:
+          $ref: '#/components/schemas/threeDsKey'
+        chargeKey:
+          $ref: '#/components/schemas/openapi_components-schemas-chargeKey'
+        chargeActionKey:
+          $ref: '#/components/schemas/chargeActionKey'
+        clearingArn:
+          $ref: '#/components/schemas/clearingArn'
+        transactionReference:
+          $ref: '#/components/schemas/openapi_components-schemas-transactionReference'
+        actionReference:
+          $ref: '#/components/schemas/openapi_components-schemas-actionReference'
+        billingFrequency:
+          $ref: '#/components/schemas/billingFrequency'
+        tierId:
+          $ref: '#/components/schemas/schemas-tierId'
+        feeId:
+          $ref: '#/components/schemas/feeId'
+        feeDescription:
+          $ref: '#/components/schemas/feeDescription'
+        feeDate:
+          $ref: '#/components/schemas/feeDate'
+        sourceAmount:
+          $ref: '#/components/schemas/SourceAmount'
+        conversionRates:
+          $ref: '#/components/schemas/ConversionRates'
+        convertedSourceAmount:
+          $ref: '#/components/schemas/ConvertedSourceAmount'
+        bookDate:
+          $ref: '#/components/schemas/bookDate'
+    Report:
+      type: object
+      oneOf:
+      - $ref: '#/components/schemas/SchemeFeeDetailsReport'
+      - $ref: '#/components/schemas/ReconciliationDetailsReport'
+      - $ref: '#/components/schemas/FraudNotificationsReport'
+      - $ref: '#/components/schemas/NetworkFundsTransfersReport'
+      - $ref: '#/components/schemas/DisputeHistoryEventsReport'
+      - $ref: '#/components/schemas/ChargesReport'
+      - $ref: '#/components/schemas/VisaQuarterlySchemeReport'
+      - $ref: '#/components/schemas/MastercardQuarterlySchemeReport'
+      - $ref: '#/components/schemas/AmmfReport'
+      - $ref: '#/components/schemas/SettlementDetailsReport'
+    openapi_components-schemas-chargeKey:
+      type: string
+      pattern: ^chg-[a-zA-Z0-9]+$
+      minLength: 24
+      maxLength: 120
+      description: 'The unique ID of the _Charge_ for which this fee has been calculated. Only present if
+
+        `category` is set to `authorization` or `clearing`.
+
+        '
+    billingAmountValue:
+      type: string
+      pattern: ^\d+(\.\d+)?$
+      minLength: 1
+      description: 'The billing amount (decimal) value, encoded as string. If this value holds a fraction,
+
+        it will use a `.` "dot" as _decimal separator_. Note that it may hold up to 11 decimals.
+
+        Use a _platform specific number parser_ to convert this string into a numeric value
+
+        without loosing precision.
+
+        '
+    reconciliationDetailsReportByNftKeyParameters:
+      type: object
+      description: The query parameters used for a report.
+      required:
+      - nftKey
+      additionalProperties: false
+      properties:
+        nftKey:
+          type: string
+          description: The Network Funds Transfer Key
+    disputeHistoryEventsReportParameters:
+      type: object
+      description: The query parameters used for a report.
+      required:
+      - createdFrom
+      - createdTo
+      additionalProperties: false
+      properties:
+        createdFrom:
+          anyOf:
+          - type: string
+            format: date
+          - type: string
+            format: date-time
+          description: Include items that have a created date greater than or equal to the specified date/date-time. Accepts both date (YYYY-MM-DD) and ISO 8601 datetime formats. Use date format for queries before 2026-04-01T00:00:00Z. `date` type support is deprecated (April 1st, 2026).
+          example: '2025-04-24'
+        createdTo:
+          anyOf:
+          - type: string
+            format: date
+          - type: string
+            format: date-time
+          description: Include items that have a created date less than or equal to the specified date/date-time. Accepts both date (YYYY-MM-DD) and ISO 8601 datetime formats. Use date format for queries before 2026-04-01T00:00:00Z. `date` type support is deprecated (April 1st, 2026).
+          example: '2025-04-25'
+    networkFundsTransfersReportMimeType:
+      type: string
+      description: The mime-type in which the network funds transfers report is available.
+      enum:
+      - text/csv
+      - application/json
+      - application/x-ndjson
+    DisputeHistoryEventsReport:
+      type: object
+      required:
+      - reportName
+      - parameters
+      - mimeType
+      description: A disputes history events report.
+      allOf:
+      - $ref: '#/components/schemas/PublicReport'
+      properties:
+        reportName:
+          $ref: '#/components/schemas/DisputeHistoryEventsReportName'
+        parameters:
+          $ref: '#/components/schemas/disputeHistoryEventsReportParameters'
+        mimeType:
+          $ref: '#/components/schemas/disputeHistoryEventsReportMimeType'
+    billingFrequency:
+      type: string
+      enum:
+      - daily
+      - weekly
+      - monthly
+      - quarterly
+      description: 'The _frequency_ or _interval_ at which this fee is witheld from settlement (or
+
+        invoiced separately). This frequency also defines the _aggregation period_ for _tiered fees_.
+
+        '
+    SchemeFeeDetailsReportName:
+      type: string
+      description: The name of the report.
+      enum:
+      - SchemeFeeDetails
+    InputValidationError:
+      type: object
+      required:
+      - type
+      - title
+      - status
+      - detail
+      - instance
+      - validationErrors
+      properties:
+        type:
+          allOf:
+          - $ref: '#/components/schemas/errorType'
+          - enum:
+            - /silverflow/problems/invalid-input
+        title:
+          allOf:
+          - $ref: '#/components/schemas/errorTitle'
+          - enum:
+            - Invalid Input
+        status:
+          allOf:
+          - $ref: '#/components/schemas/errorStatus'
+          - enum:
+            - 400
+        detail:
+          allOf:
+          - $ref: '#/components/schemas/errorDetail'
+          - enum:
+            - The request does not adhere to the defined API schema.
+        instance:
+          $ref: '#/components/schemas/errorInstance'
+        validationErrors:
+          type: array
+          items:
+            $ref: '#/components/schemas/openapi_components-schemas-ValidationError'
+          description: A list of validation errors.
+    ChargesReport:
+      type: object
+      required:
+      - reportName
+      - parameters
+      - mimeType
+      description: A Charges report.
+      allOf:
+      - $ref: '#/components/schemas/PublicReport'
+      properties:
+        reportName:
+          $ref: '#/components/schemas/ChargesReportName'
+        parameters:
+          $ref: '#/components/schemas/chargesReportParameters'
+        mimeType:
+          $ref: '#/components/schemas/chargesReportMimeType'
+    FraudNotificationsReportName:
+      type: string
+      description: The name of the report.
+      enum:
+      - FraudNotifications
+    quarter:
+      type: integer
+      description: Specifies the quarter of the year for the report. Valid values are 1 (Q1), 2 (Q2), 3 (Q3), and 4 (Q4).
+      enum:
+      - 1
+      - 2
+      - 3
+      - 4
+    ChargesReportName:
+      type: string
+      description: The name of the report.
+      enum:
+      - Charges
+    quarterlySchemeReportMimeType:
+      type: string
+      description: The mime-type in which the Quarterly Scheme Report is available.
+      enum:
+      - application/vnd.ms-excel
+    openapi_components-schemas-mid:
+      type: string
+      pattern: ^[a-zA-Z0-9-_\.]+$
+      minLength: 1
+      maxLength: 15
+      description: The value of the _MID_ for which this fee has been calculated.
+    fraudNotificationsReportMimeType:
+      type: string
+      description: The mime-type in which the fraud notifications report is available.
+      enum:
+      - text/csv
+      - application/json
+      - application/x-ndjson
+    ReconciliationDetailsReport:
+      type: object
+      required:
+      - reportName
+      - parameters
+      - mimeType
+      description: A reconciliation details report.
+      allOf:
+      - $ref: '#/components/schemas/PublicReport'
+      properties:
+        reportName:
+          $ref: '#/components/schemas/ReconciliationDetailsReportName'
+        parameters:
+          $ref: '#/components/schemas/reconciliationDetailsReportParameters'
+        mimeType:
+          $ref: '#/components/schemas/reconciliationDetailsReportMimeType'
+        distributions:
+          type: array
+          items:
+            $ref: '#/components/schemas/distributionKey'
+    reportKey:
+      description: Uniquely identifies a report object
+      type: string
+      pattern: ^rep-[a-zA-Z0-9]+$
+      minLength: 10
+      maxLength: 120
+      example: rep-1e1dAHhgstYTUhlphPzZ
+    AmmfReport:
+      type: object
+      required:
+      - reportName
+      - parameters
+      - mimeType
+      description: An AMMF report.
+      allOf:
+      - $ref: '#/components/schemas/PublicReport'
+      properties:
+        reportName:
+          $ref: '#/components/schemas/AMMFReportName'
+        parameters:
+          $ref: '#/components/schemas/AMMFReportParameters'
+        mimeType:
+          $ref: '#/components/schemas/ammfReportMimeType'
+    openapi_components-schemas-created-2:
+      type: string
+      description: The date and time this object was created
+      format: date-time
+      readOnly: true
+    openapi_components-schemas-transactionReference:
+      type: string
+      pattern: ^[a-zA-Z0-9()+,\-.:=@;$_!*\/?|]+$
+      minLength: 1
+      maxLength: 120
+      description: 'The _transaction reference_ of the transaction for which this fee has been calculated.
+
+        Only present if a `transactionReference` field was specified on the _3DS_ or _Charge_ creation
+
+        API call.
+
+        '
+    SettlementDetailsReportMimeType:
+      type: string
+      description: The mime-type in which the SettlementDetails report is available.
+      enum:
+      - text/csv
+      - application/x-ndjson
+    openapi_components-schemas-ValidationError:
+      type: object
+      required:
+      - path
+      - errorCode
+      - message
+      properties:
+        path:
+          type: string
+          description: The path to the error location in the request params or body.
+        errorCode:
+          type: string
+          description: The error code identifying the error type.
+        message:
+          type: string
+          description: The error message.
+    schemas-ConversionRate:
+      title: Conversion Rate
+      type: object
+      required:
+      - date
+      - source
+      - target
+      - rate
+      - operation
+      properties:
+        date:
+          $ref: '#/components/schemas/conversionRateDate'
+        source:
+          $ref: '#/components/schemas/scheme-fee-details_currency'
+        target:
+          $ref: '#/components/schemas/scheme-fee-details_currency'
+        rate:
+          $ref: '#/components/schemas/currencyRateValue'
+        operation:
+          $ref: '#/components/schemas/operation'
+    conversionRateDate:
+      type: string
+      format: date
+      description: "The date of the conversion rate. Conversion rates are published (daily) by the _card schemes_. \nThe method of publication introduces certain delays. Hence, this date may lie before the `feeDate`.\n"
+    feeRateValue:
+      type: string
+      pattern: ^\d+(\.\d+)?$
+      minLength: 1
+      description: 'The value of the fee rate, encoded as string. If this value holds a fraction,
+
+        it will use a `.` "dot" as _decimal separator_. Note that it may hold up to 11 decimals.
+
+        Use a _platform specific number parser_ to convert this string into a numeric value
+
+        without loosing precision. If the fee rate `type` is set to `fixed` then this value
+
+        indicates the _fixed amount_ of the fee, denominated in the specified `currency`.
+
+        When the fee rate `type` is set to `basisPoints`, then this value holds the (decimal)
+
+        number of basis points of the fee, applied to the `sourceAmount` (or `convertedSourceAmount`
+
+        in case the `feeRate` currency does not match the `sourceAmount` currency).
+
+        '
+    schemas-BaseFeeRate:
+      title: Base Fee Rate
+      type: object
+      required:
+      - type
+      properties:
+        type:
+          $ref: '#/components/schemas/feeRateType'
+        currency:
+          $ref: '#/components/schemas/scheme-fee-details_currency'
+    schemas-BaseFeeRateTier:
+      title: Base Fee Rate Tier
+      type: object
+      required:
+      - impact
+      - value
+      properties:
+        impact:
+          $ref: '#/components/schemas/feeRateImpact'
+        value:
+          $ref: '#/components/schemas/feeRateValue'
+    ammfDirectSubmission:
+      type: boolean
+      description: set to `true` to indicate that the AMMF report should be directly submitted to Visa's AMMF service
+    openapi_components-schemas-cardNetwork-2:
+      enum:
+      - visa
+      - mastercard
+      description: The _card network_ imposing the fee.
+    SchemeFeeDetailsReportFile:
+      type: array
+      description: The JSON format of the scheme fee details report.
+      items:
+        $ref: '#/components/schemas/Fee'
+    reportScheduleKey:
+      description: Uniquely identifies a report schedule object
+      type: string
+      pattern: ^rsk-[a-zA-Z0-9]+$
+      minLength: 10
+      maxLength: 120
+      example: rsk-1e1dAHhgstYTUhlphPzZ
+    errorInstance:
+      type: string
+      description: 'A reference that identifies the specific occurrence of the error. The instance is unique for every error.
+
+        '
+    components-schemas-reference:
+      type: string
+      description: Unique ID used to identify a report.
+      maxLength: 120
+    SettlementDetailsReportParameters:
+      oneOf:
+      - $ref: '#/components/schemas/SettlementDetailsReportByCreatedTimeParameters'
+      - $ref: '#/components/schemas/SettlementDetailsReportByNftKeyParameters'
+    errorStatus:
+      type: integer
+      format: int32
+      description: 'The HTTP status code generated by the origin server for this occurrence
+
+        of the problem.
+
+        '
+    scheme-fee-details_currency:
+      type: string
+      enum:
+      - EUR
+      - USD
+      - AFN
+      - ALL
+      - DZD
+      - AOA
+      - XCD
+      - ARS
+      - AMD
+      - AWG
+      - AUD
+      - AZN
+      - BSD
+      - BHD
+      - BDT
+      - BBD
+      - BYN
+      - BZD
+      - XOF
+      - BMD
+      - INR
+      - BTN
+      - BOB
+      - BAM
+      - BWP
+      - NOK
+      - BRL
+      - BND
+      - BGN
+      - BIF
+      - CVE
+      - KHR
+      - XAF
+      - CAD
+      - KYD
+      - CLP
+      - CNY
+      - COP
+      - KMF
+      - CDF
+      - NZD
+      - CRC
+      - HRK
+      - CUP
+      - CUC
+      - ANG
+      - CZK
+      - DKK
+      - DJF
+      - DOP
+      - EGP
+      - SVC
+      - ERN
+      - ETB
+      - FKP
+      - FJD
+      - XPF
+      - GMD
+      - GEL
+      - GHS
+      - GIP
+      - GTQ
+      - GBP
+      - GNF
+      - GYD
+      - HTG
+      - HNL
+      - HKD
+      - HUF
+      - ISK
+      - IDR
+      - IRR
+      - IQD
+      - ILS
+      - JMD
+      - JPY
+      - JOD
+      - KZT
+      - KES
+      - KPW
+      - KRW
+      - KWD
+      - KGS
+      - LAK
+      - LBP
+      - LSL
+      - ZAR
+      - LRD
+      - LYD
+      - CHF
+      - MOP
+      - MKD
+      - MGA
+      - MWK
+      - MYR
+      - MVR
+      - MRU
+      - MUR
+      - MXN
+      - MDL
+      - MNT
+      - MAD
+      - MZN
+      - MMK
+      - NAD
+      - NPR
+      - NIO
+      - NGN
+      - OMR
+      - PKR
+      - PAB
+      - PGK
+      - PYG
+      - PEN
+      - PHP
+      - PLN
+      - QAR
+      - RON
+      - RUB
+      - RWF
+      - SHP
+      - WST
+      - STN
+      - SAR
+      - RSD
+      - SCR
+      - SLL
+      - SGD
+      - SBD
+      - SOS
+      - SSP
+      - LKR
+      - SDG
+      - SRD
+      - SZL
+      - SEK
+      - SYP
+      - TWD
+      - TJS
+      - TZS
+      - THB
+      - TOP
+      - TTD
+      - TND
+      - TRY
+      - TMT
+      - UGX
+      - UAH
+      - AED
+      - UYU
+      - UYW
+      - UZS
+      - VUV
+      - VES
+      - VND
+      - YER
+      - ZMW
+      - ZWL
+      description: The currency.
+    feeId:
+      type: string
+      pattern: ^[A-Z0-9]+$
+      minLength: 1
+      maxLength: 120
+      description: 'The Mastercard _"Event ID"_ or the Visa _"Billing line"_, as they appear on the corresponding
+
+        invoices.
+
+        '
+    operation:
+      type: string
+      enum:
+      - divide
+      - multiply
+    reconciliationDetailsReportParameters:
+      oneOf:
+      - $ref: '#/components/schemas/reconciliationDetailsReportByCreatedTimeParameters'
+      - $ref: '#/components/schemas/reconciliationDetailsReportByNftKeyParameters'
+    bookDateFrom:
+      type: string
+      format: date-time
+      description: 'Include all scheme fees that have been created later than and including from the date specified.
+
+        Required when querying with book dates.
+
+        '
+    volumeCountTiering:
+      type: string
+      enum:
+      - volume
+      - count
+      description: 'The type of tiering. The value `volume` indicates that the applicable fee _tier_ is determined
+
+        using the total `sourceAmount` for a given period. The value `count` indicates that the
+
+        applicable _tier_ is determined using the total number of fees (transactions).
+
+        '
+    ReconciliationDetailsReportName:
+      type: string
+      description: The name of the report.
+      enum:
+      - ReconciliationDetails
+    MerchantPayoutReportName:
+      type: string
+      description: The name of the report.
+      enum:
+      - MerchantPayout
+    SourceAmount:
+      title: Amount
+      description: The _source_ amount of the transaction event, in either the original (transaction) currency or the settlement currency. This amount is the amount to which the fee applies.
+      type: object
+      required:
+      - impact
+      - currency
+      - value
+      properties:
+        impact:
+          $ref: '#/components/schemas/sourceAmountImpact'
+        currency:
+          $ref: '#/components/schemas/scheme-fee-details_currency'
+        value:
+          $ref: '#/components/schemas/sourceAmountValue'
+    schemas-NonTieredBillingAmount:
+      title: Non Tiered Billing Amount
+      description: 'The actual billing amount for this fee, denominated in the `feeRate` currency (if defined) or
+
+        the `sourceAmount` currency.
+
+        '
+      type: object
+      required:
+      - amounts
+      properties:
+        amounts:
+          type: array
+          items:
+            $ref: '#/components/schemas/schemas-NonTieredBillingAmountTier'
+          minItems: 1
+          maxItems: 1
+      allOf:
+      - $ref: '#/components/schemas/schemas-BaseBillingAmount'
+    openapi_components-schemas-binKey:
+      type: string
+      pattern: ^bin-[a-zA-Z0-9]+$
+      minLength: 24
+      maxLength: 120
+      description: The unique ID of the _BIN_ for which this fee has been calculated.
+    distributionKey:
+      description: Uniquely identifies a distribution object
+      type: string
+      pattern: ^dst-[a-zA-Z0-9]+$
+      minLength: 10
+      maxLength: 120
+      example: dst-1e1dAHhgstYTUhlphPzZ
+    errorDetail:
+      type: string
+      description: 'A human readable explanation specific to this occurrence of the problem.
+
+        '
+    DisputeHistoryEventsReportName:
+      type: string
+      description: The name of the report.
+      enum:
+      - DisputeHistoryEvents
+    threeDsKey:
+      type: string
+      pattern: ^tds-[a-zA-Z0-9]+$
+      minLength: 24
+      maxLength: 120
+      description: 'The unique ID of the _3DS_ for which this fee has been calculated. Only present if
+
+        `category` is set to `authentication`.
+
+        '
+    clearingArn:
+      type: string
+      pattern: ^(visa|mastercard)-\d+$
+      minLength: 27
+      maxLength: 50
+      description: 'The unique (clearing) _ARN_ for which this fee has been calculated. Only present if
+
+        `category` is set to `clearing`.
+
+        '
+    openapi_components-schemas-agentKey:
+      type: string
+      pattern: ^cgt-[a-zA-Z0-9]+$
+      minLength: 24
+      maxLength: 120
+      description: 'The unique ID of the _Agent_ (platform tenant) for which this fee has
+
+        been calculated.
+
+        '
+    PublicReport:
+      type: object
+      required:
+      - key
+      - agentKey
+      - status
+      - created
+      - version
+      description: A report entity.
+      properties:
+        key:
+          $ref: '#/components/schemas/reportKey'
+        agentKey:
+          $ref: '#/components/schemas/AgentKey'
+        reference:
+          $ref: '#/components/schemas/components-schemas-reference'
+        status:
+          $ref: '#/components/schemas/reportStatus'
+        result:
+          $ref: '#/components/schemas/schemas-Result'
+        created:
+          $ref: '#/components/schemas/openapi_components-schemas-created-2'
+        lastModified:
+          $ref: '#/components/schemas/openapi_components-schemas-lastModified'
+        version:
+          $ref: '#/components/schemas/components-schemas-version'
+        distributions:
+          type: array
+          items:
+            $ref: '#/components/schemas/distributionKey'
+        reportScheduleKey:
+          $ref: '#/components/schemas/reportScheduleKey'
+    schemas-TieredBillingAmount:
+      title: Tiered Billing Amount
+      description: 'The actual billing amount for this fee, denominated in the `feeRate` currency (if defined) or
+
+        the `sourceAmount` currency.
+
+        '
+      type: object
+      required:
+      - amounts
+      properties:
+        amounts:
+          description: 'A list of amounts. Each amount defines a billing amount value for the given tier, and a
+
+            threshold value (`upToIncluding` or `above`) to which it applies.
+
+            '
+          type: array
+          items:
+            $ref: '#/components/schemas/schemas-TieredBillingAmountTier'
+          minItems: 2
+      allOf:
+      - $ref: '#/components/schemas/schemas-BaseBillingAmount'
+    InterchangeFeeDowngradeAdvicesReportName:
+      type: string
+      description: The name of the report.
+      enum:
+      - InterchangeFeeDowngradeAdvices
+    feeRateType:
+      type: string
+      enum:
+      - fixed
+      - basisPoints
+      description: 'The type of fee. The value `fixed` indicates that the `value` field holds a _fixed_ fee amount,
+
+        denominated in the specified `currency`. The value `basisPoints` indicates that the `value`
+
+        fields holds the (decimal) number of basis points of the fee, applied to the `sourceAmount`
+
+        or `convertedSourceAmount` in case the `currency` does not match the `sourceAmount` currency.
+
+        '
+    errorType:
+      type: string
+      description: 'A relative URI reference, this property can be used to perform automated error handling.
+
+        '
+    ConvertedSourceAmount:
+      title: Amount
+      description: 'The _source_ amount denominated in the `feeRate` currency. This field is only present when currency
+
+        conversion has been applied. Currency conversion is only applied if the `feeRate` currency is
+
+        different from the `sourceAmount` currency.
+
+        '
+      type: object
+      required:
+      - impact
+      - currency
+      - value
+      properties:
+        impact:
+          $ref: '#/components/schemas/sourceAmountImpact'
+        currency:
+          $ref: '#/components/schemas/scheme-fee-details_currency'
+        value:
+          $ref: '#/components/schemas/sourceAmountValue'
+    openapi_components-schemas-acquirerIdCode:
+      type: string
+      pattern: ^\d+$
+      minLength: 6
+      maxLength: 6
+      description: 'The value of the _Acquirer ID Code_ for which this fee has been calculated. For Mastercard,
+
+        this field corresponds to the _Acquirer ICA_. For Visa, this field corresponds to the _CIB_,
+
+        which usually has the same value as the _BIN_.
+
+        '
+    MastercardQuarterlySchemeReportParameters:
+      type: object
+      description: The parameters used for the MastercardQuarterlySchemeReport.
+      required:
+      - network
+      - acquirerIdCode
+      - year
+      - quarter
+      - currency
+      additionalProperties: false
+      properties:
+        network:
+          type: string
+          description: The card network.
+          enum:
+          - mastercard
+        acquirerIdCode:
+          type: string
+          description: The Acquirer Institution ID code. For Mastercard, this is the Acquirer ICA (Interbank Card Association) code, which is a unique identifier for the acquirer. It should be a 6-digit numeric value.
+          pattern: ^\d{6}$
+        quarter:
+          $ref: '#/components/schemas/quarter'
+        year:
+          $ref: '#/components/schemas/year'
+        currency:
+          $ref: '#/components/schemas/currency'
+    reconciliationDetailsReportMimeType:
+      type: string
+      description: The mime-type in which the reconciliation details report is available.
+      enum:
+      - text/csv
+      - application/json
+      - application/x-ndjson
+    feeDate:
+      type: string
+      format: date-time
+      description: 'The fee date. This is the date (and time) of the event for which this fee was _incurred_.
+
+        Formatted as [ISO 8601 Date](https://en.wikipedia.org/wiki/ISO_8601) and time in UTC.
+
+        '
+    schemas-Result:
+      type: object
+      description: The result properties of generating the report.
+      required:
+      - size
+      properties:
+        size:
+          type: number
+          description: The file size, in bytes.
+        lastToken:
+          type: string
+          description: This value can be used in the `sinceToken` field of a subsequent request to retrieve scheme fee records that have not been returned in a previous report.
+        errorMessage:
+          type: string
+          description: The error message, if applicable.
+    VisaQuarterlySchemeReportParameters:
+      type: object
+      description: The parameters used for the VisaQuarterlySchemeReport.
+      required:
+      - network
+      - bid
+      - year
+      - quarter
+      - currency
+      additionalProperties: false
+      properties:
+        network:
+          type: string
+          description: The card network.
+          enum:
+          - visa
+        bid:
+          type: string
+          description: The assigned Business Identifier of the acquirer.
+          pattern: ^[a-zA-Z0-9]+$
+          minLength: 1
+          maxLength: 120
+        quarter:
+          $ref: '#/components/schemas/quarter'
+        year:
+          $ref: '#/components/schemas/year'
+        currency:
+          $ref: '#/components/schemas/currency'
+    schemas-tierNumber:
+      type: integer
+      minimum: 1
+      description: The _logical_ (1-based) tier number.
+  parameters:
+    components-parameters-sortOrder:
+      in: query
+      name: sortOrder
+      required: false
+      description: 'The sort order in which reports should be sorted. Based on the entity creation time.
+
+
+        `asc` for ascending order, `desc` for descending order.
+
+        '
+      schema:
+        type: string
+        default: asc
+        enum:
+        - asc
+        - desc
+      example: asc
+    createdFrom:
+      in: query
+      name: createdFrom
+      required: false
+      description: Include only items that have a created date greater than or equal to the specified date
+      schema:
+        type: string
+        format: date-time
+    openapi_components-parameters-offsetToken-3:
+      in: query
+      name: offsetToken
+      required: false
+      schema:
+        $ref: '#/components/schemas/components-schemas-offsetToken'
+      description: Token representing the offset for paginated results. Use the token from the last response to retrieve the next set of items.
+    createdTo:
+      in: query
+      name: createdTo
+      required: false
+      description: Include only items that have a created date less than or equal to the specified date
+      schema:
+        type: string
+        format: date-time
+    parameters-limit:
+      in: query
+      name: limit
+      required: false
+      description: The maximum number of reports to retrieve in a single request.
+      schema:
+        type: integer
+        format: int32
+        minimum: 1
+        maximum: 100
+        default: 10
+      example: 1
+  examples:
+    SchemeFeeDetailsReport:
+      summary: Scheme Fee Details Report
+      value:
+        reportName: SchemeFeeDetails
+        parameters:
+          bookDateFrom: '2019-08-24T14:15:22Z'
+          bookDateTo: '2019-08-24T14:15:22Z'
+        mimeType: application/json
+        key: rep-1e1dAHhgstYTUhlphPzZ
+        agentKey: cgt-1e1dAHhgstYTUhlphPzZ
+        reference: Report Reference
+        status: completed
+        result:
+          size: 1337
+          lastToken: ZfDH6YfTwPU2TweAN6a5Rk6cLZ1Xxyms
+        created: '2019-08-24T14:15:22Z'
+        reportScheduleKey: rsk-1e1dAHhgstYTUhlphPzZ
+        lastModified: '2019-08-25T14:15:22Z'
+        version: 2
+    NDJSON:
+      summary: SchemeFeeDetails
+      value: '{"key":"sfb-cAKaGQcUy64vHXPs8SR9jSayErDH5k6RWiBXihU6AP8","agentKey":"cgt-2YokFM7kSX7sKD3Sw000","region":"eu-west-1","binKey":"bin-2WpfFandCkkSX7sKM000","bin":"271000","acquirerIdCode":"263000","merchantAcceptorKey":"mac-2YokFM7yWNRbg8Xdo030","merchantKey":"mct-2YohR8zcx7FP8yoLJ010","mid":"7000010","threeDsKey":"tds-3z4GZdYHqqxVAwIacx2B","transactionReference":"b9b87e23-e7fe-4391-9ebd-97c598552e69","billingFrequency":"monthly","feeId":"2YA2805","feeDescription":"EMV 3DS - Acquiring Authentication Fee - Nonrecurring - Dom","feeDate":"2023-11-27T21:01:44.890Z","tiering":"none","feeRate":{"type":"basisPoints","currency":"EUR","tiers":[{"impact":"debit","value":"2.3"}]},"sourceAmount":{"currency":"EUR","value":"1780.44"},"conversionRates":[{"date":"2023-11-27","source":"USD","target":"EUR","rate":"0.913","operation":"multiply"}],"billingAmount":{"currency":"EUR","amounts":[{"impact":"debit","value":"0.4095012"}]},"cardNetwork":"mastercard","tierId":"TYA2805","bookDate":"2023-11-27T21:09:39.242Z"}
+
+        {"key":"sfb-gK0db2KtEefFcn8LbMlt0sr7lSSLkyj5ZeQyWBDiSXo","agentKey":"cgt-2YokFM7kSX7sKD3Sw000","region":"eu-west-1","binKey":"bin-2WpfFandCkkSX7sKM000","bin":"271000","acquirerIdCode":"263000","merchantAcceptorKey":"mac-2YokFM7yWNRbg8Xdo030","merchantKey":"mct-2YohR8zcx7FP8yoLJ010","mid":"7000010","threeDsKey":"tds-3z4GZdYHqqxVAwIacx2B","transactionReference":"b9b87e23-e7fe-4391-9ebd-97c598552e69","billingFrequency":"monthly","feeId":"2YA2807","feeDescription":"EMV 3DS - Acquiring Authentication Fee - Nonrecurring - Dom","feeDate":"2023-11-27T21:01:44.890Z","tiering":"none","feeRate":{"type":"basisPoints","currency":"EUR","tiers":[{"impact":"debit","value":"15.5"}]},"sourceAmount":{"currency":"EUR","value":"1780.44"},"conversionRates":[{"date":"2023-11-27","source":"USD","target":"EUR","rate":"0.913","operation":"multiply"}],"billingAmount":{"currency":"EUR","amounts":[{"impact":"debit","value":"2.759682"}]},"cardNetwork":"mastercard","tierId":"-","bookDate":"2023-11-27T21:09:39.242Z"}
+
+        {"key":"sfb-JrpJKfiyO4ep4ZoIZgot7v5wTh1uvdkENWDym4I11KP","agentKey":"cgt-2YokFM7kSX7sKD3Sw000","region":"eu-west-1","binKey":"bin-2WpfFandCkkSX7sKM000","bin":"271000","acquirerIdCode":"263000","merchantAcceptorKey":"mac-2YokFM7yWNRbg8Xdo030","merchantKey":"mct-2YohR8zcx7FP8yoLJ010","mid":"7000010","chargeKey":"chg-3z4GZe3eu1zYqMoH2Sa1","transactionReference":"b9b87e23-e7fe-4391-9ebd-97c598552e69","billingFrequency":"weekly","feeId":"2AB1116","feeDescription":"Account Status Inquiry Service Fee Domestic","feeDate":"2023-11-27T21:01:44.890Z","tiering":"none","feeRate":{"type":"fixed","currency":"USD","tiers":[{"impact":"debit","value":"2.5"}]},"sourceAmount":{"currency":"EUR","value":"1780.44"},"conversionRates":[{"date":"2023-11-27","source":"USD","target":"EUR","rate":"0.913","operation":"multiply"}],"convertedSourceAmount":{"currency":"USD","value":"1950.09857612267"},"billingAmount":{"currency":"USD","amounts":[{"impact":"debit","value":"2.5"}]},"cardNetwork":"mastercard","tierId":"-","bookDate":"2023-11-27T21:31:36.049Z"}'
+    CSV:
+      summary: SchemeFeeDetails
+      value: 'key,agentKey,cardNetwork,binKey,acquirerIdCode,merchantAcceptorKey,merchantKey,mid,threeDsKey,chargeKey,chargeActionKey,clearingArn,transactionReference,actionReference,billingFrequency,tierId,feeId,feeDescription,feeDate,bookDate,feeRate.type,feeRate.currency,feeRate.tiering,feeRate.numberOfTiers,feeRate.tiers.0.value,feeRate.tiers.0.impact,feeRate.tiers.0.upToIncluding,feeRate.tiers.0.above,feeRate.tiers.1.value,feeRate.tiers.1.impact,feeRate.tiers.1.upToIncluding,feeRate.tiers.1.above,feeRate.tiers.2.value,feeRate.tiers.2.impact,feeRate.tiers.2.upToIncluding,feeRate.tiers.2.above,feeRate.tiers.3.value,feeRate.tiers.3.impact,feeRate.tiers.3.upToIncluding,feeRate.tiers.3.above,feeRate.tiers.4.value,feeRate.tiers.4.impact,feeRate.tiers.4.upToIncluding,feeRate.tiers.4.above,feeRate.tiers.5.value,feeRate.tiers.5.impact,feeRate.tiers.5.upToIncluding,feeRate.tiers.5.above,sourceAmount.impact,sourceAmount.currency,sourceAmount.value,conversionRates.0.date,conversionRates.0.source,conversionRates.0.target,conversionRates.0.rate,conversionRates.0.operation,conversionRates.1.date,conversionRates.1.source,conversionRates.1.target,conversionRates.1.rate,conversionRates.1.operation,convertedSourceAmount.currency,convertedSourceAmount.convertedSourceAmount.value,convertedSourceAmount.value,billingAmount.currency,billingAmount.tiering,billingAmount.amounts.0.value,billingAmount.amounts.0.impact,billingAmount.amounts.0.upToIncluding,billingAmount.amounts.0.above,billingAmount.amounts.1.value,billingAmount.amounts.1.impact,billingAmount.amounts.1.upToIncluding,billingAmount.amounts.1.above,billingAmount.amounts.2.value,billingAmount.amounts.2.impact,billingAmount.amounts.2.upToIncluding,billingAmount.amounts.2.above,billingAmount.amounts.3.value,billingAmount.amounts.3.impact,billingAmount.amounts.3.upToIncluding,billingAmount.amounts.3.above,billingAmount.amounts.4.value,billingAmount.amounts.4.impact,billingAmount.amounts.4.upToIncluding,billingAmount.amounts.4.above,billingAmount.amounts.5.value,billingAmount.amounts.5.impact,billingAmount.amounts.5.upToIncluding,billingAmount.amounts.5.above
+
+        sfb-cAKaGQcUy64vHXPs8SR9jSayErDH5k6RWiBXihU6AP8,cgt-2YokFM7kSX7sKD3Sw000,mastercard,bin-2WpfFandCkkSX7sKM000,263000,mac-2YokFM7yWNRbg8Xdo030,mct-2YohR8zcx7FP8yoLJ010,7000010,tds-3z4GZdYHqqxVAwIacx2B,,,,b9b87e23-e7fe-4391-9ebd-97c598552e69,,monthly,TYA2805,2YA2805,EMV 3DS - Acquiring Authentication Fee - Nonrecurring - Dom,2023-11-27T21:01:44.890Z,2023-11-27T21:09:39.242Z,basispoints,EUR,none,,2.3,debit,,,,,,,,,,,,,,,,,,,,,,,debit,EUR,1780.44,2023-11-27,,,0.913,multiply,,,,,,,,,EUR,none,0.4095012,debit,,,,,,,,,,,,,,,,,,,,,,
+
+        sfb-gK0db2KtEefFcn8LbMlt0sr7lSSLkyj5ZeQyWBDiSXo,cgt-2YokFM7kSX7sKD3Sw000,mastercard,bin-2WpfFandCkkSX7sKM000,263000,mac-2YokFM7yWNRbg8Xdo030,mct-2YohR8zcx7FP8yoLJ010,7000010,tds-3z4GZdYHqqxVAwIacx2B,,,,b9b87e23-e7fe-4391-9ebd-97c598552e69,,monthly,-,2YA2807,EMV 3DS - Acquiring Authentication Fee - Nonrecurring - Dom,2023-11-27T21:01:44.890Z,2023-11-27T21:09:39.242Z,basispoints,EUR,none,,15.5,debit,,,,,,,,,,,,,,,,,,,,,,,debit,EUR,1780.44,2023-11-27,,,0.913,multiply,,,,,,,,,EUR,none,2.759682,debit,,,,,,,,,,,,,,,,,,,,,,
+
+        sfb-JrpJKfiyO4ep4ZoIZgot7v5wTh1uvdkENWDym4I11KP,cgt-2YokFM7kSX7sKD3Sw000,mastercard,bin-2WpfFandCkkSX7sKM000,263000,mac-2YokFM7yWNRbg8Xdo030,mct-2YohR8zcx7FP8yoLJ010,7000010,,chg-3z4GZe3eu1zYqMoH2Sa1,,,b9b87e23-e7fe-4391-9ebd-97c598552e69,,weekly,-,2AB1116,Account Status Inquiry Service Fee Domestic,2023-11-27T21:01:44.890Z,2023-11-27T21:31:36.049Z,fixed,USD,none,,2.5,debit,,,,,,,,,,,,,,,,,,,,,,,debit,EUR,1780.44,2023-11-27,,,0.913,multiply,,,,,,USD,,1950.098576,USD,none,2.5,debit,,,,,,,,,,,,,,,,,,,,,,'
+    JSON:
+      summary: SchemeFeeDetails
+      value:
+      - key: sfb-cAKaGQcUy64vHXPs8SR9jSayErDH5k6RWiBXihU6AP8
+        agentKey: cgt-2YokFM7kSX7sKD3Sw000
+        cardNetwork: mastercard
+        binKey: bin-2WpfFandCkkSX7sKM000
+        bin: '271000'
+        acquirerIdCode: '263000'
+        merchantAcceptorKey: mac-2YokFM7yWNRbg8Xdo030
+        merchantKey: mct-2YohR8zcx7FP8yoLJ010
+        mid: '7000010'
+        threeDsKey: tds-3z4GZdYHqqxVAwIacx2B
+        chargeKey: chg-3z4GZdYHqqxVAwIacx2B
+        chargeActionKey: act-3z4GZdYHqqxVAwIacx2B
+        clearingArn: mastercard-01234593166640000008444
+        transactionReference: b9b87e23-e7fe-4391-9ebd-97c598552e69
+        actionReference: b9b87e23-e7fe-4391-9ebd-97c598552e69
+        billingFrequency: monthly
+        tierId: TYA2805
+        feeId: 2YA2805
+        feeDescription: EMV 3DS - Acquiring Authentication Fee - Nonrecurring - Dom
+        feeDate: '2023-11-27T21:01:44.890Z'
+        bookDate: '2023-11-27T21:09:39.242Z'
+        tiering: none
+        feeRate:
+          type: basisPoints
+          currency: EUR
+          tiers:
+          - impact: debit
+            value: '2.3'
+        sourceAmount:
+          impact: debit
+          currency: EUR
+          value: '1780.44'
+        conversionRates:
+        - date: '2023-11-27'
+          source: USD
+          target: EUR
+          rate: '0.913'
+          operation: multiply
+        billingAmount:
+          currency: EUR
+          amounts:
+          - impact: debit
+            value: '0.4095012'
+  responses:
+    openapi_components-responses-ForbiddenError-3:
+      description: The authenticated client is forbidden to make the request for the resource identified.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/openapi_components-schemas-ProblemDetail-2'
+          example:
+            type: /silverflow/problems/forbidden
+            title: Forbidden
+            status: 403
+            detail: 'Authenticated user ''apk-33GjasQdWl4781OsErvi'' is missing the following permission(s): reports:List'
+            instance: /silverflow/b0451a9d-f66d-4ef7-9f5d-d48064a2bb3e
+    openapi_components-responses-TooManyRequestsError-3:
+      description: The number of requests (per minute) has exceeded the configured maximum
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/openapi_components-schemas-ProblemDetail-2'
+          example:
+            type: /silverflow/problems/too-many-requests
+            title: Too Many Requests
+            status: 429
+            detail: You have exceeded the rate limit. Please try again after the specified delay.
+            instance: /silverflow/b0451a9d-f66d-4ef7-9f5d-d48064a2bb3e
+  securitySchemes:
+    ApiKey:
+      description: "The primary method of authenticating to the Silverflow API is through API keys.\n\nAPI keys can be created by calling the [createApiKey](#operation/createApiKey) endpoint. You can create up to 40 API keys and also update and delete them, allowing for _credential rotation_.\n\nThe _Agent Activation_ process will generate an initial API Key for you. See [Activate Agent](#section/Getting-Started).\n\nA call to the [createApiKey](#operation/createApiKey) endpoint will return the following structure:\n\n```json\n{\n    \"key\": \"apk-1wtRxni5IsPsSpBLWpwr\",\n    \"status\": \"active\",\n    \"agentKey\": \"cgt-1wtRvFLIjDOyyUR5Q2LB\",\n    \"description\": \"Data lake API key\",\n    \"permissions\": [\n        \"charges:List\",\n        \"reports:All\"\n    ],\n    \"created\": \"2021-06-22T11:21:45.115Z\",\n    \"secret\": \"FWtnOOHAjbD6rNxWWEeVOCj7JXSEPGJQ\",\n    \"version\": 1\n}\n```\n\n> **Important:** The `secret` is only returned once in the response to the `createApiKey` call.\n\nOnce created, the `key` and `secret` fields from the API key must be used in the HTTP `Authorization` header using the `Basic` scheme.\nThe Basic scheme requires a **username** and **password** to be specified, separated by a `:` (colon) and Base64 encoded.\n\nUse the following values from the API key to construct a Basic authentication header:\n\n| Basic field | API key field | Example |\n| ----------- | ------------- | ------- |\n| username | `key` | `apk-1wtRxni5IsPsSpBLWpwr` |\n| password | `secret` | `FWtnOOHAjbD6rNxWWEeVOCj7JXSEPGJQ` |\n\nIn pseudo-code a valid HTTP Basic Authentication header would be constructed as follows:\n\n```ts\nconst apiKeyId = \"apk-1wtRxni5IsPsSpBLWpwr\";\nconst apiKeySecret = \"FWtnOOHAjbD6rNxWWEeVOCj7JXSEPGJQ\";\nconst authnValue = \"Basic \" + base64Encode(apiKeyId + \":\" + apiKeySecret);\nrequest.setHeader(\"Authorization\", authnValue);\n```\n\nUsing the values from the example a valid HTTP request would look like the following:\n\n```http\nGET /v1/agents/current HTTP/1.1\nAccept: application/json\nAuthorization: Basic YXBrLTF3dFJ4bmk1SXNQc1NwQkxXcHdyOkZXdG5PT0hBamJENnJOeFdXRWVWT0NqN0pYU0VQR0pR\n```\n\nMore information on the Basic scheme can be found in [RFC-7617 - The 'Basic' HTTP Authentication Scheme](https://datatracker.ietf.org/doc/html/rfc7617)."
+      type: http
+      scheme: basic
+    BearerToken:
+      description: 'Bearer tokens are temporary security credentials that can be used to authorize ''third parties'' (bearers) access to the Silverflow API on behalf of the agent.
+
+
+        These tokens are created by calling the [createAgentBearerToken](#operation/createAgentBearerToken) endpoint.
+
+
+        Once created the `token` field must be used in the HTTP `Authorization` header using the `Bearer` scheme.
+
+        Here''s an example of an HTTP request with a bearer token:
+
+
+        ```http
+
+        GET /v1/merchants/mct-1hPdFhmgaBzMS191nIbJ HTTP/1.1
+
+        Accept: application/json
+
+        Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...40EFOgxf_3I6mPZ16bXqHd5tUyApgl0mNOAXPm5AhnA
+
+
+        ```
+
+
+        More information on the Bearer scheme can be found in [RFC-6750 - The OAuth 2.0 Authorization Framework: Bearer Token Usage](https://datatracker.ietf.org/doc/html/rfc6750).'
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+    MutualTLS:
+      type: apiKey
+      in: header
+      name: '-'
+      description: 'The client must set up mTLS connection with a valid X.509 client certificate signed by a customer-provided CA (certificate authority) that is registered to a specific agent. The customer-provided CA certificate must be shared and added to Silverflow''s trust store prior to calling endpoints.
+
+
+        Certificate validation happens at the transport layer during TLS handshake. Tenant verification is performed by matching the agent key embedded in the client certificate against the agent key embedded in the trusted CA.
+
+        '
+x-refined-from:
+- silverflow-openapi.yml
+- silverflow-openapi.yml
+x-tagGroups:
+- name: ''
+  tags:
+  - Introduction
+  - Release Notes
+- name: Accounts
+  tags:
+  - Agents
+  - API Keys
+  - Bins
+  - Merchants
+  - Merchant Acceptors
+  - Enrollments
+  - Screenings
+- name: Event Notifications
+  tags:
+  - Event Subscriptions
+  - Charges Events
+  - Disputes Events
+  - Fraud Notification Events
+  - Processor Tokens Events
+  - Network Tokens Events
+  - Report Events
+  - Distribution Events
+  - AMMF Submission Events
+  - Reconciliation Events
+  - Clearing Events
+- name: 3DS Authentication
+  tags:
+  - 3DS Authentication
+- name: BEP Authentication
+  tags:
+  - BEP Authentication
+- name: Tokenization
+  tags:
+  - Processor Tokenization
+  - Network Tokenization
+- name: Charges
+  tags:
+  - Create Charges
+  - Create Recurring
+  - Retrieve Charges
+  - Charge Actions
+- name: Terminal-To-Cloud
+  tags:
+  - Create POS Charges
+  - Retrieve POS Charges
+  - POS Charge Actions
+- name: Card Management
+  tags:
+  - Card Management
+- name: Disputes
+  tags:
+  - Disputes
+  - Documents
+- name: Fraud Notifications
+  tags:
+  - Fraud Notifications
+- name: Card Info
+  tags:
+  - Card Info
+- name: Currency Conversion Rates
+  tags:
+  - Currency Conversion Rates
+- name: Fees
+  tags:
+  - Fees
+- name: Reconciliation
+  tags:
+  - Reconciliation Details
+  - Network Funds Transfers
+- name: Reports
+  tags:
+  - Reconciliation Reports
+  - Settlement Reports
+  - Card Network Reports
+  - Dispute Reports
+  - Fraud Notifications Reports
+  - Charges Reports
+  - Scheme Fee Reports
+  - Retrieve Reports
+  - Report Scheduling
+  - Distributions
+- name: Transaction Risk Assessment
+  tags:
+  - Transaction Risk Assessment
+- name: File Subscriptions
+  tags:
+  - File Subscriptions

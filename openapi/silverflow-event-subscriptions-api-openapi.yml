@@ -1,0 +1,780 @@
+openapi: 3.2.0
+info:
+  title: Silverflow Event Subscriptions API
+  version: 1.417.0
+  contact:
+    name: API Support
+    email: support@silverflow.com
+  license:
+    name: Commercial
+  description: 'Operations tagged Event Subscriptions across 2 of this provider''s published API definitions: silverflow-openapi.yml, silverflow-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://eu-west-1.api.silverflow.com/v1
+  description: Production URL for Europe - Equivalent to https://api.silverflow.co/v1
+- url: https://us-east-2.api.silverflow.com/v1
+  description: Production URL for North America
+- url: https://eu-west-1.api-sbx.silverflow.com/v1
+  description: Sandbox URL - Equivalent to https://api-sbx.silverflow.co/v1
+security:
+- ApiKey: []
+- BearerToken: []
+tags:
+- name: Event Subscriptions
+  description: ' '
+paths:
+  /eventSubscriptions:
+    get:
+      operationId: getEventSubscriptions
+      summary: List Event Subscriptions
+      description: 'This operation returns a paged list of all Event Subscriptions for the authenticated Agent.
+
+
+        Requires `eventSubscriptions:List` permission.
+
+        '
+      tags:
+      - Event Subscriptions
+      parameters:
+      - $ref: '#/components/parameters/sortOrder'
+      - $ref: '#/components/parameters/limit'
+      - $ref: '#/components/parameters/offsetToken'
+      responses:
+        '200':
+          description: A paged list of Event Subscriptions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EventSubscriptionsPage'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '429':
+          $ref: '#/components/responses/TooManyRequestsError'
+    post:
+      operationId: createEventSubscription
+      summary: Create Event Subscription
+      description: 'This operation creates a new Event Subscription for the given event source.
+
+        When the subscription is created successfully, a test event will be sent to the `targetUrl`.
+
+
+        Requires `eventSubscriptions:Create` permission.
+
+        '
+      tags:
+      - Event Subscriptions
+      requestBody:
+        description: 'The request body allows to set certain values on this Event Subscription.
+
+          '
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EventSubscriptionCreate'
+            examples:
+              disputesSubs:
+                $ref: '#/components/examples/create-event-subscription-dispute-events'
+      responses:
+        '201':
+          description: The created Event Subscription
+          headers:
+            Location:
+              description: The URL of the newly created Event Subscription
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EventSubscription'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '429':
+          $ref: '#/components/responses/TooManyRequestsError'
+    servers:
+    - url: https://eu-west-1.api.silverflow.com/v1
+      description: Production URL for Europe - Equivalent to https://api.silverflow.co/v1
+    - url: https://us-east-2.api.silverflow.com/v1
+      description: Production URL for North America
+    - url: https://eu-west-1.api-sbx.silverflow.com/v1
+      description: Sandbox URL - Equivalent to https://api-sbx.silverflow.co/v1
+  /eventSubscriptions/{eventSubscriptionKey}:
+    get:
+      operationId: getSubscription
+      summary: Get Event Subscription
+      description: 'This operation returns the referenced Event Subscription.
+
+
+        Requires `eventSubscriptions:Get` permission.
+
+        '
+      tags:
+      - Event Subscriptions
+      parameters:
+      - $ref: '#/components/parameters/eventSubscriptionKey'
+      responses:
+        '200':
+          description: The updated Event Subscription version
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EventSubscription'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '412':
+          $ref: '#/components/responses/PreconditionFailedError'
+        '429':
+          $ref: '#/components/responses/TooManyRequestsError'
+    delete:
+      operationId: deleteEventSubscription
+      summary: Archive Event Subscription
+      description: 'This operation archives the specified Event Subscription.
+
+        When the subscription is deleted successfully, a test event will be sent to the `targetUrl`.
+
+
+        Requires `eventSubscriptions:Archive` permission.
+
+        '
+      tags:
+      - Event Subscriptions
+      parameters:
+      - $ref: '#/components/parameters/eventSubscriptionKey'
+      responses:
+        '204':
+          description: Event Subscription deleted successfully
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '412':
+          $ref: '#/components/responses/PreconditionFailedError'
+        '429':
+          $ref: '#/components/responses/TooManyRequestsError'
+    patch:
+      operationId: updateEventSubscription
+      summary: Update Event Subscription
+      description: 'When the subscription is created successfully, a test event will be sent to the `targetUrl`.
+
+
+        Requires `eventSubscriptions:Update` permission.
+
+        '
+      tags:
+      - Event Subscriptions
+      parameters:
+      - $ref: '#/components/parameters/eventSubscriptionKey'
+      requestBody:
+        required: true
+        content:
+          application/merge-patch+json:
+            schema:
+              $ref: '#/components/schemas/EventSubscriptionMergeUpdate'
+      responses:
+        '200':
+          description: The updated Event Subscription version
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EventSubscription'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '412':
+          $ref: '#/components/responses/PreconditionFailedError'
+        '429':
+          $ref: '#/components/responses/TooManyRequestsError'
+    servers:
+    - url: https://eu-west-1.api.silverflow.com/v1
+      description: Production URL for Europe - Equivalent to https://api.silverflow.co/v1
+    - url: https://us-east-2.api.silverflow.com/v1
+      description: Production URL for North America
+    - url: https://eu-west-1.api-sbx.silverflow.com/v1
+      description: Sandbox URL - Equivalent to https://api-sbx.silverflow.co/v1
+components:
+  schemas:
+    Page:
+      type: object
+      properties:
+        offsetToken:
+          $ref: '#/components/schemas/offsetToken'
+        moreItems:
+          $ref: '#/components/schemas/moreItems'
+    eventSubscriptionKey:
+      type: string
+      pattern: ^sub-[a-zA-Z0-9]+$
+      minLength: 5
+      maxLength: 120
+      example: sub-NafdfrdPMf2XrS21r1d
+    ProblemDetail:
+      type: object
+      description: 'The ''problem detail'' object relays detailed information about the error that occurred. It is defined
+
+        by [RFC 7807 - Problem Details for HTTP APIs](https://tools.ietf.org/html/rfc7807).
+
+
+        Note that additional properties may be used to relay error specific information.
+
+        '
+      properties:
+        type:
+          type: string
+          description: 'An absolute URI that identifies the problem type.
+
+            '
+          default: about:blank
+          example: https://api.silverflow.co/problem/constraint-violation
+        title:
+          type: string
+          description: 'A short, summary of the problem type. Written in english and readable
+
+            for engineers (usually not suited for non technical stakeholders and
+
+            not localized);
+
+            '
+          example: Service Unavailable
+        status:
+          type: integer
+          format: int32
+          description: 'The HTTP status code generated by the origin server for this occurrence
+
+            of the problem.
+
+            '
+          minimum: 100
+          maximum: 599
+          example: 503
+        detail:
+          type: string
+          description: 'A human readable explanation specific to this occurrence of the
+
+            problem.
+
+            '
+          example: Connection to database timed out
+        instance:
+          type: string
+          description: 'An absolute URI that identifies the specific occurrence of the problem.
+
+            It may or may not yield further information if dereferenced.
+
+            '
+      additionalProperties: true
+    FreeTextField:
+      type: string
+      pattern: ^[\w +=.,:;!?$@()-]+$
+      minLength: 1
+      maxLength: 160
+    offsetToken:
+      type: string
+      pattern: ^[a-zA-Z0-9%]+$
+      minLength: 1
+      maxLength: 2048
+    created:
+      type: string
+      description: The date and time this object was created
+      format: date-time
+    PreconditionFailedProblemDetail:
+      type: object
+      required:
+      - type
+      - title
+      - status
+      - detail
+      - instance
+      properties:
+        type:
+          type: string
+          enum:
+          - /silverflow/problems/precondition-failed
+        title:
+          type: string
+          enum:
+          - Precondition Failed
+        status:
+          type: integer
+          enum:
+          - 412
+        detail:
+          type: string
+          description: 'A human readable explanation specific to this occurrence of the
+
+            problem.
+
+            '
+          example: Connection to database timed out
+        instance:
+          type: string
+          description: 'An absolute URI that identifies the specific occurrence of the problem.
+
+            It may or may not yield further information if dereferenced.
+
+            '
+      additionalProperties: false
+    EventSubscriptionCreate:
+      type: object
+      required:
+      - eventSource
+      - targetUrl
+      additionalProperties: false
+      properties:
+        description:
+          $ref: '#/components/schemas/FreeTextField'
+        eventSource:
+          $ref: '#/components/schemas/eventSourceRequest'
+        targetUrl:
+          $ref: '#/components/schemas/url'
+    eventSubscriptionStatus:
+      type: string
+      description: The status of the Event Subscription
+      enum:
+      - active
+      - archived
+    EventSubscriptionsPage:
+      allOf:
+      - $ref: '#/components/schemas/Page'
+      - type: object
+        required:
+        - eventSubscriptions
+        properties:
+          eventSubscriptions:
+            type: array
+            items:
+              $ref: '#/components/schemas/EventSubscription'
+    url:
+      type: string
+      description: A valid URL
+      pattern: ^http(s)?:\/\/[a-z0-9-_]+(\.[a-z0-9-_]+)+(\/.*)?$
+      minLength: 8
+      maxLength: 2048
+    version:
+      type: integer
+      description: The version of this object
+      format: int64
+    EventSubscriptionMergeUpdate:
+      type: object
+      additionalProperties: false
+      properties:
+        description:
+          $ref: '#/components/schemas/FreeTextField'
+        targetUrl:
+          $ref: '#/components/schemas/url'
+    eventSourceRequest:
+      type: string
+      enum:
+      - https://silverflow.com/charges
+      - https://silverflow.com/clearing
+      - https://silverflow.com/complianceCases
+      - https://silverflow.com/currencyRates
+      - https://silverflow.com/disputes
+      - https://silverflow.com/documents
+      - https://silverflow.com/enrollments
+      - https://silverflow.com/fraudNotifications
+      - https://silverflow.com/networkTokens
+      - https://silverflow.com/processorTokens
+      - https://silverflow.com/reconciliation
+      - https://silverflow.com/reports
+      - https://silverflow.com/distributions
+      - https://silverflow.com/ammfSubmissions
+    lastModified:
+      type: string
+      description: The date and time this object was last modified
+      format: date-time
+    moreItems:
+      type: boolean
+    agentKey:
+      description: Uniquely identifies an Agent
+      type: string
+      pattern: ^cgt-[a-zA-Z0-9]+|current$
+      example: cgt-1UF2NafdfrdPMf2XrS2
+    BadRequestProblemDetail:
+      description: 'A ''problem detail'' object for Bad Request (400) errors. Extends the base ProblemDetail
+
+        with a validationErrors array that provides detailed information about validation failures.
+
+        '
+      allOf:
+      - $ref: '#/components/schemas/ProblemDetail'
+      - type: object
+        required:
+        - type
+        - title
+        - status
+        - detail
+        - instance
+        properties:
+          type:
+            type: string
+            description: URI reference identifying the problem type.
+            enum:
+            - /silverflow/problems/bad-request
+            example: /silverflow/problems/bad-request
+          title:
+            type: string
+            description: A short summary of the problem type.
+            enum:
+            - Bad Request
+          status:
+            type: integer
+            format: int32
+            description: The HTTP status code (400 for Bad Request).
+            enum:
+            - 400
+          detail:
+            type: string
+            description: A human readable explanation specific to this occurrence of the problem.
+            example: Validation errors occurred
+          instance:
+            type: string
+            description: An absolute URI that identifies the specific occurrence of the problem.
+          validationErrors:
+            type: array
+            description: 'An array of validation errors that occurred during request processing. Each item can be either
+
+              a simple string message or an object with detailed error information including the path and message.
+
+              '
+            items:
+              oneOf:
+              - type: string
+                description: A simple validation error message
+                example: Invalid 'mid' length
+              - type: object
+                description: A detailed validation error with path and message
+                required:
+                - instancePath
+                - message
+                properties:
+                  instancePath:
+                    type: string
+                    description: The JSON path to the field that caused the validation error
+                    example: /merchantAcceptor/mid
+                  message:
+                    type: string
+                    description: The validation error message
+                    example: must be at most 15 characters
+        additionalProperties: false
+    EventSubscription:
+      type: object
+      required:
+      - key
+      - status
+      - agentKey
+      - eventSource
+      - eventDataSchema
+      - targetUrl
+      - created
+      - version
+      properties:
+        key:
+          $ref: '#/components/schemas/eventSubscriptionKey'
+        agentKey:
+          $ref: '#/components/schemas/agentKey'
+        status:
+          $ref: '#/components/schemas/eventSubscriptionStatus'
+        description:
+          $ref: '#/components/schemas/FreeTextField'
+        eventSource:
+          $ref: '#/components/schemas/url'
+        eventDataSchema:
+          $ref: '#/components/schemas/url'
+        targetUrl:
+          $ref: '#/components/schemas/url'
+        created:
+          $ref: '#/components/schemas/created'
+        lastModified:
+          $ref: '#/components/schemas/lastModified'
+        version:
+          $ref: '#/components/schemas/version'
+      example:
+        key: sub-4JYVetlH0BhpW2bpHAAL
+        status: active
+        agentKey: cgt-24OJ9rv4u6x5jEu3MP91
+        description: Disputes Data lake feed
+        eventSource: https://silverflow.com/disputes
+        eventDataSchema: https://silverflow.com/schemas/events/disputes/1.0
+        targetUrl: https://my.server.com/events/disputes
+        created: '2025-04-22T12:26:34.341Z'
+        version: 1
+  responses:
+    NotFoundError:
+      description: The requested resource was not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ProblemDetail'
+          example:
+            type: https://datatracker.ietf.org/doc/html/rfc2616#section-10.4.5
+            title: Not Found
+            status: 404
+            detail: The entity referenced in the request could not be found
+            instance: https://api.silverflow.co/v1/merchants/mct-1hPdFqhgstYTUhlphPDp
+    ForbiddenError:
+      description: The authenticated client is forbidden to make the request for the resource identified.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ProblemDetail'
+          example:
+            type: https://datatracker.ietf.org/doc/html/rfc2616#section-10.4.4
+            title: Forbidden
+            status: 403
+            detail: The server is refusing to execute the request for the current authenticated user
+            instance: https://api.silverflow.co/v1/merchants/mct-1hPdFqhgstYTUhlphPDp
+    PreconditionFailedError:
+      description: The conditions specified in the HTTP headers of the request were not met.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/PreconditionFailedProblemDetail'
+          example:
+            detail: The referenced bin with key 'bin-5nHQqdP4wTClI7MDMw5j' did not have the expected version 5
+            instance: /silverflow/00b32804-1109-4761-8776-9436a3c6b26b
+            status: 412
+            title: Precondition Failed
+            type: /silverflow/problems/precondition-failed
+    TooManyRequestsError:
+      description: The number of requests (per minute) has exceeded the configured maximum
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ProblemDetail'
+          example:
+            type: /silverflow/problems/too-many-requests
+            title: Too Many Requests
+            status: 429
+            detail: You have exceeded the rate limit. Please try again after the specified delay.
+            instance: /silverflow/b0451a9d-f66d-4ef7-9f5d-d48064a2bb3e
+    BadRequestError:
+      description: The request was malformed. See the response body for details
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/BadRequestProblemDetail'
+          example:
+            type: /silverflow/problems/bad-request
+            title: Bad Request
+            status: 400
+            detail: Validation errors occurred
+            instance: https://api.silverflow.co/v1/merchants/mct-1hPdFqhgstYTUhlphPDp
+            validationErrors:
+            - instancePath: /tags/0/businessId
+              message: must not be longer than 255 characters
+    UnauthorizedError:
+      description: Authentication information is missing or invalid
+      headers:
+        WWW_Authenticate:
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ProblemDetail'
+          example:
+            type: https://datatracker.ietf.org/doc/html/rfc2616#section-10.4.2
+            title: Unauthorized
+            status: 401
+            detail: The credentials supplied in the request are either missing, invalid, or not applicable in the current scope
+  parameters:
+    eventSubscriptionKey:
+      name: eventSubscriptionKey
+      description: 'Uniquely identifies an Event Subscription.
+
+        '
+      in: path
+      required: true
+      schema:
+        $ref: '#/components/schemas/eventSubscriptionKey'
+    offsetToken:
+      name: offsetToken
+      description: The offset token. This token is returned in the response of previous request.
+      in: query
+      required: false
+      schema:
+        $ref: '#/components/schemas/offsetToken'
+    limit:
+      name: limit
+      description: The number of items to return
+      in: query
+      required: false
+      schema:
+        type: integer
+        format: int32
+        minimum: 1
+        maximum: 100
+        default: 10
+      example: 1
+    sortOrder:
+      name: sortOrder
+      description: The sort order, __asc__ending or __desc__ending
+      in: query
+      required: false
+      schema:
+        type: string
+        enum:
+        - asc
+        - desc
+      example: desc
+  examples:
+    create-event-subscription-dispute-events:
+      summary: Example request creating an Event Subscription to receive Dispute event notifications on https://my.server.com/events/disputes
+      value:
+        description: Data Lake Disputes Event Subscription
+        eventSource: https://silverflow.com/disputes
+        targetUrl: https://my.server.com/events/disputes
+  securitySchemes:
+    ApiKey:
+      description: "The primary method of authenticating to the Silverflow API is through API keys.\n\nAPI keys can be created by calling the [createApiKey](#operation/createApiKey) endpoint. You can create up to 40 API keys and also update and delete them, allowing for _credential rotation_.\n\nThe _Agent Activation_ process will generate an initial API Key for you. See [Activate Agent](#section/Getting-Started).\n\nA call to the [createApiKey](#operation/createApiKey) endpoint will return the following structure:\n\n```json\n{\n    \"key\": \"apk-1wtRxni5IsPsSpBLWpwr\",\n    \"status\": \"active\",\n    \"agentKey\": \"cgt-1wtRvFLIjDOyyUR5Q2LB\",\n    \"description\": \"Data lake API key\",\n    \"permissions\": [\n        \"charges:List\",\n        \"reports:All\"\n    ],\n    \"created\": \"2021-06-22T11:21:45.115Z\",\n    \"secret\": \"FWtnOOHAjbD6rNxWWEeVOCj7JXSEPGJQ\",\n    \"version\": 1\n}\n```\n\n> **Important:** The `secret` is only returned once in the response to the `createApiKey` call.\n\nOnce created, the `key` and `secret` fields from the API key must be used in the HTTP `Authorization` header using the `Basic` scheme.\nThe Basic scheme requires a **username** and **password** to be specified, separated by a `:` (colon) and Base64 encoded.\n\nUse the following values from the API key to construct a Basic authentication header:\n\n| Basic field | API key field | Example |\n| ----------- | ------------- | ------- |\n| username | `key` | `apk-1wtRxni5IsPsSpBLWpwr` |\n| password | `secret` | `FWtnOOHAjbD6rNxWWEeVOCj7JXSEPGJQ` |\n\nIn pseudo-code a valid HTTP Basic Authentication header would be constructed as follows:\n\n```ts\nconst apiKeyId = \"apk-1wtRxni5IsPsSpBLWpwr\";\nconst apiKeySecret = \"FWtnOOHAjbD6rNxWWEeVOCj7JXSEPGJQ\";\nconst authnValue = \"Basic \" + base64Encode(apiKeyId + \":\" + apiKeySecret);\nrequest.setHeader(\"Authorization\", authnValue);\n```\n\nUsing the values from the example a valid HTTP request would look like the following:\n\n```http\nGET /v1/agents/current HTTP/1.1\nAccept: application/json\nAuthorization: Basic YXBrLTF3dFJ4bmk1SXNQc1NwQkxXcHdyOkZXdG5PT0hBamJENnJOeFdXRWVWT0NqN0pYU0VQR0pR\n```\n\nMore information on the Basic scheme can be found in [RFC-7617 - The 'Basic' HTTP Authentication Scheme](https://datatracker.ietf.org/doc/html/rfc7617)."
+      type: http
+      scheme: basic
+    BearerToken:
+      description: 'Bearer tokens are temporary security credentials that can be used to authorize ''third parties'' (bearers) access to the Silverflow API on behalf of the agent.
+
+
+        These tokens are created by calling the [createAgentBearerToken](#operation/createAgentBearerToken) endpoint.
+
+
+        Once created the `token` field must be used in the HTTP `Authorization` header using the `Bearer` scheme.
+
+        Here''s an example of an HTTP request with a bearer token:
+
+
+        ```http
+
+        GET /v1/merchants/mct-1hPdFhmgaBzMS191nIbJ HTTP/1.1
+
+        Accept: application/json
+
+        Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...40EFOgxf_3I6mPZ16bXqHd5tUyApgl0mNOAXPm5AhnA
+
+
+        ```
+
+
+        More information on the Bearer scheme can be found in [RFC-6750 - The OAuth 2.0 Authorization Framework: Bearer Token Usage](https://datatracker.ietf.org/doc/html/rfc6750).'
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+    MutualTLS:
+      type: apiKey
+      in: header
+      name: '-'
+      description: 'The client must set up mTLS connection with a valid X.509 client certificate signed by a customer-provided CA (certificate authority) that is registered to a specific agent. The customer-provided CA certificate must be shared and added to Silverflow''s trust store prior to calling endpoints.
+
+
+        Certificate validation happens at the transport layer during TLS handshake. Tenant verification is performed by matching the agent key embedded in the client certificate against the agent key embedded in the trusted CA.
+
+        '
+x-refined-from:
+- silverflow-openapi.yml
+- silverflow-openapi.yml
+x-tagGroups:
+- name: ''
+  tags:
+  - Introduction
+  - Release Notes
+- name: Accounts
+  tags:
+  - Agents
+  - API Keys
+  - Bins
+  - Merchants
+  - Merchant Acceptors
+  - Enrollments
+  - Screenings
+- name: Event Notifications
+  tags:
+  - Event Subscriptions
+  - Charges Events
+  - Disputes Events
+  - Fraud Notification Events
+  - Processor Tokens Events
+  - Network Tokens Events
+  - Report Events
+  - Distribution Events
+  - AMMF Submission Events
+  - Reconciliation Events
+  - Clearing Events
+- name: 3DS Authentication
+  tags:
+  - 3DS Authentication
+- name: BEP Authentication
+  tags:
+  - BEP Authentication
+- name: Tokenization
+  tags:
+  - Processor Tokenization
+  - Network Tokenization
+- name: Charges
+  tags:
+  - Create Charges
+  - Create Recurring
+  - Retrieve Charges
+  - Charge Actions
+- name: Terminal-To-Cloud
+  tags:
+  - Create POS Charges
+  - Retrieve POS Charges
+  - POS Charge Actions
+- name: Card Management
+  tags:
+  - Card Management
+- name: Disputes
+  tags:
+  - Disputes
+  - Documents
+- name: Fraud Notifications
+  tags:
+  - Fraud Notifications
+- name: Card Info
+  tags:
+  - Card Info
+- name: Currency Conversion Rates
+  tags:
+  - Currency Conversion Rates
+- name: Fees
+  tags:
+  - Fees
+- name: Reconciliation
+  tags:
+  - Reconciliation Details
+  - Network Funds Transfers
+- name: Reports
+  tags:
+  - Reconciliation Reports
+  - Settlement Reports
+  - Card Network Reports
+  - Dispute Reports
+  - Fraud Notifications Reports
+  - Charges Reports
+  - Scheme Fee Reports
+  - Retrieve Reports
+  - Report Scheduling
+  - Distributions
+- name: Transaction Risk Assessment
+  tags:
+  - Transaction Risk Assessment
+- name: File Subscriptions
+  tags:
+  - File Subscriptions

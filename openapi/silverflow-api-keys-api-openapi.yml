@@ -1,0 +1,1036 @@
+openapi: 3.2.0
+info:
+  title: Silverflow API Keys API
+  version: 1.417.0
+  contact:
+    name: API Support
+    email: support@silverflow.com
+  license:
+    name: Commercial
+  description: 'Operations tagged API Keys across 2 of this provider''s published API definitions: silverflow-openapi.yml, silverflow-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://eu-west-1.api.silverflow.com/v1
+  description: Production URL for Europe - Equivalent to https://api.silverflow.co/v1
+- url: https://us-east-2.api.silverflow.com/v1
+  description: Production URL for North America
+- url: https://eu-west-1.api-sbx.silverflow.com/v1
+  description: Sandbox URL - Equivalent to https://api-sbx.silverflow.co/v1
+security:
+- ApiKey: []
+- BearerToken: []
+tags:
+- name: API Keys
+  description: ' '
+paths:
+  /apiKeys:
+    post:
+      operationId: createApiKey
+      summary: Create API Key
+      description: 'This operation creates a new API key with the specified permissions.
+
+        When the `status` is set to `active` the API Key is immediately usable.
+
+
+        Requires `apiKeys:Create` permission.
+
+        '
+      tags:
+      - API Keys
+      requestBody:
+        description: 'The request body allows to set certain values on this API Key.
+
+          '
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ApiKeyCreate'
+            examples:
+              ipRanges:
+                $ref: '#/components/examples/create-api-key-ip-ranges'
+      responses:
+        '201':
+          description: The created API Key
+          headers:
+            Location:
+              description: The URL of the newly created API Key
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiKey'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '409':
+          $ref: '#/components/responses/ConflictError'
+        '429':
+          $ref: '#/components/responses/TooManyRequestsError'
+    get:
+      operationId: getApiKeys
+      summary: List API Keys
+      description: 'This operation returns a (paged) list of all API Keys for the authenticated Agent.
+
+
+        Requires `apiKeys:List` permission.
+
+        '
+      tags:
+      - API Keys
+      parameters:
+      - $ref: '#/components/parameters/sortOrder'
+      - $ref: '#/components/parameters/limit'
+      - $ref: '#/components/parameters/offsetToken'
+      responses:
+        '200':
+          description: A (paged) list of API Keys
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiKeysPage'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '429':
+          $ref: '#/components/responses/TooManyRequestsError'
+    servers:
+    - url: https://eu-west-1.api.silverflow.com/v1
+      description: Production URL for Europe - Equivalent to https://api.silverflow.co/v1
+    - url: https://us-east-2.api.silverflow.com/v1
+      description: Production URL for North America
+    - url: https://eu-west-1.api-sbx.silverflow.com/v1
+      description: Sandbox URL - Equivalent to https://api-sbx.silverflow.co/v1
+  /apiKeys/{apiKey}:
+    get:
+      operationId: getApiKey
+      summary: Get API Key
+      description: 'Requires `apiKeys:Get` permission.
+
+        '
+      tags:
+      - API Keys
+      parameters:
+      - $ref: '#/components/parameters/apiKey'
+      responses:
+        '200':
+          description: The referenced API Key
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiKey'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '429':
+          $ref: '#/components/responses/TooManyRequestsError'
+    patch:
+      operationId: updateApiKey
+      summary: Update API Key
+      description: 'Updates can take up to 5 minutes to become effective.
+
+
+        Requires `apiKeys:Update` permission.
+
+        '
+      tags:
+      - API Keys
+      parameters:
+      - $ref: '#/components/parameters/apiKey'
+      - $ref: '#/components/parameters/ifMatch'
+      requestBody:
+        description: 'All mutable fields of an API key are optional
+
+          '
+        required: true
+        content:
+          application/merge-patch+json:
+            schema:
+              $ref: '#/components/schemas/ApiKeyMergeUpdate'
+            examples:
+              removeIpRanges:
+                $ref: '#/components/examples/update-api-key-remove-ip-ranges'
+      responses:
+        '200':
+          description: The updated API Key
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiKey'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '409':
+          $ref: '#/components/responses/ConflictError'
+        '412':
+          $ref: '#/components/responses/PreconditionFailedError'
+        '429':
+          $ref: '#/components/responses/TooManyRequestsError'
+    delete:
+      operationId: deleteApiKey
+      summary: Delete an API Key
+      description: 'Deleting an API Key can take up to 5 minutes to become effective.
+
+
+        Requires `apiKeys:Archive` permission.
+
+        '
+      tags:
+      - API Keys
+      parameters:
+      - $ref: '#/components/parameters/apiKey'
+      - $ref: '#/components/parameters/ifMatch'
+      responses:
+        '204':
+          description: API Key deleted successfully
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '409':
+          $ref: '#/components/responses/ConflictError'
+        '412':
+          $ref: '#/components/responses/PreconditionFailedError'
+        '429':
+          $ref: '#/components/responses/TooManyRequestsError'
+    servers:
+    - url: https://eu-west-1.api.silverflow.com/v1
+      description: Production URL for Europe - Equivalent to https://api.silverflow.co/v1
+    - url: https://us-east-2.api.silverflow.com/v1
+      description: Production URL for North America
+    - url: https://eu-west-1.api-sbx.silverflow.com/v1
+      description: Sandbox URL - Equivalent to https://api-sbx.silverflow.co/v1
+components:
+  schemas:
+    Page:
+      type: object
+      properties:
+        offsetToken:
+          $ref: '#/components/schemas/offsetToken'
+        moreItems:
+          $ref: '#/components/schemas/moreItems'
+    apiKeyKey:
+      description: Uniquely identifies an API Key
+      type: string
+      pattern: ^apk-[a-zA-Z0-9]+$
+      minLength: 5
+      maxLength: 120
+      example: apk-1UF2NafdfrdPMf2XrS2
+    ProblemDetail:
+      type: object
+      description: 'The ''problem detail'' object relays detailed information about the error that occurred. It is defined
+
+        by [RFC 7807 - Problem Details for HTTP APIs](https://tools.ietf.org/html/rfc7807).
+
+
+        Note that additional properties may be used to relay error specific information.
+
+        '
+      properties:
+        type:
+          type: string
+          description: 'An absolute URI that identifies the problem type.
+
+            '
+          default: about:blank
+          example: https://api.silverflow.co/problem/constraint-violation
+        title:
+          type: string
+          description: 'A short, summary of the problem type. Written in english and readable
+
+            for engineers (usually not suited for non technical stakeholders and
+
+            not localized);
+
+            '
+          example: Service Unavailable
+        status:
+          type: integer
+          format: int32
+          description: 'The HTTP status code generated by the origin server for this occurrence
+
+            of the problem.
+
+            '
+          minimum: 100
+          maximum: 599
+          example: 503
+        detail:
+          type: string
+          description: 'A human readable explanation specific to this occurrence of the
+
+            problem.
+
+            '
+          example: Connection to database timed out
+        instance:
+          type: string
+          description: 'An absolute URI that identifies the specific occurrence of the problem.
+
+            It may or may not yield further information if dereferenced.
+
+            '
+      additionalProperties: true
+    FreeTextField:
+      type: string
+      pattern: ^[\w +=.,:;!?$@()-]+$
+      minLength: 1
+      maxLength: 160
+    offsetToken:
+      type: string
+      pattern: ^[a-zA-Z0-9%]+$
+      minLength: 1
+      maxLength: 2048
+    ApiKey:
+      type: object
+      required:
+      - key
+      - status
+      - agentKey
+      - permissions
+      - created
+      - version
+      description: 'An Agent represents a Silverflow customer
+
+        '
+      properties:
+        key:
+          $ref: '#/components/schemas/apiKeyKey'
+        status:
+          $ref: '#/components/schemas/apiKeyStatus'
+        agentKey:
+          $ref: '#/components/schemas/agentKey'
+        description:
+          description: A description of the API Key
+          $ref: '#/components/schemas/FreeTextField'
+        permissions:
+          $ref: '#/components/schemas/permissions'
+        ipRanges:
+          $ref: '#/components/schemas/ipRanges'
+        secret:
+          type: string
+          description: The secret part of this API Key. This value will only be returned upon creation. It cannot be changed afterwards.
+          minLength: 32
+          maxLength: 150
+        created:
+          $ref: '#/components/schemas/created'
+        lastModified:
+          $ref: '#/components/schemas/lastModified'
+        version:
+          $ref: '#/components/schemas/version'
+      example:
+        key: apk-1nM6msvaara1OMHzU7Zd
+        status: active
+        agentKey: cgt-6y5t4r3edcgfrthb
+        description: API Key for for use by the Data lake
+        permissions:
+        - reports:All
+        ipRanges:
+        - 185.184.111.39/32
+        created: '2021-05-27T10:57:52Z'
+        lastModified: '2021-05-27T10:57:52Z'
+        version: 1
+    created:
+      type: string
+      description: The date and time this object was created
+      format: date-time
+    ApiKeysPage:
+      allOf:
+      - $ref: '#/components/schemas/Page'
+      - type: object
+        required:
+        - apiKeys
+        properties:
+          apiKeys:
+            type: array
+            items:
+              $ref: '#/components/schemas/ApiKey'
+      example:
+        offsetToken: Q29uZ3JhdHVhbHRpb25zISBZb3Ugc3VjY2Vzc2Z1bGx5IGJhc2U2NC1kZWNvZGVkIHRoZSB2YWx1ZS4gWW91J3JlIG9uIGEgcm9sbCBzbyBrZWVwIGdvaW5nIQ==
+        apiKeys:
+        - key: apk-1nM6msvaara1OMHzU7Zd
+          status: active
+          description: API Key for for use by the Data lake
+          permissions:
+          - reports:All
+          ipRanges:
+          - 185.184.111.39/32
+          created: '2021-05-27T10:57:52Z'
+          lastModified: '2021-05-27T10:57:52Z'
+          version: 1
+        - key: apk-1hPdFhmgaBzMS191nIbJ
+          status: active
+          description: API key for merchant management
+          permissions:
+          - all:All
+          ipRanges:
+          - 185.184.111.90/32
+          - 185.184.111.96/29
+          created: '2021-05-27T11:07:30Z'
+          lastModified: '2021-05-27T11:07:30Z'
+          version: 2
+    permissions:
+      type: array
+      items:
+        $ref: '#/components/schemas/permission'
+        minItems: 1
+        uniqueItems: true
+    PreconditionFailedProblemDetail:
+      type: object
+      required:
+      - type
+      - title
+      - status
+      - detail
+      - instance
+      properties:
+        type:
+          type: string
+          enum:
+          - /silverflow/problems/precondition-failed
+        title:
+          type: string
+          enum:
+          - Precondition Failed
+        status:
+          type: integer
+          enum:
+          - 412
+        detail:
+          type: string
+          description: 'A human readable explanation specific to this occurrence of the
+
+            problem.
+
+            '
+          example: Connection to database timed out
+        instance:
+          type: string
+          description: 'An absolute URI that identifies the specific occurrence of the problem.
+
+            It may or may not yield further information if dereferenced.
+
+            '
+      additionalProperties: false
+    version:
+      type: integer
+      description: The version of this object
+      format: int64
+    ApiKeyCreate:
+      type: object
+      required:
+      - permissions
+      additionalProperties: false
+      properties:
+        status:
+          $ref: '#/components/schemas/apiKeyStatus'
+        description:
+          $ref: '#/components/schemas/FreeTextField'
+          description: A description of the API Key
+        permissions:
+          $ref: '#/components/schemas/permissions'
+        ipRanges:
+          $ref: '#/components/schemas/ipRanges'
+      example:
+        status: disabled
+        description: API key for merchant management
+        permissions:
+        - reports:All
+        ipRanges:
+        - 185.184.111.39/32
+    ipRange:
+      type: string
+      description: An IP range in Classless Inter-domain Routing (CIDR) notation as defined by RFC 4632
+      pattern: ^\d{1,3}(\.\d{1,3}){3}/\d{1,2}$
+      externalDocs:
+        description: RFC 4632
+        url: https://datatracker.ietf.org/doc/html/rfc4632
+    ApiKeyMergeUpdate:
+      type: object
+      additionalProperties: false
+      properties:
+        status:
+          $ref: '#/components/schemas/apiKeyUpdateStatus'
+        description:
+          $ref: '#/components/schemas/FreeTextField'
+          description: A description of the API Key
+        permissions:
+          $ref: '#/components/schemas/permissions'
+        ipRanges:
+          $ref: '#/components/schemas/ipRanges'
+      example:
+        status: active
+        permissions:
+        - reports:All
+        ipRanges:
+        - 185.184.111.90/32
+        - 185.184.111.96/29
+    ipRanges:
+      type: array
+      description: A list of IP ranges
+      items:
+        $ref: '#/components/schemas/ipRange'
+        minItems: 1
+        uniqueItems: true
+    lastModified:
+      type: string
+      description: The date and time this object was last modified
+      format: date-time
+    moreItems:
+      type: boolean
+    apiKeyStatus:
+      description: The status of an API Key
+      type: string
+      enum:
+      - disabled
+      - active
+      - archived
+    BadRequestProblemDetail:
+      description: 'A ''problem detail'' object for Bad Request (400) errors. Extends the base ProblemDetail
+
+        with a validationErrors array that provides detailed information about validation failures.
+
+        '
+      allOf:
+      - $ref: '#/components/schemas/ProblemDetail'
+      - type: object
+        required:
+        - type
+        - title
+        - status
+        - detail
+        - instance
+        properties:
+          type:
+            type: string
+            description: URI reference identifying the problem type.
+            enum:
+            - /silverflow/problems/bad-request
+            example: /silverflow/problems/bad-request
+          title:
+            type: string
+            description: A short summary of the problem type.
+            enum:
+            - Bad Request
+          status:
+            type: integer
+            format: int32
+            description: The HTTP status code (400 for Bad Request).
+            enum:
+            - 400
+          detail:
+            type: string
+            description: A human readable explanation specific to this occurrence of the problem.
+            example: Validation errors occurred
+          instance:
+            type: string
+            description: An absolute URI that identifies the specific occurrence of the problem.
+          validationErrors:
+            type: array
+            description: 'An array of validation errors that occurred during request processing. Each item can be either
+
+              a simple string message or an object with detailed error information including the path and message.
+
+              '
+            items:
+              oneOf:
+              - type: string
+                description: A simple validation error message
+                example: Invalid 'mid' length
+              - type: object
+                description: A detailed validation error with path and message
+                required:
+                - instancePath
+                - message
+                properties:
+                  instancePath:
+                    type: string
+                    description: The JSON path to the field that caused the validation error
+                    example: /merchantAcceptor/mid
+                  message:
+                    type: string
+                    description: The validation error message
+                    example: must be at most 15 characters
+        additionalProperties: false
+    apiKeyUpdateStatus:
+      description: Updatable API Key statuses
+      type: string
+      enum:
+      - disabled
+      - active
+    agentKey:
+      description: Uniquely identifies an Agent
+      type: string
+      pattern: ^cgt-[a-zA-Z0-9]+|current$
+      example: cgt-1UF2NafdfrdPMf2XrS2
+    permission:
+      description: A permission
+      type: string
+      enum:
+      - acceptors:Activate
+      - acceptors:All
+      - acceptors:Archive
+      - acceptors:Get
+      - acceptors:GetActive
+      - acceptors:GetDraft
+      - acceptors:List
+      - acceptors:Update
+      - agents:Activate
+      - agents:All
+      - agents:CreateBearerToken
+      - agents:Get
+      - agents:GetBin
+      - agents:ListBins
+      - agents:Update
+      - all:All
+      - apiKeys:All
+      - apiKeys:Archive
+      - apiKeys:Create
+      - apiKeys:Disable
+      - apiKeys:Enable
+      - apiKeys:Get
+      - apiKeys:List
+      - apiKeys:Update
+      - bep:All
+      - bep:Create
+      - bep:Get
+      - bep:Update
+      - cardInfo:GetInfo
+      - charges:All
+      - charges:Cancel
+      - charges:CancelOrRefund
+      - charges:Clear
+      - charges:Create
+      - charges:CreateAtm
+      - charges:CreateMitFunding
+      - charges:CreatePayout
+      - charges:CreatePos
+      - charges:Get
+      - charges:GetRecords
+      - charges:GetResponses
+      - charges:Increment
+      - charges:List
+      - charges:OfflineRefund
+      - charges:Refund
+      - charges:Reverse
+      - currencyRate:All
+      - currencyRate:GetInfo
+      - disputes:Accept
+      - disputes:AddDocument
+      - disputes:All
+      - disputes:ArchiveDocument
+      - disputes:Defend
+      - disputes:DownloadFile
+      - disputes:Get
+      - disputes:GetDocument
+      - disputes:GetHistory
+      - disputes:List
+      - disputes:ListDocuments
+      - disputes:ListHistory
+      - disputes:RejectEvidence
+      - disputes:SubmitEvidence
+      - disputes:UploadFile
+      - distributions:All
+      - distributions:Archive
+      - distributions:Create
+      - distributions:Distribute
+      - distributions:Get
+      - distributions:List
+      - distributions:Update
+      - documents:All
+      - documents:Archive
+      - documents:Download
+      - documents:Get
+      - documents:Upload
+      - enrollments:All
+      - enrollments:Archive
+      - enrollments:Create
+      - enrollments:Get
+      - enrollments:List
+      - eventSubscriptions:All
+      - eventSubscriptions:Archive
+      - eventSubscriptions:Create
+      - eventSubscriptions:Get
+      - eventSubscriptions:List
+      - eventSubscriptions:Update
+      - fees:Interchange
+      - fees:Scheme
+      - fileSubscription:All
+      - fileSubscription:Create
+      - fileSubscription:Delete
+      - fileSubscription:List
+      - fileSubscription:Update
+      - fraudNotifications:Get
+      - fraudNotifications:List
+      - merchants:All
+      - merchants:Archive
+      - merchants:Create
+      - merchants:CreateAcceptor
+      - merchants:Get
+      - merchants:List
+      - merchants:ListAcceptors
+      - merchants:Update
+      - networkTokens:All
+      - networkTokens:Archive
+      - networkTokens:Create
+      - networkTokens:CreateNetworkTokenCryptogram
+      - networkTokens:Get
+      - networkTokens:GetCardArt
+      - networkTokens:GetNetworkTokenData
+      - networkTokens:List
+      - processorTokens:All
+      - processorTokens:Archive
+      - processorTokens:Create
+      - processorTokens:Get
+      - processorTokens:GetCardData
+      - processorTokens:List
+      - reports:All
+      - reports:Create
+      - reports:CreateCharges
+      - reports:CreateDisputeHistoryEvents
+      - reports:CreateFraudNotifications
+      - reports:CreateNetworkFundsTransfers
+      - reports:CreateReconciliationDetails
+      - reports:CreateSchemeFeeDetails
+      - reports:CreateSchemeFeeDetailsSchedule
+      - reports:DailySettlementTotals
+      - reports:DisputeMonitoring
+      - reports:Download
+      - reports:DownloadAmmfReport
+      - reports:DownloadCharges
+      - reports:DownloadDisputeHistoryEvents
+      - reports:DownloadFraudNotifications
+      - reports:DownloadNetworkFundsTransfers
+      - reports:DownloadQuarterlySchemeReport
+      - reports:DownloadReconciliationDetails
+      - reports:DownloadSchemeFeeDetails
+      - reports:DownloadSettlementDetails
+      - reports:Get
+      - reports:GetCharges
+      - reports:GetDisputeHistoryEvents
+      - reports:GetFraudNotifications
+      - reports:GetNetworkFundsTransfers
+      - reports:GetReconciliationDetails
+      - reports:GetSchemeFeeDetails
+      - reports:GetSchemeFeeDetailsData
+      - reports:List
+      - reports:NetworkFundsTransfers
+      - reports:QuarterlyNetwork
+      - reports:SettlementDetails
+      - reportSchedules:All
+      - reportSchedules:Archive
+      - reportSchedules:Create
+      - reportSchedules:Get
+      - reportSchedules:List
+      - reportSchedules:Update
+      - riskAssessments:Create
+      - screenings:All
+      - screenings:Archive
+      - screenings:Create
+      - screenings:Get
+      - screenings:List
+      - threeDs:Create
+      - threeDs:Get
+      - threeDs:List
+  responses:
+    NotFoundError:
+      description: The requested resource was not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ProblemDetail'
+          example:
+            type: https://datatracker.ietf.org/doc/html/rfc2616#section-10.4.5
+            title: Not Found
+            status: 404
+            detail: The entity referenced in the request could not be found
+            instance: https://api.silverflow.co/v1/merchants/mct-1hPdFqhgstYTUhlphPDp
+    ForbiddenError:
+      description: The authenticated client is forbidden to make the request for the resource identified.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ProblemDetail'
+          example:
+            type: https://datatracker.ietf.org/doc/html/rfc2616#section-10.4.4
+            title: Forbidden
+            status: 403
+            detail: The server is refusing to execute the request for the current authenticated user
+            instance: https://api.silverflow.co/v1/merchants/mct-1hPdFqhgstYTUhlphPDp
+    ConflictError:
+      description: The request could not be completed due to a conflict with the current state of the resources involved in the request.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ProblemDetail'
+    PreconditionFailedError:
+      description: The conditions specified in the HTTP headers of the request were not met.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/PreconditionFailedProblemDetail'
+          example:
+            detail: The referenced bin with key 'bin-5nHQqdP4wTClI7MDMw5j' did not have the expected version 5
+            instance: /silverflow/00b32804-1109-4761-8776-9436a3c6b26b
+            status: 412
+            title: Precondition Failed
+            type: /silverflow/problems/precondition-failed
+    TooManyRequestsError:
+      description: The number of requests (per minute) has exceeded the configured maximum
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ProblemDetail'
+          example:
+            type: /silverflow/problems/too-many-requests
+            title: Too Many Requests
+            status: 429
+            detail: You have exceeded the rate limit. Please try again after the specified delay.
+            instance: /silverflow/b0451a9d-f66d-4ef7-9f5d-d48064a2bb3e
+    BadRequestError:
+      description: The request was malformed. See the response body for details
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/BadRequestProblemDetail'
+          example:
+            type: /silverflow/problems/bad-request
+            title: Bad Request
+            status: 400
+            detail: Validation errors occurred
+            instance: https://api.silverflow.co/v1/merchants/mct-1hPdFqhgstYTUhlphPDp
+            validationErrors:
+            - instancePath: /tags/0/businessId
+              message: must not be longer than 255 characters
+    UnauthorizedError:
+      description: Authentication information is missing or invalid
+      headers:
+        WWW_Authenticate:
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ProblemDetail'
+          example:
+            type: https://datatracker.ietf.org/doc/html/rfc2616#section-10.4.2
+            title: Unauthorized
+            status: 401
+            detail: The credentials supplied in the request are either missing, invalid, or not applicable in the current scope
+  examples:
+    update-api-key-remove-ip-ranges:
+      summary: Example request removing ipRanges from an API Key
+      value:
+        ipRanges: []
+    create-api-key-ip-ranges:
+      summary: Example request creating an API key with 'all:All' permission and ip restriction for two ranges, that is 'active'
+      value:
+        status: active
+        description: IP-restricted key
+        permissions:
+        - all:All
+        ipRanges:
+        - 185.184.111.39/32
+        - 102.177.115.120/29
+        - 0.0.0.0/0
+  parameters:
+    ifMatch:
+      name: If-Match
+      description: The request condition
+      in: header
+      required: false
+      schema:
+        type: integer
+        format: int32
+    offsetToken:
+      name: offsetToken
+      description: The offset token. This token is returned in the response of previous request.
+      in: query
+      required: false
+      schema:
+        $ref: '#/components/schemas/offsetToken'
+    apiKey:
+      name: apiKey
+      in: path
+      required: true
+      description: 'Uniquely identifies an API Key.
+
+        '
+      schema:
+        $ref: '#/components/schemas/apiKeyKey'
+    limit:
+      name: limit
+      description: The number of items to return
+      in: query
+      required: false
+      schema:
+        type: integer
+        format: int32
+        minimum: 1
+        maximum: 100
+        default: 10
+      example: 1
+    sortOrder:
+      name: sortOrder
+      description: The sort order, __asc__ending or __desc__ending
+      in: query
+      required: false
+      schema:
+        type: string
+        enum:
+        - asc
+        - desc
+      example: desc
+  securitySchemes:
+    ApiKey:
+      description: "The primary method of authenticating to the Silverflow API is through API keys.\n\nAPI keys can be created by calling the [createApiKey](#operation/createApiKey) endpoint. You can create up to 40 API keys and also update and delete them, allowing for _credential rotation_.\n\nThe _Agent Activation_ process will generate an initial API Key for you. See [Activate Agent](#section/Getting-Started).\n\nA call to the [createApiKey](#operation/createApiKey) endpoint will return the following structure:\n\n```json\n{\n    \"key\": \"apk-1wtRxni5IsPsSpBLWpwr\",\n    \"status\": \"active\",\n    \"agentKey\": \"cgt-1wtRvFLIjDOyyUR5Q2LB\",\n    \"description\": \"Data lake API key\",\n    \"permissions\": [\n        \"charges:List\",\n        \"reports:All\"\n    ],\n    \"created\": \"2021-06-22T11:21:45.115Z\",\n    \"secret\": \"FWtnOOHAjbD6rNxWWEeVOCj7JXSEPGJQ\",\n    \"version\": 1\n}\n```\n\n> **Important:** The `secret` is only returned once in the response to the `createApiKey` call.\n\nOnce created, the `key` and `secret` fields from the API key must be used in the HTTP `Authorization` header using the `Basic` scheme.\nThe Basic scheme requires a **username** and **password** to be specified, separated by a `:` (colon) and Base64 encoded.\n\nUse the following values from the API key to construct a Basic authentication header:\n\n| Basic field | API key field | Example |\n| ----------- | ------------- | ------- |\n| username | `key` | `apk-1wtRxni5IsPsSpBLWpwr` |\n| password | `secret` | `FWtnOOHAjbD6rNxWWEeVOCj7JXSEPGJQ` |\n\nIn pseudo-code a valid HTTP Basic Authentication header would be constructed as follows:\n\n```ts\nconst apiKeyId = \"apk-1wtRxni5IsPsSpBLWpwr\";\nconst apiKeySecret = \"FWtnOOHAjbD6rNxWWEeVOCj7JXSEPGJQ\";\nconst authnValue = \"Basic \" + base64Encode(apiKeyId + \":\" + apiKeySecret);\nrequest.setHeader(\"Authorization\", authnValue);\n```\n\nUsing the values from the example a valid HTTP request would look like the following:\n\n```http\nGET /v1/agents/current HTTP/1.1\nAccept: application/json\nAuthorization: Basic YXBrLTF3dFJ4bmk1SXNQc1NwQkxXcHdyOkZXdG5PT0hBamJENnJOeFdXRWVWT0NqN0pYU0VQR0pR\n```\n\nMore information on the Basic scheme can be found in [RFC-7617 - The 'Basic' HTTP Authentication Scheme](https://datatracker.ietf.org/doc/html/rfc7617)."
+      type: http
+      scheme: basic
+    BearerToken:
+      description: 'Bearer tokens are temporary security credentials that can be used to authorize ''third parties'' (bearers) access to the Silverflow API on behalf of the agent.
+
+
+        These tokens are created by calling the [createAgentBearerToken](#operation/createAgentBearerToken) endpoint.
+
+
+        Once created the `token` field must be used in the HTTP `Authorization` header using the `Bearer` scheme.
+
+        Here''s an example of an HTTP request with a bearer token:
+
+
+        ```http
+
+        GET /v1/merchants/mct-1hPdFhmgaBzMS191nIbJ HTTP/1.1
+
+        Accept: application/json
+
+        Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...40EFOgxf_3I6mPZ16bXqHd5tUyApgl0mNOAXPm5AhnA
+
+
+        ```
+
+
+        More information on the Bearer scheme can be found in [RFC-6750 - The OAuth 2.0 Authorization Framework: Bearer Token Usage](https://datatracker.ietf.org/doc/html/rfc6750).'
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+    MutualTLS:
+      type: apiKey
+      in: header
+      name: '-'
+      description: 'The client must set up mTLS connection with a valid X.509 client certificate signed by a customer-provided CA (certificate authority) that is registered to a specific agent. The customer-provided CA certificate must be shared and added to Silverflow''s trust store prior to calling endpoints.
+
+
+        Certificate validation happens at the transport layer during TLS handshake. Tenant verification is performed by matching the agent key embedded in the client certificate against the agent key embedded in the trusted CA.
+
+        '
+x-refined-from:
+- silverflow-openapi.yml
+- silverflow-openapi.yml
+x-tagGroups:
+- name: ''
+  tags:
+  - Introduction
+  - Release Notes
+- name: Accounts
+  tags:
+  - Agents
+  - API Keys
+  - Bins
+  - Merchants
+  - Merchant Acceptors
+  - Enrollments
+  - Screenings
+- name: Event Notifications
+  tags:
+  - Event Subscriptions
+  - Charges Events
+  - Disputes Events
+  - Fraud Notification Events
+  - Processor Tokens Events
+  - Network Tokens Events
+  - Report Events
+  - Distribution Events
+  - AMMF Submission Events
+  - Reconciliation Events
+  - Clearing Events
+- name: 3DS Authentication
+  tags:
+  - 3DS Authentication
+- name: BEP Authentication
+  tags:
+  - BEP Authentication
+- name: Tokenization
+  tags:
+  - Processor Tokenization
+  - Network Tokenization
+- name: Charges
+  tags:
+  - Create Charges
+  - Create Recurring
+  - Retrieve Charges
+  - Charge Actions
+- name: Terminal-To-Cloud
+  tags:
+  - Create POS Charges
+  - Retrieve POS Charges
+  - POS Charge Actions
+- name: Card Management
+  tags:
+  - Card Management
+- name: Disputes
+  tags:
+  - Disputes
+  - Documents
+- name: Fraud Notifications
+  tags:
+  - Fraud Notifications
+- name: Card Info
+  tags:
+  - Card Info
+- name: Currency Conversion Rates
+  tags:
+  - Currency Conversion Rates
+- name: Fees
+  tags:
+  - Fees
+- name: Reconciliation
+  tags:
+  - Reconciliation Details
+  - Network Funds Transfers
+- name: Reports
+  tags:
+  - Reconciliation Reports
+  - Settlement Reports
+  - Card Network Reports
+  - Dispute Reports
+  - Fraud Notifications Reports
+  - Charges Reports
+  - Scheme Fee Reports
+  - Retrieve Reports
+  - Report Scheduling
+  - Distributions
+- name: Transaction Risk Assessment
+  tags:
+  - Transaction Risk Assessment
+- name: File Subscriptions
+  tags:
+  - File Subscriptions

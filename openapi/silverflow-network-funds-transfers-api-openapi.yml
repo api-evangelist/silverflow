@@ -1,0 +1,1484 @@
+openapi: 3.2.0
+info:
+  title: Silverflow Network Funds Transfers API
+  version: 1.417.0
+  contact:
+    name: API Support
+    email: support@silverflow.com
+  license:
+    name: Commercial
+  description: 'Operations tagged Network Funds Transfers across 2 of this provider''s published API definitions: silverflow-openapi.yml, silverflow-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://eu-west-1.api.silverflow.com/v1
+  description: Production URL for Europe - Equivalent to https://api.silverflow.co/v1
+- url: https://us-east-2.api.silverflow.com/v1
+  description: Production URL for North America
+- url: https://eu-west-1.api-sbx.silverflow.com/v1
+  description: Sandbox URL - Equivalent to https://api-sbx.silverflow.co/v1
+security:
+- ApiKey: []
+- BearerToken: []
+tags:
+- name: Network Funds Transfers
+paths:
+  /reports/networkFundsTransfers/fundsTransferDate/{fundsTransferDate}:
+    get:
+      operationId: getNetworkFundsTransfers
+      summary: List Network Funds Transfers
+      description: '
+
+        Requires `reports:NetworkFundsTransfers` permission.
+
+
+        Returns a list of Network Funds Transfer Objects. Each objects corresponds to an expected Funds Transfer between the Card Network and the Acquirer.
+
+        '
+      tags:
+      - Network Funds Transfers
+      parameters:
+      - $ref: '#/components/parameters/fundsTransferDatePath'
+      - $ref: '#/components/parameters/limit'
+      - $ref: '#/components/parameters/openapi_components-parameters-offsetToken-2'
+      - $ref: '#/components/parameters/sortOrder'
+      responses:
+        '200':
+          description: A list of networkFundsTransfer objects
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NetworkFundsTransfersPage'
+              examples:
+                network-funds-transfers:
+                  $ref: '#/components/examples/report-network-funds-transfers'
+        '400':
+          $ref: '#/components/responses/components-responses-BadRequestError'
+        '401':
+          $ref: '#/components/responses/openapi_components-responses-UnauthorizedError-3'
+        '403':
+          $ref: '#/components/responses/openapi_components-responses-ForbiddenError-2'
+        '429':
+          $ref: '#/components/responses/openapi_components-responses-TooManyRequestsError-2'
+    servers:
+    - url: https://eu-west-1.api.silverflow.com/v1
+      description: Production URL for Europe - Equivalent to https://api.silverflow.co/v1
+    - url: https://us-east-2.api.silverflow.com/v1
+      description: Production URL for North America
+    - url: https://eu-west-1.api-sbx.silverflow.com/v1
+      description: Sandbox URL - Equivalent to https://api-sbx.silverflow.co/v1
+  /reports/networkFundsTransfers/{key}:
+    get:
+      operationId: getNetworkFundsTransferByNetworkFundsTransferKey
+      summary: Get Network Funds Transfer
+      description: '
+
+        Requires `reports:NetworkFundsTransfers` permission.
+
+
+        Returns a Network Funds Transfer Object. It corresponds to an expected Funds Transfer between the Card Network and the Acquirer.
+
+        '
+      tags:
+      - Network Funds Transfers
+      parameters:
+      - $ref: '#/components/parameters/networkFundsTransferKeyPath'
+      responses:
+        '200':
+          description: A networkFundsTransfer object
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NetworkFundsTransfer'
+              examples:
+                network-funds-transfer:
+                  $ref: '#/components/examples/report-network-funds-transfer'
+        '400':
+          $ref: '#/components/responses/components-responses-BadRequestError'
+        '401':
+          $ref: '#/components/responses/openapi_components-responses-UnauthorizedError-3'
+        '403':
+          $ref: '#/components/responses/openapi_components-responses-ForbiddenError-2'
+        '404':
+          $ref: '#/components/responses/openapi_components-responses-NotFoundError'
+        '429':
+          $ref: '#/components/responses/openapi_components-responses-TooManyRequestsError-2'
+    servers:
+    - url: https://eu-west-1.api.silverflow.com/v1
+      description: Production URL for Europe - Equivalent to https://api.silverflow.co/v1
+    - url: https://us-east-2.api.silverflow.com/v1
+      description: Production URL for North America
+    - url: https://eu-west-1.api-sbx.silverflow.com/v1
+      description: Sandbox URL - Equivalent to https://api-sbx.silverflow.co/v1
+components:
+  schemas:
+    networkfundsTransferStatus:
+      type: string
+      description: The status of the networkFundsTransfer. When flagged as `pending` the networkFundsTransfer is expected to change in the future as a result of new reports coming in from the card scheme. When flagged as `completed` the networkFundsTransfer is final.
+      enum:
+      - completed
+      - pending
+    openapi_components-schemas-ProblemDetail:
+      type: object
+      description: 'The ''problem detail'' object relays detailed information about the error that occurred. It is defined
+
+        by [RFC 7807 - Problem Details for HTTP APIs](https://tools.ietf.org/html/rfc7807).
+
+
+        Note that additional properties may be used to relay error specific information. For instance,
+
+        A Bad Request error may hold information about the individual validation errors found in the request.
+
+        '
+      properties:
+        type:
+          type: string
+          description: 'An absolute URI that identifies the problem type.
+
+            '
+          example: https://api.silverflow.co/problem/constraint-violation
+        title:
+          type: string
+          description: 'A short, summary of the problem type. Written in english and readable
+
+            for engineers (usually not suited for non technical stakeholders and
+
+            not localized);
+
+            '
+          example: Service Unavailable
+        status:
+          type: integer
+          format: int32
+          description: 'The HTTP status code generated by the origin server for this occurrence
+
+            of the problem.
+
+            '
+          minimum: 100
+          maximum: 599
+          example: 403
+        detail:
+          type: string
+          description: 'A human readable explanation specific to this occurrence of the
+
+            problem.
+
+            '
+          example: Connection to database timed out
+        instance:
+          type: string
+          description: 'An absolute URI that identifies the specific occurrence of the problem.
+
+            It may or may not yield further information if dereferenced.
+
+            '
+      additionalProperties: true
+    Reported:
+      type: object
+      description: The properties of the Funds Transfer as reported by the Card Network
+      required:
+      - amount
+      properties:
+        amount:
+          $ref: '#/components/schemas/ReportedAmount'
+    requestOffsetToken:
+      type: string
+      pattern: ^[a-zA-Z0-9%]+$
+      description: The offset token. This token is returned in the response of previous request.
+    ReportedAmount:
+      type: object
+      description: The Net Settlement Amount of the Funds Transfer as reported by the Card Network
+      required:
+      - value
+      - impact
+      - currency
+      properties:
+        value:
+          $ref: '#/components/schemas/fundsTransferAmountValue'
+        impact:
+          enum:
+          - credit
+          - debit
+        currency:
+          $ref: '#/components/schemas/openapi_components-schemas-currencyCode-5'
+    OpeningDebitBalance:
+      type: object
+      description: The opening debit balance of the account at the time of funds transfer.
+      required:
+      - value
+      - impact
+      - currency
+      properties:
+        value:
+          $ref: '#/components/schemas/openapi_components-schemas-amountValue-3'
+        impact:
+          enum:
+          - debit
+        currency:
+          $ref: '#/components/schemas/openapi_components-schemas-currencyCode-5'
+    reportingFor:
+      type: string
+      description: Identifier for which Settlement Information is reported by the Card Networks (Visa SRE, Mastercard ICA).
+    NetworkFundsTransfersPage:
+      type: object
+      required:
+      - networkFundsTransfers
+      - moreItems
+      properties:
+        networkFundsTransfers:
+          type: array
+          items:
+            $ref: '#/components/schemas/NetworkFundsTransfer'
+        moreItems:
+          type: boolean
+        offsetToken:
+          $ref: '#/components/schemas/responseOffsetToken'
+    InvalidOffsetTokenError:
+      allOf:
+      - $ref: '#/components/schemas/openapi_components-schemas-ProblemDetail'
+      - type: object
+        properties:
+          type:
+            enum:
+            - /silverflow/problems/invalid-offset-token
+          title:
+            enum:
+            - Invalid Offset Token
+    openapi_components-schemas-currencyCode-5:
+      type: string
+      enum:
+      - EUR
+      - USD
+      - AFN
+      - ALL
+      - DZD
+      - AOA
+      - XCD
+      - ARS
+      - AMD
+      - AWG
+      - AUD
+      - AZN
+      - BSD
+      - BHD
+      - BDT
+      - BBD
+      - BYN
+      - BZD
+      - XOF
+      - BMD
+      - INR
+      - BTN
+      - BOB
+      - BAM
+      - BWP
+      - NOK
+      - BRL
+      - BND
+      - BGN
+      - BIF
+      - CVE
+      - KHR
+      - XAF
+      - CAD
+      - KYD
+      - CLP
+      - CNY
+      - COP
+      - KMF
+      - CDF
+      - NZD
+      - CRC
+      - HRK
+      - CUP
+      - CUC
+      - ANG
+      - CZK
+      - DKK
+      - DJF
+      - DOP
+      - EGP
+      - SVC
+      - ERN
+      - ETB
+      - FKP
+      - FJD
+      - XPF
+      - GMD
+      - GEL
+      - GHS
+      - GIP
+      - GTQ
+      - GBP
+      - GNF
+      - GYD
+      - HTG
+      - HNL
+      - HKD
+      - HUF
+      - ISK
+      - IDR
+      - IRR
+      - IQD
+      - ILS
+      - JMD
+      - JPY
+      - JOD
+      - KZT
+      - KES
+      - KPW
+      - KRW
+      - KWD
+      - KGS
+      - LAK
+      - LBP
+      - LSL
+      - ZAR
+      - LRD
+      - LYD
+      - CHF
+      - MOP
+      - MKD
+      - MGA
+      - MWK
+      - MYR
+      - MVR
+      - MRU
+      - MUR
+      - MXN
+      - MDL
+      - MNT
+      - MAD
+      - MZN
+      - MMK
+      - NAD
+      - NPR
+      - NIO
+      - NGN
+      - OMR
+      - PKR
+      - PAB
+      - PGK
+      - PYG
+      - PEN
+      - PHP
+      - PLN
+      - QAR
+      - RON
+      - RUB
+      - RWF
+      - SHP
+      - WST
+      - STN
+      - SAR
+      - RSD
+      - SCR
+      - SLL
+      - SGD
+      - SBD
+      - SOS
+      - SSP
+      - LKR
+      - SDG
+      - SRD
+      - SZL
+      - SEK
+      - SYP
+      - TWD
+      - TJS
+      - TZS
+      - THB
+      - TOP
+      - TTD
+      - TND
+      - TRY
+      - TMT
+      - UGX
+      - UAH
+      - AED
+      - UYU
+      - UYW
+      - UZS
+      - VUV
+      - VES
+      - VND
+      - YER
+      - ZMW
+      - ZWL
+      description: 'The three-letter ISO code of the currency.
+
+
+
+        **European ISO Currency Codes**
+
+
+        <details>
+
+
+        | Country — Currency | Code | Numeric | Minor Units |
+
+        | ------------------ | ---- | ------- | ----------- |
+
+        | Åland Islands — Euro | EUR | 978 | 2 |
+
+        | Andorra — Euro | EUR | 978 | 2 |
+
+        | Austria — Euro | EUR | 978 | 2 |
+
+        | Belgium — Euro | EUR | 978 | 2 |
+
+        | Cyprus — Euro | EUR | 978 | 2 |
+
+        | Estonia — Euro | EUR | 978 | 2 |
+
+        | European Union — Euro | EUR | 978 | 2 |
+
+        | Finland — Euro | EUR | 978 | 2 |
+
+        | France — Euro | EUR | 978 | 2 |
+
+        | French Guiana — Euro | EUR | 978 | 2 |
+
+        | French Southern Territories (The) — Euro | EUR | 978 | 2 |
+
+        | Germany — Euro | EUR | 978 | 2 |
+
+        | Greece — Euro | EUR | 978 | 2 |
+
+        | Guadeloupe — Euro | EUR | 978 | 2 |
+
+        | Holy See (The) — Euro | EUR | 978 | 2 |
+
+        | Ireland — Euro | EUR | 978 | 2 |
+
+        | Italy — Euro | EUR | 978 | 2 |
+
+        | Latvia — Euro | EUR | 978 | 2 |
+
+        | Lithuania — Euro | EUR | 978 | 2 |
+
+        | Luxembourg — Euro | EUR | 978 | 2 |
+
+        | Malta — Euro | EUR | 978 | 2 |
+
+        | Martinique — Euro | EUR | 978 | 2 |
+
+        | Mayotte — Euro | EUR | 978 | 2 |
+
+        | Monaco — Euro | EUR | 978 | 2 |
+
+        | Montenegro — Euro | EUR | 978 | 2 |
+
+        | Netherlands (The) — Euro | EUR | 978 | 2 |
+
+        | Portugal — Euro | EUR | 978 | 2 |
+
+        | Réunion — Euro | EUR | 978 | 2 |
+
+        | Saint Barthélemy — Euro | EUR | 978 | 2 |
+
+        | Saint Martin (French Part) — Euro | EUR | 978 | 2 |
+
+        | Saint Pierre And Miquelon — Euro | EUR | 978 | 2 |
+
+        | San Marino — Euro | EUR | 978 | 2 |
+
+        | Slovakia — Euro | EUR | 978 | 2 |
+
+        | Slovenia — Euro | EUR | 978 | 2 |
+
+        | Spain — Euro | EUR | 978 | 2 |
+
+
+        </details>
+
+
+        **US ISO Currency Codes**
+
+
+        <details>
+
+
+        | Country — Currency | Code | Numeric | Minor Units |
+
+        | ------------------ | ---- | ------- | ----------- |
+
+        | American Samoa — US Dollar | USD | 840 | 2 |
+
+        | Bonaire, Sint Eustatius And Saba — US Dollar | USD | 840 | 2 |
+
+        | British Indian Ocean Territory (The) — US Dollar | USD | 840 | 2 |
+
+        | Ecuador — US Dollar | USD | 840 | 2 |
+
+        | El Salvador — US Dollar | USD | 840 | 2 |
+
+        | Guam — US Dollar | USD | 840 | 2 |
+
+        | Haiti — US Dollar | USD | 840 | 2 |
+
+        | Marshall Islands (The) — US Dollar | USD | 840 | 2 |
+
+        | Micronesia (Federated States Of) — US Dollar | USD | 840 | 2 |
+
+        | Northern Mariana Islands (The) — US Dollar | USD | 840 | 2 |
+
+        | Palau — US Dollar | USD | 840 | 2 |
+
+        | Panama — US Dollar | USD | 840 | 2 |
+
+        | Puerto Rico — US Dollar | USD | 840 | 2 |
+
+        | Timor-leste — US Dollar | USD | 840 | 2 |
+
+        | Turks And Caicos Islands (The) — US Dollar | USD | 840 | 2 |
+
+        | United States Minor Outlying Islands (The) — US Dollar | USD | 840 | 2 |
+
+        | United States Of America (The) — US Dollar | USD | 840 | 2 |
+
+        | Virgin Islands (British) — US Dollar | USD | 840 | 2 |
+
+        | Virgin Islands (U.s.) — US Dollar | USD | 840 | 2 |
+
+
+        </details>
+
+
+        **Other ISO Currency Codes**
+
+
+        <details>
+
+
+        | Country — Currency | Code | Numeric | Minor Units |
+
+        | ------------------ | ---- | ------- | ----------- |
+
+        | Afghanistan — Afghani | AFN | 971 | 2 |
+
+        | Albania — Lek | ALL | 008 | 2 |
+
+        | Algeria — Algerian Dinar | DZD | 012 | 2 |
+
+        | Angola — Kwanza | AOA | 973 | 2 |
+
+        | Anguilla — East Caribbean Dollar | XCD | 951 | 2 |
+
+        | Antigua And Barbuda — East Caribbean Dollar | XCD | 951 | 2 |
+
+        | Argentina — Argentine Peso | ARS | 032 | 2 |
+
+        | Armenia — Armenian Dram | AMD | 051 | 2 |
+
+        | Aruba — Aruban Florin | AWG | 533 | 2 |
+
+        | Australia — Australian Dollar | AUD | 036 | 2 |
+
+        | Azerbaijan — Azerbaijan Manat | AZN | 944 | 2 |
+
+        | Bahamas (The) — Bahamian Dollar | BSD | 044 | 2 |
+
+        | Bahrain — Bahraini Dinar | BHD | 048 | 3 |
+
+        | Bangladesh — Taka | BDT | 050 | 2 |
+
+        | Barbados — Barbados Dollar | BBD | 052 | 2 |
+
+        | Belarus — Belarusian Ruble | BYN | 933 | 2 |
+
+        | Belize — Belize Dollar | BZD | 084 | 2 |
+
+        | Benin — CFA Franc BCEAO | XOF | 952 | 0 |
+
+        | Bermuda — Bermudian Dollar | BMD | 060 | 2 |
+
+        | Bhutan — Indian Rupee | INR | 356 | 2 |
+
+        | Bhutan — Ngultrum | BTN | 064 | 2 |
+
+        | Bolivia (Plurinational State Of) — Boliviano | BOB | 068 | 2 |
+
+        | Bosnia And Herzegovina — Convertible Mark | BAM | 977 | 2 |
+
+        | Botswana — Pula | BWP | 072 | 2 |
+
+        | Bouvet Island — Norwegian Krone | NOK | 578 | 2 |
+
+        | Brazil — Brazilian Real | BRL | 986 | 2 |
+
+        | Brunei Darussalam — Brunei Dollar | BND | 096 | 2 |
+
+        | Bulgaria — Bulgarian Lev | BGN | 975 | 2 |
+
+        | Burkina Faso — CFA Franc BCEAO | XOF | 952 | 0 |
+
+        | Burundi — Burundi Franc | BIF | 108 | 0 |
+
+        | Cabo Verde — Cabo Verde Escudo | CVE | 132 | 2 |
+
+        | Cambodia — Riel | KHR | 116 | 2 |
+
+        | Cameroon — CFA Franc BEAC | XAF | 950 | 0 |
+
+        | Canada — Canadian Dollar | CAD | 124 | 2 |
+
+        | Cayman Islands (The) — Cayman Islands Dollar | KYD | 136 | 2 |
+
+        | Central African Republic (The) — CFA Franc BEAC | XAF | 950 | 0 |
+
+        | Chad — CFA Franc BEAC | XAF | 950 | 0 |
+
+        | Chile — Chilean Peso | CLP | 152 | 0 |
+
+        | China — Yuan Renminbi | CNY | 156 | 2 |
+
+        | Christmas Island — Australian Dollar | AUD | 036 | 2 |
+
+        | Cocos (Keeling) Islands (The) — Australian Dollar | AUD | 036 | 2 |
+
+        | Colombia — Colombian Peso | COP | 170 | 2 |
+
+        | Comoros (The) — Comorian Franc | KMF | 174 | 0 |
+
+        | Congo (The Democratic Republic Of The) — Congolese Franc | CDF | 976 | 2 |
+
+        | Congo (The) — CFA Franc BEAC | XAF | 950 | 0 |
+
+        | Cook Islands (The) — New Zealand Dollar | NZD | 554 | 2 |
+
+        | Costa Rica — Costa Rican Colon | CRC | 188 | 2 |
+
+        | Côte D''ivoire — CFA Franc BCEAO | XOF | 952 | 0 |
+
+        | Croatia — Kuna | HRK | 191 | 2 |
+
+        | Cuba — Cuban Peso | CUP | 192 | 2 |
+
+        | Cuba — Peso Convertible | CUC | 931 | 2 |
+
+        | Curaçao — Netherlands Antillean Guilder | ANG | 532 | 2 |
+
+        | Czechia — Czech Koruna | CZK | 203 | 2 |
+
+        | Denmark — Danish Krone | DKK | 208 | 2 |
+
+        | Djibouti — Djibouti Franc | DJF | 262 | 0 |
+
+        | Dominica — East Caribbean Dollar | XCD | 951 | 2 |
+
+        | Dominican Republic (The) — Dominican Peso | DOP | 214 | 2 |
+
+        | Egypt — Egyptian Pound | EGP | 818 | 2 |
+
+        | El Salvador — El Salvador Colon | SVC | 222 | 2 |
+
+        | Equatorial Guinea — CFA Franc BEAC | XAF | 950 | 0 |
+
+        | Eritrea — Nakfa | ERN | 232 | 2 |
+
+        | Ethiopia — Ethiopian Birr | ETB | 230 | 2 |
+
+        | Falkland Islands (The) [Malvinas] — Falkland Islands Pound | FKP | 238 | 2 |
+
+        | Faroe Islands (The) — Danish Krone | DKK | 208 | 2 |
+
+        | Fiji — Fiji Dollar | FJD | 242 | 2 |
+
+        | French Polynesia — CFP Franc | XPF | 953 | 0 |
+
+        | Gabon — CFA Franc BEAC | XAF | 950 | 0 |
+
+        | Gambia (The) — Dalasi | GMD | 270 | 2 |
+
+        | Georgia — Lari | GEL | 981 | 2 |
+
+        | Ghana — Ghana Cedi | GHS | 936 | 2 |
+
+        | Gibraltar — Gibraltar Pound | GIP | 292 | 2 |
+
+        | Greenland — Danish Krone | DKK | 208 | 2 |
+
+        | Grenada — East Caribbean Dollar | XCD | 951 | 2 |
+
+        | Guatemala — Quetzal | GTQ | 320 | 2 |
+
+        | Guernsey — Pound Sterling | GBP | 826 | 2 |
+
+        | Guinea — Guinean Franc | GNF | 324 | 0 |
+
+        | Guinea-bissau — CFA Franc BCEAO | XOF | 952 | 0 |
+
+        | Guyana — Guyana Dollar | GYD | 328 | 2 |
+
+        | Haiti — Gourde | HTG | 332 | 2 |
+
+        | Heard Island And Mcdonald Islands — Australian Dollar | AUD | 036 | 2 |
+
+        | Honduras — Lempira | HNL | 340 | 2 |
+
+        | Hong Kong — Hong Kong Dollar | HKD | 344 | 2 |
+
+        | Hungary — Forint | HUF | 348 | 2 |
+
+        | Iceland — Iceland Krona | ISK | 352 | 0 |
+
+        | India — Indian Rupee | INR | 356 | 2 |
+
+        | Indonesia — Rupiah | IDR | 360 | 2 |
+
+        | Iran (Islamic Republic Of) — Iranian Rial | IRR | 364 | 2 |
+
+        | Iraq — Iraqi Dinar | IQD | 368 | 3 |
+
+        | Isle Of Man — Pound Sterling | GBP | 826 | 2 |
+
+        | Israel — New Israeli Sheqel | ILS | 376 | 2 |
+
+        | Jamaica — Jamaican Dollar | JMD | 388 | 2 |
+
+        | Japan — Yen | JPY | 392 | 0 |
+
+        | Jersey — Pound Sterling | GBP | 826 | 2 |
+
+        | Jordan — Jordanian Dinar | JOD | 400 | 3 |
+
+        | Kazakhstan — Tenge | KZT | 398 | 2 |
+
+        | Kenya — Kenyan Shilling | KES | 404 | 2 |
+
+        | Kiribati — Australian Dollar | AUD | 036 | 2 |
+
+        | Korea (The Democratic People’s Republic Of) — North Korean Won | KPW | 408 | 2 |
+
+        | Korea (The Republic Of) — Won | KRW | 410 | 0 |
+
+        | Kuwait — Kuwaiti Dinar | KWD | 414 | 3 |
+
+        | Kyrgyzstan — Som | KGS | 417 | 2 |
+
+        | Lao People’s Democratic Republic (The) — Lao Kip | LAK | 418 | 2 |
+
+        | Lebanon — Lebanese Pound | LBP | 422 | 2 |
+
+        | Lesotho — Loti | LSL | 426 | 2 |
+
+        | Lesotho — Rand | ZAR | 710 | 2 |
+
+        | Liberia — Liberian Dollar | LRD | 430 | 2 |
+
+        | Libya — Libyan Dinar | LYD | 434 | 3 |
+
+        | Liechtenstein — Swiss Franc | CHF | 756 | 2 |
+
+        | Macao — Pataca | MOP | 446 | 2 |
+
+        | Macedonia (The Former Yugoslav Republic Of) — Denar | MKD | 807 | 2 |
+
+        | Madagascar — Malagasy Ariary | MGA | 969 | 2 |
+
+        | Malawi — Malawi Kwacha | MWK | 454 | 2 |
+
+        | Malaysia — Malaysian Ringgit | MYR | 458 | 2 |
+
+        | Maldives — Rufiyaa | MVR | 462 | 2 |
+
+        | Mali — CFA Franc BCEAO | XOF | 952 | 0 |
+
+        | Mauritania — Ouguiya | MRU | 929 | 2 |
+
+        | Mauritius — Mauritius Rupee | MUR | 480 | 2 |
+
+        | Mexico — Mexican Peso | MXN | 484 | 2 |
+
+        | Moldova (The Republic Of) — Moldovan Leu | MDL | 498 | 2 |
+
+        | Mongolia — Tugrik | MNT | 496 | 2 |
+
+        | Montserrat — East Caribbean Dollar | XCD | 951 | 2 |
+
+        | Morocco — Moroccan Dirham | MAD | 504 | 2 |
+
+        | Mozambique — Mozambique Metical | MZN | 943 | 2 |
+
+        | Myanmar — Kyat | MMK | 104 | 2 |
+
+        | Namibia — Namibia Dollar | NAD | 516 | 2 |
+
+        | Namibia — Rand | ZAR | 710 | 2 |
+
+        | Nauru — Australian Dollar | AUD | 036 | 2 |
+
+        | Nepal — Nepalese Rupee | NPR | 524 | 2 |
+
+        | New Caledonia — CFP Franc | XPF | 953 | 0 |
+
+        | New Zealand — New Zealand Dollar | NZD | 554 | 2 |
+
+        | Nicaragua — Cordoba Oro | NIO | 558 | 2 |
+
+        | Niger (The) — CFA Franc BCEAO | XOF | 952 | 0 |
+
+        | Nigeria — Naira | NGN | 566 | 2 |
+
+        | Niue — New Zealand Dollar | NZD | 554 | 2 |
+
+        | Norfolk Island — Australian Dollar | AUD | 036 | 2 |
+
+        | Norway — Norwegian Krone | NOK | 578 | 2 |
+
+        | Oman — Rial Omani | OMR | 512 | 3 |
+
+        | Pakistan — Pakistan Rupee | PKR | 586 | 2 |
+
+        | Panama — Balboa | PAB | 590 | 2 |
+
+        | Papua New Guinea — Kina | PGK | 598 | 2 |
+
+        | Paraguay — Guarani | PYG | 600 | 0 |
+
+        | Peru — Sol | PEN | 604 | 2 |
+
+        | Philippines (The) — Philippine Peso | PHP | 608 | 2 |
+
+        | Pitcairn — New Zealand Dollar | NZD | 554 | 2 |
+
+        | Poland — Zloty | PLN | 985 | 2 |
+
+        | Qatar — Qatari Rial | QAR | 634 | 2 |
+
+        | Romania — Romanian Leu | RON | 946 | 2 |
+
+        | Russian Federation (The) — Russian Ruble | RUB | 643 | 2 |
+
+        | Rwanda — Rwanda Franc | RWF | 646 | 0 |
+
+        | Saint Helena, Ascension And Tristan Da Cunha — Saint Helena Pound | SHP | 654 | 2 |
+
+        | Saint Kitts And Nevis — East Caribbean Dollar | XCD | 951 | 2 |
+
+        | Saint Lucia — East Caribbean Dollar | XCD | 951 | 2 |
+
+        | Saint Vincent And The Grenadines — East Caribbean Dollar | XCD | 951 | 2 |
+
+        | Samoa — Tala | WST | 882 | 2 |
+
+        | Sao Tome And Principe — Dobra | STN | 930 | 2 |
+
+        | Saudi Arabia — Saudi Riyal | SAR | 682 | 2 |
+
+        | Senegal — CFA Franc BCEAO | XOF | 952 | 0 |
+
+        | Serbia — Serbian Dinar | RSD | 941 | 2 |
+
+        | Seychelles — Seychelles Rupee | SCR | 690 | 2 |
+
+        | Sierra Leone — Leone | SLL | 694 | 2 |
+
+        | Singapore — Singapore Dollar | SGD | 702 | 2 |
+
+        | Sint Maarten (Dutch Part) — Netherlands Antillean Guilder | ANG | 532 | 2 |
+
+        | Solomon Islands — Solomon Islands Dollar | SBD | 090 | 2 |
+
+        | Somalia — Somali Shilling | SOS | 706 | 2 |
+
+        | South Africa — Rand | ZAR | 710 | 2 |
+
+        | South Sudan — South Sudanese Pound | SSP | 728 | 2 |
+
+        | Sri Lanka — Sri Lanka Rupee | LKR | 144 | 2 |
+
+        | Sudan (The) — Sudanese Pound | SDG | 938 | 2 |
+
+        | Suriname — Surinam Dollar | SRD | 968 | 2 |
+
+        | Svalbard And Jan Mayen — Norwegian Krone | NOK | 578 | 2 |
+
+        | Eswatini — Lilangeni | SZL | 748 | 2 |
+
+        | Sweden — Swedish Krona | SEK | 752 | 2 |
+
+        | Switzerland — Swiss Franc | CHF | 756 | 2 |
+
+        | Syrian Arab Republic — Syrian Pound | SYP | 760 | 2 |
+
+        | Taiwan (Province Of China) — New Taiwan Dollar | TWD | 901 | 2 |
+
+        | Tajikistan — Somoni | TJS | 972 | 2 |
+
+        | Tanzania, United Republic Of — Tanzanian Shilling | TZS | 834 | 2 |
+
+        | Thailand — Baht | THB | 764 | 2 |
+
+        | Togo — CFA Franc BCEAO | XOF | 952 | 0 |
+
+        | Tokelau — New Zealand Dollar | NZD | 554 | 2 |
+
+        | Tonga — Pa’anga | TOP | 776 | 2 |
+
+        | Trinidad And Tobago — Trinidad and Tobago Dollar | TTD | 780 | 2 |
+
+        | Tunisia — Tunisian Dinar | TND | 788 | 3 |
+
+        | Turkey — Turkish Lira | TRY | 949 | 2 |
+
+        | Turkmenistan — Turkmenistan New Manat | TMT | 934 | 2 |
+
+        | Tuvalu — Australian Dollar | AUD | 036 | 2 |
+
+        | Uganda — Uganda Shilling | UGX | 800 | 0 |
+
+        | Ukraine — Hryvnia | UAH | 980 | 2 |
+
+        | United Arab Emirates (The) — UAE Dirham | AED | 784 | 2 |
+
+        | United Kingdom Of Great Britain And Northern Ireland (The) — Pound Sterling | GBP | 826 | 2 |
+
+        | Uruguay — Peso Uruguayo | UYU | 858 | 2 |
+
+        | Uruguay — Unidad Previsional | UYW | 927 | 4 |
+
+        | Uzbekistan — Uzbekistan Sum | UZS | 860 | 2 |
+
+        | Vanuatu — Vatu | VUV | 548 | 0 |
+
+        | Venezuela (Bolivarian Republic Of) — Bolívar Soberano | VES | 928 | 2 |
+
+        | Viet Nam — Dong | VND | 704 | 0 |
+
+        | Wallis And Futuna — CFP Franc | XPF | 953 | 0 |
+
+        | Western Sahara — Moroccan Dirham | MAD | 504 | 2 |
+
+        | Yemen — Yemeni Rial | YER | 886 | 2 |
+
+        | Zambia — Zambian Kwacha | ZMW | 967 | 2 |
+
+        | Zimbabwe — Zimbabwe Dollar | ZWL | 932 | 2 |
+
+
+        </details>'
+      externalDocs:
+        description: Find more info here
+        url: https://www.iso.org/iso-4217-currency-codes.html
+      example: EUR
+    responseOffsetToken:
+      type: string
+      pattern: ^[a-zA-Z0-9%]+$
+      description: The offset token. Can be used to continue paginating in the next request.
+    NetworkFundsTransferKey:
+      description: Uniquely identifies a networkFundsTransfer object
+      type: string
+      pattern: ^nft-[a-zA-Z0-9]+$
+      readOnly: true
+    networkFundsTransfer_SettlementService:
+      type: object
+      description: The Settlement Service concerned
+      required:
+      - code
+      - name
+      - currency
+      properties:
+        code:
+          description: Unique code of settlement service
+          type: string
+        name:
+          description: Name of settlement service
+          type: string
+        currency:
+          $ref: '#/components/schemas/openapi_components-schemas-currencyCode-5'
+    GenericBadRequestError:
+      allOf:
+      - $ref: '#/components/schemas/openapi_components-schemas-ProblemDetail'
+      - type: object
+        properties:
+          type:
+            enum:
+            - /silverflow/problems/bad-request
+          title:
+            enum:
+            - Bad Request
+    fundsTransferAmountValue:
+      type: integer
+      format: int64
+      minimum: 0
+      description: 'The amount in minor units. For example `$12.34` should be encoded as `1234`. Note that not all
+
+        currencies have 2 minor units; some have three or zero.
+
+        '
+    NetworkFundsTransfer:
+      type: object
+      required:
+      - key
+      - cardNetwork
+      - reportingFor
+      - settlementService
+      - reported
+      - fundsTransferBookDate
+      - fundsTransferDate
+      - status
+      - created
+      - lastModified
+      description: The expected Funds Transfer as a result of net settlement.
+      properties:
+        key:
+          $ref: '#/components/schemas/NetworkFundsTransferKey'
+        cardNetwork:
+          $ref: '#/components/schemas/openapi_components-schemas-cardNetwork'
+        reportingFor:
+          $ref: '#/components/schemas/reportingFor'
+        settlementService:
+          $ref: '#/components/schemas/networkFundsTransfer_SettlementService'
+        reported:
+          $ref: '#/components/schemas/Reported'
+        fundsTransferBookDate:
+          description: The book date of the funds transfer.
+          type: string
+          format: date
+        fundsTransferDate:
+          description: The (value) date of the funds transfer.
+          type: string
+          format: date
+        created:
+          $ref: '#/components/schemas/openapi_components-schemas-created-2'
+        lastModified:
+          $ref: '#/components/schemas/openapi_components-schemas-lastModified'
+        status:
+          $ref: '#/components/schemas/networkfundsTransferStatus'
+        openingDebitBalance:
+          $ref: '#/components/schemas/OpeningDebitBalance'
+    openapi_components-schemas-lastModified:
+      type: string
+      description: The date and time this object was last modified
+      format: date-time
+      readOnly: true
+    openapi_components-schemas-amountValue-3:
+      type: integer
+      format: int64
+      minimum: 0
+      maximum: 900000000
+      description: 'The amount in minor units. For example `$12.34` should be encoded as `1234`. Note that not all
+
+        currencies have 2 minor units; some have three or zero.
+
+        '
+    openapi_components-schemas-created-2:
+      type: string
+      description: The date and time this object was created
+      format: date-time
+      readOnly: true
+    openapi_components-schemas-cardNetwork:
+      type: string
+      description: The card network
+      enum:
+      - mastercard
+      - visa
+      - bancontact
+      - american-express
+      - discover
+      example: mastercard
+  responses:
+    components-responses-BadRequestError:
+      description: The request was malformed. See the response body for details
+      content:
+        application/json:
+          schema:
+            oneOf:
+            - $ref: '#/components/schemas/GenericBadRequestError'
+            - $ref: '#/components/schemas/InvalidOffsetTokenError'
+          examples:
+            genericBadRequestError:
+              $ref: '#/components/examples/error-bad-request'
+            invalidOffsetTokenError:
+              $ref: '#/components/examples/error-invalid-offset-token'
+    openapi_components-responses-ForbiddenError-2:
+      description: The authenticated client is forbidden to make the request for the resource identified.
+      content:
+        application/json:
+          schema:
+            allOf:
+            - $ref: '#/components/schemas/openapi_components-schemas-ProblemDetail'
+            - type: object
+              properties:
+                type:
+                  enum:
+                  - /silverflow/problems/forbidden
+                title:
+                  enum:
+                  - Forbidden
+          example:
+            summary: Forbidden error
+            value:
+              status: 403
+              type: /silverflow/problems/forbidden
+              title: Forbidden
+              detail: 'Authenticated user ''apk-33GjasQdWl4781OsErvi'' is missing the following permission(s): charges:Create.'
+              instance: /silverflow/b0451a9d-f66d-4ef7-9f5d-d48064a2bb3e
+    openapi_components-responses-TooManyRequestsError-2:
+      description: The number of requests (per minute) has exceeded the configured maximum
+      content:
+        application/json:
+          schema:
+            allOf:
+            - $ref: '#/components/schemas/openapi_components-schemas-ProblemDetail'
+            - type: object
+              properties:
+                type:
+                  enum:
+                  - /silverflow/problems/authentication-required
+                title:
+                  enum:
+                  - Authentication Required
+          example:
+            summary: Too many requests error
+            value:
+              status: 429
+              type: /silverflow/problems/too-many-requests
+              title: Too Many Requests
+              detail: The number of requests performed by the client has exceeded the configured maximum for a given period
+              instance: /silverflow/b68c4b1e-a40a-467f-afa3-095f8eb451d2
+    openapi_components-responses-UnauthorizedError-3:
+      description: Authentication information is missing or invalid
+      headers:
+        WWW_Authenticate:
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            allOf:
+            - $ref: '#/components/schemas/openapi_components-schemas-ProblemDetail'
+            - type: object
+              properties:
+                type:
+                  enum:
+                  - /silverflow/problems/authentication-required
+                title:
+                  enum:
+                  - Authentication Required
+          example:
+            summary: Authentication Required Error
+            value:
+              status: 401
+              type: /silverflow/problems/authentication-required
+              title: Authentication Required
+              detail: Authentication Required
+              instance: /silverflow/RjLFu5Sund7ryJFNhZpFRGFsMzeuMym2BNoIxjvXTfxjtGZZlEpFnQ==
+    openapi_components-responses-NotFoundError:
+      description: The requested resource was not found
+      content:
+        application/json:
+          schema:
+            allOf:
+            - $ref: '#/components/schemas/openapi_components-schemas-ProblemDetail'
+            - type: object
+              properties:
+                type:
+                  enum:
+                  - /silverflow/problems/not-found
+                title:
+                  enum:
+                  - Not Found
+          example:
+            summary: Not found error
+            value:
+              status: 404
+              type: /silverflow/problems/not-found
+              title: Not Found
+              detail: The entity referenced in the request could not be found
+              instance: /silverflow/3da2b6cf-b522-4c4a-891b-01514ba6c1c4
+  examples:
+    error-bad-request:
+      summary: Generic bad request error
+      value:
+        status: 400
+        type: /silverflow/problems/bad-request
+        title: Bad Request
+        detail: The submitted request was syntactically or semantically invalid
+        instance: /silverflow/dbfaddea-8178-469a-bc23-c5af05a3fa00
+    report-network-funds-transfer:
+      summary: Example of a Network Funds Transfer
+      value:
+        key: nft-aTrKhISSAKrbPeEMHJQ5
+        cardNetwork: mastercard
+        reportingFor: '021010'
+        settlementService:
+          code: EU00000008
+          name: Settlement Bank, Frankfurt
+          currency: EUR
+        reported:
+          amount:
+            value: 800235
+            impact: credit
+            currency: EUR
+        fundsTransferBookDate: '2023-01-10'
+        fundsTransferDate: '2023-01-10'
+        created: '2023-01-09T07:15:57.272Z'
+        lastModified: '2023-01-09T12:23:45.008Z'
+        status: pending
+    error-invalid-offset-token:
+      summary: Invalid offset token error
+      value:
+        status: 400
+        type: /silverflow/problems/invalid-offset-token
+        title: Invalid Offset Token
+        detail: The provided offset token is invalid.
+        instance: /silverflow/dbfaddea-8178-469a-bc23-c5af05a3fb48
+    report-network-funds-transfers:
+      summary: Example of a Page of Network Funds Transfers
+      value:
+        networkFundsTransfers:
+        - key: nft-aTrKhISSAKrbPeEMHJQ5
+          cardNetwork: mastercard
+          reportingFor: '021010'
+          settlementService:
+            code: EU00000008
+            name: Settlement Bank, Frankfurt
+            currency: EUR
+          reported:
+            amount:
+              value: 800235
+              impact: credit
+              currency: EUR
+          fundsTransferBookDate: '2023-01-10'
+          fundsTransferDate: '2023-01-10'
+          created: '2023-01-09T07:15:57.272Z'
+          lastModified: '2023-01-09T12:23:45.008Z'
+          status: pending
+        - key: nft-v0P069tMYq8ivga5oaM6
+          cardNetwork: mastercard
+          reportingFor: '021010'
+          settlementService:
+            code: EU00000012
+            name: Settlement Bank, London
+            currency: GBP
+          reported:
+            amount:
+              value: 123235
+              impact: credit
+              currency: EUR
+          fundsTransferBookDate: '2023-01-10'
+          fundsTransferDate: '2023-01-10'
+          created: '2023-01-09T09:15:57.272Z'
+          lastModified: '2023-01-09T12:23:45.008Z'
+          status: completed
+        - key: nft-jv4Og3CCLwE4uph5PII8
+          cardNetwork: visa
+          reportingFor: '9000000001'
+          settlementService:
+            code: 080
+            name: Euro Area Net Settlement Service
+            currency: EUR
+          reported:
+            amount:
+              value: 442050
+              impact: credit
+              currency: EUR
+          fundsTransferBookDate: '2023-01-10'
+          fundsTransferDate: '2023-01-09'
+          created: '2023-01-09T08:05:57.272Z'
+          lastModified: '2023-01-09T12:23:45.008Z'
+          status: pending
+        - key: nft-p163R0xUx0HBuCUeVPTZ
+          cardNetwork: visa
+          reportingFor: '9000000002'
+          settlementService:
+            code: '001'
+            name: International Settlement Service
+            currency: NOK
+          reported:
+            amount:
+              value: 53200150
+              impact: credit
+              currency: NOK
+          fundsTransferBookDate: '2023-01-11'
+          fundsTransferDate: '2023-01-11'
+          created: '2023-01-09T08:25:57.272Z'
+          lastModified: '2023-01-09T12:23:45.008Z'
+          status: completed
+        moreItems: false
+  parameters:
+    limit:
+      name: limit
+      description: The number of items to return
+      in: query
+      required: false
+      schema:
+        type: integer
+        format: int32
+        minimum: 1
+        maximum: 100
+        default: 10
+      example: 1
+    fundsTransferDatePath:
+      name: fundsTransferDate
+      description: Includes only items that have a funds transfer date _equal_ to the specified date
+      example: '2021-01-31'
+      in: path
+      required: true
+      schema:
+        type: string
+        format: date
+    networkFundsTransferKeyPath:
+      name: key
+      in: path
+      required: true
+      description: 'Uniquely identifies a networkFundsTransfer object.
+
+        '
+      schema:
+        $ref: '#/components/schemas/NetworkFundsTransferKey'
+    openapi_components-parameters-offsetToken-2:
+      name: offsetToken
+      description: The offset token. This token is returned in the response of previous request.
+      in: query
+      required: false
+      schema:
+        $ref: '#/components/schemas/requestOffsetToken'
+    sortOrder:
+      name: sortOrder
+      description: The sort order, __asc__ending or __desc__ending
+      in: query
+      required: false
+      schema:
+        type: string
+        enum:
+        - asc
+        - desc
+      example: desc
+  securitySchemes:
+    ApiKey:
+      description: "The primary method of authenticating to the Silverflow API is through API keys.\n\nAPI keys can be created by calling the [createApiKey](#operation/createApiKey) endpoint. You can create up to 40 API keys and also update and delete them, allowing for _credential rotation_.\n\nThe _Agent Activation_ process will generate an initial API Key for you. See [Activate Agent](#section/Getting-Started).\n\nA call to the [createApiKey](#operation/createApiKey) endpoint will return the following structure:\n\n```json\n{\n    \"key\": \"apk-1wtRxni5IsPsSpBLWpwr\",\n    \"status\": \"active\",\n    \"agentKey\": \"cgt-1wtRvFLIjDOyyUR5Q2LB\",\n    \"description\": \"Data lake API key\",\n    \"permissions\": [\n        \"charges:List\",\n        \"reports:All\"\n    ],\n    \"created\": \"2021-06-22T11:21:45.115Z\",\n    \"secret\": \"FWtnOOHAjbD6rNxWWEeVOCj7JXSEPGJQ\",\n    \"version\": 1\n}\n```\n\n> **Important:** The `secret` is only returned once in the response to the `createApiKey` call.\n\nOnce created, the `key` and `secret` fields from the API key must be used in the HTTP `Authorization` header using the `Basic` scheme.\nThe Basic scheme requires a **username** and **password** to be specified, separated by a `:` (colon) and Base64 encoded.\n\nUse the following values from the API key to construct a Basic authentication header:\n\n| Basic field | API key field | Example |\n| ----------- | ------------- | ------- |\n| username | `key` | `apk-1wtRxni5IsPsSpBLWpwr` |\n| password | `secret` | `FWtnOOHAjbD6rNxWWEeVOCj7JXSEPGJQ` |\n\nIn pseudo-code a valid HTTP Basic Authentication header would be constructed as follows:\n\n```ts\nconst apiKeyId = \"apk-1wtRxni5IsPsSpBLWpwr\";\nconst apiKeySecret = \"FWtnOOHAjbD6rNxWWEeVOCj7JXSEPGJQ\";\nconst authnValue = \"Basic \" + base64Encode(apiKeyId + \":\" + apiKeySecret);\nrequest.setHeader(\"Authorization\", authnValue);\n```\n\nUsing the values from the example a valid HTTP request would look like the following:\n\n```http\nGET /v1/agents/current HTTP/1.1\nAccept: application/json\nAuthorization: Basic YXBrLTF3dFJ4bmk1SXNQc1NwQkxXcHdyOkZXdG5PT0hBamJENnJOeFdXRWVWT0NqN0pYU0VQR0pR\n```\n\nMore information on the Basic scheme can be found in [RFC-7617 - The 'Basic' HTTP Authentication Scheme](https://datatracker.ietf.org/doc/html/rfc7617)."
+      type: http
+      scheme: basic
+    BearerToken:
+      description: 'Bearer tokens are temporary security credentials that can be used to authorize ''third parties'' (bearers) access to the Silverflow API on behalf of the agent.
+
+
+        These tokens are created by calling the [createAgentBearerToken](#operation/createAgentBearerToken) endpoint.
+
+
+        Once created the `token` field must be used in the HTTP `Authorization` header using the `Bearer` scheme.
+
+        Here''s an example of an HTTP request with a bearer token:
+
+
+        ```http
+
+        GET /v1/merchants/mct-1hPdFhmgaBzMS191nIbJ HTTP/1.1
+
+        Accept: application/json
+
+        Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...40EFOgxf_3I6mPZ16bXqHd5tUyApgl0mNOAXPm5AhnA
+
+
+        ```
+
+
+        More information on the Bearer scheme can be found in [RFC-6750 - The OAuth 2.0 Authorization Framework: Bearer Token Usage](https://datatracker.ietf.org/doc/html/rfc6750).'
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+    MutualTLS:
+      type: apiKey
+      in: header
+      name: '-'
+      description: 'The client must set up mTLS connection with a valid X.509 client certificate signed by a customer-provided CA (certificate authority) that is registered to a specific agent. The customer-provided CA certificate must be shared and added to Silverflow''s trust store prior to calling endpoints.
+
+
+        Certificate validation happens at the transport layer during TLS handshake. Tenant verification is performed by matching the agent key embedded in the client certificate against the agent key embedded in the trusted CA.
+
+        '
+x-refined-from:
+- silverflow-openapi.yml
+- silverflow-openapi.yml
+x-tagGroups:
+- name: ''
+  tags:
+  - Introduction
+  - Release Notes
+- name: Accounts
+  tags:
+  - Agents
+  - API Keys
+  - Bins
+  - Merchants
+  - Merchant Acceptors
+  - Enrollments
+  - Screenings
+- name: Event Notifications
+  tags:
+  - Event Subscriptions
+  - Charges Events
+  - Disputes Events
+  - Fraud Notification Events
+  - Processor Tokens Events
+  - Network Tokens Events
+  - Report Events
+  - Distribution Events
+  - AMMF Submission Events
+  - Reconciliation Events
+  - Clearing Events
+- name: 3DS Authentication
+  tags:
+  - 3DS Authentication
+- name: BEP Authentication
+  tags:
+  - BEP Authentication
+- name: Tokenization
+  tags:
+  - Processor Tokenization
+  - Network Tokenization
+- name: Charges
+  tags:
+  - Create Charges
+  - Create Recurring
+  - Retrieve Charges
+  - Charge Actions
+- name: Terminal-To-Cloud
+  tags:
+  - Create POS Charges
+  - Retrieve POS Charges
+  - POS Charge Actions
+- name: Card Management
+  tags:
+  - Card Management
+- name: Disputes
+  tags:
+  - Disputes
+  - Documents
+- name: Fraud Notifications
+  tags:
+  - Fraud Notifications
+- name: Card Info
+  tags:
+  - Card Info
+- name: Currency Conversion Rates
+  tags:
+  - Currency Conversion Rates
+- name: Fees
+  tags:
+  - Fees
+- name: Reconciliation
+  tags:
+  - Reconciliation Details
+  - Network Funds Transfers
+- name: Reports
+  tags:
+  - Reconciliation Reports
+  - Settlement Reports
+  - Card Network Reports
+  - Dispute Reports
+  - Fraud Notifications Reports
+  - Charges Reports
+  - Scheme Fee Reports
+  - Retrieve Reports
+  - Report Scheduling
+  - Distributions
+- name: Transaction Risk Assessment
+  tags:
+  - Transaction Risk Assessment
+- name: File Subscriptions
+  tags:
+  - File Subscriptions

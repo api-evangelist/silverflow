@@ -1,0 +1,1446 @@
+openapi: 3.2.0
+info:
+  title: Silverflow Fraud Notifications API
+  version: 1.417.0
+  contact:
+    name: API Support
+    email: support@silverflow.com
+  license:
+    name: Commercial
+  description: 'Operations tagged Fraud Notifications across 2 of this provider''s published API definitions: silverflow-openapi.yml, silverflow-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://eu-west-1.api.silverflow.com/v1
+  description: Production URL for Europe - Equivalent to https://api.silverflow.co/v1
+- url: https://us-east-2.api.silverflow.com/v1
+  description: Production URL for North America
+- url: https://eu-west-1.api-sbx.silverflow.com/v1
+  description: Sandbox URL - Equivalent to https://api-sbx.silverflow.co/v1
+security:
+- ApiKey: []
+- BearerToken: []
+tags:
+- name: Fraud Notifications
+  description: "Fraud Notifications are created by the schemes when a fraudulent transaction is reported to them. \n\nThe Fraud Notification endpoints, allow to obtain more information about a Fraud Notification, including the reported Fraud Type code(s) and the related charge.\n"
+paths:
+  /fraudNotifications/{fraudNotificationKey}:
+    get:
+      operationId: getFraudNotification
+      summary: Get Fraud Notification
+      description: 'Returns the Fraud Notification identified by the specified key.
+
+
+        Requires `fraudNotifications:Get` permission.
+
+        '
+      tags:
+      - Fraud Notifications
+      parameters:
+      - $ref: '#/components/parameters/fraudNotificationKey'
+      responses:
+        '200':
+          description: The referenced Fraud Notification
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FraudNotification'
+        '401':
+          $ref: '#/components/responses/responses-UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/responses-ForbiddenError'
+        '404':
+          $ref: '#/components/responses/responses-NotFoundError'
+        '429':
+          $ref: '#/components/responses/responses-TooManyRequestsError'
+    servers:
+    - url: https://eu-west-1.api.silverflow.com/v1
+      description: Production URL for Europe - Equivalent to https://api.silverflow.co/v1
+    - url: https://us-east-2.api.silverflow.com/v1
+      description: Production URL for North America
+    - url: https://eu-west-1.api-sbx.silverflow.com/v1
+      description: Sandbox URL - Equivalent to https://api-sbx.silverflow.co/v1
+  /fraudNotifications:
+    get:
+      operationId: getFraudNotifications
+      summary: List Fraud Notifications
+      description: 'This operation returns a (paged) list of all Fraud Notifications for the authenticated Agent.
+
+
+        Requires `fraudNotifications:List` permission.
+
+        '
+      tags:
+      - Fraud Notifications
+      parameters:
+      - $ref: '#/components/parameters/parameters-merchantKeyQs'
+      - $ref: '#/components/parameters/limit'
+      - $ref: '#/components/parameters/components-parameters-offsetToken'
+      - $ref: '#/components/parameters/parameters-sortOrder'
+      - $ref: '#/components/parameters/components-parameters-from'
+      - $ref: '#/components/parameters/components-parameters-to'
+      responses:
+        '200':
+          description: A (paged) list of Fraud Notifications
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FraudNotificationsPage'
+        '401':
+          $ref: '#/components/responses/responses-UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/responses-ForbiddenError'
+        '429':
+          $ref: '#/components/responses/responses-TooManyRequestsError'
+    servers:
+    - url: https://eu-west-1.api.silverflow.com/v1
+      description: Production URL for Europe - Equivalent to https://api.silverflow.co/v1
+    - url: https://us-east-2.api.silverflow.com/v1
+      description: Production URL for North America
+    - url: https://eu-west-1.api-sbx.silverflow.com/v1
+      description: Sandbox URL - Equivalent to https://api-sbx.silverflow.co/v1
+components:
+  responses:
+    responses-ForbiddenError:
+      description: The authenticated client is forbidden to make the request for the resource identified.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/schemas-ProblemDetail'
+          example:
+            type: https://datatracker.ietf.org/doc/html/rfc2616#section-10.4.4
+            title: Forbidden
+            status: 403
+            detail: The server is refusing to execute the request for the current authenticated user
+            instance: https://api.silverflow.co/v1/merchants/mct-1hPdFqhgstYTUhlphPDp
+    responses-UnauthorizedError:
+      description: Authentication information is missing or invalid
+      headers:
+        WWW_Authenticate:
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/schemas-ProblemDetail'
+          example:
+            type: https://datatracker.ietf.org/doc/html/rfc2616#section-10.4.2
+            title: Unauthorized
+            status: 401
+            detail: The credentials supplied in the request are either missing, invalid, or not applicable in the current scope
+    responses-NotFoundError:
+      description: The requested resource was not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/schemas-ProblemDetail'
+          example:
+            type: https://datatracker.ietf.org/doc/html/rfc2616#section-10.4.5
+            title: Not Found
+            status: 404
+            detail: The entity referenced in the request could not be found
+            instance: https://api.silverflow.co/v1/merchants/mct-1hPdFqhgstYTUhlphPDp
+    responses-TooManyRequestsError:
+      description: The number of requests (per minute) has exceeded the configured maximum
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/schemas-ProblemDetail'
+          example:
+            type: https://api.silverflow.co/problem/too-many-requests
+            title: Too Many Requests
+            status: 429
+            detail: The number of requests performed by the client has exceeded the configured maximum for a given period
+  schemas:
+    fraud-notifications_transactionReference:
+      type: string
+      description: 'Unique ID assigned by the merchant or payment service provider for the transaction. Used to identify the transaction.
+
+        '
+      pattern: ^[a-zA-Z0-9()+,\-.:=@;$_!*\/?|]+$
+      minLength: 1
+      maxLength: 120
+      example: Dz3dIzE74EfH1HeTInyE
+    schemas-last4:
+      type: string
+      deprecated: true
+      description: The last 4 digits of the card. **This property will be removed on 24 September 2025. Use `maskedNumber` instead.**
+      readOnly: false
+      pattern: ^\d+$
+      minLength: 4
+      maxLength: 4
+      example: 0905
+    components-schemas-merchantKey:
+      description: Uniquely identifies a Merchant
+      type: string
+      pattern: ^mct-[a-zA-Z0-9]+$
+      minLength: 1
+      maxLength: 120
+      readOnly: false
+      example: mct-123dinkqFqfq3q2f2adfa
+    clearingDateTime:
+      type: string
+      description: Clearing datetime of the disputed authorization.
+      format: date-time
+      example: '2021-05-27T10:57:52Z'
+    maskedNumber:
+      type: string
+      description: The card number used to create this charge, masked according to PCI standards. For card numbers with 16 or more digits, the first 8 and the last 4 digits are visible. For card numbers with 13-15 digits, the first 6 and the last 4 digits are visible. For cards numbers with less than 13 digits, the first 6 and last 2 digits are visible.
+    components-schemas-agentKey:
+      description: Uniquely identifies an Agent
+      type: string
+      pattern: ^cgt-[a-zA-Z0-9]+|current$
+      minLength: 1
+      maxLength: 120
+      readOnly: false
+      example: cgt-1UF2NafdfrdPMf2XrS2
+    fraud-notifications_status:
+      description: The status of a Fraud Notification.
+      type: string
+      enum:
+      - active
+      - archived
+    FraudNotification:
+      type: object
+      required:
+      - key
+      - network
+      - agentKey
+      - merchantAcceptorRef
+      - merchantKey
+      - mcc
+      - mid
+      - chargeInfo
+      - cardInfo
+      - fraudAmount
+      - fraudType
+      - purchaseDate
+      - fraudReportingDate
+      - status
+      - created
+      - version
+      description: 'A Fraud Notification
+
+        '
+      properties:
+        key:
+          $ref: '#/components/schemas/fraudNotificationKey'
+        network:
+          $ref: '#/components/schemas/schemas-cardNetwork'
+        agentKey:
+          $ref: '#/components/schemas/components-schemas-agentKey'
+        merchantKey:
+          $ref: '#/components/schemas/components-schemas-merchantKey'
+        merchantAcceptorRef:
+          $ref: '#/components/schemas/merchantAcceptorRef'
+        chargeInfo:
+          $ref: '#/components/schemas/fraud-notifications_chargeInfo'
+        cardInfo:
+          $ref: '#/components/schemas/cardInfo'
+        fraudAmount:
+          $ref: '#/components/schemas/openapi_components-schemas-Amount'
+        fraudType:
+          $ref: '#/components/schemas/fraudType'
+        purchaseDate:
+          $ref: '#/components/schemas/purchaseDate'
+        fraudReportingDate:
+          $ref: '#/components/schemas/fraudReportingDate'
+        mid:
+          $ref: '#/components/schemas/schemas-mid'
+        created:
+          $ref: '#/components/schemas/openapi_components-schemas-created-3'
+        version:
+          $ref: '#/components/schemas/openapi_components-schemas-version'
+        status:
+          $ref: '#/components/schemas/fraud-notifications_status'
+    schemas-ProblemDetail:
+      type: object
+      description: 'The ''problem detail'' object relays detailed information about the error that occurred. It is defined
+
+        by [RFC 7807 - Problem Details for HTTP APIs](https://tools.ietf.org/html/rfc7807).
+
+
+        Note that additional properties may be used to relay error specific information. For instance,
+
+        A Bad Request error may hold information about the individual validation errors found in the request.
+
+        '
+      properties:
+        type:
+          type: string
+          description: 'An absolute URI that identifies the problem type.
+
+            '
+          default: about:blank
+          example: https://api.silverflow.co/problem/constraint-violation
+        title:
+          type: string
+          description: 'A short, summary of the problem type. Written in english and readable
+
+            for engineers (usually not suited for non technical stakeholders and
+
+            not localized);
+
+            '
+          example: Service Unavailable
+        status:
+          type: integer
+          format: int32
+          description: 'The HTTP status code generated by the origin server for this occurrence
+
+            of the problem.
+
+            '
+          minimum: 100
+          maximum: 599
+          example: 503
+        detail:
+          type: string
+          description: 'A human readable explanation specific to this occurrence of the
+
+            problem.
+
+            '
+          example: Connection to database timed out
+        instance:
+          type: string
+          description: 'An absolute URI that identifies the specific occurrence of the problem.
+
+            It may or may not yield further information if dereferenced.
+
+            '
+      additionalProperties: true
+      example:
+        type: https://api.silverflow.co/problem/bad-request
+        title: Bad Request
+        status: 400
+        detail: The request could not be processed as it contained an invalid request entity
+        instance: https://api.silverflow.co/v1/merchants/mct-1hPdFqhgstYTUhlphPDp
+        validationErrors:
+        - The value of property 'status' should be one of 'idle', 'active' or 'archived'
+        - The value of property 'tags.0.businessId' must not be longer than 255 characters
+    schemas-cardNetwork:
+      type: string
+      description: The card network
+      enum:
+      - mastercard
+      - visa
+      - american-express
+    components-schemas-offsetToken:
+      type: string
+      pattern: ^[a-zA-Z0-9%]+$
+      minLength: 1
+      maxLength: 2048
+      example: LUtyr0s918rNZ5WuWDYh5FNzqAli6HqKHpPDatcfdsaVlibrlO49BKcOdz9YccUOtDSoyLtc4kAiOLkmjSW5zLa8OCnOXXBRja2rDYh5FNzqAli6HqKHpPDatcfdsaVlibrlO49BKcOdz9Yc
+    openapi_components-schemas-version:
+      type: integer
+      description: The version of this object
+      format: int64
+      minimum: 1
+      maximum: 1000
+      example: 1
+      readOnly: false
+    acquirerReferenceNumber:
+      description: Unique identifier assigned by the acquirer at clearing. Used to identify the transaction with the card networks.
+      type: string
+      pattern: ^\d+$
+      minLength: 23
+      maxLength: 23
+      readOnly: false
+      example: '12345678901234567890123'
+    purchaseDate:
+      description: Date when the purchase was done
+      type: string
+      format: date
+      example: '2021-05-27'
+    openapi_components-schemas-acceptorKey:
+      description: Uniquely identifies a Merchant Acceptor.
+      type: string
+      pattern: ^mac-[a-zA-Z0-9]+$
+      minLength: 1
+      maxLength: 120
+      readOnly: false
+      example: mac-1JRadf2ffdfrdPMf2XrS2
+    merchantAcceptorRef:
+      description: Charge related information
+      type: object
+      required:
+      - key
+      - version
+      properties:
+        key:
+          $ref: '#/components/schemas/openapi_components-schemas-acceptorKey'
+        version:
+          $ref: '#/components/schemas/openapi_components-schemas-version'
+    fraud-notifications_chargeInfo:
+      description: Charge related information
+      type: object
+      required:
+      - arn
+      - amount
+      - fraudLiability
+      properties:
+        arn:
+          $ref: '#/components/schemas/acquirerReferenceNumber'
+        localTransactionDateTime:
+          $ref: '#/components/schemas/schemas-localTransactionDateTime'
+        amount:
+          $ref: '#/components/schemas/openapi_components-schemas-Amount'
+        chargeKey:
+          $ref: '#/components/schemas/schemas-chargeKey'
+        fraudLiability:
+          $ref: '#/components/schemas/fraud-notifications_fraudLiability'
+        transactionReference:
+          $ref: '#/components/schemas/fraud-notifications_transactionReference'
+        clearingDateTime:
+          $ref: '#/components/schemas/clearingDateTime'
+    schemas-mid:
+      type: string
+      description: 'Merchant ID assigned to the merchant (or Payfac) by the acquirer.
+
+        Acceptors that use the same BIN, Doing Business As name, and location must have the same `mid`.
+
+        Acceptors that use the same BIN cannot share a `mid` if they have a different Doing Business As name or location.
+
+        '
+      pattern: ^[a-zA-Z0-9-_\.]+$
+      minLength: 1
+      maxLength: 15
+    moreItems:
+      type: boolean
+    openapi_components-schemas-Amount:
+      type: object
+      required:
+      - value
+      - currency
+      additionalProperties: false
+      description: 'An amount encoded as an object with a `value` in minor units and a `currency` code.
+
+        '
+      properties:
+        value:
+          $ref: '#/components/schemas/openapi_components-schemas-amountValue-2'
+        currency:
+          $ref: '#/components/schemas/openapi_components-schemas-currencyCode-3'
+    openapi_components-schemas-currencyCode-3:
+      type: string
+      enum:
+      - AED
+      - AFN
+      - ALL
+      - AMD
+      - ANG
+      - AOA
+      - ARS
+      - AUD
+      - AWG
+      - AZN
+      - BAM
+      - BBD
+      - BDT
+      - BGN
+      - BHD
+      - BIF
+      - BMD
+      - BND
+      - BOB
+      - BRL
+      - BSD
+      - BTN
+      - BWP
+      - BYN
+      - BZD
+      - CAD
+      - CDF
+      - CHF
+      - CLP
+      - CNH
+      - CNY
+      - COP
+      - CRC
+      - CUC
+      - CUP
+      - CVE
+      - CZK
+      - DJF
+      - DKK
+      - DOP
+      - DZD
+      - EGP
+      - ERN
+      - ETB
+      - EUR
+      - FJD
+      - FKP
+      - GBP
+      - GEL
+      - GHS
+      - GIP
+      - GMD
+      - GNF
+      - GTQ
+      - GYD
+      - HKD
+      - HNL
+      - HRK
+      - HTG
+      - HUF
+      - IDR
+      - ILS
+      - INR
+      - IQD
+      - IRR
+      - ISK
+      - JMD
+      - JOD
+      - JPY
+      - KES
+      - KGS
+      - KHR
+      - KMF
+      - KPW
+      - KRW
+      - KWD
+      - KYD
+      - KZT
+      - LAK
+      - LBP
+      - LKR
+      - LRD
+      - LSL
+      - LYD
+      - MAD
+      - MDL
+      - MGA
+      - MKD
+      - MMK
+      - MNT
+      - MOP
+      - MRU
+      - MUR
+      - MVR
+      - MWK
+      - MXN
+      - MYR
+      - MZN
+      - NAD
+      - NGN
+      - NIO
+      - NOK
+      - NPR
+      - NZD
+      - OMR
+      - PAB
+      - PEN
+      - PGK
+      - PHP
+      - PKR
+      - PLN
+      - PYG
+      - QAR
+      - RON
+      - RSD
+      - RUB
+      - RWF
+      - SAR
+      - SBD
+      - SCR
+      - SDG
+      - SEK
+      - SGD
+      - SHP
+      - SLE
+      - SLL
+      - SOS
+      - SRD
+      - SSP
+      - STN
+      - SVC
+      - SYP
+      - SZL
+      - THB
+      - TJS
+      - TMT
+      - TND
+      - TOP
+      - TRY
+      - TTD
+      - TWD
+      - TZS
+      - UAH
+      - UGX
+      - USD
+      - UYU
+      - UYW
+      - UZS
+      - VES
+      - VND
+      - VUV
+      - WST
+      - XAF
+      - XCD
+      - XCG
+      - XOF
+      - XPF
+      - YER
+      - ZAR
+      - ZMW
+      - ZWL
+      description: 'The three-letter ISO code of the currency.
+
+
+        **European ISO Currency Codes**
+
+
+        <details>
+
+
+        | Country — Currency                       | Code | Numeric | Minor Units |
+
+        | ---------------------------------------- | ---- | ------- | ----------- |
+
+        | Åland Islands — Euro                     | EUR  | 978     | 2           |
+
+        | Andorra — Euro                           | EUR  | 978     | 2           |
+
+        | Austria — Euro                           | EUR  | 978     | 2           |
+
+        | Belgium — Euro                           | EUR  | 978     | 2           |
+
+        | Cyprus — Euro                            | EUR  | 978     | 2           |
+
+        | Estonia — Euro                           | EUR  | 978     | 2           |
+
+        | European Union — Euro                    | EUR  | 978     | 2           |
+
+        | Finland — Euro                           | EUR  | 978     | 2           |
+
+        | France — Euro                            | EUR  | 978     | 2           |
+
+        | French Guiana — Euro                     | EUR  | 978     | 2           |
+
+        | French Southern Territories (The) — Euro | EUR  | 978     | 2           |
+
+        | Germany — Euro                           | EUR  | 978     | 2           |
+
+        | Greece — Euro                            | EUR  | 978     | 2           |
+
+        | Guadeloupe — Euro                        | EUR  | 978     | 2           |
+
+        | Holy See (The) — Euro                    | EUR  | 978     | 2           |
+
+        | Ireland — Euro                           | EUR  | 978     | 2           |
+
+        | Italy — Euro                             | EUR  | 978     | 2           |
+
+        | Latvia — Euro                            | EUR  | 978     | 2           |
+
+        | Lithuania — Euro                         | EUR  | 978     | 2           |
+
+        | Luxembourg — Euro                        | EUR  | 978     | 2           |
+
+        | Malta — Euro                             | EUR  | 978     | 2           |
+
+        | Martinique — Euro                        | EUR  | 978     | 2           |
+
+        | Mayotte — Euro                           | EUR  | 978     | 2           |
+
+        | Monaco — Euro                            | EUR  | 978     | 2           |
+
+        | Montenegro — Euro                        | EUR  | 978     | 2           |
+
+        | Netherlands (The) — Euro                 | EUR  | 978     | 2           |
+
+        | Portugal — Euro                          | EUR  | 978     | 2           |
+
+        | Réunion — Euro                           | EUR  | 978     | 2           |
+
+        | Saint Barthélemy — Euro                  | EUR  | 978     | 2           |
+
+        | Saint Martin (French Part) — Euro        | EUR  | 978     | 2           |
+
+        | Saint Pierre And Miquelon — Euro         | EUR  | 978     | 2           |
+
+        | San Marino — Euro                        | EUR  | 978     | 2           |
+
+        | Slovakia — Euro                          | EUR  | 978     | 2           |
+
+        | Slovenia — Euro                          | EUR  | 978     | 2           |
+
+        | Spain — Euro                             | EUR  | 978     | 2           |
+
+
+        </details>
+
+
+        **US ISO Currency Codes**
+
+
+        <details>
+
+
+        | Country — Currency                                     | Code | Numeric | Minor Units |
+
+        | ------------------------------------------------------ | ---- | ------- | ----------- |
+
+        | American Samoa — US Dollar                             | USD  | 840     | 2           |
+
+        | Bonaire, Sint Eustatius And Saba — US Dollar           | USD  | 840     | 2           |
+
+        | British Indian Ocean Territory (The) — US Dollar       | USD  | 840     | 2           |
+
+        | Ecuador — US Dollar                                    | USD  | 840     | 2           |
+
+        | El Salvador — US Dollar                                | USD  | 840     | 2           |
+
+        | Guam — US Dollar                                       | USD  | 840     | 2           |
+
+        | Haiti — US Dollar                                      | USD  | 840     | 2           |
+
+        | Marshall Islands (The) — US Dollar                     | USD  | 840     | 2           |
+
+        | Micronesia (Federated States Of) — US Dollar           | USD  | 840     | 2           |
+
+        | Northern Mariana Islands (The) — US Dollar             | USD  | 840     | 2           |
+
+        | Palau — US Dollar                                      | USD  | 840     | 2           |
+
+        | Panama — US Dollar                                     | USD  | 840     | 2           |
+
+        | Puerto Rico — US Dollar                                | USD  | 840     | 2           |
+
+        | Timor-leste — US Dollar                                | USD  | 840     | 2           |
+
+        | Turks And Caicos Islands (The) — US Dollar             | USD  | 840     | 2           |
+
+        | United States Minor Outlying Islands (The) — US Dollar | USD  | 840     | 2           |
+
+        | United States Of America (The) — US Dollar             | USD  | 840     | 2           |
+
+        | Virgin Islands (British) — US Dollar                   | USD  | 840     | 2           |
+
+        | Virgin Islands (U.s.) — US Dollar                      | USD  | 840     | 2           |
+
+
+        </details>
+
+
+        **Other ISO Currency Codes**
+
+
+        <details>
+
+
+        | Country — Currency                                                          | Code | Numeric | Minor Units |
+
+        | --------------------------------------------------------------------------- | ---- | ------- | ----------- |
+
+        | Afghanistan — Afghani                                                       | AFN  | 971     | 2           |
+
+        | Albania — Lek                                                               | ALL  | 008     | 2           |
+
+        | Algeria — Algerian Dinar                                                    | DZD  | 012     | 2           |
+
+        | Angola — Kwanza                                                             | AOA  | 973     | 2           |
+
+        | Anguilla — East Caribbean Dollar                                            | XCD  | 951     | 2           |
+
+        | Antigua And Barbuda — East Caribbean Dollar                                 | XCD  | 951     | 2           |
+
+        | Argentina — Argentine Peso                                                  | ARS  | 032     | 2           |
+
+        | Armenia — Armenian Dram                                                     | AMD  | 051     | 2           |
+
+        | Aruba — Aruban Florin                                                       | AWG  | 533     | 2           |
+
+        | Australia — Australian Dollar                                               | AUD  | 036     | 2           |
+
+        | Azerbaijan — Azerbaijan Manat                                               | AZN  | 944     | 2           |
+
+        | Bahamas (The) — Bahamian Dollar                                             | BSD  | 044     | 2           |
+
+        | Bahrain — Bahraini Dinar                                                    | BHD  | 048     | 3           |
+
+        | Bangladesh — Taka                                                           | BDT  | 050     | 2           |
+
+        | Barbados — Barbados Dollar                                                  | BBD  | 052     | 2           |
+
+        | Belarus — Belarusian Ruble                                                  | BYN  | 933     | 2           |
+
+        | Belize — Belize Dollar                                                      | BZD  | 084     | 2           |
+
+        | Benin — CFA Franc BCEAO                                                     | XOF  | 952     | 0           |
+
+        | Bermuda — Bermudian Dollar                                                  | BMD  | 060     | 2           |
+
+        | Bhutan — Indian Rupee                                                       | INR  | 356     | 2           |
+
+        | Bhutan — Ngultrum                                                           | BTN  | 064     | 2           |
+
+        | Bolivia (Plurinational State Of) — Boliviano                                | BOB  | 068     | 2           |
+
+        | Bosnia And Herzegovina — Convertible Mark                                   | BAM  | 977     | 2           |
+
+        | Botswana — Pula                                                             | BWP  | 072     | 2           |
+
+        | Bouvet Island — Norwegian Krone                                             | NOK  | 578     | 2           |
+
+        | Brazil — Brazilian Real                                                     | BRL  | 986     | 2           |
+
+        | Brunei Darussalam — Brunei Dollar                                           | BND  | 096     | 2           |
+
+        | Bulgaria — Bulgarian Lev                                                    | BGN  | 975     | 2           |
+
+        | Burkina Faso — CFA Franc BCEAO                                              | XOF  | 952     | 0           |
+
+        | Burundi — Burundi Franc                                                     | BIF  | 108     | 0           |
+
+        | Cabo Verde — Cabo Verde Escudo                                              | CVE  | 132     | 2           |
+
+        | Cambodia — Riel                                                             | KHR  | 116     | 2           |
+
+        | Cameroon — CFA Franc BEAC                                                   | XAF  | 950     | 0           |
+
+        | Canada — Canadian Dollar                                                    | CAD  | 124     | 2           |
+
+        | Cayman Islands (The) — Cayman Islands Dollar                                | KYD  | 136     | 2           |
+
+        | Central African Republic (The) — CFA Franc BEAC                             | XAF  | 950     | 0           |
+
+        | Chad — CFA Franc BEAC                                                       | XAF  | 950     | 0           |
+
+        | Chile — Chilean Peso                                                        | CLP  | 152     | 0           |
+
+        | China — Yuan Renminbi                                                       | CNY  | 156     | 2           |
+
+        | Christmas Island — Australian Dollar                                        | AUD  | 036     | 2           |
+
+        | Cocos (Keeling) Islands (The) — Australian Dollar                           | AUD  | 036     | 2           |
+
+        | Colombia — Colombian Peso                                                   | COP  | 170     | 2           |
+
+        | Comoros (The) — Comorian Franc                                              | KMF  | 174     | 0           |
+
+        | Congo (The Democratic Republic Of The) — Congolese Franc                    | CDF  | 976     | 2           |
+
+        | Congo (The) — CFA Franc BEAC                                                | XAF  | 950     | 0           |
+
+        | Cook Islands (The) — New Zealand Dollar                                     | NZD  | 554     | 2           |
+
+        | Costa Rica — Costa Rican Colon                                              | CRC  | 188     | 2           |
+
+        | Côte D''ivoire — CFA Franc BCEAO                                             | XOF  | 952     | 0           |
+
+        | Croatia — Kuna                                                              | HRK  | 191     | 2           |
+
+        | Cuba — Cuban Peso                                                           | CUP  | 192     | 2           |
+
+        | Cuba — Peso Convertible                                                     | CUC  | 931     | 2           |
+
+        | Curaçao — Netherlands Antillean Guilder                                     | ANG  | 532     | 2           |
+
+        | Czechia — Czech Koruna                                                      | CZK  | 203     | 2           |
+
+        | Denmark — Danish Krone                                                      | DKK  | 208     | 2           |
+
+        | Djibouti — Djibouti Franc                                                   | DJF  | 262     | 0           |
+
+        | Dominica — East Caribbean Dollar                                            | XCD  | 951     | 2           |
+
+        | Dominican Republic (The) — Dominican Peso                                   | DOP  | 214     | 2           |
+
+        | Egypt — Egyptian Pound                                                      | EGP  | 818     | 2           |
+
+        | El Salvador — El Salvador Colon                                             | SVC  | 222     | 2           |
+
+        | Equatorial Guinea — CFA Franc BEAC                                          | XAF  | 950     | 0           |
+
+        | Eritrea — Nakfa                                                             | ERN  | 232     | 2           |
+
+        | Ethiopia — Ethiopian Birr                                                   | ETB  | 230     | 2           |
+
+        | Falkland Islands (The) [Malvinas] — Falkland Islands Pound                  | FKP  | 238     | 2           |
+
+        | Faroe Islands (The) — Danish Krone                                          | DKK  | 208     | 2           |
+
+        | Fiji — Fiji Dollar                                                          | FJD  | 242     | 2           |
+
+        | French Polynesia — CFP Franc                                                | XPF  | 953     | 0           |
+
+        | Gabon — CFA Franc BEAC                                                      | XAF  | 950     | 0           |
+
+        | Gambia (The) — Dalasi                                                       | GMD  | 270     | 2           |
+
+        | Georgia — Lari                                                              | GEL  | 981     | 2           |
+
+        | Ghana — Ghana Cedi                                                          | GHS  | 936     | 2           |
+
+        | Gibraltar — Gibraltar Pound                                                 | GIP  | 292     | 2           |
+
+        | Greenland — Danish Krone                                                    | DKK  | 208     | 2           |
+
+        | Grenada — East Caribbean Dollar                                             | XCD  | 951     | 2           |
+
+        | Guatemala — Quetzal                                                         | GTQ  | 320     | 2           |
+
+        | Guernsey — Pound Sterling                                                   | GBP  | 826     | 2           |
+
+        | Guinea — Guinean Franc                                                      | GNF  | 324     | 0           |
+
+        | Guinea-bissau — CFA Franc BCEAO                                             | XOF  | 952     | 0           |
+
+        | Guyana — Guyana Dollar                                                      | GYD  | 328     | 2           |
+
+        | Haiti — Gourde                                                              | HTG  | 332     | 2           |
+
+        | Heard Island And Mcdonald Islands — Australian Dollar                       | AUD  | 036     | 2           |
+
+        | Honduras — Lempira                                                          | HNL  | 340     | 2           |
+
+        | Hong Kong — Hong Kong Dollar                                                | HKD  | 344     | 2           |
+
+        | Hungary — Forint                                                            | HUF  | 348     | 2           |
+
+        | Iceland — Iceland Krona                                                     | ISK  | 352     | 0           |
+
+        | India — Indian Rupee                                                        | INR  | 356     | 2           |
+
+        | Indonesia — Rupiah                                                          | IDR  | 360     | 2           |
+
+        | Iran (Islamic Republic Of) — Iranian Rial                                   | IRR  | 364     | 2           |
+
+        | Iraq — Iraqi Dinar                                                          | IQD  | 368     | 3           |
+
+        | Isle Of Man — Pound Sterling                                                | GBP  | 826     | 2           |
+
+        | Israel — New Israeli Sheqel                                                 | ILS  | 376     | 2           |
+
+        | Jamaica — Jamaican Dollar                                                   | JMD  | 388     | 2           |
+
+        | Japan — Yen                                                                 | JPY  | 392     | 0           |
+
+        | Jersey — Pound Sterling                                                     | GBP  | 826     | 2           |
+
+        | Jordan — Jordanian Dinar                                                    | JOD  | 400     | 3           |
+
+        | Kazakhstan — Tenge                                                          | KZT  | 398     | 2           |
+
+        | Kenya — Kenyan Shilling                                                     | KES  | 404     | 2           |
+
+        | Kiribati — Australian Dollar                                                | AUD  | 036     | 2           |
+
+        | Korea (The Democratic People’s Republic Of) — North Korean Won              | KPW  | 408     | 2           |
+
+        | Korea (The Republic Of) — Won                                               | KRW  | 410     | 0           |
+
+        | Kuwait — Kuwaiti Dinar                                                      | KWD  | 414     | 3           |
+
+        | Kyrgyzstan — Som                                                            | KGS  | 417     | 2           |
+
+        | Lao People’s Democratic Republic (The) — Lao Kip                            | LAK  | 418     | 2           |
+
+        | Lebanon — Lebanese Pound                                                    | LBP  | 422     | 2           |
+
+        | Lesotho — Loti                                                              | LSL  | 426     | 2           |
+
+        | Lesotho — Rand                                                              | ZAR  | 710     | 2           |
+
+        | Liberia — Liberian Dollar                                                   | LRD  | 430     | 2           |
+
+        | Libya — Libyan Dinar                                                        | LYD  | 434     | 3           |
+
+        | Liechtenstein — Swiss Franc                                                 | CHF  | 756     | 2           |
+
+        | Macao — Pataca                                                              | MOP  | 446     | 2           |
+
+        | Macedonia (The Former Yugoslav Republic Of) — Denar                         | MKD  | 807     | 2           |
+
+        | Madagascar — Malagasy Ariary                                                | MGA  | 969     | 2           |
+
+        | Malawi — Malawi Kwacha                                                      | MWK  | 454     | 2           |
+
+        | Malaysia — Malaysian Ringgit                                                | MYR  | 458     | 2           |
+
+        | Maldives — Rufiyaa                                                          | MVR  | 462     | 2           |
+
+        | Mali — CFA Franc BCEAO                                                      | XOF  | 952     | 0           |
+
+        | Mauritania — Ouguiya                                                        | MRU  | 929     | 2           |
+
+        | Mauritius — Mauritius Rupee                                                 | MUR  | 480     | 2           |
+
+        | Mexico — Mexican Peso                                                       | MXN  | 484     | 2           |
+
+        | Moldova (The Republic Of) — Moldovan Leu                                    | MDL  | 498     | 2           |
+
+        | Mongolia — Tugrik                                                           | MNT  | 496     | 2           |
+
+        | Montserrat — East Caribbean Dollar                                          | XCD  | 951     | 2           |
+
+        | Morocco — Moroccan Dirham                                                   | MAD  | 504     | 2           |
+
+        | Mozambique — Mozambique Metical                                             | MZN  | 943     | 2           |
+
+        | Myanmar — Kyat                                                              | MMK  | 104     | 2           |
+
+        | Namibia — Namibia Dollar                                                    | NAD  | 516     | 2           |
+
+        | Namibia — Rand                                                              | ZAR  | 710     | 2           |
+
+        | Nauru — Australian Dollar                                                   | AUD  | 036     | 2           |
+
+        | Nepal — Nepalese Rupee                                                      | NPR  | 524     | 2           |
+
+        | New Caledonia — CFP Franc                                                   | XPF  | 953     | 0           |
+
+        | New Zealand — New Zealand Dollar                                            | NZD  | 554     | 2           |
+
+        | Nicaragua — Cordoba Oro                                                     | NIO  | 558     | 2           |
+
+        | Niger (The) — CFA Franc BCEAO                                               | XOF  | 952     | 0           |
+
+        | Nigeria — Naira                                                             | NGN  | 566     | 2           |
+
+        | Niue — New Zealand Dollar                                                   | NZD  | 554     | 2           |
+
+        | Norfolk Island — Australian Dollar                                          | AUD  | 036     | 2           |
+
+        | Norway — Norwegian Krone                                                    | NOK  | 578     | 2           |
+
+        | Oman — Rial Omani                                                           | OMR  | 512     | 3           |
+
+        | Pakistan — Pakistan Rupee                                                   | PKR  | 586     | 2           |
+
+        | Panama — Balboa                                                             | PAB  | 590     | 2           |
+
+        | Papua New Guinea — Kina                                                     | PGK  | 598     | 2           |
+
+        | Paraguay — Guarani                                                          | PYG  | 600     | 0           |
+
+        | Peru — Sol                                                                  | PEN  | 604     | 2           |
+
+        | Philippines (The) — Philippine Peso                                         | PHP  | 608     | 2           |
+
+        | Pitcairn — New Zealand Dollar                                               | NZD  | 554     | 2           |
+
+        | Poland — Zloty                                                              | PLN  | 985     | 2           |
+
+        | Qatar — Qatari Rial                                                         | QAR  | 634     | 2           |
+
+        | Romania — Romanian Leu                                                      | RON  | 946     | 2           |
+
+        | Russian Federation (The) — Russian Ruble                                    | RUB  | 643     | 2           |
+
+        | Rwanda — Rwanda Franc                                                       | RWF  | 646     | 0           |
+
+        | Saint Helena, Ascension And Tristan Da Cunha — Saint Helena Pound           | SHP  | 654     | 2           |
+
+        | Saint Kitts And Nevis — East Caribbean Dollar                               | XCD  | 951     | 2           |
+
+        | Saint Lucia — East Caribbean Dollar                                         | XCD  | 951     | 2           |
+
+        | Saint Vincent And The Grenadines — East Caribbean Dollar                    | XCD  | 951     | 2           |
+
+        | Samoa — Tala                                                                | WST  | 882     | 2           |
+
+        | Sao Tome And Principe — Dobra                                               | STN  | 930     | 2           |
+
+        | Saudi Arabia — Saudi Riyal                                                  | SAR  | 682     | 2           |
+
+        | Senegal — CFA Franc BCEAO                                                   | XOF  | 952     | 0           |
+
+        | Serbia — Serbian Dinar                                                      | RSD  | 941     | 2           |
+
+        | Seychelles — Seychelles Rupee                                               | SCR  | 690     | 2           |
+
+        | Sierra Leone — Leone                                                        | SLL  | 694     | 2           |
+
+        | Singapore — Singapore Dollar                                                | SGD  | 702     | 2           |
+
+        | Sint Maarten (Dutch Part) — Netherlands Antillean Guilder                   | ANG  | 532     | 2           |
+
+        | Solomon Islands — Solomon Islands Dollar                                    | SBD  | 090     | 2           |
+
+        | Somalia — Somali Shilling                                                   | SOS  | 706     | 2           |
+
+        | South Africa — Rand                                                         | ZAR  | 710     | 2           |
+
+        | South Sudan — South Sudanese Pound                                          | SSP  | 728     | 2           |
+
+        | Sri Lanka — Sri Lanka Rupee                                                 | LKR  | 144     | 2           |
+
+        | Sudan (The) — Sudanese Pound                                                | SDG  | 938     | 2           |
+
+        | Suriname — Surinam Dollar                                                   | SRD  | 968     | 2           |
+
+        | Svalbard And Jan Mayen — Norwegian Krone                                    | NOK  | 578     | 2           |
+
+        | Eswatini — Lilangeni                                                        | SZL  | 748     | 2           |
+
+        | Sweden — Swedish Krona                                                      | SEK  | 752     | 2           |
+
+        | Switzerland — Swiss Franc                                                   | CHF  | 756     | 2           |
+
+        | Syrian Arab Republic — Syrian Pound                                         | SYP  | 760     | 2           |
+
+        | Taiwan (Province Of China) — New Taiwan Dollar                              | TWD  | 901     | 2           |
+
+        | Tajikistan — Somoni                                                         | TJS  | 972     | 2           |
+
+        | Tanzania, United Republic Of — Tanzanian Shilling                           | TZS  | 834     | 2           |
+
+        | Thailand — Baht                                                             | THB  | 764     | 2           |
+
+        | Togo — CFA Franc BCEAO                                                      | XOF  | 952     | 0           |
+
+        | Tokelau — New Zealand Dollar                                                | NZD  | 554     | 2           |
+
+        | Tonga — Pa’anga                                                             | TOP  | 776     | 2           |
+
+        | Trinidad And Tobago — Trinidad and Tobago Dollar                            | TTD  | 780     | 2           |
+
+        | Tunisia — Tunisian Dinar                                                    | TND  | 788     | 3           |
+
+        | Turkey — Turkish Lira                                                       | TRY  | 949     | 2           |
+
+        | Turkmenistan — Turkmenistan New Manat                                       | TMT  | 934     | 2           |
+
+        | Tuvalu — Australian Dollar                                                  | AUD  | 036     | 2           |
+
+        | Uganda — Uganda Shilling                                                    | UGX  | 800     | 0           |
+
+        | Ukraine — Hryvnia                                                           | UAH  | 980     | 2           |
+
+        | United Arab Emirates (The) — UAE Dirham                                     | AED  | 784     | 2           |
+
+        | United Kingdom Of Great Britain And Northern Ireland (The) — Pound Sterling | GBP  | 826     | 2           |
+
+        | Uruguay — Peso Uruguayo                                                     | UYU  | 858     | 2           |
+
+        | Uruguay — Unidad Previsional                                                | UYW  | 927     | 4           |
+
+        | Uzbekistan — Uzbekistan Sum                                                 | UZS  | 860     | 2           |
+
+        | Vanuatu — Vatu                                                              | VUV  | 548     | 0           |
+
+        | Venezuela (Bolivarian Republic Of) — Bolívar Soberano                       | VES  | 928     | 2           |
+
+        | Viet Nam — Dong                                                             | VND  | 704     | 0           |
+
+        | Wallis And Futuna — CFP Franc                                               | XPF  | 953     | 0           |
+
+        | Western Sahara — Moroccan Dirham                                            | MAD  | 504     | 2           |
+
+        | Yemen — Yemeni Rial                                                         | YER  | 886     | 2           |
+
+        | Zambia — Zambian Kwacha                                                     | ZMW  | 967     | 2           |
+
+        | Zimbabwe — Zimbabwe Dollar                                                  | ZWL  | 932     | 2           |
+
+
+        </details>
+
+        '
+      externalDocs:
+        description: Find more info here
+        url: https://www.iso.org/iso-4217-currency-codes.html
+      example: EUR
+    PageWithMoreAndTotalItems:
+      type: object
+      properties:
+        moreItems:
+          $ref: '#/components/schemas/moreItems'
+        offsetToken:
+          $ref: '#/components/schemas/components-schemas-offsetToken'
+        totalItems:
+          $ref: '#/components/schemas/totalItems'
+    openapi_components-schemas-created-3:
+      type: string
+      description: The date and time this object was created
+      format: date-time
+      readOnly: false
+    schemas-localTransactionDateTime:
+      type: string
+      description: The date and time of the transaction
+      format: date-time
+      readOnly: false
+      example: '2021-05-27T10:57:52Z'
+    FraudNotificationsPage:
+      allOf:
+      - $ref: '#/components/schemas/PageWithMoreAndTotalItems'
+      - type: object
+        required:
+        - fraudNotifications
+        properties:
+          fraudNotifications:
+            type: array
+            items:
+              $ref: '#/components/schemas/FraudNotification'
+    fraudType:
+      description: The type of the Fraud reported by the network
+      type: object
+      required:
+      - code
+      properties:
+        typeCode:
+          type: string
+          example: '01'
+        subTypeCode:
+          type: string
+          example: N
+    openapi_components-schemas-amountValue-2:
+      type: integer
+      format: int64
+      minimum: 0
+      maximum: 900000000
+      description: 'The amount in minor units. For example `$12.34` should be encoded as `1234`. Note that not all
+
+        currencies have 2 minor units. Some have three or zero.
+
+        '
+      example: 2599
+    fraudNotificationKey:
+      description: Uniquely identifies a Fraud Notification
+      type: string
+      pattern: ^frn-[a-zA-Z0-9]+$
+      minLength: 1
+      maxLength: 120
+      readOnly: false
+      example: frn-1JRadf2ffdfrdPMf2XrS2
+    fraud-notifications_fraudLiability:
+      description: Indicates the entity responsible for covering the losses incurred due to fraudulent activities.
+      type: string
+      enum:
+      - acquirer
+      - issuer
+    fraudReportingDate:
+      description: Date when the Fraud Notification was received by the Card Network. This is specific for each network. For Mastercard this is the TLL8 "Fraud Posted Date". For VISA this is the TC90 "Processing Date".
+      type: string
+      format: date
+      example: '2021-05-28'
+    schemas-chargeKey:
+      description: Uniquely identifies a charge.
+      type: string
+      pattern: ^chg-[a-zA-Z0-9]+$
+      minLength: 1
+      maxLength: 120
+      readOnly: false
+      example: chg-1e1dAHhgstYTUhlphPzZ
+    cardInfo:
+      description: Card related information
+      type: object
+      required:
+      - last4
+      properties:
+        last4:
+          $ref: '#/components/schemas/schemas-last4'
+        maskedNumber:
+          $ref: '#/components/schemas/maskedNumber'
+        issuerName:
+          type: string
+          readOnly: false
+    totalItems:
+      type: number
+      format: int64
+      minLength: 0
+      example: '1'
+  parameters:
+    components-parameters-offsetToken:
+      name: offsetToken
+      description: The offset token. This token is returned in the response of previous request.
+      in: query
+      required: false
+      schema:
+        $ref: '#/components/schemas/components-schemas-offsetToken'
+    fraudNotificationKey:
+      name: fraudNotificationKey
+      in: path
+      required: true
+      description: 'Uniquely identifies a Fraud Notification.
+
+        '
+      schema:
+        $ref: '#/components/schemas/fraudNotificationKey'
+    components-parameters-to:
+      name: to
+      description: Include only items that have a created date _less than_ the specified date
+      in: query
+      required: false
+      schema:
+        type: string
+        format: date-time
+      example: '2022-08-15T14:15:23Z'
+    parameters-sortOrder:
+      name: sortOrder
+      description: The sort order (ascending or descending)
+      in: query
+      required: false
+      schema:
+        type: string
+        enum:
+        - asc
+        - desc
+      example: desc
+    parameters-merchantKeyQs:
+      name: merchantKey
+      description: 'Immutable, unique identifier of the merchant
+
+        '
+      in: query
+      required: false
+      schema:
+        $ref: '#/components/schemas/components-schemas-merchantKey'
+    components-parameters-from:
+      name: from
+      description: Include only items that have a created date _greater than or equal to_ the specified date
+      in: query
+      required: false
+      schema:
+        type: string
+        format: date-time
+      example: '2022-08-15T14:15:23Z'
+    limit:
+      name: limit
+      description: The number of items to return
+      in: query
+      required: false
+      schema:
+        type: integer
+        format: int32
+        minimum: 1
+        maximum: 100
+        default: 10
+      example: 1
+  securitySchemes:
+    ApiKey:
+      description: "The primary method of authenticating to the Silverflow API is through API keys.\n\nAPI keys can be created by calling the [createApiKey](#operation/createApiKey) endpoint. You can create up to 40 API keys and also update and delete them, allowing for _credential rotation_.\n\nThe _Agent Activation_ process will generate an initial API Key for you. See [Activate Agent](#section/Getting-Started).\n\nA call to the [createApiKey](#operation/createApiKey) endpoint will return the following structure:\n\n```json\n{\n    \"key\": \"apk-1wtRxni5IsPsSpBLWpwr\",\n    \"status\": \"active\",\n    \"agentKey\": \"cgt-1wtRvFLIjDOyyUR5Q2LB\",\n    \"description\": \"Data lake API key\",\n    \"permissions\": [\n        \"charges:List\",\n        \"reports:All\"\n    ],\n    \"created\": \"2021-06-22T11:21:45.115Z\",\n    \"secret\": \"FWtnOOHAjbD6rNxWWEeVOCj7JXSEPGJQ\",\n    \"version\": 1\n}\n```\n\n> **Important:** The `secret` is only returned once in the response to the `createApiKey` call.\n\nOnce created, the `key` and `secret` fields from the API key must be used in the HTTP `Authorization` header using the `Basic` scheme.\nThe Basic scheme requires a **username** and **password** to be specified, separated by a `:` (colon) and Base64 encoded.\n\nUse the following values from the API key to construct a Basic authentication header:\n\n| Basic field | API key field | Example |\n| ----------- | ------------- | ------- |\n| username | `key` | `apk-1wtRxni5IsPsSpBLWpwr` |\n| password | `secret` | `FWtnOOHAjbD6rNxWWEeVOCj7JXSEPGJQ` |\n\nIn pseudo-code a valid HTTP Basic Authentication header would be constructed as follows:\n\n```ts\nconst apiKeyId = \"apk-1wtRxni5IsPsSpBLWpwr\";\nconst apiKeySecret = \"FWtnOOHAjbD6rNxWWEeVOCj7JXSEPGJQ\";\nconst authnValue = \"Basic \" + base64Encode(apiKeyId + \":\" + apiKeySecret);\nrequest.setHeader(\"Authorization\", authnValue);\n```\n\nUsing the values from the example a valid HTTP request would look like the following:\n\n```http\nGET /v1/agents/current HTTP/1.1\nAccept: application/json\nAuthorization: Basic YXBrLTF3dFJ4bmk1SXNQc1NwQkxXcHdyOkZXdG5PT0hBamJENnJOeFdXRWVWT0NqN0pYU0VQR0pR\n```\n\nMore information on the Basic scheme can be found in [RFC-7617 - The 'Basic' HTTP Authentication Scheme](https://datatracker.ietf.org/doc/html/rfc7617)."
+      type: http
+      scheme: basic
+    BearerToken:
+      description: 'Bearer tokens are temporary security credentials that can be used to authorize ''third parties'' (bearers) access to the Silverflow API on behalf of the agent.
+
+
+        These tokens are created by calling the [createAgentBearerToken](#operation/createAgentBearerToken) endpoint.
+
+
+        Once created the `token` field must be used in the HTTP `Authorization` header using the `Bearer` scheme.
+
+        Here''s an example of an HTTP request with a bearer token:
+
+
+        ```http
+
+        GET /v1/merchants/mct-1hPdFhmgaBzMS191nIbJ HTTP/1.1
+
+        Accept: application/json
+
+        Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...40EFOgxf_3I6mPZ16bXqHd5tUyApgl0mNOAXPm5AhnA
+
+
+        ```
+
+
+        More information on the Bearer scheme can be found in [RFC-6750 - The OAuth 2.0 Authorization Framework: Bearer Token Usage](https://datatracker.ietf.org/doc/html/rfc6750).'
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+    MutualTLS:
+      type: apiKey
+      in: header
+      name: '-'
+      description: 'The client must set up mTLS connection with a valid X.509 client certificate signed by a customer-provided CA (certificate authority) that is registered to a specific agent. The customer-provided CA certificate must be shared and added to Silverflow''s trust store prior to calling endpoints.
+
+
+        Certificate validation happens at the transport layer during TLS handshake. Tenant verification is performed by matching the agent key embedded in the client certificate against the agent key embedded in the trusted CA.
+
+        '
+x-refined-from:
+- silverflow-openapi.yml
+- silverflow-openapi.yml
+x-tagGroups:
+- name: ''
+  tags:
+  - Introduction
+  - Release Notes
+- name: Accounts
+  tags:
+  - Agents
+  - API Keys
+  - Bins
+  - Merchants
+  - Merchant Acceptors
+  - Enrollments
+  - Screenings
+- name: Event Notifications
+  tags:
+  - Event Subscriptions
+  - Charges Events
+  - Disputes Events
+  - Fraud Notification Events
+  - Processor Tokens Events
+  - Network Tokens Events
+  - Report Events
+  - Distribution Events
+  - AMMF Submission Events
+  - Reconciliation Events
+  - Clearing Events
+- name: 3DS Authentication
+  tags:
+  - 3DS Authentication
+- name: BEP Authentication
+  tags:
+  - BEP Authentication
+- name: Tokenization
+  tags:
+  - Processor Tokenization
+  - Network Tokenization
+- name: Charges
+  tags:
+  - Create Charges
+  - Create Recurring
+  - Retrieve Charges
+  - Charge Actions
+- name: Terminal-To-Cloud
+  tags:
+  - Create POS Charges
+  - Retrieve POS Charges
+  - POS Charge Actions
+- name: Card Management
+  tags:
+  - Card Management
+- name: Disputes
+  tags:
+  - Disputes
+  - Documents
+- name: Fraud Notifications
+  tags:
+  - Fraud Notifications
+- name: Card Info
+  tags:
+  - Card Info
+- name: Currency Conversion Rates
+  tags:
+  - Currency Conversion Rates
+- name: Fees
+  tags:
+  - Fees
+- name: Reconciliation
+  tags:
+  - Reconciliation Details
+  - Network Funds Transfers
+- name: Reports
+  tags:
+  - Reconciliation Reports
+  - Settlement Reports
+  - Card Network Reports
+  - Dispute Reports
+  - Fraud Notifications Reports
+  - Charges Reports
+  - Scheme Fee Reports
+  - Retrieve Reports
+  - Report Scheduling
+  - Distributions
+- name: Transaction Risk Assessment
+  tags:
+  - Transaction Risk Assessment
+- name: File Subscriptions
+  tags:
+  - File Subscriptions

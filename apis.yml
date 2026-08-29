@@ -45,28 +45,16 @@ tags:
 - Point of Sale
 - Netherlands
 apis:
-- name: Silverflow API
-  description: 'The Silverflow card processing API — a single, contract-first OpenAPI
-    3.0.3 description covering accounts (agents, API keys, BINs, merchants, merchant
-    acceptors, enrollments, screenings), 3-D Secure and BEP authentication, processor
-    and network tokenization, charge creation (standard, recurring/MIT, funding, payout,
-    POS, ATM), charge actions (increment, reverse, cancel, refund, offline refund,
-    manual clearing), disputes and documents, fraud notifications, card info, currency
-    conversion rates, interchange and scheme fee estimation, transaction risk assessment,
-    reconciliation details, network funds transfers, report generation and scheduling,
-    distributions and file subscriptions.'
+- aid: silverflow:silverflow-3ds-authentication-api
+  name: Silverflow 3DS Authentication API
+  description: 3DS Authentication Endpoints
   humanURL: https://docs.silverflow.com/
   baseURL: https://eu-west-1.api.silverflow.com/v1
   tags:
-  - Payments
-  - Card Processing
-  - Acquiring
-  - Charges
-  - Disputes
-  - Tokenization
+  - 3DS Authentication
   properties:
   - type: OpenAPI
-    url: openapi/silverflow-openapi.yml
+    url: openapi/silverflow-3ds-authentication-api-openapi.yml
   - type: Documentation
     url: https://docs.silverflow.com/
   - type: APIReference
@@ -91,8 +79,1801 @@ apis:
     url: data-model/silverflow-data-model.yml
   - type: Sandbox
     url: sandbox/silverflow-sandbox.yml
-  - type: Overlay
-    url: overlays/silverflow-openapi-overlay.yaml
+  - type: ToolCrosswalk
+    url: mcp/silverflow-tool-crosswalk.yml
+- aid: silverflow:silverflow-agents-api
+  name: Silverflow Agents API
+  description: ''
+  humanURL: https://docs.silverflow.com/
+  baseURL: https://eu-west-1.api.silverflow.com/v1
+  tags:
+  - Agents
+  properties:
+  - type: OpenAPI
+    url: openapi/silverflow-agents-api-openapi.yml
+  - type: Documentation
+    url: https://docs.silverflow.com/
+  - type: APIReference
+    url: https://docs.silverflow.com/apidocs/latest/index.html
+  - type: GettingStarted
+    url: https://docs.silverflow.com/guides/getting-started
+  - type: Authentication
+    url: authentication/silverflow-authentication.yml
+  - type: Webhooks
+    url: asyncapi/silverflow-events-webhooks.yml
+  - type: ErrorCatalog
+    url: errors/silverflow-problem-types.yml
+  - type: DeclineCodes
+    url: errors/silverflow-decline-codes.yml
+  - type: RateLimits
+    url: rate-limits/silverflow-rate-limits.yml
+  - type: Conventions
+    url: conventions/silverflow-conventions.yml
+  - type: Idempotency
+    url: conventions/silverflow-conventions.yml
+  - type: DataModel
+    url: data-model/silverflow-data-model.yml
+  - type: Sandbox
+    url: sandbox/silverflow-sandbox.yml
+  - type: ToolCrosswalk
+    url: mcp/silverflow-tool-crosswalk.yml
+- aid: silverflow:silverflow-ammf-submission-events-api
+  name: Silverflow AMMF Submission Events API
+  description: ''
+  humanURL: https://docs.silverflow.com/
+  baseURL: https://eu-west-1.api.silverflow.com/v1
+  tags:
+  - AMMF Submission Events
+  properties:
+  - type: OpenAPI
+    url: openapi/silverflow-ammf-submission-events-api-openapi.yml
+  - type: Documentation
+    url: https://docs.silverflow.com/
+  - type: APIReference
+    url: https://docs.silverflow.com/apidocs/latest/index.html
+  - type: GettingStarted
+    url: https://docs.silverflow.com/guides/getting-started
+  - type: Authentication
+    url: authentication/silverflow-authentication.yml
+  - type: Webhooks
+    url: asyncapi/silverflow-events-webhooks.yml
+  - type: ErrorCatalog
+    url: errors/silverflow-problem-types.yml
+  - type: DeclineCodes
+    url: errors/silverflow-decline-codes.yml
+  - type: RateLimits
+    url: rate-limits/silverflow-rate-limits.yml
+  - type: Conventions
+    url: conventions/silverflow-conventions.yml
+  - type: Idempotency
+    url: conventions/silverflow-conventions.yml
+  - type: DataModel
+    url: data-model/silverflow-data-model.yml
+  - type: Sandbox
+    url: sandbox/silverflow-sandbox.yml
+  - type: ToolCrosswalk
+    url: mcp/silverflow-tool-crosswalk.yml
+- aid: silverflow:silverflow-api-keys-api
+  name: Silverflow API Keys API
+  description: ''
+  humanURL: https://docs.silverflow.com/
+  baseURL: https://eu-west-1.api.silverflow.com/v1
+  tags:
+  - API Keys
+  properties:
+  - type: OpenAPI
+    url: openapi/silverflow-api-keys-api-openapi.yml
+  - type: Documentation
+    url: https://docs.silverflow.com/
+  - type: APIReference
+    url: https://docs.silverflow.com/apidocs/latest/index.html
+  - type: GettingStarted
+    url: https://docs.silverflow.com/guides/getting-started
+  - type: Authentication
+    url: authentication/silverflow-authentication.yml
+  - type: Webhooks
+    url: asyncapi/silverflow-events-webhooks.yml
+  - type: ErrorCatalog
+    url: errors/silverflow-problem-types.yml
+  - type: DeclineCodes
+    url: errors/silverflow-decline-codes.yml
+  - type: RateLimits
+    url: rate-limits/silverflow-rate-limits.yml
+  - type: Conventions
+    url: conventions/silverflow-conventions.yml
+  - type: Idempotency
+    url: conventions/silverflow-conventions.yml
+  - type: DataModel
+    url: data-model/silverflow-data-model.yml
+  - type: Sandbox
+    url: sandbox/silverflow-sandbox.yml
+  - type: ToolCrosswalk
+    url: mcp/silverflow-tool-crosswalk.yml
+- aid: silverflow:silverflow-bep-authentication-api
+  name: Silverflow BEP Authentication API
+  description: The BEP Authentication API from Silverflow — 3 operation(s) for bep authentication.
+  humanURL: https://docs.silverflow.com/
+  baseURL: https://eu-west-1.api.silverflow.com/v1
+  tags:
+  - BEP Authentication
+  properties:
+  - type: OpenAPI
+    url: openapi/silverflow-bep-authentication-api-openapi.yml
+  - type: Documentation
+    url: https://docs.silverflow.com/
+  - type: APIReference
+    url: https://docs.silverflow.com/apidocs/latest/index.html
+  - type: GettingStarted
+    url: https://docs.silverflow.com/guides/getting-started
+  - type: Authentication
+    url: authentication/silverflow-authentication.yml
+  - type: Webhooks
+    url: asyncapi/silverflow-events-webhooks.yml
+  - type: ErrorCatalog
+    url: errors/silverflow-problem-types.yml
+  - type: DeclineCodes
+    url: errors/silverflow-decline-codes.yml
+  - type: RateLimits
+    url: rate-limits/silverflow-rate-limits.yml
+  - type: Conventions
+    url: conventions/silverflow-conventions.yml
+  - type: Idempotency
+    url: conventions/silverflow-conventions.yml
+  - type: DataModel
+    url: data-model/silverflow-data-model.yml
+  - type: Sandbox
+    url: sandbox/silverflow-sandbox.yml
+  - type: ToolCrosswalk
+    url: mcp/silverflow-tool-crosswalk.yml
+- aid: silverflow:silverflow-bins-api
+  name: Silverflow Bins API
+  description: ''
+  humanURL: https://docs.silverflow.com/
+  baseURL: https://eu-west-1.api.silverflow.com/v1
+  tags:
+  - Bins
+  properties:
+  - type: OpenAPI
+    url: openapi/silverflow-bins-api-openapi.yml
+  - type: Documentation
+    url: https://docs.silverflow.com/
+  - type: APIReference
+    url: https://docs.silverflow.com/apidocs/latest/index.html
+  - type: GettingStarted
+    url: https://docs.silverflow.com/guides/getting-started
+  - type: Authentication
+    url: authentication/silverflow-authentication.yml
+  - type: Webhooks
+    url: asyncapi/silverflow-events-webhooks.yml
+  - type: ErrorCatalog
+    url: errors/silverflow-problem-types.yml
+  - type: DeclineCodes
+    url: errors/silverflow-decline-codes.yml
+  - type: RateLimits
+    url: rate-limits/silverflow-rate-limits.yml
+  - type: Conventions
+    url: conventions/silverflow-conventions.yml
+  - type: Idempotency
+    url: conventions/silverflow-conventions.yml
+  - type: DataModel
+    url: data-model/silverflow-data-model.yml
+  - type: Sandbox
+    url: sandbox/silverflow-sandbox.yml
+  - type: ToolCrosswalk
+    url: mcp/silverflow-tool-crosswalk.yml
+- aid: silverflow:silverflow-card-info-api
+  name: Silverflow Card Info API
+  description: Provides information from the card networks about Card Ranges.
+  humanURL: https://docs.silverflow.com/
+  baseURL: https://eu-west-1.api.silverflow.com/v1
+  tags:
+  - Card Info
+  properties:
+  - type: OpenAPI
+    url: openapi/silverflow-card-info-api-openapi.yml
+  - type: Documentation
+    url: https://docs.silverflow.com/
+  - type: APIReference
+    url: https://docs.silverflow.com/apidocs/latest/index.html
+  - type: GettingStarted
+    url: https://docs.silverflow.com/guides/getting-started
+  - type: Authentication
+    url: authentication/silverflow-authentication.yml
+  - type: Webhooks
+    url: asyncapi/silverflow-events-webhooks.yml
+  - type: ErrorCatalog
+    url: errors/silverflow-problem-types.yml
+  - type: DeclineCodes
+    url: errors/silverflow-decline-codes.yml
+  - type: RateLimits
+    url: rate-limits/silverflow-rate-limits.yml
+  - type: Conventions
+    url: conventions/silverflow-conventions.yml
+  - type: Idempotency
+    url: conventions/silverflow-conventions.yml
+  - type: DataModel
+    url: data-model/silverflow-data-model.yml
+  - type: Sandbox
+    url: sandbox/silverflow-sandbox.yml
+  - type: ToolCrosswalk
+    url: mcp/silverflow-tool-crosswalk.yml
+- aid: silverflow:silverflow-card-management-api
+  name: Silverflow Card Management API
+  description: >-
+    ATM card management actions: PIN change, PIN unblock, balance inquiry and
+
+    PIN change reversal.
+  humanURL: https://docs.silverflow.com/
+  baseURL: https://eu-west-1.api.silverflow.com/v1
+  tags:
+  - Card Management
+  properties:
+  - type: OpenAPI
+    url: openapi/silverflow-card-management-api-openapi.yml
+  - type: Documentation
+    url: https://docs.silverflow.com/
+  - type: APIReference
+    url: https://docs.silverflow.com/apidocs/latest/index.html
+  - type: GettingStarted
+    url: https://docs.silverflow.com/guides/getting-started
+  - type: Authentication
+    url: authentication/silverflow-authentication.yml
+  - type: Webhooks
+    url: asyncapi/silverflow-events-webhooks.yml
+  - type: ErrorCatalog
+    url: errors/silverflow-problem-types.yml
+  - type: DeclineCodes
+    url: errors/silverflow-decline-codes.yml
+  - type: RateLimits
+    url: rate-limits/silverflow-rate-limits.yml
+  - type: Conventions
+    url: conventions/silverflow-conventions.yml
+  - type: Idempotency
+    url: conventions/silverflow-conventions.yml
+  - type: DataModel
+    url: data-model/silverflow-data-model.yml
+  - type: Sandbox
+    url: sandbox/silverflow-sandbox.yml
+  - type: ToolCrosswalk
+    url: mcp/silverflow-tool-crosswalk.yml
+- aid: silverflow:silverflow-card-network-reports-api
+  name: Silverflow Card Network Reports API
+  description: The Card Network Reports API from Silverflow — 2 operation(s) for card network reports.
+  humanURL: https://docs.silverflow.com/
+  baseURL: https://eu-west-1.api.silverflow.com/v1
+  tags:
+  - Card Network Reports
+  properties:
+  - type: OpenAPI
+    url: openapi/silverflow-card-network-reports-api-openapi.yml
+  - type: Documentation
+    url: https://docs.silverflow.com/
+  - type: APIReference
+    url: https://docs.silverflow.com/apidocs/latest/index.html
+  - type: GettingStarted
+    url: https://docs.silverflow.com/guides/getting-started
+  - type: Authentication
+    url: authentication/silverflow-authentication.yml
+  - type: Webhooks
+    url: asyncapi/silverflow-events-webhooks.yml
+  - type: ErrorCatalog
+    url: errors/silverflow-problem-types.yml
+  - type: DeclineCodes
+    url: errors/silverflow-decline-codes.yml
+  - type: RateLimits
+    url: rate-limits/silverflow-rate-limits.yml
+  - type: Conventions
+    url: conventions/silverflow-conventions.yml
+  - type: Idempotency
+    url: conventions/silverflow-conventions.yml
+  - type: DataModel
+    url: data-model/silverflow-data-model.yml
+  - type: Sandbox
+    url: sandbox/silverflow-sandbox.yml
+  - type: ToolCrosswalk
+    url: mcp/silverflow-tool-crosswalk.yml
+- aid: silverflow:silverflow-charge-actions-api
+  name: Silverflow Charge Actions API
+  description: Perform different actions on existing charges.
+  humanURL: https://docs.silverflow.com/
+  baseURL: https://eu-west-1.api.silverflow.com/v1
+  tags:
+  - Charge Actions
+  properties:
+  - type: OpenAPI
+    url: openapi/silverflow-charge-actions-api-openapi.yml
+  - type: Documentation
+    url: https://docs.silverflow.com/
+  - type: APIReference
+    url: https://docs.silverflow.com/apidocs/latest/index.html
+  - type: GettingStarted
+    url: https://docs.silverflow.com/guides/getting-started
+  - type: Authentication
+    url: authentication/silverflow-authentication.yml
+  - type: Webhooks
+    url: asyncapi/silverflow-events-webhooks.yml
+  - type: ErrorCatalog
+    url: errors/silverflow-problem-types.yml
+  - type: DeclineCodes
+    url: errors/silverflow-decline-codes.yml
+  - type: RateLimits
+    url: rate-limits/silverflow-rate-limits.yml
+  - type: Conventions
+    url: conventions/silverflow-conventions.yml
+  - type: Idempotency
+    url: conventions/silverflow-conventions.yml
+  - type: DataModel
+    url: data-model/silverflow-data-model.yml
+  - type: Sandbox
+    url: sandbox/silverflow-sandbox.yml
+  - type: ToolCrosswalk
+    url: mcp/silverflow-tool-crosswalk.yml
+- aid: silverflow:silverflow-charges-events-api
+  name: Silverflow Charges Events API
+  description: ''
+  humanURL: https://docs.silverflow.com/
+  baseURL: https://eu-west-1.api.silverflow.com/v1
+  tags:
+  - Charges Events
+  properties:
+  - type: OpenAPI
+    url: openapi/silverflow-charges-events-api-openapi.yml
+  - type: Documentation
+    url: https://docs.silverflow.com/
+  - type: APIReference
+    url: https://docs.silverflow.com/apidocs/latest/index.html
+  - type: GettingStarted
+    url: https://docs.silverflow.com/guides/getting-started
+  - type: Authentication
+    url: authentication/silverflow-authentication.yml
+  - type: Webhooks
+    url: asyncapi/silverflow-events-webhooks.yml
+  - type: ErrorCatalog
+    url: errors/silverflow-problem-types.yml
+  - type: DeclineCodes
+    url: errors/silverflow-decline-codes.yml
+  - type: RateLimits
+    url: rate-limits/silverflow-rate-limits.yml
+  - type: Conventions
+    url: conventions/silverflow-conventions.yml
+  - type: Idempotency
+    url: conventions/silverflow-conventions.yml
+  - type: DataModel
+    url: data-model/silverflow-data-model.yml
+  - type: Sandbox
+    url: sandbox/silverflow-sandbox.yml
+  - type: ToolCrosswalk
+    url: mcp/silverflow-tool-crosswalk.yml
+- aid: silverflow:silverflow-charges-reports-api
+  name: Silverflow Charges Reports API
+  description: The Charges Reports API from Silverflow — 1 operation(s) for charges reports.
+  humanURL: https://docs.silverflow.com/
+  baseURL: https://eu-west-1.api.silverflow.com/v1
+  tags:
+  - Charges Reports
+  properties:
+  - type: OpenAPI
+    url: openapi/silverflow-charges-reports-api-openapi.yml
+  - type: Documentation
+    url: https://docs.silverflow.com/
+  - type: APIReference
+    url: https://docs.silverflow.com/apidocs/latest/index.html
+  - type: GettingStarted
+    url: https://docs.silverflow.com/guides/getting-started
+  - type: Authentication
+    url: authentication/silverflow-authentication.yml
+  - type: Webhooks
+    url: asyncapi/silverflow-events-webhooks.yml
+  - type: ErrorCatalog
+    url: errors/silverflow-problem-types.yml
+  - type: DeclineCodes
+    url: errors/silverflow-decline-codes.yml
+  - type: RateLimits
+    url: rate-limits/silverflow-rate-limits.yml
+  - type: Conventions
+    url: conventions/silverflow-conventions.yml
+  - type: Idempotency
+    url: conventions/silverflow-conventions.yml
+  - type: DataModel
+    url: data-model/silverflow-data-model.yml
+  - type: Sandbox
+    url: sandbox/silverflow-sandbox.yml
+  - type: ToolCrosswalk
+    url: mcp/silverflow-tool-crosswalk.yml
+- aid: silverflow:silverflow-clearing-events-api
+  name: Silverflow Clearing Events API
+  description: ''
+  humanURL: https://docs.silverflow.com/
+  baseURL: https://eu-west-1.api.silverflow.com/v1
+  tags:
+  - Clearing Events
+  properties:
+  - type: OpenAPI
+    url: openapi/silverflow-clearing-events-api-openapi.yml
+  - type: Documentation
+    url: https://docs.silverflow.com/
+  - type: APIReference
+    url: https://docs.silverflow.com/apidocs/latest/index.html
+  - type: GettingStarted
+    url: https://docs.silverflow.com/guides/getting-started
+  - type: Authentication
+    url: authentication/silverflow-authentication.yml
+  - type: Webhooks
+    url: asyncapi/silverflow-events-webhooks.yml
+  - type: ErrorCatalog
+    url: errors/silverflow-problem-types.yml
+  - type: DeclineCodes
+    url: errors/silverflow-decline-codes.yml
+  - type: RateLimits
+    url: rate-limits/silverflow-rate-limits.yml
+  - type: Conventions
+    url: conventions/silverflow-conventions.yml
+  - type: Idempotency
+    url: conventions/silverflow-conventions.yml
+  - type: DataModel
+    url: data-model/silverflow-data-model.yml
+  - type: Sandbox
+    url: sandbox/silverflow-sandbox.yml
+  - type: ToolCrosswalk
+    url: mcp/silverflow-tool-crosswalk.yml
+- aid: silverflow:silverflow-create-charges-api
+  name: Silverflow Create Charges API
+  description: Create different types of charges.
+  humanURL: https://docs.silverflow.com/
+  baseURL: https://eu-west-1.api.silverflow.com/v1
+  tags:
+  - Create Charges
+  properties:
+  - type: OpenAPI
+    url: openapi/silverflow-create-charges-api-openapi.yml
+  - type: Documentation
+    url: https://docs.silverflow.com/
+  - type: APIReference
+    url: https://docs.silverflow.com/apidocs/latest/index.html
+  - type: GettingStarted
+    url: https://docs.silverflow.com/guides/getting-started
+  - type: Authentication
+    url: authentication/silverflow-authentication.yml
+  - type: Webhooks
+    url: asyncapi/silverflow-events-webhooks.yml
+  - type: ErrorCatalog
+    url: errors/silverflow-problem-types.yml
+  - type: DeclineCodes
+    url: errors/silverflow-decline-codes.yml
+  - type: RateLimits
+    url: rate-limits/silverflow-rate-limits.yml
+  - type: Conventions
+    url: conventions/silverflow-conventions.yml
+  - type: Idempotency
+    url: conventions/silverflow-conventions.yml
+  - type: DataModel
+    url: data-model/silverflow-data-model.yml
+  - type: Sandbox
+    url: sandbox/silverflow-sandbox.yml
+  - type: ToolCrosswalk
+    url: mcp/silverflow-tool-crosswalk.yml
+- aid: silverflow:silverflow-create-pos-charges-api
+  name: Silverflow Create POS Charges API
+  description: Create a POS charge.
+  humanURL: https://docs.silverflow.com/
+  baseURL: https://eu-west-1.api.silverflow.com/v1
+  tags:
+  - Create POS Charges
+  properties:
+  - type: OpenAPI
+    url: openapi/silverflow-create-pos-charges-api-openapi.yml
+  - type: Documentation
+    url: https://docs.silverflow.com/
+  - type: APIReference
+    url: https://docs.silverflow.com/apidocs/latest/index.html
+  - type: GettingStarted
+    url: https://docs.silverflow.com/guides/getting-started
+  - type: Authentication
+    url: authentication/silverflow-authentication.yml
+  - type: Webhooks
+    url: asyncapi/silverflow-events-webhooks.yml
+  - type: ErrorCatalog
+    url: errors/silverflow-problem-types.yml
+  - type: DeclineCodes
+    url: errors/silverflow-decline-codes.yml
+  - type: RateLimits
+    url: rate-limits/silverflow-rate-limits.yml
+  - type: Conventions
+    url: conventions/silverflow-conventions.yml
+  - type: Idempotency
+    url: conventions/silverflow-conventions.yml
+  - type: DataModel
+    url: data-model/silverflow-data-model.yml
+  - type: Sandbox
+    url: sandbox/silverflow-sandbox.yml
+  - type: ToolCrosswalk
+    url: mcp/silverflow-tool-crosswalk.yml
+- aid: silverflow:silverflow-create-recurring-api
+  name: Silverflow Create Recurring API
+  description: Create different types of recurring charges.
+  humanURL: https://docs.silverflow.com/
+  baseURL: https://eu-west-1.api.silverflow.com/v1
+  tags:
+  - Create Recurring
+  properties:
+  - type: OpenAPI
+    url: openapi/silverflow-create-recurring-api-openapi.yml
+  - type: Documentation
+    url: https://docs.silverflow.com/
+  - type: APIReference
+    url: https://docs.silverflow.com/apidocs/latest/index.html
+  - type: GettingStarted
+    url: https://docs.silverflow.com/guides/getting-started
+  - type: Authentication
+    url: authentication/silverflow-authentication.yml
+  - type: Webhooks
+    url: asyncapi/silverflow-events-webhooks.yml
+  - type: ErrorCatalog
+    url: errors/silverflow-problem-types.yml
+  - type: DeclineCodes
+    url: errors/silverflow-decline-codes.yml
+  - type: RateLimits
+    url: rate-limits/silverflow-rate-limits.yml
+  - type: Conventions
+    url: conventions/silverflow-conventions.yml
+  - type: Idempotency
+    url: conventions/silverflow-conventions.yml
+  - type: DataModel
+    url: data-model/silverflow-data-model.yml
+  - type: Sandbox
+    url: sandbox/silverflow-sandbox.yml
+  - type: ToolCrosswalk
+    url: mcp/silverflow-tool-crosswalk.yml
+- aid: silverflow:silverflow-currency-conversion-rates-api
+  name: Silverflow Currency Conversion Rates API
+  description: >-
+    The Currency Conversion Rates API from Silverflow — 1 operation(s) for currency conversion rates.
+  humanURL: https://docs.silverflow.com/
+  baseURL: https://eu-west-1.api.silverflow.com/v1
+  tags:
+  - Currency Conversion Rates
+  properties:
+  - type: OpenAPI
+    url: openapi/silverflow-currency-conversion-rates-api-openapi.yml
+  - type: Documentation
+    url: https://docs.silverflow.com/
+  - type: APIReference
+    url: https://docs.silverflow.com/apidocs/latest/index.html
+  - type: GettingStarted
+    url: https://docs.silverflow.com/guides/getting-started
+  - type: Authentication
+    url: authentication/silverflow-authentication.yml
+  - type: Webhooks
+    url: asyncapi/silverflow-events-webhooks.yml
+  - type: ErrorCatalog
+    url: errors/silverflow-problem-types.yml
+  - type: DeclineCodes
+    url: errors/silverflow-decline-codes.yml
+  - type: RateLimits
+    url: rate-limits/silverflow-rate-limits.yml
+  - type: Conventions
+    url: conventions/silverflow-conventions.yml
+  - type: Idempotency
+    url: conventions/silverflow-conventions.yml
+  - type: DataModel
+    url: data-model/silverflow-data-model.yml
+  - type: Sandbox
+    url: sandbox/silverflow-sandbox.yml
+  - type: ToolCrosswalk
+    url: mcp/silverflow-tool-crosswalk.yml
+- aid: silverflow:silverflow-dispute-reports-api
+  name: Silverflow Dispute Reports API
+  description: The Dispute Reports API from Silverflow — 1 operation(s) for dispute reports.
+  humanURL: https://docs.silverflow.com/
+  baseURL: https://eu-west-1.api.silverflow.com/v1
+  tags:
+  - Dispute Reports
+  properties:
+  - type: OpenAPI
+    url: openapi/silverflow-dispute-reports-api-openapi.yml
+  - type: Documentation
+    url: https://docs.silverflow.com/
+  - type: APIReference
+    url: https://docs.silverflow.com/apidocs/latest/index.html
+  - type: GettingStarted
+    url: https://docs.silverflow.com/guides/getting-started
+  - type: Authentication
+    url: authentication/silverflow-authentication.yml
+  - type: Webhooks
+    url: asyncapi/silverflow-events-webhooks.yml
+  - type: ErrorCatalog
+    url: errors/silverflow-problem-types.yml
+  - type: DeclineCodes
+    url: errors/silverflow-decline-codes.yml
+  - type: RateLimits
+    url: rate-limits/silverflow-rate-limits.yml
+  - type: Conventions
+    url: conventions/silverflow-conventions.yml
+  - type: Idempotency
+    url: conventions/silverflow-conventions.yml
+  - type: DataModel
+    url: data-model/silverflow-data-model.yml
+  - type: Sandbox
+    url: sandbox/silverflow-sandbox.yml
+  - type: ToolCrosswalk
+    url: mcp/silverflow-tool-crosswalk.yml
+- aid: silverflow:silverflow-disputes-api
+  name: Silverflow Disputes API
+  description: The Disputes API from Silverflow — 9 operation(s) for disputes.
+  humanURL: https://docs.silverflow.com/
+  baseURL: https://eu-west-1.api.silverflow.com/v1
+  tags:
+  - Disputes
+  properties:
+  - type: OpenAPI
+    url: openapi/silverflow-disputes-api-openapi.yml
+  - type: Documentation
+    url: https://docs.silverflow.com/
+  - type: APIReference
+    url: https://docs.silverflow.com/apidocs/latest/index.html
+  - type: GettingStarted
+    url: https://docs.silverflow.com/guides/getting-started
+  - type: Authentication
+    url: authentication/silverflow-authentication.yml
+  - type: Webhooks
+    url: asyncapi/silverflow-events-webhooks.yml
+  - type: ErrorCatalog
+    url: errors/silverflow-problem-types.yml
+  - type: DeclineCodes
+    url: errors/silverflow-decline-codes.yml
+  - type: RateLimits
+    url: rate-limits/silverflow-rate-limits.yml
+  - type: Conventions
+    url: conventions/silverflow-conventions.yml
+  - type: Idempotency
+    url: conventions/silverflow-conventions.yml
+  - type: DataModel
+    url: data-model/silverflow-data-model.yml
+  - type: Sandbox
+    url: sandbox/silverflow-sandbox.yml
+  - type: ToolCrosswalk
+    url: mcp/silverflow-tool-crosswalk.yml
+- aid: silverflow:silverflow-disputes-events-api
+  name: Silverflow Disputes Events API
+  description: ''
+  humanURL: https://docs.silverflow.com/
+  baseURL: https://eu-west-1.api.silverflow.com/v1
+  tags:
+  - Disputes Events
+  properties:
+  - type: OpenAPI
+    url: openapi/silverflow-disputes-events-api-openapi.yml
+  - type: Documentation
+    url: https://docs.silverflow.com/
+  - type: APIReference
+    url: https://docs.silverflow.com/apidocs/latest/index.html
+  - type: GettingStarted
+    url: https://docs.silverflow.com/guides/getting-started
+  - type: Authentication
+    url: authentication/silverflow-authentication.yml
+  - type: Webhooks
+    url: asyncapi/silverflow-events-webhooks.yml
+  - type: ErrorCatalog
+    url: errors/silverflow-problem-types.yml
+  - type: DeclineCodes
+    url: errors/silverflow-decline-codes.yml
+  - type: RateLimits
+    url: rate-limits/silverflow-rate-limits.yml
+  - type: Conventions
+    url: conventions/silverflow-conventions.yml
+  - type: Idempotency
+    url: conventions/silverflow-conventions.yml
+  - type: DataModel
+    url: data-model/silverflow-data-model.yml
+  - type: Sandbox
+    url: sandbox/silverflow-sandbox.yml
+  - type: ToolCrosswalk
+    url: mcp/silverflow-tool-crosswalk.yml
+- aid: silverflow:silverflow-distribution-events-api
+  name: Silverflow Distribution Events API
+  description: ''
+  humanURL: https://docs.silverflow.com/
+  baseURL: https://eu-west-1.api.silverflow.com/v1
+  tags:
+  - Distribution Events
+  properties:
+  - type: OpenAPI
+    url: openapi/silverflow-distribution-events-api-openapi.yml
+  - type: Documentation
+    url: https://docs.silverflow.com/
+  - type: APIReference
+    url: https://docs.silverflow.com/apidocs/latest/index.html
+  - type: GettingStarted
+    url: https://docs.silverflow.com/guides/getting-started
+  - type: Authentication
+    url: authentication/silverflow-authentication.yml
+  - type: Webhooks
+    url: asyncapi/silverflow-events-webhooks.yml
+  - type: ErrorCatalog
+    url: errors/silverflow-problem-types.yml
+  - type: DeclineCodes
+    url: errors/silverflow-decline-codes.yml
+  - type: RateLimits
+    url: rate-limits/silverflow-rate-limits.yml
+  - type: Conventions
+    url: conventions/silverflow-conventions.yml
+  - type: Idempotency
+    url: conventions/silverflow-conventions.yml
+  - type: DataModel
+    url: data-model/silverflow-data-model.yml
+  - type: Sandbox
+    url: sandbox/silverflow-sandbox.yml
+  - type: ToolCrosswalk
+    url: mcp/silverflow-tool-crosswalk.yml
+- aid: silverflow:silverflow-distributions-api
+  name: Silverflow Distributions API
+  description: The Distributions API from Silverflow — 2 operation(s) for distributions.
+  humanURL: https://docs.silverflow.com/
+  baseURL: https://eu-west-1.api.silverflow.com/v1
+  tags:
+  - Distributions
+  properties:
+  - type: OpenAPI
+    url: openapi/silverflow-distributions-api-openapi.yml
+  - type: Documentation
+    url: https://docs.silverflow.com/
+  - type: APIReference
+    url: https://docs.silverflow.com/apidocs/latest/index.html
+  - type: GettingStarted
+    url: https://docs.silverflow.com/guides/getting-started
+  - type: Authentication
+    url: authentication/silverflow-authentication.yml
+  - type: Webhooks
+    url: asyncapi/silverflow-events-webhooks.yml
+  - type: ErrorCatalog
+    url: errors/silverflow-problem-types.yml
+  - type: DeclineCodes
+    url: errors/silverflow-decline-codes.yml
+  - type: RateLimits
+    url: rate-limits/silverflow-rate-limits.yml
+  - type: Conventions
+    url: conventions/silverflow-conventions.yml
+  - type: Idempotency
+    url: conventions/silverflow-conventions.yml
+  - type: DataModel
+    url: data-model/silverflow-data-model.yml
+  - type: Sandbox
+    url: sandbox/silverflow-sandbox.yml
+  - type: ToolCrosswalk
+    url: mcp/silverflow-tool-crosswalk.yml
+- aid: silverflow:silverflow-documents-api
+  name: Silverflow Documents API
+  description: >-
+    A Document is a file with associated metadata that can be uploaded and downloaded. Documents have
+    to be attached to a business entity, for example `Dispute Documents`. The Document upload process
+    starts with creating metadata information, see [Add Dispute Document](#operation/addDisputeDocumentsMetadata).
+    New Documents will be created with status `pending`.
+
+
+    Adding a Document returns a key which can be used to upload the file using [Upload Document](#operation/uploadDocumentFile).
+    Once the file is successfully updated, the status will be changed to `active`.
+
+
+    The maximum size for a Document is 10MB and the maximum combined size of all documents uploaded for
+    a Dispute is 14.5MB.
+
+
+    Supported MIME types:
+
+    -   image/jpeg
+
+    -   application/pdf
+
+    -   image/tiff
+  humanURL: https://docs.silverflow.com/
+  baseURL: https://eu-west-1.api.silverflow.com/v1
+  tags:
+  - Documents
+  properties:
+  - type: OpenAPI
+    url: openapi/silverflow-documents-api-openapi.yml
+  - type: Documentation
+    url: https://docs.silverflow.com/
+  - type: APIReference
+    url: https://docs.silverflow.com/apidocs/latest/index.html
+  - type: GettingStarted
+    url: https://docs.silverflow.com/guides/getting-started
+  - type: Authentication
+    url: authentication/silverflow-authentication.yml
+  - type: Webhooks
+    url: asyncapi/silverflow-events-webhooks.yml
+  - type: ErrorCatalog
+    url: errors/silverflow-problem-types.yml
+  - type: DeclineCodes
+    url: errors/silverflow-decline-codes.yml
+  - type: RateLimits
+    url: rate-limits/silverflow-rate-limits.yml
+  - type: Conventions
+    url: conventions/silverflow-conventions.yml
+  - type: Idempotency
+    url: conventions/silverflow-conventions.yml
+  - type: DataModel
+    url: data-model/silverflow-data-model.yml
+  - type: Sandbox
+    url: sandbox/silverflow-sandbox.yml
+  - type: ToolCrosswalk
+    url: mcp/silverflow-tool-crosswalk.yml
+- aid: silverflow:silverflow-enrollments-api
+  name: Silverflow Enrollments API
+  description: ''
+  humanURL: https://docs.silverflow.com/
+  baseURL: https://eu-west-1.api.silverflow.com/v1
+  tags:
+  - Enrollments
+  properties:
+  - type: OpenAPI
+    url: openapi/silverflow-enrollments-api-openapi.yml
+  - type: Documentation
+    url: https://docs.silverflow.com/
+  - type: APIReference
+    url: https://docs.silverflow.com/apidocs/latest/index.html
+  - type: GettingStarted
+    url: https://docs.silverflow.com/guides/getting-started
+  - type: Authentication
+    url: authentication/silverflow-authentication.yml
+  - type: Webhooks
+    url: asyncapi/silverflow-events-webhooks.yml
+  - type: ErrorCatalog
+    url: errors/silverflow-problem-types.yml
+  - type: DeclineCodes
+    url: errors/silverflow-decline-codes.yml
+  - type: RateLimits
+    url: rate-limits/silverflow-rate-limits.yml
+  - type: Conventions
+    url: conventions/silverflow-conventions.yml
+  - type: Idempotency
+    url: conventions/silverflow-conventions.yml
+  - type: DataModel
+    url: data-model/silverflow-data-model.yml
+  - type: Sandbox
+    url: sandbox/silverflow-sandbox.yml
+  - type: ToolCrosswalk
+    url: mcp/silverflow-tool-crosswalk.yml
+- aid: silverflow:silverflow-event-subscriptions-api
+  name: Silverflow Event Subscriptions API
+  description: ''
+  humanURL: https://docs.silverflow.com/
+  baseURL: https://eu-west-1.api.silverflow.com/v1
+  tags:
+  - Event Subscriptions
+  properties:
+  - type: OpenAPI
+    url: openapi/silverflow-event-subscriptions-api-openapi.yml
+  - type: Documentation
+    url: https://docs.silverflow.com/
+  - type: APIReference
+    url: https://docs.silverflow.com/apidocs/latest/index.html
+  - type: GettingStarted
+    url: https://docs.silverflow.com/guides/getting-started
+  - type: Authentication
+    url: authentication/silverflow-authentication.yml
+  - type: Webhooks
+    url: asyncapi/silverflow-events-webhooks.yml
+  - type: ErrorCatalog
+    url: errors/silverflow-problem-types.yml
+  - type: DeclineCodes
+    url: errors/silverflow-decline-codes.yml
+  - type: RateLimits
+    url: rate-limits/silverflow-rate-limits.yml
+  - type: Conventions
+    url: conventions/silverflow-conventions.yml
+  - type: Idempotency
+    url: conventions/silverflow-conventions.yml
+  - type: DataModel
+    url: data-model/silverflow-data-model.yml
+  - type: Sandbox
+    url: sandbox/silverflow-sandbox.yml
+  - type: ToolCrosswalk
+    url: mcp/silverflow-tool-crosswalk.yml
+- aid: silverflow:silverflow-fees-api
+  name: Silverflow Fees API
+  description: The Fees API from Silverflow — 2 operation(s) for fees.
+  humanURL: https://docs.silverflow.com/
+  baseURL: https://eu-west-1.api.silverflow.com/v1
+  tags:
+  - Fees
+  properties:
+  - type: OpenAPI
+    url: openapi/silverflow-fees-api-openapi.yml
+  - type: Documentation
+    url: https://docs.silverflow.com/
+  - type: APIReference
+    url: https://docs.silverflow.com/apidocs/latest/index.html
+  - type: GettingStarted
+    url: https://docs.silverflow.com/guides/getting-started
+  - type: Authentication
+    url: authentication/silverflow-authentication.yml
+  - type: Webhooks
+    url: asyncapi/silverflow-events-webhooks.yml
+  - type: ErrorCatalog
+    url: errors/silverflow-problem-types.yml
+  - type: DeclineCodes
+    url: errors/silverflow-decline-codes.yml
+  - type: RateLimits
+    url: rate-limits/silverflow-rate-limits.yml
+  - type: Conventions
+    url: conventions/silverflow-conventions.yml
+  - type: Idempotency
+    url: conventions/silverflow-conventions.yml
+  - type: DataModel
+    url: data-model/silverflow-data-model.yml
+  - type: Sandbox
+    url: sandbox/silverflow-sandbox.yml
+  - type: ToolCrosswalk
+    url: mcp/silverflow-tool-crosswalk.yml
+- aid: silverflow:silverflow-file-subscriptions-api
+  name: Silverflow File Subscriptions API
+  description: Subscribe to raw files from the card networks.
+  humanURL: https://docs.silverflow.com/
+  baseURL: https://eu-west-1.api.silverflow.com/v1
+  tags:
+  - File Subscriptions
+  properties:
+  - type: OpenAPI
+    url: openapi/silverflow-file-subscriptions-api-openapi.yml
+  - type: Documentation
+    url: https://docs.silverflow.com/
+  - type: APIReference
+    url: https://docs.silverflow.com/apidocs/latest/index.html
+  - type: GettingStarted
+    url: https://docs.silverflow.com/guides/getting-started
+  - type: Authentication
+    url: authentication/silverflow-authentication.yml
+  - type: Webhooks
+    url: asyncapi/silverflow-events-webhooks.yml
+  - type: ErrorCatalog
+    url: errors/silverflow-problem-types.yml
+  - type: DeclineCodes
+    url: errors/silverflow-decline-codes.yml
+  - type: RateLimits
+    url: rate-limits/silverflow-rate-limits.yml
+  - type: Conventions
+    url: conventions/silverflow-conventions.yml
+  - type: Idempotency
+    url: conventions/silverflow-conventions.yml
+  - type: DataModel
+    url: data-model/silverflow-data-model.yml
+  - type: Sandbox
+    url: sandbox/silverflow-sandbox.yml
+  - type: ToolCrosswalk
+    url: mcp/silverflow-tool-crosswalk.yml
+- aid: silverflow:silverflow-fraud-notification-events-api
+  name: Silverflow Fraud Notification Events API
+  description: ''
+  humanURL: https://docs.silverflow.com/
+  baseURL: https://eu-west-1.api.silverflow.com/v1
+  tags:
+  - Fraud Notification Events
+  properties:
+  - type: OpenAPI
+    url: openapi/silverflow-fraud-notification-events-api-openapi.yml
+  - type: Documentation
+    url: https://docs.silverflow.com/
+  - type: APIReference
+    url: https://docs.silverflow.com/apidocs/latest/index.html
+  - type: GettingStarted
+    url: https://docs.silverflow.com/guides/getting-started
+  - type: Authentication
+    url: authentication/silverflow-authentication.yml
+  - type: Webhooks
+    url: asyncapi/silverflow-events-webhooks.yml
+  - type: ErrorCatalog
+    url: errors/silverflow-problem-types.yml
+  - type: DeclineCodes
+    url: errors/silverflow-decline-codes.yml
+  - type: RateLimits
+    url: rate-limits/silverflow-rate-limits.yml
+  - type: Conventions
+    url: conventions/silverflow-conventions.yml
+  - type: Idempotency
+    url: conventions/silverflow-conventions.yml
+  - type: DataModel
+    url: data-model/silverflow-data-model.yml
+  - type: Sandbox
+    url: sandbox/silverflow-sandbox.yml
+  - type: ToolCrosswalk
+    url: mcp/silverflow-tool-crosswalk.yml
+- aid: silverflow:silverflow-fraud-notifications-api
+  name: Silverflow Fraud Notifications API
+  description: "Fraud Notifications are created by the schemes when a fraudulent transaction is reported\
+    \ to them. \n\nThe Fraud Notification endpoints, allow to obtain more information about a Fraud Notification,\
+    \ including the reported Fraud Type code(s) and the related charge."
+  humanURL: https://docs.silverflow.com/
+  baseURL: https://eu-west-1.api.silverflow.com/v1
+  tags:
+  - Fraud Notifications
+  properties:
+  - type: OpenAPI
+    url: openapi/silverflow-fraud-notifications-api-openapi.yml
+  - type: Documentation
+    url: https://docs.silverflow.com/
+  - type: APIReference
+    url: https://docs.silverflow.com/apidocs/latest/index.html
+  - type: GettingStarted
+    url: https://docs.silverflow.com/guides/getting-started
+  - type: Authentication
+    url: authentication/silverflow-authentication.yml
+  - type: Webhooks
+    url: asyncapi/silverflow-events-webhooks.yml
+  - type: ErrorCatalog
+    url: errors/silverflow-problem-types.yml
+  - type: DeclineCodes
+    url: errors/silverflow-decline-codes.yml
+  - type: RateLimits
+    url: rate-limits/silverflow-rate-limits.yml
+  - type: Conventions
+    url: conventions/silverflow-conventions.yml
+  - type: Idempotency
+    url: conventions/silverflow-conventions.yml
+  - type: DataModel
+    url: data-model/silverflow-data-model.yml
+  - type: Sandbox
+    url: sandbox/silverflow-sandbox.yml
+  - type: ToolCrosswalk
+    url: mcp/silverflow-tool-crosswalk.yml
+- aid: silverflow:silverflow-fraud-notifications-reports-api
+  name: Silverflow Fraud Notifications Reports API
+  description: >-
+    The Fraud Notifications Reports API from Silverflow — 1 operation(s) for fraud notifications reports.
+  humanURL: https://docs.silverflow.com/
+  baseURL: https://eu-west-1.api.silverflow.com/v1
+  tags:
+  - Fraud Notifications Reports
+  properties:
+  - type: OpenAPI
+    url: openapi/silverflow-fraud-notifications-reports-api-openapi.yml
+  - type: Documentation
+    url: https://docs.silverflow.com/
+  - type: APIReference
+    url: https://docs.silverflow.com/apidocs/latest/index.html
+  - type: GettingStarted
+    url: https://docs.silverflow.com/guides/getting-started
+  - type: Authentication
+    url: authentication/silverflow-authentication.yml
+  - type: Webhooks
+    url: asyncapi/silverflow-events-webhooks.yml
+  - type: ErrorCatalog
+    url: errors/silverflow-problem-types.yml
+  - type: DeclineCodes
+    url: errors/silverflow-decline-codes.yml
+  - type: RateLimits
+    url: rate-limits/silverflow-rate-limits.yml
+  - type: Conventions
+    url: conventions/silverflow-conventions.yml
+  - type: Idempotency
+    url: conventions/silverflow-conventions.yml
+  - type: DataModel
+    url: data-model/silverflow-data-model.yml
+  - type: Sandbox
+    url: sandbox/silverflow-sandbox.yml
+  - type: ToolCrosswalk
+    url: mcp/silverflow-tool-crosswalk.yml
+- aid: silverflow:silverflow-merchant-acceptors-api
+  name: Silverflow Merchant Acceptors API
+  description: ''
+  humanURL: https://docs.silverflow.com/
+  baseURL: https://eu-west-1.api.silverflow.com/v1
+  tags:
+  - Merchant Acceptors
+  properties:
+  - type: OpenAPI
+    url: openapi/silverflow-merchant-acceptors-api-openapi.yml
+  - type: Documentation
+    url: https://docs.silverflow.com/
+  - type: APIReference
+    url: https://docs.silverflow.com/apidocs/latest/index.html
+  - type: GettingStarted
+    url: https://docs.silverflow.com/guides/getting-started
+  - type: Authentication
+    url: authentication/silverflow-authentication.yml
+  - type: Webhooks
+    url: asyncapi/silverflow-events-webhooks.yml
+  - type: ErrorCatalog
+    url: errors/silverflow-problem-types.yml
+  - type: DeclineCodes
+    url: errors/silverflow-decline-codes.yml
+  - type: RateLimits
+    url: rate-limits/silverflow-rate-limits.yml
+  - type: Conventions
+    url: conventions/silverflow-conventions.yml
+  - type: Idempotency
+    url: conventions/silverflow-conventions.yml
+  - type: DataModel
+    url: data-model/silverflow-data-model.yml
+  - type: Sandbox
+    url: sandbox/silverflow-sandbox.yml
+  - type: ToolCrosswalk
+    url: mcp/silverflow-tool-crosswalk.yml
+- aid: silverflow:silverflow-merchants-api
+  name: Silverflow Merchants API
+  description: ''
+  humanURL: https://docs.silverflow.com/
+  baseURL: https://eu-west-1.api.silverflow.com/v1
+  tags:
+  - Merchants
+  properties:
+  - type: OpenAPI
+    url: openapi/silverflow-merchants-api-openapi.yml
+  - type: Documentation
+    url: https://docs.silverflow.com/
+  - type: APIReference
+    url: https://docs.silverflow.com/apidocs/latest/index.html
+  - type: GettingStarted
+    url: https://docs.silverflow.com/guides/getting-started
+  - type: Authentication
+    url: authentication/silverflow-authentication.yml
+  - type: Webhooks
+    url: asyncapi/silverflow-events-webhooks.yml
+  - type: ErrorCatalog
+    url: errors/silverflow-problem-types.yml
+  - type: DeclineCodes
+    url: errors/silverflow-decline-codes.yml
+  - type: RateLimits
+    url: rate-limits/silverflow-rate-limits.yml
+  - type: Conventions
+    url: conventions/silverflow-conventions.yml
+  - type: Idempotency
+    url: conventions/silverflow-conventions.yml
+  - type: DataModel
+    url: data-model/silverflow-data-model.yml
+  - type: Sandbox
+    url: sandbox/silverflow-sandbox.yml
+  - type: ToolCrosswalk
+    url: mcp/silverflow-tool-crosswalk.yml
+- aid: silverflow:silverflow-network-funds-transfers-api
+  name: Silverflow Network Funds Transfers API
+  description: >-
+    The Network Funds Transfers API from Silverflow — 2 operation(s) for network funds transfers.
+  humanURL: https://docs.silverflow.com/
+  baseURL: https://eu-west-1.api.silverflow.com/v1
+  tags:
+  - Network Funds Transfers
+  properties:
+  - type: OpenAPI
+    url: openapi/silverflow-network-funds-transfers-api-openapi.yml
+  - type: Documentation
+    url: https://docs.silverflow.com/
+  - type: APIReference
+    url: https://docs.silverflow.com/apidocs/latest/index.html
+  - type: GettingStarted
+    url: https://docs.silverflow.com/guides/getting-started
+  - type: Authentication
+    url: authentication/silverflow-authentication.yml
+  - type: Webhooks
+    url: asyncapi/silverflow-events-webhooks.yml
+  - type: ErrorCatalog
+    url: errors/silverflow-problem-types.yml
+  - type: DeclineCodes
+    url: errors/silverflow-decline-codes.yml
+  - type: RateLimits
+    url: rate-limits/silverflow-rate-limits.yml
+  - type: Conventions
+    url: conventions/silverflow-conventions.yml
+  - type: Idempotency
+    url: conventions/silverflow-conventions.yml
+  - type: DataModel
+    url: data-model/silverflow-data-model.yml
+  - type: Sandbox
+    url: sandbox/silverflow-sandbox.yml
+  - type: ToolCrosswalk
+    url: mcp/silverflow-tool-crosswalk.yml
+- aid: silverflow:silverflow-network-tokenization-api
+  name: Silverflow Network Tokenization API
+  description: Network Tokenization
+  humanURL: https://docs.silverflow.com/
+  baseURL: https://eu-west-1.api.silverflow.com/v1
+  tags:
+  - Network Tokenization
+  properties:
+  - type: OpenAPI
+    url: openapi/silverflow-network-tokenization-api-openapi.yml
+  - type: Documentation
+    url: https://docs.silverflow.com/
+  - type: APIReference
+    url: https://docs.silverflow.com/apidocs/latest/index.html
+  - type: GettingStarted
+    url: https://docs.silverflow.com/guides/getting-started
+  - type: Authentication
+    url: authentication/silverflow-authentication.yml
+  - type: Webhooks
+    url: asyncapi/silverflow-events-webhooks.yml
+  - type: ErrorCatalog
+    url: errors/silverflow-problem-types.yml
+  - type: DeclineCodes
+    url: errors/silverflow-decline-codes.yml
+  - type: RateLimits
+    url: rate-limits/silverflow-rate-limits.yml
+  - type: Conventions
+    url: conventions/silverflow-conventions.yml
+  - type: Idempotency
+    url: conventions/silverflow-conventions.yml
+  - type: DataModel
+    url: data-model/silverflow-data-model.yml
+  - type: Sandbox
+    url: sandbox/silverflow-sandbox.yml
+  - type: ToolCrosswalk
+    url: mcp/silverflow-tool-crosswalk.yml
+- aid: silverflow:silverflow-network-tokens-events-api
+  name: Silverflow Network Tokens Events API
+  description: ''
+  humanURL: https://docs.silverflow.com/
+  baseURL: https://eu-west-1.api.silverflow.com/v1
+  tags:
+  - Network Tokens Events
+  properties:
+  - type: OpenAPI
+    url: openapi/silverflow-network-tokens-events-api-openapi.yml
+  - type: Documentation
+    url: https://docs.silverflow.com/
+  - type: APIReference
+    url: https://docs.silverflow.com/apidocs/latest/index.html
+  - type: GettingStarted
+    url: https://docs.silverflow.com/guides/getting-started
+  - type: Authentication
+    url: authentication/silverflow-authentication.yml
+  - type: Webhooks
+    url: asyncapi/silverflow-events-webhooks.yml
+  - type: ErrorCatalog
+    url: errors/silverflow-problem-types.yml
+  - type: DeclineCodes
+    url: errors/silverflow-decline-codes.yml
+  - type: RateLimits
+    url: rate-limits/silverflow-rate-limits.yml
+  - type: Conventions
+    url: conventions/silverflow-conventions.yml
+  - type: Idempotency
+    url: conventions/silverflow-conventions.yml
+  - type: DataModel
+    url: data-model/silverflow-data-model.yml
+  - type: Sandbox
+    url: sandbox/silverflow-sandbox.yml
+  - type: ToolCrosswalk
+    url: mcp/silverflow-tool-crosswalk.yml
+- aid: silverflow:silverflow-pos-charge-actions-api
+  name: Silverflow POS Charge Actions API
+  description: Perform different actions on a previously created charge.
+  humanURL: https://docs.silverflow.com/
+  baseURL: https://eu-west-1.api.silverflow.com/v1
+  tags:
+  - POS Charge Actions
+  properties:
+  - type: OpenAPI
+    url: openapi/silverflow-pos-charge-actions-api-openapi.yml
+  - type: Documentation
+    url: https://docs.silverflow.com/
+  - type: APIReference
+    url: https://docs.silverflow.com/apidocs/latest/index.html
+  - type: GettingStarted
+    url: https://docs.silverflow.com/guides/getting-started
+  - type: Authentication
+    url: authentication/silverflow-authentication.yml
+  - type: Webhooks
+    url: asyncapi/silverflow-events-webhooks.yml
+  - type: ErrorCatalog
+    url: errors/silverflow-problem-types.yml
+  - type: DeclineCodes
+    url: errors/silverflow-decline-codes.yml
+  - type: RateLimits
+    url: rate-limits/silverflow-rate-limits.yml
+  - type: Conventions
+    url: conventions/silverflow-conventions.yml
+  - type: Idempotency
+    url: conventions/silverflow-conventions.yml
+  - type: DataModel
+    url: data-model/silverflow-data-model.yml
+  - type: Sandbox
+    url: sandbox/silverflow-sandbox.yml
+  - type: ToolCrosswalk
+    url: mcp/silverflow-tool-crosswalk.yml
+- aid: silverflow:silverflow-processor-tokenization-api
+  name: Silverflow Processor Tokenization API
+  description: Processor Tokenization
+  humanURL: https://docs.silverflow.com/
+  baseURL: https://eu-west-1.api.silverflow.com/v1
+  tags:
+  - Processor Tokenization
+  properties:
+  - type: OpenAPI
+    url: openapi/silverflow-processor-tokenization-api-openapi.yml
+  - type: Documentation
+    url: https://docs.silverflow.com/
+  - type: APIReference
+    url: https://docs.silverflow.com/apidocs/latest/index.html
+  - type: GettingStarted
+    url: https://docs.silverflow.com/guides/getting-started
+  - type: Authentication
+    url: authentication/silverflow-authentication.yml
+  - type: Webhooks
+    url: asyncapi/silverflow-events-webhooks.yml
+  - type: ErrorCatalog
+    url: errors/silverflow-problem-types.yml
+  - type: DeclineCodes
+    url: errors/silverflow-decline-codes.yml
+  - type: RateLimits
+    url: rate-limits/silverflow-rate-limits.yml
+  - type: Conventions
+    url: conventions/silverflow-conventions.yml
+  - type: Idempotency
+    url: conventions/silverflow-conventions.yml
+  - type: DataModel
+    url: data-model/silverflow-data-model.yml
+  - type: Sandbox
+    url: sandbox/silverflow-sandbox.yml
+  - type: ToolCrosswalk
+    url: mcp/silverflow-tool-crosswalk.yml
+- aid: silverflow:silverflow-processor-tokens-events-api
+  name: Silverflow Processor Tokens Events API
+  description: ''
+  humanURL: https://docs.silverflow.com/
+  baseURL: https://eu-west-1.api.silverflow.com/v1
+  tags:
+  - Processor Tokens Events
+  properties:
+  - type: OpenAPI
+    url: openapi/silverflow-processor-tokens-events-api-openapi.yml
+  - type: Documentation
+    url: https://docs.silverflow.com/
+  - type: APIReference
+    url: https://docs.silverflow.com/apidocs/latest/index.html
+  - type: GettingStarted
+    url: https://docs.silverflow.com/guides/getting-started
+  - type: Authentication
+    url: authentication/silverflow-authentication.yml
+  - type: Webhooks
+    url: asyncapi/silverflow-events-webhooks.yml
+  - type: ErrorCatalog
+    url: errors/silverflow-problem-types.yml
+  - type: DeclineCodes
+    url: errors/silverflow-decline-codes.yml
+  - type: RateLimits
+    url: rate-limits/silverflow-rate-limits.yml
+  - type: Conventions
+    url: conventions/silverflow-conventions.yml
+  - type: Idempotency
+    url: conventions/silverflow-conventions.yml
+  - type: DataModel
+    url: data-model/silverflow-data-model.yml
+  - type: Sandbox
+    url: sandbox/silverflow-sandbox.yml
+  - type: ToolCrosswalk
+    url: mcp/silverflow-tool-crosswalk.yml
+- aid: silverflow:silverflow-reconciliation-details-api
+  name: Silverflow Reconciliation Details API
+  description: >-
+    The Reconciliation Details API from Silverflow — 3 operation(s) for reconciliation details.
+  humanURL: https://docs.silverflow.com/
+  baseURL: https://eu-west-1.api.silverflow.com/v1
+  tags:
+  - Reconciliation Details
+  properties:
+  - type: OpenAPI
+    url: openapi/silverflow-reconciliation-details-api-openapi.yml
+  - type: Documentation
+    url: https://docs.silverflow.com/
+  - type: APIReference
+    url: https://docs.silverflow.com/apidocs/latest/index.html
+  - type: GettingStarted
+    url: https://docs.silverflow.com/guides/getting-started
+  - type: Authentication
+    url: authentication/silverflow-authentication.yml
+  - type: Webhooks
+    url: asyncapi/silverflow-events-webhooks.yml
+  - type: ErrorCatalog
+    url: errors/silverflow-problem-types.yml
+  - type: DeclineCodes
+    url: errors/silverflow-decline-codes.yml
+  - type: RateLimits
+    url: rate-limits/silverflow-rate-limits.yml
+  - type: Conventions
+    url: conventions/silverflow-conventions.yml
+  - type: Idempotency
+    url: conventions/silverflow-conventions.yml
+  - type: DataModel
+    url: data-model/silverflow-data-model.yml
+  - type: Sandbox
+    url: sandbox/silverflow-sandbox.yml
+  - type: ToolCrosswalk
+    url: mcp/silverflow-tool-crosswalk.yml
+- aid: silverflow:silverflow-reconciliation-events-api
+  name: Silverflow Reconciliation Events API
+  description: ''
+  humanURL: https://docs.silverflow.com/
+  baseURL: https://eu-west-1.api.silverflow.com/v1
+  tags:
+  - Reconciliation Events
+  properties:
+  - type: OpenAPI
+    url: openapi/silverflow-reconciliation-events-api-openapi.yml
+  - type: Documentation
+    url: https://docs.silverflow.com/
+  - type: APIReference
+    url: https://docs.silverflow.com/apidocs/latest/index.html
+  - type: GettingStarted
+    url: https://docs.silverflow.com/guides/getting-started
+  - type: Authentication
+    url: authentication/silverflow-authentication.yml
+  - type: Webhooks
+    url: asyncapi/silverflow-events-webhooks.yml
+  - type: ErrorCatalog
+    url: errors/silverflow-problem-types.yml
+  - type: DeclineCodes
+    url: errors/silverflow-decline-codes.yml
+  - type: RateLimits
+    url: rate-limits/silverflow-rate-limits.yml
+  - type: Conventions
+    url: conventions/silverflow-conventions.yml
+  - type: Idempotency
+    url: conventions/silverflow-conventions.yml
+  - type: DataModel
+    url: data-model/silverflow-data-model.yml
+  - type: Sandbox
+    url: sandbox/silverflow-sandbox.yml
+  - type: ToolCrosswalk
+    url: mcp/silverflow-tool-crosswalk.yml
+- aid: silverflow:silverflow-reconciliation-reports-api
+  name: Silverflow Reconciliation Reports API
+  description: >-
+    The Reconciliation Reports API from Silverflow — 2 operation(s) for reconciliation reports.
+  humanURL: https://docs.silverflow.com/
+  baseURL: https://eu-west-1.api.silverflow.com/v1
+  tags:
+  - Reconciliation Reports
+  properties:
+  - type: OpenAPI
+    url: openapi/silverflow-reconciliation-reports-api-openapi.yml
+  - type: Documentation
+    url: https://docs.silverflow.com/
+  - type: APIReference
+    url: https://docs.silverflow.com/apidocs/latest/index.html
+  - type: GettingStarted
+    url: https://docs.silverflow.com/guides/getting-started
+  - type: Authentication
+    url: authentication/silverflow-authentication.yml
+  - type: Webhooks
+    url: asyncapi/silverflow-events-webhooks.yml
+  - type: ErrorCatalog
+    url: errors/silverflow-problem-types.yml
+  - type: DeclineCodes
+    url: errors/silverflow-decline-codes.yml
+  - type: RateLimits
+    url: rate-limits/silverflow-rate-limits.yml
+  - type: Conventions
+    url: conventions/silverflow-conventions.yml
+  - type: Idempotency
+    url: conventions/silverflow-conventions.yml
+  - type: DataModel
+    url: data-model/silverflow-data-model.yml
+  - type: Sandbox
+    url: sandbox/silverflow-sandbox.yml
+  - type: ToolCrosswalk
+    url: mcp/silverflow-tool-crosswalk.yml
+- aid: silverflow:silverflow-report-events-api
+  name: Silverflow Report Events API
+  description: The Report Events API from Silverflow — 0 operation(s) for report events.
+  humanURL: https://docs.silverflow.com/
+  baseURL: https://eu-west-1.api.silverflow.com/v1
+  tags:
+  - Report Events
+  properties:
+  - type: OpenAPI
+    url: openapi/silverflow-report-events-api-openapi.yml
+  - type: Documentation
+    url: https://docs.silverflow.com/
+  - type: APIReference
+    url: https://docs.silverflow.com/apidocs/latest/index.html
+  - type: GettingStarted
+    url: https://docs.silverflow.com/guides/getting-started
+  - type: Authentication
+    url: authentication/silverflow-authentication.yml
+  - type: Webhooks
+    url: asyncapi/silverflow-events-webhooks.yml
+  - type: ErrorCatalog
+    url: errors/silverflow-problem-types.yml
+  - type: DeclineCodes
+    url: errors/silverflow-decline-codes.yml
+  - type: RateLimits
+    url: rate-limits/silverflow-rate-limits.yml
+  - type: Conventions
+    url: conventions/silverflow-conventions.yml
+  - type: Idempotency
+    url: conventions/silverflow-conventions.yml
+  - type: DataModel
+    url: data-model/silverflow-data-model.yml
+  - type: Sandbox
+    url: sandbox/silverflow-sandbox.yml
+  - type: ToolCrosswalk
+    url: mcp/silverflow-tool-crosswalk.yml
+- aid: silverflow:silverflow-report-scheduling-api
+  name: Silverflow Report Scheduling API
+  description: The Report Scheduling API from Silverflow — 2 operation(s) for report scheduling.
+  humanURL: https://docs.silverflow.com/
+  baseURL: https://eu-west-1.api.silverflow.com/v1
+  tags:
+  - Report Scheduling
+  properties:
+  - type: OpenAPI
+    url: openapi/silverflow-report-scheduling-api-openapi.yml
+  - type: Documentation
+    url: https://docs.silverflow.com/
+  - type: APIReference
+    url: https://docs.silverflow.com/apidocs/latest/index.html
+  - type: GettingStarted
+    url: https://docs.silverflow.com/guides/getting-started
+  - type: Authentication
+    url: authentication/silverflow-authentication.yml
+  - type: Webhooks
+    url: asyncapi/silverflow-events-webhooks.yml
+  - type: ErrorCatalog
+    url: errors/silverflow-problem-types.yml
+  - type: DeclineCodes
+    url: errors/silverflow-decline-codes.yml
+  - type: RateLimits
+    url: rate-limits/silverflow-rate-limits.yml
+  - type: Conventions
+    url: conventions/silverflow-conventions.yml
+  - type: Idempotency
+    url: conventions/silverflow-conventions.yml
+  - type: DataModel
+    url: data-model/silverflow-data-model.yml
+  - type: Sandbox
+    url: sandbox/silverflow-sandbox.yml
+  - type: ToolCrosswalk
+    url: mcp/silverflow-tool-crosswalk.yml
+- aid: silverflow:silverflow-retrieve-charges-api
+  name: Silverflow Retrieve Charges API
+  description: Retrieve a single or multiple charges.
+  humanURL: https://docs.silverflow.com/
+  baseURL: https://eu-west-1.api.silverflow.com/v1
+  tags:
+  - Retrieve Charges
+  properties:
+  - type: OpenAPI
+    url: openapi/silverflow-retrieve-charges-api-openapi.yml
+  - type: Documentation
+    url: https://docs.silverflow.com/
+  - type: APIReference
+    url: https://docs.silverflow.com/apidocs/latest/index.html
+  - type: GettingStarted
+    url: https://docs.silverflow.com/guides/getting-started
+  - type: Authentication
+    url: authentication/silverflow-authentication.yml
+  - type: Webhooks
+    url: asyncapi/silverflow-events-webhooks.yml
+  - type: ErrorCatalog
+    url: errors/silverflow-problem-types.yml
+  - type: DeclineCodes
+    url: errors/silverflow-decline-codes.yml
+  - type: RateLimits
+    url: rate-limits/silverflow-rate-limits.yml
+  - type: Conventions
+    url: conventions/silverflow-conventions.yml
+  - type: Idempotency
+    url: conventions/silverflow-conventions.yml
+  - type: DataModel
+    url: data-model/silverflow-data-model.yml
+  - type: Sandbox
+    url: sandbox/silverflow-sandbox.yml
+  - type: ToolCrosswalk
+    url: mcp/silverflow-tool-crosswalk.yml
+- aid: silverflow:silverflow-retrieve-pos-charges-api
+  name: Silverflow Retrieve POS Charges API
+  description: Retrieve charges for given merchant and with additonal filters.
+  humanURL: https://docs.silverflow.com/
+  baseURL: https://eu-west-1.api.silverflow.com/v1
+  tags:
+  - Retrieve POS Charges
+  properties:
+  - type: OpenAPI
+    url: openapi/silverflow-retrieve-pos-charges-api-openapi.yml
+  - type: Documentation
+    url: https://docs.silverflow.com/
+  - type: APIReference
+    url: https://docs.silverflow.com/apidocs/latest/index.html
+  - type: GettingStarted
+    url: https://docs.silverflow.com/guides/getting-started
+  - type: Authentication
+    url: authentication/silverflow-authentication.yml
+  - type: Webhooks
+    url: asyncapi/silverflow-events-webhooks.yml
+  - type: ErrorCatalog
+    url: errors/silverflow-problem-types.yml
+  - type: DeclineCodes
+    url: errors/silverflow-decline-codes.yml
+  - type: RateLimits
+    url: rate-limits/silverflow-rate-limits.yml
+  - type: Conventions
+    url: conventions/silverflow-conventions.yml
+  - type: Idempotency
+    url: conventions/silverflow-conventions.yml
+  - type: DataModel
+    url: data-model/silverflow-data-model.yml
+  - type: Sandbox
+    url: sandbox/silverflow-sandbox.yml
+  - type: ToolCrosswalk
+    url: mcp/silverflow-tool-crosswalk.yml
+- aid: silverflow:silverflow-retrieve-reports-api
+  name: Silverflow Retrieve Reports API
+  description: The Retrieve Reports API from Silverflow — 3 operation(s) for retrieve reports.
+  humanURL: https://docs.silverflow.com/
+  baseURL: https://eu-west-1.api.silverflow.com/v1
+  tags:
+  - Retrieve Reports
+  properties:
+  - type: OpenAPI
+    url: openapi/silverflow-retrieve-reports-api-openapi.yml
+  - type: Documentation
+    url: https://docs.silverflow.com/
+  - type: APIReference
+    url: https://docs.silverflow.com/apidocs/latest/index.html
+  - type: GettingStarted
+    url: https://docs.silverflow.com/guides/getting-started
+  - type: Authentication
+    url: authentication/silverflow-authentication.yml
+  - type: Webhooks
+    url: asyncapi/silverflow-events-webhooks.yml
+  - type: ErrorCatalog
+    url: errors/silverflow-problem-types.yml
+  - type: DeclineCodes
+    url: errors/silverflow-decline-codes.yml
+  - type: RateLimits
+    url: rate-limits/silverflow-rate-limits.yml
+  - type: Conventions
+    url: conventions/silverflow-conventions.yml
+  - type: Idempotency
+    url: conventions/silverflow-conventions.yml
+  - type: DataModel
+    url: data-model/silverflow-data-model.yml
+  - type: Sandbox
+    url: sandbox/silverflow-sandbox.yml
+  - type: ToolCrosswalk
+    url: mcp/silverflow-tool-crosswalk.yml
+- aid: silverflow:silverflow-scheme-fee-reports-api
+  name: Silverflow Scheme Fee Reports API
+  description: The Scheme Fee Reports API from Silverflow — 1 operation(s) for scheme fee reports.
+  humanURL: https://docs.silverflow.com/
+  baseURL: https://eu-west-1.api.silverflow.com/v1
+  tags:
+  - Scheme Fee Reports
+  properties:
+  - type: OpenAPI
+    url: openapi/silverflow-scheme-fee-reports-api-openapi.yml
+  - type: Documentation
+    url: https://docs.silverflow.com/
+  - type: APIReference
+    url: https://docs.silverflow.com/apidocs/latest/index.html
+  - type: GettingStarted
+    url: https://docs.silverflow.com/guides/getting-started
+  - type: Authentication
+    url: authentication/silverflow-authentication.yml
+  - type: Webhooks
+    url: asyncapi/silverflow-events-webhooks.yml
+  - type: ErrorCatalog
+    url: errors/silverflow-problem-types.yml
+  - type: DeclineCodes
+    url: errors/silverflow-decline-codes.yml
+  - type: RateLimits
+    url: rate-limits/silverflow-rate-limits.yml
+  - type: Conventions
+    url: conventions/silverflow-conventions.yml
+  - type: Idempotency
+    url: conventions/silverflow-conventions.yml
+  - type: DataModel
+    url: data-model/silverflow-data-model.yml
+  - type: Sandbox
+    url: sandbox/silverflow-sandbox.yml
+  - type: ToolCrosswalk
+    url: mcp/silverflow-tool-crosswalk.yml
+- aid: silverflow:silverflow-screenings-api
+  name: Silverflow Screenings API
+  description: ''
+  humanURL: https://docs.silverflow.com/
+  baseURL: https://eu-west-1.api.silverflow.com/v1
+  tags:
+  - Screenings
+  properties:
+  - type: OpenAPI
+    url: openapi/silverflow-screenings-api-openapi.yml
+  - type: Documentation
+    url: https://docs.silverflow.com/
+  - type: APIReference
+    url: https://docs.silverflow.com/apidocs/latest/index.html
+  - type: GettingStarted
+    url: https://docs.silverflow.com/guides/getting-started
+  - type: Authentication
+    url: authentication/silverflow-authentication.yml
+  - type: Webhooks
+    url: asyncapi/silverflow-events-webhooks.yml
+  - type: ErrorCatalog
+    url: errors/silverflow-problem-types.yml
+  - type: DeclineCodes
+    url: errors/silverflow-decline-codes.yml
+  - type: RateLimits
+    url: rate-limits/silverflow-rate-limits.yml
+  - type: Conventions
+    url: conventions/silverflow-conventions.yml
+  - type: Idempotency
+    url: conventions/silverflow-conventions.yml
+  - type: DataModel
+    url: data-model/silverflow-data-model.yml
+  - type: Sandbox
+    url: sandbox/silverflow-sandbox.yml
+  - type: ToolCrosswalk
+    url: mcp/silverflow-tool-crosswalk.yml
+- aid: silverflow:silverflow-settlement-reports-api
+  name: Silverflow Settlement Reports API
+  description: The Settlement Reports API from Silverflow — 1 operation(s) for settlement reports.
+  humanURL: https://docs.silverflow.com/
+  baseURL: https://eu-west-1.api.silverflow.com/v1
+  tags:
+  - Settlement Reports
+  properties:
+  - type: OpenAPI
+    url: openapi/silverflow-settlement-reports-api-openapi.yml
+  - type: Documentation
+    url: https://docs.silverflow.com/
+  - type: APIReference
+    url: https://docs.silverflow.com/apidocs/latest/index.html
+  - type: GettingStarted
+    url: https://docs.silverflow.com/guides/getting-started
+  - type: Authentication
+    url: authentication/silverflow-authentication.yml
+  - type: Webhooks
+    url: asyncapi/silverflow-events-webhooks.yml
+  - type: ErrorCatalog
+    url: errors/silverflow-problem-types.yml
+  - type: DeclineCodes
+    url: errors/silverflow-decline-codes.yml
+  - type: RateLimits
+    url: rate-limits/silverflow-rate-limits.yml
+  - type: Conventions
+    url: conventions/silverflow-conventions.yml
+  - type: Idempotency
+    url: conventions/silverflow-conventions.yml
+  - type: DataModel
+    url: data-model/silverflow-data-model.yml
+  - type: Sandbox
+    url: sandbox/silverflow-sandbox.yml
+  - type: ToolCrosswalk
+    url: mcp/silverflow-tool-crosswalk.yml
+- aid: silverflow:silverflow-transaction-risk-assessment-api
+  name: Silverflow Transaction Risk Assessment API
+  description: Transaction Risk Assessment
+  humanURL: https://docs.silverflow.com/
+  baseURL: https://eu-west-1.api.silverflow.com/v1
+  tags:
+  - Transaction Risk Assessment
+  properties:
+  - type: OpenAPI
+    url: openapi/silverflow-transaction-risk-assessment-api-openapi.yml
+  - type: Documentation
+    url: https://docs.silverflow.com/
+  - type: APIReference
+    url: https://docs.silverflow.com/apidocs/latest/index.html
+  - type: GettingStarted
+    url: https://docs.silverflow.com/guides/getting-started
+  - type: Authentication
+    url: authentication/silverflow-authentication.yml
+  - type: Webhooks
+    url: asyncapi/silverflow-events-webhooks.yml
+  - type: ErrorCatalog
+    url: errors/silverflow-problem-types.yml
+  - type: DeclineCodes
+    url: errors/silverflow-decline-codes.yml
+  - type: RateLimits
+    url: rate-limits/silverflow-rate-limits.yml
+  - type: Conventions
+    url: conventions/silverflow-conventions.yml
+  - type: Idempotency
+    url: conventions/silverflow-conventions.yml
+  - type: DataModel
+    url: data-model/silverflow-data-model.yml
+  - type: Sandbox
+    url: sandbox/silverflow-sandbox.yml
   - type: ToolCrosswalk
     url: mcp/silverflow-tool-crosswalk.yml
 maintainers:

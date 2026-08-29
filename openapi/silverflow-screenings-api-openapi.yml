@@ -1,0 +1,3550 @@
+openapi: 3.2.0
+info:
+  title: Silverflow Screenings API
+  version: 1.417.0
+  contact:
+    name: API Support
+    email: support@silverflow.com
+  license:
+    name: Commercial
+  description: 'Operations tagged Screenings across 2 of this provider''s published API definitions: silverflow-openapi.yml, silverflow-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://eu-west-1.api.silverflow.com/v1
+  description: Production URL for Europe - Equivalent to https://api.silverflow.co/v1
+- url: https://us-east-2.api.silverflow.com/v1
+  description: Production URL for North America
+- url: https://eu-west-1.api-sbx.silverflow.com/v1
+  description: Sandbox URL - Equivalent to https://api-sbx.silverflow.co/v1
+security:
+- ApiKey: []
+- BearerToken: []
+tags:
+- name: Screenings
+  description: ' '
+paths:
+  /screenings:
+    post:
+      operationId: postScreening
+      summary: Create Screening Request [EXPERIMENTAL]
+      description: 'Submit merchant information to initiate a merchant screening request.
+
+        This will trigger a Mastercard MATCH_PRO or a Visa VMSS screening submission.
+
+        Processing is asynchronous. Results are generally available in under two minutes, but may be delayed depending on the type of screening and the load on the card scheme screening services.
+
+        <br> **Note**: The website URL and address are retrieved from the Merchant entity.
+
+        - "https://", "www", and excess subdomains might be trimmed while preserving key URL components for VMSS screening requests to ensure it does not exceed 84 characters.
+
+        - city will be trimmed to ensure it does not exceed 20 characters for MATCH_PRO or 30 characters for VMSS.
+
+        - address lines from the merchant will be trimmed to ensure it does not exceed 60 characters for MATCH.
+
+        - duplicate principals with the same firstName and lastName (case-insensitive) will be deduplicated for VMSS screening requests, keeping only the first occurrence.
+
+        '
+      tags:
+      - Screenings
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ScreeningRequest'
+            examples:
+              MATCH_PRO:
+                $ref: '#/components/examples/screening-submit-request-mc-pro'
+              VMSS:
+                $ref: '#/components/examples/screening-submit-request-visa'
+      responses:
+        '201':
+          description: Information on the submitted screening request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Screening'
+              examples:
+                MATCH_PRO:
+                  $ref: '#/components/examples/screening-submit-response-mc-pro'
+                VMSS:
+                  $ref: '#/components/examples/screening-submit-response-visa'
+        '400':
+          $ref: '#/components/responses/InvalidInputError'
+        '401':
+          $ref: '#/components/responses/responses-UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/responses-ForbiddenError'
+        '404':
+          $ref: '#/components/responses/responses-NotFoundError'
+        '429':
+          $ref: '#/components/responses/responses-TooManyRequestsError'
+    get:
+      operationId: listScreenings
+      summary: List Screenings [EXPERIMENTAL]
+      description: 'List screening entities created by an agent.
+
+        '
+      tags:
+      - Screenings
+      parameters:
+      - $ref: '#/components/parameters/sortOrder'
+      - $ref: '#/components/parameters/limit'
+      - $ref: '#/components/parameters/offsetToken'
+      - $ref: '#/components/parameters/from'
+      - $ref: '#/components/parameters/to'
+      responses:
+        '200':
+          description: Page of screenings.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScreeningsPage'
+              examples:
+                submit:
+                  $ref: '#/components/examples/list-screenings-response'
+        '400':
+          $ref: '#/components/responses/InvalidInputError'
+        '401':
+          $ref: '#/components/responses/responses-UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/responses-ForbiddenError'
+        '404':
+          $ref: '#/components/responses/responses-NotFoundError'
+        '429':
+          $ref: '#/components/responses/responses-TooManyRequestsError'
+    servers:
+    - url: https://eu-west-1.api.silverflow.com/v1
+      description: Production URL for Europe - Equivalent to https://api.silverflow.co/v1
+    - url: https://us-east-2.api.silverflow.com/v1
+      description: Production URL for North America
+    - url: https://eu-west-1.api-sbx.silverflow.com/v1
+      description: Sandbox URL - Equivalent to https://api-sbx.silverflow.co/v1
+  /screenings/{screeningsKey}:
+    get:
+      operationId: getScreening
+      summary: Get a Screening [EXPERIMENTAL]
+      description: 'Retrieve a screening entity.
+
+        '
+      tags:
+      - Screenings
+      parameters:
+      - $ref: '#/components/parameters/screeningKey'
+      responses:
+        '200':
+          description: Information on the requested screening.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Screening'
+              examples:
+                MATCH:
+                  $ref: '#/components/examples/get-screening-response-mc'
+                VMSS:
+                  $ref: '#/components/examples/get-screening-response-visa'
+                MATCH_PRO:
+                  $ref: '#/components/examples/get-screening-response-mc-pro'
+        '400':
+          $ref: '#/components/responses/InvalidInputError'
+        '401':
+          $ref: '#/components/responses/responses-UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/responses-ForbiddenError'
+        '404':
+          $ref: '#/components/responses/responses-NotFoundError'
+        '429':
+          $ref: '#/components/responses/responses-TooManyRequestsError'
+    servers:
+    - url: https://eu-west-1.api.silverflow.com/v1
+      description: Production URL for Europe - Equivalent to https://api.silverflow.co/v1
+    - url: https://us-east-2.api.silverflow.com/v1
+      description: Production URL for North America
+    - url: https://eu-west-1.api-sbx.silverflow.com/v1
+      description: Sandbox URL - Equivalent to https://api-sbx.silverflow.co/v1
+  /screenings/{screeningsKey}/results:
+    get:
+      operationId: listScreeningResults
+      summary: List Screening Results [EXPERIMENTAL]
+      description: 'Retrieves the results of a screening request.
+
+        '
+      tags:
+      - Screenings
+      parameters:
+      - $ref: '#/components/parameters/screeningKey'
+      - $ref: '#/components/parameters/sortOrder'
+      - $ref: '#/components/parameters/limit'
+      - $ref: '#/components/parameters/offsetToken'
+      responses:
+        '200':
+          description: List of screening results.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScreeningResultsPage'
+              examples:
+                noMatch:
+                  $ref: '#/components/examples/list-screenings-no-match-response'
+                partialMatch:
+                  $ref: '#/components/examples/list-screenings-partial-match-response'
+        '400':
+          $ref: '#/components/responses/InvalidInputError'
+        '401':
+          $ref: '#/components/responses/responses-UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/responses-ForbiddenError'
+        '404':
+          $ref: '#/components/responses/responses-NotFoundError'
+        '409':
+          $ref: '#/components/responses/responses-ConflictError'
+        '429':
+          $ref: '#/components/responses/responses-TooManyRequestsError'
+    servers:
+    - url: https://eu-west-1.api.silverflow.com/v1
+      description: Production URL for Europe - Equivalent to https://api.silverflow.co/v1
+    - url: https://us-east-2.api.silverflow.com/v1
+      description: Production URL for North America
+    - url: https://eu-west-1.api-sbx.silverflow.com/v1
+      description: Sandbox URL - Equivalent to https://api-sbx.silverflow.co/v1
+components:
+  examples:
+    screening-submit-request-visa:
+      summary: Create a screening request for VMSS
+      value:
+        screeningType: VMSS
+        doingBusinessAsName: ACME Corp. A/S
+        binKey: bin-123412414
+        merchantKey: mct-123412414
+        tradeOverInternet: false
+        businessPhoneNumbers:
+        - '31201234567'
+        - '31201234568'
+        principals:
+        - lastName: Doe
+          firstName: Jane
+        businessCategory: marketplace
+    get-screening-response-visa:
+      summary: Get a VMSS screening response
+      value:
+        key: scr-2VfOLO8cmTcIe0PkDgKl
+        agentKey: cgt-2VfOLO8cmTcIe0PkDgKl
+        binKey: bin-2VfOLO8cmTcIe0PkDgKl
+        merchantKey: mct-2VfOLO8cmTcIe0PkDgKl
+        status: active
+        screeningStatus: pending
+        screeningType: VMSS
+        created: '2021-12-02T13:00:18.487Z'
+        version: 1
+        screeningDetail:
+          bid: '10056588'
+          doingBusinessAsName: ACME Corp. A/S
+          tradeOverInternet: false
+          businessPhoneNumbers:
+          - '31201234567'
+          - '31201234568'
+          businessCategory: marketplace
+          principals:
+          - lastName: Doe
+            firstName: Jane
+          websiteUrl: https://www.acme.com
+          address:
+            countryCode:
+              alpha2: NL
+              alpha3: NLD
+              numeric: '528'
+            stateOrProvince: Westeros
+            city: Braavos
+            line1: Kings Road
+            line2: '1'
+            postalCode: 1103JT
+    get-screening-response-mc:
+      summary: Get a MATCH screening response
+      value:
+        key: scr-2VfOLO8cmTcIe0PkDgKl
+        agentKey: cgt-2VfOLO8cmTcIe0PkDgKl
+        binKey: bin-2VfOLO8cmTcIe0PkDgKl
+        merchantKey: mct-2VfOLO8cmTcIe0PkDgKl
+        status: active
+        screeningStatus: pending
+        screeningType: MATCH
+        created: '2021-12-02T13:00:18.487Z'
+        version: 1
+        totalNumberOfResults: 0
+        screeningDetail:
+          doingBusinessAsName: ACME Corp. A/S
+          acquirerIdCode: '123213'
+          legalName: ACME Corp. A/S
+          principals:
+          - lastName: Doe
+            firstName: Jane
+            phoneNumber: '31201234567'
+            address:
+              countryCode:
+                alpha2: NL
+                alpha3: NLD
+                numeric: '528'
+              stateOrProvince: Westeros
+              city: Braavos
+              line1: Kings Road
+              line2: '1'
+              postalCode: 1103JT
+          websiteUrl: https://www.acme.com
+          address:
+            countryCode:
+              alpha2: NL
+              alpha3: NLD
+              numeric: '528'
+            stateOrProvince: Westeros
+            city: Braavos
+            line1: Kings Road
+            line2: '1'
+            postalCode: 1103JT
+    list-screenings-no-match-response:
+      summary: Result no match
+      value:
+        moreItems: false
+        screeningResults: []
+    list-screenings-response:
+      summary: List screenings response
+      value:
+        offsetToken: 23fOLO8cmTcIe0PkDgKl23fOLO8cmTcIe0PkDgKl
+        moreItems: true
+        screenings:
+        - key: scr-23fOLO8cmTcIe0PkDgKl
+          agentKey: cgt-2VfOLO8cmTcIe0PkDgKl
+          binKey: bin-2VfOLO8cmTcIe0PkDgKl
+          merchantKey: mct-2456O7O8cmTcIe0PkDgKl
+          status: active
+          screeningStatus: pending
+          screeningType: VMSS
+          created: '2021-12-02T13:00:18.487Z'
+          version: 1
+          screeningDetail:
+            bid: '10056588'
+            doingBusinessAsName: ACME Corp. A/S
+            tradeOverInternet: false
+            businessPhoneNumbers:
+            - '31201234567'
+            - '31201234568'
+            businessCategory: marketplace
+            principals:
+            - lastName: Doe
+              firstName: Jane
+            websiteUrl: https://www.acme.com
+            address:
+              countryCode:
+                alpha2: NL
+                alpha3: NLD
+                numeric: '528'
+              stateOrProvince: Westeros
+              city: Braavos
+              line1: Kings Road
+              line2: '1'
+              postalCode: 1103JT
+        - key: scr-2VfOLO8cmTcIe0PkDgKl
+          agentKey: cgt-2VfOLO8cmTcIe0PkDgKl
+          binKey: bin-2VfOLO8cmTcIe0PkDgKl
+          merchantKey: mct-2VfOLO8cmTcIe0PkDgKl
+          status: active
+          screeningStatus: pending
+          screeningType: MATCH
+          created: '2021-12-02T13:00:18.487Z'
+          version: 1
+          screeningDetail:
+            doingBusinessAsName: ACME Corp. A/S
+            acquirerIdCode: '123213'
+            legalName: ACME Corp. A/S
+            principals:
+            - lastName: Doe
+              firstName: Jane
+              phoneNumber: '31201234567'
+              address:
+                countryCode:
+                  alpha2: NL
+                  alpha3: NLD
+                  numeric: '528'
+                stateOrProvince: Westeros
+                city: Braavos
+                line1: Kings Road
+                line2: '1'
+                postalCode: 1103JT
+            websiteUrl: https://www.acme.com
+            address:
+              countryCode:
+                alpha2: NL
+                alpha3: NLD
+                numeric: '528'
+              stateOrProvince: Westeros
+              city: Braavos
+              line1: Kings Road
+              line2: '1'
+              postalCode: 1103JT
+    screening-submit-request-mc-pro:
+      summary: Create a screening request for MATCH_PRO
+      value:
+        screeningType: MATCH_PRO
+        doingBusinessAsName: ACME Corp. A/S
+        binKey: bin-123412414
+        merchantKey: mct-123412414
+        merchantPhoneNumber: '31641444444'
+        merchantCategoryCode: '1234'
+        principals:
+        - lastName: Doe
+          firstName: Jane
+          phoneNumber: '31201234567'
+          email: jane@doe.com
+          address:
+            countryCode:
+              alpha2: NL
+            stateOrProvince: Westeros
+            city: Braavos
+            line1: Kings Road
+            line2: '1'
+            postalCode: 1103JT
+    list-screenings-partial-match-response:
+      summary: Result with 2 partial match
+      value:
+        moreItems: false
+        screeningResults:
+        - terminationReason: common-point-of-purchase
+          terminatedMerchant:
+            acquirerIdCode: '123213'
+            legalName:
+              matchType: none
+              value: ACME Corp. A/S
+            doingBusinessAsName:
+              matchType: none
+              value: ACME Corp. A/S
+            address:
+              countryCode:
+                value: NLD
+                matchType: partial
+              stateOrProvince:
+                value: Westeros
+                matchType: partial
+              city:
+                value: Braavos
+                matchType: partial
+              line1:
+                value: Kings Road
+                matchType: partial
+              postalCode:
+                value: 1103JT
+                matchType: partial
+            websiteUrl:
+              matchType: phonetic
+              value:
+              - https://www.aqme.com
+            principals:
+            - firstName:
+                value: Jane
+                matchType: none
+              lastName:
+                value: Doe
+                matchType: partial
+              address:
+                countryCode:
+                  value: NLD
+                  matchType: partial
+                stateOrProvince:
+                  matchType: partial
+                  value: Westeros
+                city:
+                  matchType: partial
+                  value: Braavos
+                line1:
+                  matchType: partial
+                  value: Kings Road
+                postalCode:
+                  matchType: partial
+                  value: 1103JT
+              phoneNumber:
+                value: '31201234567'
+                matchType: partial
+        - terminationReason: excessive-chargebacks
+          terminatedMerchant:
+            acquirerIdCode: '2325'
+            doingBusinessAsName:
+              matchType: partial
+              value: ACME Corp. A/S
+            legalName:
+              matchType: none
+              value: ACME Corp. A/S
+            address:
+              countryCode:
+                value: NLD
+                matchType: partial
+              stateOrProvince:
+                matchType: partial
+                value: Westeros
+              city:
+                matchType: partial
+                value: Braavos
+              line1:
+                matchType: partial
+                value: Kings Road
+              postalCode:
+                matchType: partial
+                value: 1103JT
+            websiteUrl:
+              matchType: phonetic
+              value:
+              - https://www.aqme.com
+            principals:
+            - firstName:
+                value: Jane
+                matchType: none
+              lastName:
+                value: Doe
+                matchType: partial
+              address:
+                countryCode:
+                  value: NLD
+                  matchType: partial
+                stateOrProvince:
+                  matchType: partial
+                  value: Westeros
+                city:
+                  matchType: partial
+                  value: Braavos
+                line1:
+                  matchType: partial
+                  value: Kings Road
+                postalCode:
+                  matchType: partial
+                  value: 1103JT
+              phoneNumber:
+                value: '31201234567'
+                matchType: partial
+    screening-submit-response-visa:
+      summary: Create a screening response VMSS
+      value:
+        key: scr-2VfOLO8cmTcIe0PkDgKl
+        created: '2021-12-02T13:00:18.487Z'
+        version: 1
+        agentKey: cgt-2VfOLO8cmTcIe0PkDgKl
+        binKey: bin-2VfOLO8cmTcIe0PkDgKl
+        merchantKey: mct-2VfOLO8cmTcIe0PkDgKl
+        status: active
+        screeningStatus: pending
+        screeningType: VMSS
+        screeningDetail:
+          bid: '10056588'
+          doingBusinessAsName: ACME Corp. A/S
+          tradeOverInternet: false
+          businessPhoneNumbers:
+          - '31201234567'
+          - '31201234568'
+          businessCategory: marketplace
+          principals:
+          - lastName: Doe
+            firstName: Jane
+          websiteUrl: https://www.acme.com
+          address:
+            countryCode:
+              alpha2: NL
+              alpha3: NLD
+              numeric: '528'
+            stateOrProvince: Westeros
+            city: Braavos
+            line1: Kings Road
+            line2: '1'
+            postalCode: 1103JT
+    get-screening-response-mc-pro:
+      summary: Get a MATCH_PRO screening response
+      value:
+        key: scr-2VfOLO8cmTcIe0PkDgKl
+        agentKey: cgt-2VfOLO8cmTcIe0PkDgKl
+        binKey: bin-2VfOLO8cmTcIe0PkDgKl
+        merchantKey: mct-2VfOLO8cmTcIe0PkDgKl
+        status: active
+        screeningStatus: pending
+        screeningType: MATCH_PRO
+        created: '2021-12-02T13:00:18.487Z'
+        version: 1
+        totalNumberOfResults: 0
+        screeningDetail:
+          doingBusinessAsName: ACME Corp. A/S
+          acquirerIdCode: '123213'
+          legalName: ACME Corp. A/S
+          merchantCategoryCode: '5999'
+          merchantPhoneNumber: '31850609160'
+          principals:
+          - lastName: Doe
+            firstName: Jane
+            phoneNumber: '31201234567'
+            email: jane.doe@acme.com
+            address:
+              countryCode:
+                alpha2: NL
+                alpha3: NLD
+                numeric: '528'
+              stateOrProvince: Westeros
+              city: Braavos
+              line1: Kings Road
+              line2: '1'
+              postalCode: 1103JT
+          websiteUrl: https://www.acme.com
+          address:
+            countryCode:
+              alpha2: NL
+              alpha3: NLD
+              numeric: '528'
+            stateOrProvince: Westeros
+            city: Braavos
+            line1: Kings Road
+            line2: '1'
+            postalCode: 1103JT
+    screening-submit-response-mc-pro:
+      summary: Create a screening response MATCH_PRO
+      value:
+        key: scr-2VfOLO8cmTcIe0PkDgKl
+        created: '2021-12-02T13:00:18.487Z'
+        version: 1
+        agentKey: cgt-2VfOLO8cmTcIe0PkDgKl
+        binKey: bin-2VfOLO8cmTcIe0PkDgKl
+        merchantKey: mct-2VfOLO8cmTcIe0PkDgKl
+        status: active
+        screeningStatus: pending
+        screeningType: MATCH_PRO
+        screeningDetail:
+          doingBusinessAsName: ACME Corp. A/S
+          acquirerIdCode: '123213'
+          legalName: ACME Corp. A/S
+          merchantCategoryCode: '5999'
+          merchantPhoneNumber: '31850609160'
+          principals:
+          - lastName: Doe
+            firstName: Jane
+            phoneNumber: '31201234567'
+            email: jane.doe@acme.com
+            address:
+              countryCode:
+                alpha2: NL
+                alpha3: NLD
+                numeric: '528'
+              stateOrProvince: Westeros
+              city: Braavos
+              line1: Kings Road
+              line2: '1'
+              postalCode: 1103JT
+          websiteUrl: https://www.acme.com
+          address:
+            countryCode:
+              alpha2: NL
+              alpha3: NLD
+              numeric: '528'
+            stateOrProvince: Westeros
+            city: Braavos
+            line1: Kings Road
+            line2: '1'
+            postalCode: 1103JT
+  schemas:
+    schemas-line2:
+      allOf:
+      - $ref: '#/components/schemas/ExtendedNameOfPeopleAndPlaces'
+      - description: 'Address line 2. Clients not enrolled in the "extended character set beta" are still subject to the `^[\w ,\.\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u00FF-]+$` pattern for field input.
+
+          '
+    MatchProScreeningRequest:
+      type: object
+      required:
+      - screeningType
+      - merchantKey
+      - binKey
+      - doingBusinessAsName
+      - principals
+      - merchantCategoryCode
+      - merchantPhoneNumber
+      description: 'Post an array of principals with all details to be screened for the merchant acceptor.
+
+        '
+      properties:
+        screeningType:
+          type: string
+          enum:
+          - MATCH_PRO
+        merchantKey:
+          $ref: '#/components/schemas/merchantKey'
+        binKey:
+          $ref: '#/components/schemas/schemas-binKey'
+        doingBusinessAsName:
+          type: string
+          description: Assumed, trade or fictitious name of the merchant.
+          pattern: ^[\x20-\x7E\xA0-\xA3\xA5\xA7\xA9-\xB3\xB5-\xB7\xB9-\xBB\xBF-\xFF\u20AC\u0160\u0161\u017D\u017E\u0152\u0153\u0178]+$
+          minLength: 1
+          maxLength: 110
+        merchantCategoryCode:
+          type: string
+          description: A classification code used in authorization, clearing and other transactions or reports to identify the type of merchant.
+          pattern: ^\d{4}$
+          minLength: 4
+          maxLength: 4
+        merchantPhoneNumber:
+          $ref: '#/components/schemas/businessPhoneNumber'
+          description: "The merchant's business phone number, including area code.\n  - For U.S. numbers\n    - Must be exactly 10 digits and cannot start with 0 or 1.\n  - For non-U.S. numbers\n    - Can be up to 25 digits. Do not include the country code. \n  - Formatting\n    - Digits only. Do not use symbols or formatting characters (e.g., parentheses, spaces, or dashes).\n"
+        principals:
+          type: array
+          description: The principals of the business
+          minItems: 1
+          maxItems: 5
+          items:
+            $ref: '#/components/schemas/MatchProPrincipalInput'
+    ScreeningDetail:
+      oneOf:
+      - $ref: '#/components/schemas/MatchScreeningDetail'
+      - $ref: '#/components/schemas/MatchProScreeningDetail'
+      - $ref: '#/components/schemas/VmssScreeningDetail'
+    tradeOverInternet:
+      type: boolean
+      description: TradeOverInternet
+    ScreeningRequest:
+      oneOf:
+      - $ref: '#/components/schemas/MatchProScreeningRequest'
+      - $ref: '#/components/schemas/VmssScreeningRequest'
+      discriminator:
+        propertyName: screeningType
+        mapping:
+          MATCH_PRO: '#/components/schemas/MatchProScreeningRequest'
+          VMSS: '#/components/schemas/VmssScreeningRequest'
+    version:
+      type: integer
+      description: The version of this object
+      format: int64
+    CountryCodeAlpha2:
+      type: object
+      required:
+      - alpha2
+      additionalProperties: false
+      properties:
+        alpha2:
+          $ref: '#/components/schemas/countryCodeAlpha2'
+    visaPrincipalLastName:
+      type: string
+      pattern: ^[\w ,\.\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u00FF-]+$
+      minLength: 1
+      maxLength: 15
+    status:
+      type: string
+      description: The status of the object
+      enum:
+      - active
+      - archived
+    businessPhoneNumber:
+      type: string
+      description: An international phone number. Within the USA, phone numbers have a length of 10, and for outside the US, it can be any length with a maximum of 12 digits. Within the U.S. phone numbers can not start with 0 or 1. If the number is outside the U.S. region; do not include the country code. The phone number must be digits only, with no format characters such as parenthesis or dashes.
+      pattern: ^[0-9]{10,12}$
+      minLength: 10
+      maxLength: 12
+      example: '31850609160'
+    schemas-acquirerIdCode:
+      type: string
+      description: Acquirer Institution ID code. For Mastercard, this field corresponds to the Acquirer ICA. For Visa, this field corresponds to the CIB, which usually has the same value as the BIN.
+      pattern: ^\d+$
+      minLength: 6
+      maxLength: 6
+    ValidationError:
+      type: object
+      required:
+      - path
+      - message
+      properties:
+        path:
+          type: string
+          description: A relative path to the error location within the request body.
+        errorCode:
+          type: string
+          description: A code that identifies the error.
+        message:
+          type: string
+          description: A brief description of the validation error.
+    ExtendedNameOfPeopleAndPlaces:
+      type: string
+      pattern: ^[\x20-\x7E\xA0-\xA3\xA5\xA7\xA9-\xB3\xB5-\xB7\xB9-\xBB\xBF-\xFF\u20AC\u0160\u0161\u017D\u017E\u0152\u0153\u0178]+$
+      minLength: 1
+      maxLength: 120
+    ScreeningsPage:
+      allOf:
+      - $ref: '#/components/schemas/Page'
+      - type: object
+        required:
+        - screenings
+        properties:
+          screenings:
+            type: array
+            items:
+              $ref: '#/components/schemas/Screening'
+    RecordMatchStringArray:
+      type: object
+      description: 'Describes the type of match and the value of the record that matched with the input.
+
+        Some sensitive fields will be masked by the card networks.
+
+        '
+      required:
+      - matchType
+      - value
+      properties:
+        matchType:
+          $ref: '#/components/schemas/matchType'
+        value:
+          type: array
+          minItems: 0
+          maxItems: 5
+          items:
+            type: string
+    terminatedMerchant:
+      oneOf:
+      - $ref: '#/components/schemas/VmssScreeningResult'
+      - anyOf:
+        - $ref: '#/components/schemas/MatchScreeningResult'
+        - $ref: '#/components/schemas/MatchProScreeningResult'
+    CountryCode:
+      type: object
+      required:
+      - alpha3
+      - alpha2
+      - numeric
+      properties:
+        alpha3:
+          $ref: '#/components/schemas/countryCodeAlpha3'
+        alpha2:
+          $ref: '#/components/schemas/countryCodeAlpha2'
+        numeric:
+          $ref: '#/components/schemas/countryCodeNumeric'
+    RecordMatchString:
+      type: object
+      description: 'Describes the type of match and the value of the record that matched with the input.
+
+        Some sensitive fields will be masked by the card networks
+
+        '
+      required:
+      - matchType
+      properties:
+        matchType:
+          $ref: '#/components/schemas/matchType'
+        value:
+          type: string
+    schemas-city:
+      allOf:
+      - $ref: '#/components/schemas/ExtendedNameOfPeopleAndPlaces'
+      - description: 'The city of the address. Clients not enrolled in the "extended character set beta" are still subject to the `^[\w ,\.\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u00FF-]+$` pattern for field input.
+
+          '
+    MatchProPrincipal:
+      type: object
+      required:
+      - firstName
+      - lastName
+      - phoneNumber
+      - address
+      - email
+      description: 'A principal of the business. Could be a director, founder, C-level executive, et cetera.
+
+        '
+      properties:
+        firstName:
+          allOf:
+          - description: First name of the principal legal owner of the merchant
+          - $ref: '#/components/schemas/NameOfPeopleAndPlaces'
+        lastName:
+          allOf:
+          - description: Last name of the principal legal owner of the merchant
+          - $ref: '#/components/schemas/NameOfPeopleAndPlaces'
+        phoneNumber:
+          $ref: '#/components/schemas/businessPhoneNumber'
+          description: The Business or Merchant's phone number, including the area code. Within the USA, phone numbers have a length of 10, and for outside the US, it can be any length with a maximum of 12 digits. Within the U.S. phone numbers can not start with 0 or 1. If the number is outside the U.S. region; do not include the country code. The phone number must be digits only, with no format characters such as parenthesis or dashes.
+        address:
+          $ref: '#/components/schemas/schemas-Address'
+        email:
+          $ref: '#/components/schemas/MatchProEmail'
+    screeningKey:
+      description: Uniquely identifies a screening
+      type: string
+      pattern: ^scr-[a-zA-Z0-9]+$
+      minLength: 5
+      maxLength: 120
+    vmssDoingBusinessAsName:
+      type: string
+      description: Assumed, trade or fictitious name of the merchant. The name will be trimmed if greater than 70.
+      pattern: ^[\w\s\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u00FF,\-()'`.\/;:&$#!+?@=\\]*$
+    VmssScreeningResult:
+      type: object
+      required:
+      - bid
+      - doingBusinessAsName
+      - businessPhoneNumbers
+      - address
+      - principals
+      - websiteUrl
+      properties:
+        bid:
+          $ref: '#/components/schemas/bid'
+        doingBusinessAsName:
+          $ref: '#/components/schemas/RecordMatchString'
+        businessPhoneNumbers:
+          $ref: '#/components/schemas/RecordMatchStringArray'
+        websiteUrl:
+          $ref: '#/components/schemas/RecordMatchStringArray'
+        address:
+          $ref: '#/components/schemas/AddressMatch'
+        principals:
+          type: array
+          items:
+            $ref: '#/components/schemas/VmssPrincipalResult'
+    MatchScreeningDetail:
+      type: object
+      required:
+      - acquirerIdCode
+      - legalName
+      - address
+      - doingBusinessAsName
+      - principals
+      - websiteUrl
+      description: 'Post an array of principals with all details to be screened for the merchant.
+
+        '
+      properties:
+        acquirerIdCode:
+          $ref: '#/components/schemas/schemas-acquirerIdCode'
+        legalName:
+          allOf:
+          - $ref: '#/components/schemas/ExtendedNameOfPeopleAndPlaces'
+          - description: The legal name of the Merchant. Clients not enrolled in the "extended character set beta" are still subject to the `^[\w ,\.\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u00FF-\/]+$` pattern for field input. LegalName will be trimmed if it is longer then 60 chars.
+        doingBusinessAsName:
+          $ref: '#/components/schemas/schemas-doingBusinessAsName'
+        address:
+          $ref: '#/components/schemas/schemas-Address'
+        websiteUrl:
+          $ref: '#/components/schemas/schemas-url'
+        principals:
+          type: array
+          description: The principals of the business
+          minItems: 1
+          maxItems: 5
+          items:
+            $ref: '#/components/schemas/MatchPrincipal'
+    moreItems:
+      type: boolean
+    MatchProEmail:
+      type: string
+      description: Email address of a principal
+      maxLength: 100
+      pattern: \w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*
+    bid:
+      type: string
+      description: Visa assigned Business Identifier (BID) of the Acquirer.
+      pattern: ^[0-9]{8}$
+    screeningResult:
+      type: object
+      required:
+      - terminatedMerchant
+      - terminationReason
+      properties:
+        terminationReason:
+          $ref: '#/components/schemas/terminationReason'
+        terminatedMerchant:
+          $ref: '#/components/schemas/terminatedMerchant'
+    countryCodeNumeric:
+      type: string
+      pattern: ^[0-9]+$
+      minLength: 3
+      maxLength: 3
+      description: 'The ISO code of the country.
+
+
+        **European ISO Country Codes**
+
+
+        <details>
+
+
+        | Country | Alpha-2 code | Numeric |
+
+        | ------- | ------------ | ------- |
+
+        | Åland Islands | AX | 248 |
+
+        | Andorra | AD | 020 |
+
+        | Austria | AT | 040 |
+
+        | Belgium | BE | 056 |
+
+        | Cyprus | CY | 196 |
+
+        | Estonia | EE | 233 |  |
+
+        | Finland | FI | 246 |
+
+        | France | FR | 250 |
+
+        | French Guiana | GF | 254 |
+
+        | French Southern Territories | TF | 260 |
+
+        | Germany | DE | 280 |
+
+        | Greece | GR | 300 |
+
+        | Guadeloupe | GP | 312 |
+
+        | Ireland | IE | 372 |
+
+        | Italy | IT | 380 |
+
+        | Kosovo, United Nations Mission in Kosovo (UNMIK) | QZ | 900 |
+
+        | Latvia | LV | 428 |
+
+        | Lithuania | LT | 440 |
+
+        | Luxembourg | LU | 442 |
+
+        | Malta | MT | 470 |
+
+        | Martinique | MQ | 474 |
+
+        | Mayotte | YT | 175 |
+
+        | Monaco | MC | 492 |
+
+        | Montenegro | ME | 499 |
+
+        | Netherlands | NL | 528 |
+
+        | Portugal | PT | 620 |
+
+        | Reunion | RE | 638 |
+
+        | Saint Barthélemy | BL | 652 |
+
+        | Saint Martin (French Part) | MF | 663 |
+
+        | San Marino | SM | 674 |
+
+        | Slovakia | SK | 703 |
+
+        | Slovenia | SI | 705 |
+
+        | Spain | ES | 724 |
+
+        | St. Pierre and Miquelon | PM | 666 |
+
+        | Vatican City State (Holy See) | VA | 336 |
+
+
+        </details>
+
+
+        **US ISO Country Codes**
+
+
+        <details>
+
+
+        | Country | Alpha-2 code | Numeric |
+
+        | ------- | ------------ | ------- |
+
+        | American Samoa | AS | 016 |
+
+        | Bonaire, St. Eusasius and Saba | BQ | 535 |
+
+        | British Indian Ocean Territory | IO | 086 |
+
+        | Ecuador | EC | 218 |
+
+        | Guam | GU | 316 |
+
+        | Marshall Islands | MH | 584 |
+
+        | Micronesia, Federated States of | FM | 583 |
+
+        | Northern Mariana Islands | MP | 580 |
+
+        | Palau | PW | 585 |
+
+        | Palestine, State of | PS | 275 |
+
+        | Puerto Rico | PR | 630 |
+
+        | Timor-Leste | TP | 626 |
+
+        | Turks and Caicos Islands | TC | 796 |
+
+        | U.S. Minor Outlying Islands | UM | 581 |
+
+        | United States | US | 840 |
+
+        | Virgin Islands, British | VG | 092 |
+
+        | Virgin Islands, U.S. | VI | 850 |
+
+
+        </details>
+
+
+        **Other ISO Country Codes**
+
+
+        <details>
+
+
+        | Country | Alpha-2 code | Numeric |
+
+        | ------- | ------------ | ------- |
+
+        | Afghanistan | AF | 004 |
+
+        | Albania | AL | 008 |
+
+        | Algeria | DZ | 012 |
+
+        | Angola | AO | 024 |
+
+        | Anguilla | AI | 660 |
+
+        | Antarctica | AQ | 010 |
+
+        | Antigua and Barbuda | AG | 028 |
+
+        | Argentina | AR | 032 |
+
+        | Armenia | AM | 051 |
+
+        | Aruba | AW | 533 |
+
+        | Australia | AU | 036 |
+
+        | Azerbaijan | AZ | 031 |
+
+        | Bahamas | BS | 044 |
+
+        | Bahrain | BH | 048 |
+
+        | Bangladesh | BD | 050 |
+
+        | Barbados | BB | 052 |
+
+        | Belarus | BR | 112 |
+
+        | Belize | BZ | 084 |
+
+        | Benin | BJ | 204 |
+
+        | Bermuda | BM | 060 |
+
+        | Bhutan | BT | 064 |
+
+        | Bolivia, Plurinational State of | BO | 068 |
+
+        | Bosnia and Herzegovina | BA | 070 |
+
+        | Botswana | BW | 072 |
+
+        | Bouvet Island | BV | 074 |
+
+        | Brazil | BR | 076 |
+
+        | Brunei Darussalam | BN | 096 |
+
+        | Bulgaria | BG | 100 |
+
+        | Burkina Faso | BF | 854 |
+
+        | Burundi | BI | 108 |
+
+        | Cambodia | KH | 116 |
+
+        | Cameroon | CM | 120 |
+
+        | Canada | CA | 124 |
+
+        | Cape Verde | CV | 132 |
+
+        | Cayman Islands | KY | 136 |
+
+        | Central African Republic | CF | 140 |
+
+        | Chad | TD | 148 |
+
+        | Chile | CL | 152 |
+
+        | China | CN | 156 |
+
+        | Christmas Island | CX | 162 |
+
+        | Cocos (Keeling) Islands | CC | 166 |
+
+        | Colombia | CO | 170 |
+
+        | Comoros | KM | 174 |
+
+        | Congo | CG | 178 |
+
+        | Cook Islands | CK | 184 |
+
+        | Costa Rica | CR | 188 |
+
+        | Côte D''Ivoire | CI | 384 |
+
+        | Croatia | HR | 191 |
+
+        | Cuba | CU | 192 |
+
+        | Curacao | CW | 531 |
+
+        | Czech Republic | CZ | 203 |
+
+        | Democratic Republic of the Congo | CD | 180 |
+
+        | Denmark | DK | 208 |
+
+        | Djibouti | DJ | 262 |
+
+        | Dominica | DM | 212 |
+
+        | Dominican Republic | DO | 214 |
+
+        | Egypt | EG | 818 |
+
+        | El Salvador | SV | 222 |
+
+        | Equatorial Guinea | GQ | 226 |
+
+        | Eritrea | ER | 232 |
+
+        | Ethiopia | ET | 230 |
+
+        | Falkland Islands (Malvinas) | FK | 238 |
+
+        | Faroe Islands | FO | 234 |
+
+        | Fiji | FJ | 242 |
+
+        | French Polynesia | PF | 258 |
+
+        | Gabon | GA | 266 |
+
+        | Gambia | GM | 270 |
+
+        | Georgia | GE | 268 |
+
+        | Ghana | GH | 288 |
+
+        | Gibraltar | GI | 292 |
+
+        | Greenland | GL | 304 |
+
+        | Grenada | GD | 308 |
+
+        | Guatemala | GT | 320 |
+
+        | Guernsey | GG | 831 |
+
+        | Guinea | GN | 324 |
+
+        | Guinea-Bissau | GW | 624 |
+
+        | Guyana | GY | 328 |
+
+        | Haiti | HT | 332 |
+
+        | Heard and McDonald Islands | HM | 334 |
+
+        | Honduras | HN | 340 |
+
+        | Hong Kong | HK | 344 |
+
+        | Hungary | HU | 348 |
+
+        | Iceland | IS | 352 |
+
+        | India | IN | 356 |
+
+        | Indonesia | ID | 360 |
+
+        | Iraq | IQ | 368 |
+
+        | Isle of Man | IM | 833 |
+
+        | Israel | IL | 376 |
+
+        | Jamaica | JM | 388 |
+
+        | Japan | JP | 392 |
+
+        | Jersey | JE | 832 |
+
+        | Jordan | JO | 400 |
+
+        | Kazakhstan | KZ | 398 |
+
+        | Kenya | KE | 404 |
+
+        | Kiribati | KI | 296 |
+
+        | Korea, Republic of | KR | 410 |
+
+        | Kuwait | KW | 414 |
+
+        | Kyrgyzstan | KG | 417 |
+
+        | Lao People''s Democratic Republic | LA | 418 |
+
+        | Lebanon | LB | 422 |
+
+        | Lesotho | LS | 426 |
+
+        | Liberia | LR | 430 |
+
+        | Libyan Arab Jamahiriya | LY | 434 |
+
+        | Liechtenstein | LI | 438 |
+
+        | Macao | MO | 446 |
+
+        | Macedonia | MK | 807 |
+
+        | Madagascar | MG | 450 |
+
+        | Malawi | MW | 454 |
+
+        | Malaysia | MY | 458 |
+
+        | Maldives | MV | 462 |
+
+        | Mali | ML | 466 |
+
+        | Mauritania | MR | 478 |
+
+        | Mauritius | MU | 480 |
+
+        | Mexico | MX | 484 |
+
+        | Moldova, Republic of | MD | 498 |
+
+        | Mongolia | MN | 496 |
+
+        | Montserrat | MS | 500 |
+
+        | Morocco | MA | 504 |
+
+        | Mozambique | MZ | 508 |
+
+        | Myanmar (effective 1 November 2012) | MM | 104 |
+
+        | Namibia | NA | 516 |
+
+        | Nauru | NR | 520 |
+
+        | Nepal | NP | 524 |
+
+        | Netherlands Antilles | AN | 530 |
+
+        | New Caledonia | NC | 540 |
+
+        | New Zealand | NZ | 554 |
+
+        | Nicaragua | NI | 558 |
+
+        | Niger | NE | 562 |
+
+        | Nigeria | NG | 566 |
+
+        | Niue | NU | 570 |
+
+        | Norfolk Island | NF | 574 |
+
+        | Norway | NO | 578 |
+
+        | Oman | OM | 512 |
+
+        | Pakistan | PK | 586 |
+
+        | Panama | PA | 591 |
+
+        | Papua New Guinea | PG | 598 |
+
+        | Paraguay | PY | 600 |
+
+        | Peru | PE | 604 |
+
+        | Philippines | PH | 608 |
+
+        | Pitcairn | PN | 612 |
+
+        | Poland | PL | 616 |
+
+        | Qatar | QA | 634 |
+
+        | Republic of South Sudan | SS | 728 |
+
+        | Romania | RO | 642 |
+
+        | Russian Federation | RU | 643 |
+
+        | Rwanda | RW | 646 |
+
+        | Samoa | WS | 882 |
+
+        | Sao Tome and Principe | ST | 678 |
+
+        | Saudi Arabia | SA | 682 |
+
+        | Senegal | SN | 686 |
+
+        | Serbia | RS | 688 |
+
+        | Seychelles | SC | 690 |
+
+        | Sierra Leone | SL | 694 |
+
+        | Singapore | SG | 702 |
+
+        | Sint Maarten (Dutch Part) | SX | 534 |
+
+        | Solomon Islands | SB | 090 |
+
+        | Somalia | SO | 706 |
+
+        | South Africa | ZA | 710 |
+
+        | South Georgia and the South Sandwich Islands | GS | 239 |
+
+        | Sri Lanka | LK | 144 |
+
+        | Saint Helena, Ascension and Tristan Da Cunha | SH | 654 |
+
+        | St. Kitts and Nevis | KN | 659 |
+
+        | St. Lucia | LC | 662 |
+
+        | St. Vincent and the Grenadines | VC | 670 |
+
+        | Suriname | SR | 740 |
+
+        | Svalbard and Jan Mayen | SJ | 744 |
+
+        | Swaziland | SZ | 748 |
+
+        | Sweden | SE | 752 |
+
+        | Switzerland | CH | 756 |
+
+        | Taiwan | TW | 158 |
+
+        | Tajikistan | TJ | 762 |
+
+        | Tanzania, United Republic of | TZ | 834 |
+
+        | Thailand | TH | 764 |
+
+        | Togo | TG | 768 |
+
+        | Tokelau | TK | 772 |
+
+        | Tonga | TO | 776 |
+
+        | Trinidad and Tobago | TT | 780 |
+
+        | Tunisia | TN | 788 |
+
+        | Turkey | TR | 792 |
+
+        | Turkmenistan | TM | 795 |
+
+        | Tuvalu | TV | 798 |
+
+        | Uganda | UG | 800 |
+
+        | Ukraine | UA | 804 |
+
+        | United Arab Emirates | AE | 784 |
+
+        | United Kingdom | GB | 826 |
+
+        | Uruguay | UY | 858 |
+
+        | Uzbekistan | UZ | 860 |
+
+        | Vanuatu | VU | 548 |
+
+        | Venezuela, Bolivarian Republic of | VE | 862 |
+
+        | Vietnam | VN | 704 |
+
+        | Wallis and Futuna | WF | 876 |
+
+        | Western Sahara | EH | 732 |
+
+        | Yemen | YE | 886 |
+
+        | Zambia | ZM | 894 |
+
+        | Zimbabwe | ZW | 716 |
+
+
+        </details>'
+      externalDocs:
+        description: Find more info here
+        url: https://www.iso.org/iso-3166-country-codes.html
+      example: '528'
+    terminationReason:
+      type: string
+      enum:
+      - excessive-fraud
+      - excessive-chargebacks
+      - transaction-laundering
+      - illegal-transactions
+      - visa-compliance-program
+      - merchant-collusion
+      - common-point-of-purchase
+      - fraud-conviction
+      - insolvency
+      - violation-of-agreement
+      - violation-of-rules
+      - pci-non-compliance
+      - account-data-compromise
+      - merchant-identity-theft
+      - disqualified-from-network
+      - non-f2f-adult-content
+    VmssScreeningRequest:
+      type: object
+      required:
+      - screeningType
+      - merchantKey
+      - binKey
+      - doingBusinessAsName
+      - principals
+      - businessPhoneNumbers
+      - tradeOverInternet
+      - businessCategory
+      description: 'Post an array of principals with all details to be screened for the merchant acceptor.
+
+        '
+      properties:
+        screeningType:
+          type: string
+          enum:
+          - VMSS
+        merchantKey:
+          $ref: '#/components/schemas/merchantKey'
+        binKey:
+          $ref: '#/components/schemas/schemas-binKey'
+        doingBusinessAsName:
+          $ref: '#/components/schemas/vmssDoingBusinessAsName'
+        businessPhoneNumbers:
+          type: array
+          description: Additional phone numbers of the merchant including the area code.
+          minItems: 1
+          maxItems: 5
+          items:
+            $ref: '#/components/schemas/businessPhoneNumber'
+        tradeOverInternet:
+          $ref: '#/components/schemas/tradeOverInternet'
+        businessCategory:
+          $ref: '#/components/schemas/businessCategory'
+          description: Category of the business
+        principals:
+          type: array
+          description: 'The principals of the business.
+
+
+            Note: Duplicate principals with the same firstName and lastName (case-insensitive) will be automatically deduplicated, keeping only the first occurrence.
+
+            '
+          minItems: 1
+          maxItems: 5
+          items:
+            $ref: '#/components/schemas/VmssPrincipal'
+        bid:
+          $ref: '#/components/schemas/bid'
+    totalNumberOfResults:
+      type: number
+      description: Indicates the number of merchants that matched with the search criteria. `totalNumberOfResults` will be available when screening is completed.
+    CountryCodeNumeric:
+      type: object
+      required:
+      - numeric
+      additionalProperties: false
+      properties:
+        numeric:
+          $ref: '#/components/schemas/countryCodeNumeric'
+    InvalidInputErrorDetails:
+      type: object
+      required:
+      - type
+      - title
+      - status
+      - detail
+      - instance
+      properties:
+        type:
+          type: string
+          description: A relative URI reference, this property can be used to perform automated error handling.
+          enum:
+          - /silverflow/problems/invalid-input
+        title:
+          type: string
+          description: A short, human-readable summary of the problem type. It does not change from occurrence to occurrence of the error.
+          enum:
+          - Invalid Input
+        status:
+          type: integer
+          format: int32
+          description: The HTTP status code generated by the origin server for this occurrence of the problem.
+          enum:
+          - 400
+        detail:
+          type: string
+          description: A human readable explanation specific to this occurrence of the problem.
+        instance:
+          type: string
+          description: A reference that identifies the specific occurrence of the error. The instance is unique for every error.
+        validationErrors:
+          type: array
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          description: A list of validation errors.
+    Screening:
+      type: object
+      required:
+      - key
+      - merchantKey
+      - binKey
+      - screeningType
+      - agentKey
+      - created
+      - screeningStatus
+      - status
+      - screeningDetail
+      - version
+      description: 'A response on a submitted screening request.
+
+        '
+      properties:
+        key:
+          $ref: '#/components/schemas/screeningKey'
+        merchantKey:
+          $ref: '#/components/schemas/merchantKey'
+        binKey:
+          $ref: '#/components/schemas/schemas-binKey'
+        agentKey:
+          $ref: '#/components/schemas/agentKey'
+        screeningStatus:
+          $ref: '#/components/schemas/screeningStatus'
+        errorMessage:
+          $ref: '#/components/schemas/ErrorMessage'
+        screeningType:
+          $ref: '#/components/schemas/screeningType'
+        created:
+          $ref: '#/components/schemas/created'
+        lastModified:
+          $ref: '#/components/schemas/lastModified'
+        status:
+          $ref: '#/components/schemas/status'
+        version:
+          $ref: '#/components/schemas/version'
+        totalNumberOfResults:
+          $ref: '#/components/schemas/totalNumberOfResults'
+        screeningDetail:
+          $ref: '#/components/schemas/ScreeningDetail'
+    MatchProPrincipalInput:
+      type: object
+      required:
+      - firstName
+      - lastName
+      - phoneNumber
+      - address
+      - email
+      description: 'A principal of the business. Could be a director, founder, C-level executive, et cetera.
+
+        '
+      properties:
+        firstName:
+          description: First name of the principal legal owner of the merchant
+          $ref: '#/components/schemas/MatchPrincipalName'
+        lastName:
+          description: Last name of the principal legal owner of the merchant
+          $ref: '#/components/schemas/MatchPrincipalName'
+        phoneNumber:
+          $ref: '#/components/schemas/businessPhoneNumber'
+          description: The Business or Merchant's phone number, including the area code. Within the USA, phone numbers have a length of 10, and for outside the US, it can be any length with a maximum of 12 digits. Within the U.S. phone numbers can not start with 0 or 1. If the number is outside the U.S. region; do not include the country code. The phone number must be digits only, with no format characters such as parenthesis or dashes.
+        address:
+          $ref: '#/components/schemas/MatchProAddressInput'
+        email:
+          $ref: '#/components/schemas/MatchProEmail'
+    VmssPrincipal:
+      type: object
+      required:
+      - firstName
+      - lastName
+      description: 'A principal of the business. Could be a director, founder, C-level executive, et cetera.
+
+        '
+      properties:
+        firstName:
+          allOf:
+          - description: First name of the principal legal owner of the merchant
+          - $ref: '#/components/schemas/visaPrincipalName'
+        lastName:
+          allOf:
+          - description: Last name of the principal legal owner of the merchant
+          - $ref: '#/components/schemas/visaPrincipalLastName'
+    businessCategory:
+      type: string
+      enum:
+      - merchant
+      - paymentFacilitator
+      - marketplace
+    offsetToken:
+      type: string
+      pattern: ^[a-zA-Z0-9%]+$
+      minLength: 1
+      maxLength: 2048
+    AddressMatch:
+      type: object
+      properties:
+        line1:
+          $ref: '#/components/schemas/RecordMatchString'
+        city:
+          $ref: '#/components/schemas/RecordMatchString'
+        stateOrProvince:
+          $ref: '#/components/schemas/RecordMatchString'
+        countryCode:
+          $ref: '#/components/schemas/RecordMatchString'
+        postalCode:
+          $ref: '#/components/schemas/RecordMatchString'
+    created:
+      type: string
+      description: The date and time this object was created
+      format: date-time
+    schemas-url:
+      type: string
+      description: A valid URL
+      pattern: ^http(s)?:\/\/[a-z0-9-_]+(\.[a-z0-9-_]+)+(/.*)?$
+      minLength: 8
+      maxLength: 2048
+    screeningType:
+      type: string
+      enum:
+      - MATCH
+      - VMSS
+      - MATCH_PRO
+    ErrorMessage:
+      description: Error message in case `screeningStatus` is 'failed'.
+      type: string
+    visaPrincipalName:
+      type: string
+      pattern: ^[\w ,\.\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u00FF-]+$
+      minLength: 1
+      maxLength: 15
+    NameOfPeopleAndPlaces:
+      type: string
+      pattern: ^[\w ,\.\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u00FF-]+$
+      minLength: 1
+      maxLength: 120
+    MatchProPrincipalResult:
+      type: object
+      required:
+      - firstName
+      - lastName
+      - address
+      - phoneNumber
+      properties:
+        firstName:
+          $ref: '#/components/schemas/RecordMatchString'
+        lastName:
+          $ref: '#/components/schemas/RecordMatchString'
+        address:
+          $ref: '#/components/schemas/AddressMatch'
+        phoneNumber:
+          $ref: '#/components/schemas/RecordMatchString'
+        email:
+          $ref: '#/components/schemas/RecordMatchString'
+    schemas-binKey:
+      description: A key assigned by Silverflow to uniquely identify a BIN.
+      type: string
+      pattern: ^bin-[a-zA-Z0-9]+$
+      minLength: 5
+      maxLength: 120
+    schemas-stateOrProvince:
+      allOf:
+      - $ref: '#/components/schemas/ExtendedNameOfPeopleAndPlaces'
+      - description: 'The state (US) or province (non-US) of the address. Clients not enrolled in the "extended character set beta" are still subject to the `^[\w ,\.\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u00FF-]+$` pattern for field input.
+
+          '
+    schemas-Address:
+      type: object
+      required:
+      - countryCode
+      - city
+      - line1
+      - postalCode
+      additionalProperties: false
+      description: 'A physical postal address
+
+        '
+      properties:
+        countryCode:
+          $ref: '#/components/schemas/CountryCode'
+        stateOrProvince:
+          $ref: '#/components/schemas/schemas-stateOrProvince'
+        city:
+          $ref: '#/components/schemas/schemas-city'
+        line1:
+          $ref: '#/components/schemas/schemas-line1'
+        line2:
+          $ref: '#/components/schemas/schemas-line2'
+        postalCode:
+          $ref: '#/components/schemas/schemas-postalCode'
+    MatchPrincipalName:
+      type: string
+      pattern: ^[\w ,\.\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u00FF-]+$
+      minLength: 1
+      maxLength: 40
+    MatchPrincipalResult:
+      type: object
+      required:
+      - firstName
+      - lastName
+      - address
+      - phoneNumber
+      properties:
+        firstName:
+          $ref: '#/components/schemas/RecordMatchString'
+        lastName:
+          $ref: '#/components/schemas/RecordMatchString'
+        address:
+          $ref: '#/components/schemas/AddressMatch'
+        phoneNumber:
+          $ref: '#/components/schemas/RecordMatchString'
+    MatchProScreeningDetail:
+      type: object
+      required:
+      - acquirerIdCode
+      - legalName
+      - address
+      - doingBusinessAsName
+      - merchantCategoryCode
+      - merchantPhoneNumber
+      - principals
+      - websiteUrl
+      description: 'Post an array of principals with all details to be screened for the merchant.
+
+        '
+      properties:
+        acquirerIdCode:
+          $ref: '#/components/schemas/schemas-acquirerIdCode'
+        legalName:
+          allOf:
+          - $ref: '#/components/schemas/ExtendedNameOfPeopleAndPlaces'
+          - description: The legal name of the Merchant. Clients not enrolled in the "extended character set beta" are still subject to the `^[\w ,\.\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u00FF-\/]+$` pattern for field input. LegalName will be trimmed if it is longer then 60 chars.
+        doingBusinessAsName:
+          $ref: '#/components/schemas/schemas-doingBusinessAsName'
+        merchantCategoryCode:
+          type: string
+          description: Assumed, trade or fictitious name of the merchant.
+          pattern: ^\d{4}$
+          minLength: 4
+          maxLength: 4
+        merchantPhoneNumber:
+          $ref: '#/components/schemas/businessPhoneNumber'
+          description: "The merchant's business phone number, including area code.\n  - For U.S. numbers\n    - Must be exactly 10 digits and cannot start with 0 or 1.\n  - For non-U.S. numbers\n    - Can be up to 25 digits. Do not include the country code. \n  - Formatting\n    - Digits only. Do not use symbols or formatting characters (e.g., parentheses, spaces, or dashes).\n"
+        address:
+          $ref: '#/components/schemas/schemas-Address'
+        websiteUrl:
+          $ref: '#/components/schemas/schemas-url'
+        principals:
+          type: array
+          description: The principals of the business
+          minItems: 1
+          maxItems: 5
+          items:
+            $ref: '#/components/schemas/MatchProPrincipal'
+    MatchProAddressInput:
+      type: object
+      required:
+      - countryCode
+      - city
+      - line1
+      - postalCode
+      additionalProperties: false
+      description: 'A physical postal address
+
+        '
+      properties:
+        countryCode:
+          $ref: '#/components/schemas/CountryCodeInput'
+        stateOrProvince:
+          $ref: '#/components/schemas/schemas-stateOrProvince'
+        city:
+          type: string
+          pattern: ^[\x20-\x7E\xA0-\xA3\xA5\xA7\xA9-\xB3\xB5-\xB7\xB9-\xBB\xBF-\xFF\u20AC\u0160\u0161\u017D\u017E\u0152\u0153\u0178]+$
+          minLength: 1
+          maxLength: 40
+          description: 'The city of the address. Clients not enrolled in the "extended character set beta" are still subject to the `^[\w ,\.\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u00FF-]+$` pattern for field input.
+
+            '
+        line1:
+          type: string
+          pattern: ^[\x20-\x7E\xA0-\xA3\xA5\xA7\xA9-\xB3\xB5-\xB7\xB9-\xBB\xBF-\xFF\u20AC\u0160\u0161\u017D\u017E\u0152\u0153\u0178]+$
+          minLength: 1
+          maxLength: 60
+          description: 'Address line 1. Clients not enrolled in the "extended character set beta" are still subject to the `^[\w ,\.\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u00FF-]+$` pattern for field input.
+
+            '
+        line2:
+          type: string
+          pattern: ^[\x20-\x7E\xA0-\xA3\xA5\xA7\xA9-\xB3\xB5-\xB7\xB9-\xBB\xBF-\xFF\u20AC\u0160\u0161\u017D\u017E\u0152\u0153\u0178]+$
+          minLength: 1
+          maxLength: 60
+          description: 'Address line 2. Clients not enrolled in the "extended character set beta" are still subject to the `^[\w ,\.\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u00FF-]+$` pattern for field input.
+
+            '
+        postalCode:
+          $ref: '#/components/schemas/schemas-postalCode'
+    terminatedByAcquirerIdCode:
+      type: string
+      description: AcquirerIdCode that terminated the merchant.
+    MatchProScreeningResult:
+      type: object
+      required:
+      - acquirerIdCode
+      - legalName
+      - address
+      - principals
+      - doingBusinessAsName
+      - websiteUrl
+      properties:
+        acquirerIdCode:
+          $ref: '#/components/schemas/terminatedByAcquirerIdCode'
+        legalName:
+          $ref: '#/components/schemas/RecordMatchString'
+        doingBusinessAsName:
+          $ref: '#/components/schemas/RecordMatchString'
+        merchantCategoryCode:
+          $ref: '#/components/schemas/RecordMatchString'
+        merchantPhoneNumber:
+          $ref: '#/components/schemas/RecordMatchString'
+        address:
+          $ref: '#/components/schemas/AddressMatch'
+        websiteUrl:
+          $ref: '#/components/schemas/RecordMatchStringArray'
+        principals:
+          type: array
+          items:
+            $ref: '#/components/schemas/MatchProPrincipalResult'
+    merchantKey:
+      description: Uniquely identifies a Merchant
+      type: string
+      pattern: ^mct-[a-zA-Z0-9]+$
+      minLength: 5
+      maxLength: 120
+      example: mct-123dinkqFqfq3q2f2adfa
+    MatchScreeningResult:
+      type: object
+      required:
+      - acquirerIdCode
+      - legalName
+      - address
+      - principals
+      - doingBusinessAsName
+      - websiteUrl
+      properties:
+        acquirerIdCode:
+          $ref: '#/components/schemas/terminatedByAcquirerIdCode'
+        legalName:
+          $ref: '#/components/schemas/RecordMatchString'
+        doingBusinessAsName:
+          $ref: '#/components/schemas/RecordMatchString'
+        address:
+          $ref: '#/components/schemas/AddressMatch'
+        websiteUrl:
+          $ref: '#/components/schemas/RecordMatchStringArray'
+        principals:
+          type: array
+          items:
+            $ref: '#/components/schemas/MatchPrincipalResult'
+    Page:
+      type: object
+      properties:
+        offsetToken:
+          $ref: '#/components/schemas/offsetToken'
+        moreItems:
+          $ref: '#/components/schemas/moreItems'
+    MatchPrincipal:
+      type: object
+      required:
+      - firstName
+      - lastName
+      - phoneNumber
+      - address
+      description: 'A principal of the business. Could be a director, founder, C-level executive, et cetera.
+
+        '
+      properties:
+        firstName:
+          allOf:
+          - description: First name of the principal legal owner of the merchant
+          - $ref: '#/components/schemas/NameOfPeopleAndPlaces'
+        lastName:
+          allOf:
+          - description: Last name of the principal legal owner of the merchant
+          - $ref: '#/components/schemas/NameOfPeopleAndPlaces'
+        phoneNumber:
+          $ref: '#/components/schemas/businessPhoneNumber'
+          description: The Business or Merchant's phone number, including the area code. Within the USA, phone numbers have a length of 10, and for outside the US, it can be any length with a maximum of 12 digits. Within the U.S. phone numbers can not start with 0 or 1. If the number is outside the U.S. region; do not include the country code. The phone number must be digits only, with no format characters such as parenthesis or dashes.
+        address:
+          $ref: '#/components/schemas/schemas-Address'
+    countryCodeAlpha2:
+      type: string
+      pattern: ^[A-Z]+$
+      minLength: 2
+      maxLength: 2
+      description: 'The ISO code of the country.
+
+
+        **European ISO Country Codes**
+
+
+        <details>
+
+
+        | Country | Alpha-2 code | Numeric |
+
+        | ------- | ------------ | ------- |
+
+        | Åland Islands | AX | 248 |
+
+        | Andorra | AD | 020 |
+
+        | Austria | AT | 040 |
+
+        | Belgium | BE | 056 |
+
+        | Cyprus | CY | 196 |
+
+        | Estonia | EE | 233 |  |
+
+        | Finland | FI | 246 |
+
+        | France | FR | 250 |
+
+        | French Guiana | GF | 254 |
+
+        | French Southern Territories | TF | 260 |
+
+        | Germany | DE | 280 |
+
+        | Greece | GR | 300 |
+
+        | Guadeloupe | GP | 312 |
+
+        | Ireland | IE | 372 |
+
+        | Italy | IT | 380 |
+
+        | Kosovo, United Nations Mission in Kosovo (UNMIK) | QZ | 900 |
+
+        | Latvia | LV | 428 |
+
+        | Lithuania | LT | 440 |
+
+        | Luxembourg | LU | 442 |
+
+        | Malta | MT | 470 |
+
+        | Martinique | MQ | 474 |
+
+        | Mayotte | YT | 175 |
+
+        | Monaco | MC | 492 |
+
+        | Montenegro | ME | 499 |
+
+        | Netherlands | NL | 528 |
+
+        | Portugal | PT | 620 |
+
+        | Reunion | RE | 638 |
+
+        | Saint Barthélemy | BL | 652 |
+
+        | Saint Martin (French Part) | MF | 663 |
+
+        | San Marino | SM | 674 |
+
+        | Slovakia | SK | 703 |
+
+        | Slovenia | SI | 705 |
+
+        | Spain | ES | 724 |
+
+        | St. Pierre and Miquelon | PM | 666 |
+
+        | Vatican City State (Holy See) | VA | 336 |
+
+
+        </details>
+
+
+        **US ISO Country Codes**
+
+
+        <details>
+
+
+        | Country | Alpha-2 code | Numeric |
+
+        | ------- | ------------ | ------- |
+
+        | American Samoa | AS | 016 |
+
+        | Bonaire, St. Eusasius and Saba | BQ | 535 |
+
+        | British Indian Ocean Territory | IO | 086 |
+
+        | Ecuador | EC | 218 |
+
+        | Guam | GU | 316 |
+
+        | Marshall Islands | MH | 584 |
+
+        | Micronesia, Federated States of | FM | 583 |
+
+        | Northern Mariana Islands | MP | 580 |
+
+        | Palau | PW | 585 |
+
+        | Palestine, State of | PS | 275 |
+
+        | Puerto Rico | PR | 630 |
+
+        | Timor-Leste | TP | 626 |
+
+        | Turks and Caicos Islands | TC | 796 |
+
+        | U.S. Minor Outlying Islands | UM | 581 |
+
+        | United States | US | 840 |
+
+        | Virgin Islands, British | VG | 092 |
+
+        | Virgin Islands, U.S. | VI | 850 |
+
+
+        </details>
+
+
+        **Other ISO Country Codes**
+
+
+        <details>
+
+
+        | Country | Alpha-2 code | Numeric |
+
+        | ------- | ------------ | ------- |
+
+        | Afghanistan | AF | 004 |
+
+        | Albania | AL | 008 |
+
+        | Algeria | DZ | 012 |
+
+        | Angola | AO | 024 |
+
+        | Anguilla | AI | 660 |
+
+        | Antarctica | AQ | 010 |
+
+        | Antigua and Barbuda | AG | 028 |
+
+        | Argentina | AR | 032 |
+
+        | Armenia | AM | 051 |
+
+        | Aruba | AW | 533 |
+
+        | Australia | AU | 036 |
+
+        | Azerbaijan | AZ | 031 |
+
+        | Bahamas | BS | 044 |
+
+        | Bahrain | BH | 048 |
+
+        | Bangladesh | BD | 050 |
+
+        | Barbados | BB | 052 |
+
+        | Belarus | BR | 112 |
+
+        | Belize | BZ | 084 |
+
+        | Benin | BJ | 204 |
+
+        | Bermuda | BM | 060 |
+
+        | Bhutan | BT | 064 |
+
+        | Bolivia, Plurinational State of | BO | 068 |
+
+        | Bosnia and Herzegovina | BA | 070 |
+
+        | Botswana | BW | 072 |
+
+        | Bouvet Island | BV | 074 |
+
+        | Brazil | BR | 076 |
+
+        | Brunei Darussalam | BN | 096 |
+
+        | Bulgaria | BG | 100 |
+
+        | Burkina Faso | BF | 854 |
+
+        | Burundi | BI | 108 |
+
+        | Cambodia | KH | 116 |
+
+        | Cameroon | CM | 120 |
+
+        | Canada | CA | 124 |
+
+        | Cape Verde | CV | 132 |
+
+        | Cayman Islands | KY | 136 |
+
+        | Central African Republic | CF | 140 |
+
+        | Chad | TD | 148 |
+
+        | Chile | CL | 152 |
+
+        | China | CN | 156 |
+
+        | Christmas Island | CX | 162 |
+
+        | Cocos (Keeling) Islands | CC | 166 |
+
+        | Colombia | CO | 170 |
+
+        | Comoros | KM | 174 |
+
+        | Congo | CG | 178 |
+
+        | Cook Islands | CK | 184 |
+
+        | Costa Rica | CR | 188 |
+
+        | Côte D''Ivoire | CI | 384 |
+
+        | Croatia | HR | 191 |
+
+        | Cuba | CU | 192 |
+
+        | Curacao | CW | 531 |
+
+        | Czech Republic | CZ | 203 |
+
+        | Democratic Republic of the Congo | CD | 180 |
+
+        | Denmark | DK | 208 |
+
+        | Djibouti | DJ | 262 |
+
+        | Dominica | DM | 212 |
+
+        | Dominican Republic | DO | 214 |
+
+        | Egypt | EG | 818 |
+
+        | El Salvador | SV | 222 |
+
+        | Equatorial Guinea | GQ | 226 |
+
+        | Eritrea | ER | 232 |
+
+        | Ethiopia | ET | 230 |
+
+        | Falkland Islands (Malvinas) | FK | 238 |
+
+        | Faroe Islands | FO | 234 |
+
+        | Fiji | FJ | 242 |
+
+        | French Polynesia | PF | 258 |
+
+        | Gabon | GA | 266 |
+
+        | Gambia | GM | 270 |
+
+        | Georgia | GE | 268 |
+
+        | Ghana | GH | 288 |
+
+        | Gibraltar | GI | 292 |
+
+        | Greenland | GL | 304 |
+
+        | Grenada | GD | 308 |
+
+        | Guatemala | GT | 320 |
+
+        | Guernsey | GG | 831 |
+
+        | Guinea | GN | 324 |
+
+        | Guinea-Bissau | GW | 624 |
+
+        | Guyana | GY | 328 |
+
+        | Haiti | HT | 332 |
+
+        | Heard and McDonald Islands | HM | 334 |
+
+        | Honduras | HN | 340 |
+
+        | Hong Kong | HK | 344 |
+
+        | Hungary | HU | 348 |
+
+        | Iceland | IS | 352 |
+
+        | India | IN | 356 |
+
+        | Indonesia | ID | 360 |
+
+        | Iraq | IQ | 368 |
+
+        | Isle of Man | IM | 833 |
+
+        | Israel | IL | 376 |
+
+        | Jamaica | JM | 388 |
+
+        | Japan | JP | 392 |
+
+        | Jersey | JE | 832 |
+
+        | Jordan | JO | 400 |
+
+        | Kazakhstan | KZ | 398 |
+
+        | Kenya | KE | 404 |
+
+        | Kiribati | KI | 296 |
+
+        | Korea, Republic of | KR | 410 |
+
+        | Kuwait | KW | 414 |
+
+        | Kyrgyzstan | KG | 417 |
+
+        | Lao People''s Democratic Republic | LA | 418 |
+
+        | Lebanon | LB | 422 |
+
+        | Lesotho | LS | 426 |
+
+        | Liberia | LR | 430 |
+
+        | Libyan Arab Jamahiriya | LY | 434 |
+
+        | Liechtenstein | LI | 438 |
+
+        | Macao | MO | 446 |
+
+        | Macedonia | MK | 807 |
+
+        | Madagascar | MG | 450 |
+
+        | Malawi | MW | 454 |
+
+        | Malaysia | MY | 458 |
+
+        | Maldives | MV | 462 |
+
+        | Mali | ML | 466 |
+
+        | Mauritania | MR | 478 |
+
+        | Mauritius | MU | 480 |
+
+        | Mexico | MX | 484 |
+
+        | Moldova, Republic of | MD | 498 |
+
+        | Mongolia | MN | 496 |
+
+        | Montserrat | MS | 500 |
+
+        | Morocco | MA | 504 |
+
+        | Mozambique | MZ | 508 |
+
+        | Myanmar (effective 1 November 2012) | MM | 104 |
+
+        | Namibia | NA | 516 |
+
+        | Nauru | NR | 520 |
+
+        | Nepal | NP | 524 |
+
+        | Netherlands Antilles | AN | 530 |
+
+        | New Caledonia | NC | 540 |
+
+        | New Zealand | NZ | 554 |
+
+        | Nicaragua | NI | 558 |
+
+        | Niger | NE | 562 |
+
+        | Nigeria | NG | 566 |
+
+        | Niue | NU | 570 |
+
+        | Norfolk Island | NF | 574 |
+
+        | Norway | NO | 578 |
+
+        | Oman | OM | 512 |
+
+        | Pakistan | PK | 586 |
+
+        | Panama | PA | 591 |
+
+        | Papua New Guinea | PG | 598 |
+
+        | Paraguay | PY | 600 |
+
+        | Peru | PE | 604 |
+
+        | Philippines | PH | 608 |
+
+        | Pitcairn | PN | 612 |
+
+        | Poland | PL | 616 |
+
+        | Qatar | QA | 634 |
+
+        | Republic of South Sudan | SS | 728 |
+
+        | Romania | RO | 642 |
+
+        | Russian Federation | RU | 643 |
+
+        | Rwanda | RW | 646 |
+
+        | Samoa | WS | 882 |
+
+        | Sao Tome and Principe | ST | 678 |
+
+        | Saudi Arabia | SA | 682 |
+
+        | Senegal | SN | 686 |
+
+        | Serbia | RS | 688 |
+
+        | Seychelles | SC | 690 |
+
+        | Sierra Leone | SL | 694 |
+
+        | Singapore | SG | 702 |
+
+        | Sint Maarten (Dutch Part) | SX | 534 |
+
+        | Solomon Islands | SB | 090 |
+
+        | Somalia | SO | 706 |
+
+        | South Africa | ZA | 710 |
+
+        | South Georgia and the South Sandwich Islands | GS | 239 |
+
+        | Sri Lanka | LK | 144 |
+
+        | Saint Helena, Ascension and Tristan Da Cunha | SH | 654 |
+
+        | St. Kitts and Nevis | KN | 659 |
+
+        | St. Lucia | LC | 662 |
+
+        | St. Vincent and the Grenadines | VC | 670 |
+
+        | Suriname | SR | 740 |
+
+        | Svalbard and Jan Mayen | SJ | 744 |
+
+        | Swaziland | SZ | 748 |
+
+        | Sweden | SE | 752 |
+
+        | Switzerland | CH | 756 |
+
+        | Taiwan | TW | 158 |
+
+        | Tajikistan | TJ | 762 |
+
+        | Tanzania, United Republic of | TZ | 834 |
+
+        | Thailand | TH | 764 |
+
+        | Togo | TG | 768 |
+
+        | Tokelau | TK | 772 |
+
+        | Tonga | TO | 776 |
+
+        | Trinidad and Tobago | TT | 780 |
+
+        | Tunisia | TN | 788 |
+
+        | Turkey | TR | 792 |
+
+        | Turkmenistan | TM | 795 |
+
+        | Tuvalu | TV | 798 |
+
+        | Uganda | UG | 800 |
+
+        | Ukraine | UA | 804 |
+
+        | United Arab Emirates | AE | 784 |
+
+        | United Kingdom | GB | 826 |
+
+        | Uruguay | UY | 858 |
+
+        | Uzbekistan | UZ | 860 |
+
+        | Vanuatu | VU | 548 |
+
+        | Venezuela, Bolivarian Republic of | VE | 862 |
+
+        | Vietnam | VN | 704 |
+
+        | Wallis and Futuna | WF | 876 |
+
+        | Western Sahara | EH | 732 |
+
+        | Yemen | YE | 886 |
+
+        | Zambia | ZM | 894 |
+
+        | Zimbabwe | ZW | 716 |
+
+
+        </details>'
+      externalDocs:
+        description: Find more info here
+        url: https://www.iso.org/iso-3166-country-codes.html
+      example: NL
+    schemas-doingBusinessAsName:
+      allOf:
+      - description: Assumed, trade or fictitious name of the merchant. The name will be trimmed if greater than 70 (VMSS) or 60 (MATCH_PRO).
+      - $ref: '#/components/schemas/ExtendedNameOfPeopleAndPlaces'
+    countryCodeAlpha3:
+      type: string
+      pattern: ^[A-Z]+$
+      minLength: 3
+      maxLength: 3
+      description: 'The ISO code of the country.
+
+
+        **European ISO Country Codes**
+
+
+        <details>
+
+
+        | Country | Alpha-2 code | Numeric |
+
+        | ------- | ------------ | ------- |
+
+        | Åland Islands | AX | 248 |
+
+        | Andorra | AD | 020 |
+
+        | Austria | AT | 040 |
+
+        | Belgium | BE | 056 |
+
+        | Cyprus | CY | 196 |
+
+        | Estonia | EE | 233 |  |
+
+        | Finland | FI | 246 |
+
+        | France | FR | 250 |
+
+        | French Guiana | GF | 254 |
+
+        | French Southern Territories | TF | 260 |
+
+        | Germany | DE | 280 |
+
+        | Greece | GR | 300 |
+
+        | Guadeloupe | GP | 312 |
+
+        | Ireland | IE | 372 |
+
+        | Italy | IT | 380 |
+
+        | Kosovo, United Nations Mission in Kosovo (UNMIK) | QZ | 900 |
+
+        | Latvia | LV | 428 |
+
+        | Lithuania | LT | 440 |
+
+        | Luxembourg | LU | 442 |
+
+        | Malta | MT | 470 |
+
+        | Martinique | MQ | 474 |
+
+        | Mayotte | YT | 175 |
+
+        | Monaco | MC | 492 |
+
+        | Montenegro | ME | 499 |
+
+        | Netherlands | NL | 528 |
+
+        | Portugal | PT | 620 |
+
+        | Reunion | RE | 638 |
+
+        | Saint Barthélemy | BL | 652 |
+
+        | Saint Martin (French Part) | MF | 663 |
+
+        | San Marino | SM | 674 |
+
+        | Slovakia | SK | 703 |
+
+        | Slovenia | SI | 705 |
+
+        | Spain | ES | 724 |
+
+        | St. Pierre and Miquelon | PM | 666 |
+
+        | Vatican City State (Holy See) | VA | 336 |
+
+
+        </details>
+
+
+        **US ISO Country Codes**
+
+
+        <details>
+
+
+        | Country | Alpha-2 code | Numeric |
+
+        | ------- | ------------ | ------- |
+
+        | American Samoa | AS | 016 |
+
+        | Bonaire, St. Eusasius and Saba | BQ | 535 |
+
+        | British Indian Ocean Territory | IO | 086 |
+
+        | Ecuador | EC | 218 |
+
+        | Guam | GU | 316 |
+
+        | Marshall Islands | MH | 584 |
+
+        | Micronesia, Federated States of | FM | 583 |
+
+        | Northern Mariana Islands | MP | 580 |
+
+        | Palau | PW | 585 |
+
+        | Palestine, State of | PS | 275 |
+
+        | Puerto Rico | PR | 630 |
+
+        | Timor-Leste | TP | 626 |
+
+        | Turks and Caicos Islands | TC | 796 |
+
+        | U.S. Minor Outlying Islands | UM | 581 |
+
+        | United States | US | 840 |
+
+        | Virgin Islands, British | VG | 092 |
+
+        | Virgin Islands, U.S. | VI | 850 |
+
+
+        </details>
+
+
+        **Other ISO Country Codes**
+
+
+        <details>
+
+
+        | Country | Alpha-2 code | Numeric |
+
+        | ------- | ------------ | ------- |
+
+        | Afghanistan | AF | 004 |
+
+        | Albania | AL | 008 |
+
+        | Algeria | DZ | 012 |
+
+        | Angola | AO | 024 |
+
+        | Anguilla | AI | 660 |
+
+        | Antarctica | AQ | 010 |
+
+        | Antigua and Barbuda | AG | 028 |
+
+        | Argentina | AR | 032 |
+
+        | Armenia | AM | 051 |
+
+        | Aruba | AW | 533 |
+
+        | Australia | AU | 036 |
+
+        | Azerbaijan | AZ | 031 |
+
+        | Bahamas | BS | 044 |
+
+        | Bahrain | BH | 048 |
+
+        | Bangladesh | BD | 050 |
+
+        | Barbados | BB | 052 |
+
+        | Belarus | BR | 112 |
+
+        | Belize | BZ | 084 |
+
+        | Benin | BJ | 204 |
+
+        | Bermuda | BM | 060 |
+
+        | Bhutan | BT | 064 |
+
+        | Bolivia, Plurinational State of | BO | 068 |
+
+        | Bosnia and Herzegovina | BA | 070 |
+
+        | Botswana | BW | 072 |
+
+        | Bouvet Island | BV | 074 |
+
+        | Brazil | BR | 076 |
+
+        | Brunei Darussalam | BN | 096 |
+
+        | Bulgaria | BG | 100 |
+
+        | Burkina Faso | BF | 854 |
+
+        | Burundi | BI | 108 |
+
+        | Cambodia | KH | 116 |
+
+        | Cameroon | CM | 120 |
+
+        | Canada | CA | 124 |
+
+        | Cape Verde | CV | 132 |
+
+        | Cayman Islands | KY | 136 |
+
+        | Central African Republic | CF | 140 |
+
+        | Chad | TD | 148 |
+
+        | Chile | CL | 152 |
+
+        | China | CN | 156 |
+
+        | Christmas Island | CX | 162 |
+
+        | Cocos (Keeling) Islands | CC | 166 |
+
+        | Colombia | CO | 170 |
+
+        | Comoros | KM | 174 |
+
+        | Congo | CG | 178 |
+
+        | Cook Islands | CK | 184 |
+
+        | Costa Rica | CR | 188 |
+
+        | Côte D''Ivoire | CI | 384 |
+
+        | Croatia | HR | 191 |
+
+        | Cuba | CU | 192 |
+
+        | Curacao | CW | 531 |
+
+        | Czech Republic | CZ | 203 |
+
+        | Democratic Republic of the Congo | CD | 180 |
+
+        | Denmark | DK | 208 |
+
+        | Djibouti | DJ | 262 |
+
+        | Dominica | DM | 212 |
+
+        | Dominican Republic | DO | 214 |
+
+        | Egypt | EG | 818 |
+
+        | El Salvador | SV | 222 |
+
+        | Equatorial Guinea | GQ | 226 |
+
+        | Eritrea | ER | 232 |
+
+        | Ethiopia | ET | 230 |
+
+        | Falkland Islands (Malvinas) | FK | 238 |
+
+        | Faroe Islands | FO | 234 |
+
+        | Fiji | FJ | 242 |
+
+        | French Polynesia | PF | 258 |
+
+        | Gabon | GA | 266 |
+
+        | Gambia | GM | 270 |
+
+        | Georgia | GE | 268 |
+
+        | Ghana | GH | 288 |
+
+        | Gibraltar | GI | 292 |
+
+        | Greenland | GL | 304 |
+
+        | Grenada | GD | 308 |
+
+        | Guatemala | GT | 320 |
+
+        | Guernsey | GG | 831 |
+
+        | Guinea | GN | 324 |
+
+        | Guinea-Bissau | GW | 624 |
+
+        | Guyana | GY | 328 |
+
+        | Haiti | HT | 332 |
+
+        | Heard and McDonald Islands | HM | 334 |
+
+        | Honduras | HN | 340 |
+
+        | Hong Kong | HK | 344 |
+
+        | Hungary | HU | 348 |
+
+        | Iceland | IS | 352 |
+
+        | India | IN | 356 |
+
+        | Indonesia | ID | 360 |
+
+        | Iraq | IQ | 368 |
+
+        | Isle of Man | IM | 833 |
+
+        | Israel | IL | 376 |
+
+        | Jamaica | JM | 388 |
+
+        | Japan | JP | 392 |
+
+        | Jersey | JE | 832 |
+
+        | Jordan | JO | 400 |
+
+        | Kazakhstan | KZ | 398 |
+
+        | Kenya | KE | 404 |
+
+        | Kiribati | KI | 296 |
+
+        | Korea, Republic of | KR | 410 |
+
+        | Kuwait | KW | 414 |
+
+        | Kyrgyzstan | KG | 417 |
+
+        | Lao People''s Democratic Republic | LA | 418 |
+
+        | Lebanon | LB | 422 |
+
+        | Lesotho | LS | 426 |
+
+        | Liberia | LR | 430 |
+
+        | Libyan Arab Jamahiriya | LY | 434 |
+
+        | Liechtenstein | LI | 438 |
+
+        | Macao | MO | 446 |
+
+        | Macedonia | MK | 807 |
+
+        | Madagascar | MG | 450 |
+
+        | Malawi | MW | 454 |
+
+        | Malaysia | MY | 458 |
+
+        | Maldives | MV | 462 |
+
+        | Mali | ML | 466 |
+
+        | Mauritania | MR | 478 |
+
+        | Mauritius | MU | 480 |
+
+        | Mexico | MX | 484 |
+
+        | Moldova, Republic of | MD | 498 |
+
+        | Mongolia | MN | 496 |
+
+        | Montserrat | MS | 500 |
+
+        | Morocco | MA | 504 |
+
+        | Mozambique | MZ | 508 |
+
+        | Myanmar (effective 1 November 2012) | MM | 104 |
+
+        | Namibia | NA | 516 |
+
+        | Nauru | NR | 520 |
+
+        | Nepal | NP | 524 |
+
+        | Netherlands Antilles | AN | 530 |
+
+        | New Caledonia | NC | 540 |
+
+        | New Zealand | NZ | 554 |
+
+        | Nicaragua | NI | 558 |
+
+        | Niger | NE | 562 |
+
+        | Nigeria | NG | 566 |
+
+        | Niue | NU | 570 |
+
+        | Norfolk Island | NF | 574 |
+
+        | Norway | NO | 578 |
+
+        | Oman | OM | 512 |
+
+        | Pakistan | PK | 586 |
+
+        | Panama | PA | 591 |
+
+        | Papua New Guinea | PG | 598 |
+
+        | Paraguay | PY | 600 |
+
+        | Peru | PE | 604 |
+
+        | Philippines | PH | 608 |
+
+        | Pitcairn | PN | 612 |
+
+        | Poland | PL | 616 |
+
+        | Qatar | QA | 634 |
+
+        | Republic of South Sudan | SS | 728 |
+
+        | Romania | RO | 642 |
+
+        | Russian Federation | RU | 643 |
+
+        | Rwanda | RW | 646 |
+
+        | Samoa | WS | 882 |
+
+        | Sao Tome and Principe | ST | 678 |
+
+        | Saudi Arabia | SA | 682 |
+
+        | Senegal | SN | 686 |
+
+        | Serbia | RS | 688 |
+
+        | Seychelles | SC | 690 |
+
+        | Sierra Leone | SL | 694 |
+
+        | Singapore | SG | 702 |
+
+        | Sint Maarten (Dutch Part) | SX | 534 |
+
+        | Solomon Islands | SB | 090 |
+
+        | Somalia | SO | 706 |
+
+        | South Africa | ZA | 710 |
+
+        | South Georgia and the South Sandwich Islands | GS | 239 |
+
+        | Sri Lanka | LK | 144 |
+
+        | Saint Helena, Ascension and Tristan Da Cunha | SH | 654 |
+
+        | St. Kitts and Nevis | KN | 659 |
+
+        | St. Lucia | LC | 662 |
+
+        | St. Vincent and the Grenadines | VC | 670 |
+
+        | Suriname | SR | 740 |
+
+        | Svalbard and Jan Mayen | SJ | 744 |
+
+        | Swaziland | SZ | 748 |
+
+        | Sweden | SE | 752 |
+
+        | Switzerland | CH | 756 |
+
+        | Taiwan | TW | 158 |
+
+        | Tajikistan | TJ | 762 |
+
+        | Tanzania, United Republic of | TZ | 834 |
+
+        | Thailand | TH | 764 |
+
+        | Togo | TG | 768 |
+
+        | Tokelau | TK | 772 |
+
+        | Tonga | TO | 776 |
+
+        | Trinidad and Tobago | TT | 780 |
+
+        | Tunisia | TN | 788 |
+
+        | Turkey | TR | 792 |
+
+        | Turkmenistan | TM | 795 |
+
+        | Tuvalu | TV | 798 |
+
+        | Uganda | UG | 800 |
+
+        | Ukraine | UA | 804 |
+
+        | United Arab Emirates | AE | 784 |
+
+        | United Kingdom | GB | 826 |
+
+        | Uruguay | UY | 858 |
+
+        | Uzbekistan | UZ | 860 |
+
+        | Vanuatu | VU | 548 |
+
+        | Venezuela, Bolivarian Republic of | VE | 862 |
+
+        | Vietnam | VN | 704 |
+
+        | Wallis and Futuna | WF | 876 |
+
+        | Western Sahara | EH | 732 |
+
+        | Yemen | YE | 886 |
+
+        | Zambia | ZM | 894 |
+
+        | Zimbabwe | ZW | 716 |
+
+
+        </details>'
+      externalDocs:
+        description: Find more info here
+        url: https://www.iso.org/iso-3166-country-codes.html
+      example: NLD
+    schemas-line1:
+      allOf:
+      - $ref: '#/components/schemas/ExtendedNameOfPeopleAndPlaces'
+      - description: 'Address line 1. Clients not enrolled in the "extended character set beta" are still subject to the `^[\w ,\.\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u00FF-]+$` pattern for field input.
+
+          '
+    schemas-ProblemDetail:
+      type: object
+      description: 'The ''problem detail'' object relays detailed information about the error that occurred. It is defined
+
+        by [RFC 7807 - Problem Details for HTTP APIs](https://tools.ietf.org/html/rfc7807).
+
+
+        Note that additional properties may be used to relay error specific information. For instance,
+
+        A Bad Request error may hold information about the individual validation errors found in the request.
+
+        '
+      properties:
+        type:
+          type: string
+          description: 'An absolute URI that identifies the problem type.
+
+            '
+          default: about:blank
+          example: https://api.silverflow.co/problem/constraint-violation
+        title:
+          type: string
+          description: 'A short, summary of the problem type. Written in english and readable
+
+            for engineers (usually not suited for non technical stakeholders and
+
+            not localized);
+
+            '
+          example: Service Unavailable
+        status:
+          type: integer
+          format: int32
+          description: 'The HTTP status code generated by the origin server for this occurrence
+
+            of the problem.
+
+            '
+          minimum: 100
+          maximum: 599
+          example: 503
+        detail:
+          type: string
+          description: 'A human readable explanation specific to this occurrence of the
+
+            problem.
+
+            '
+          example: Connection to database timed out
+        instance:
+          type: string
+          description: 'An absolute URI that identifies the specific occurrence of the problem.
+
+            It may or may not yield further information if dereferenced.
+
+            '
+      additionalProperties: true
+      example:
+        type: https://api.silverflow.co/problem/bad-request
+        title: Bad Request
+        status: 400
+        detail: The request could not be processed as it contained an invalid request entity
+        instance: https://api.silverflow.co/v1/merchants/mct-1hPdFqhgstYTUhlphPDp
+        validationErrors:
+        - The value of property 'status' should be one of 'idle', 'active' or 'archived'
+        - The value of property 'tags.0.businessId' must not be longer than 255 characters
+    ScreeningResultsPage:
+      allOf:
+      - $ref: '#/components/schemas/Page'
+      - type: object
+        required:
+        - screeningResults
+        properties:
+          screeningResults:
+            type: array
+            items:
+              $ref: '#/components/schemas/screeningResult'
+    CountryCodeInput:
+      oneOf:
+      - $ref: '#/components/schemas/CountryCodeAlpha3'
+      - $ref: '#/components/schemas/CountryCodeAlpha2'
+      - $ref: '#/components/schemas/CountryCodeNumeric'
+    lastModified:
+      type: string
+      description: The date and time this object was last modified
+      format: date-time
+    screeningStatus:
+      description: Status of the screening request
+      type: string
+      enum:
+      - pending
+      - completed
+      - failed
+    VmssPrincipalResult:
+      type: object
+      required:
+      - firstName
+      - lastName
+      properties:
+        firstName:
+          $ref: '#/components/schemas/RecordMatchString'
+        lastName:
+          $ref: '#/components/schemas/RecordMatchString'
+    schemas-postalCode:
+      type: string
+      pattern: ^[A-Z0-9]+([ -][A-Z0-9]+)?$
+      minLength: 1
+      maxLength: 10
+      description: 'The postal code of the address. Clients not enrolled in the "extended character set beta" are still subject to the `^[A-Z0-9]+(\ [A-Z0-9]*)?$` pattern for field input.
+
+        '
+      example:
+      - 1114 AA
+      - 1115SB
+      - EC1A 1BB
+      - 123-456
+      - M1 1AE
+    VmssScreeningDetail:
+      type: object
+      required:
+      - bid
+      - doingBusinessAsName
+      - address
+      - principals
+      - businessPhoneNumbers
+      - tradeOverInternet
+      - websiteUrl
+      - businessCategory
+      description: 'Post an array of principals with all details to be screened for the merchant acceptor.
+
+        '
+      properties:
+        bid:
+          $ref: '#/components/schemas/bid'
+        doingBusinessAsName:
+          $ref: '#/components/schemas/vmssDoingBusinessAsName'
+        address:
+          $ref: '#/components/schemas/schemas-Address'
+        businessPhoneNumbers:
+          type: array
+          description: Additional phone numbers of the merchant including the area code.
+          minItems: 1
+          maxItems: 5
+          items:
+            $ref: '#/components/schemas/businessPhoneNumber'
+        websiteUrl:
+          $ref: '#/components/schemas/schemas-url'
+        tradeOverInternet:
+          $ref: '#/components/schemas/tradeOverInternet'
+        businessCategory:
+          $ref: '#/components/schemas/businessCategory'
+          description: Category of the business
+        principals:
+          type: array
+          description: The principals of the business
+          minItems: 1
+          maxItems: 5
+          items:
+            $ref: '#/components/schemas/VmssPrincipal'
+    matchType:
+      type: string
+      enum:
+      - none
+      - partial
+      - phonetic
+      - exact
+    CountryCodeAlpha3:
+      type: object
+      required:
+      - alpha3
+      additionalProperties: false
+      properties:
+        alpha3:
+          $ref: '#/components/schemas/countryCodeAlpha3'
+    agentKey:
+      description: Uniquely identifies an Agent
+      type: string
+      pattern: ^cgt-[a-zA-Z0-9]+|current$
+      example: cgt-1UF2NafdfrdPMf2XrS2
+  responses:
+    responses-ConflictError:
+      description: The request could not be completed due to a conflict with the current state of the resources involved in the request.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/schemas-ProblemDetail'
+    responses-ForbiddenError:
+      description: The authenticated client is forbidden to make the request for the resource identified.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/schemas-ProblemDetail'
+          example:
+            type: https://datatracker.ietf.org/doc/html/rfc2616#section-10.4.4
+            title: Forbidden
+            status: 403
+            detail: The server is refusing to execute the request for the current authenticated user
+            instance: https://api.silverflow.co/v1/merchants/mct-1hPdFqhgstYTUhlphPDp
+    responses-TooManyRequestsError:
+      description: The number of requests (per minute) has exceeded the configured maximum
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/schemas-ProblemDetail'
+          example:
+            type: https://api.silverflow.co/problem/too-many-requests
+            title: Too Many Requests
+            status: 429
+            detail: The number of requests performed by the client has exceeded the configured maximum for a given period
+    responses-UnauthorizedError:
+      description: Authentication information is missing or invalid
+      headers:
+        WWW_Authenticate:
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/schemas-ProblemDetail'
+          example:
+            type: https://datatracker.ietf.org/doc/html/rfc2616#section-10.4.2
+            title: Unauthorized
+            status: 401
+            detail: The credentials supplied in the request are either missing, invalid, or not applicable in the current scope
+    responses-NotFoundError:
+      description: The requested resource was not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/schemas-ProblemDetail'
+          example:
+            type: https://datatracker.ietf.org/doc/html/rfc2616#section-10.4.5
+            title: Not Found
+            status: 404
+            detail: The entity referenced in the request could not be found
+            instance: https://api.silverflow.co/v1/merchants/mct-1hPdFqhgstYTUhlphPDp
+    InvalidInputError:
+      description: The request body was malformed
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/InvalidInputErrorDetails'
+          example:
+            type: /silverflow/problems/invalid-input
+            title: Invalid Input
+            status: 400
+            detail: The request does not adhere to the defined API schema.
+            instance: /silverflow/d2356c5d-4081-427d-b86e-4f098f0be84a
+            validationErrors:
+            - path: /screenings
+              message: '''screeningType'' must be equal to one of the allowed values: MATCH_PRO, VMSS.'
+  parameters:
+    screeningKey:
+      name: screeningKey
+      description: 'Immutable, unique identifier of the screening
+
+        '
+      in: path
+      required: true
+      schema:
+        $ref: '#/components/schemas/screeningKey'
+    offsetToken:
+      name: offsetToken
+      description: The offset token. This token is returned in the response of previous request.
+      in: query
+      required: false
+      schema:
+        $ref: '#/components/schemas/offsetToken'
+    to:
+      name: to
+      description: Include only items that have a created date _less than_ the specified date
+      in: query
+      required: false
+      schema:
+        type: string
+        format: date-time
+      example: '2022-08-15T14:15:23Z'
+      allowReserved: true
+    from:
+      name: from
+      description: Include only items that have a created date _greater than or equal to_ the specified date
+      in: query
+      required: false
+      schema:
+        type: string
+        format: date-time
+      example: '2022-08-13T14:15:23Z'
+      allowReserved: true
+    sortOrder:
+      name: sortOrder
+      description: The sort order, __asc__ending or __desc__ending
+      in: query
+      required: false
+      schema:
+        type: string
+        enum:
+        - asc
+        - desc
+      example: desc
+    limit:
+      name: limit
+      description: The number of items to return
+      in: query
+      required: false
+      schema:
+        type: integer
+        format: int32
+        minimum: 1
+        maximum: 100
+        default: 10
+      example: 1
+  securitySchemes:
+    ApiKey:
+      description: "The primary method of authenticating to the Silverflow API is through API keys.\n\nAPI keys can be created by calling the [createApiKey](#operation/createApiKey) endpoint. You can create up to 40 API keys and also update and delete them, allowing for _credential rotation_.\n\nThe _Agent Activation_ process will generate an initial API Key for you. See [Activate Agent](#section/Getting-Started).\n\nA call to the [createApiKey](#operation/createApiKey) endpoint will return the following structure:\n\n```json\n{\n    \"key\": \"apk-1wtRxni5IsPsSpBLWpwr\",\n    \"status\": \"active\",\n    \"agentKey\": \"cgt-1wtRvFLIjDOyyUR5Q2LB\",\n    \"description\": \"Data lake API key\",\n    \"permissions\": [\n        \"charges:List\",\n        \"reports:All\"\n    ],\n    \"created\": \"2021-06-22T11:21:45.115Z\",\n    \"secret\": \"FWtnOOHAjbD6rNxWWEeVOCj7JXSEPGJQ\",\n    \"version\": 1\n}\n```\n\n> **Important:** The `secret` is only returned once in the response to the `createApiKey` call.\n\nOnce created, the `key` and `secret` fields from the API key must be used in the HTTP `Authorization` header using the `Basic` scheme.\nThe Basic scheme requires a **username** and **password** to be specified, separated by a `:` (colon) and Base64 encoded.\n\nUse the following values from the API key to construct a Basic authentication header:\n\n| Basic field | API key field | Example |\n| ----------- | ------------- | ------- |\n| username | `key` | `apk-1wtRxni5IsPsSpBLWpwr` |\n| password | `secret` | `FWtnOOHAjbD6rNxWWEeVOCj7JXSEPGJQ` |\n\nIn pseudo-code a valid HTTP Basic Authentication header would be constructed as follows:\n\n```ts\nconst apiKeyId = \"apk-1wtRxni5IsPsSpBLWpwr\";\nconst apiKeySecret = \"FWtnOOHAjbD6rNxWWEeVOCj7JXSEPGJQ\";\nconst authnValue = \"Basic \" + base64Encode(apiKeyId + \":\" + apiKeySecret);\nrequest.setHeader(\"Authorization\", authnValue);\n```\n\nUsing the values from the example a valid HTTP request would look like the following:\n\n```http\nGET /v1/agents/current HTTP/1.1\nAccept: application/json\nAuthorization: Basic YXBrLTF3dFJ4bmk1SXNQc1NwQkxXcHdyOkZXdG5PT0hBamJENnJOeFdXRWVWT0NqN0pYU0VQR0pR\n```\n\nMore information on the Basic scheme can be found in [RFC-7617 - The 'Basic' HTTP Authentication Scheme](https://datatracker.ietf.org/doc/html/rfc7617)."
+      type: http
+      scheme: basic
+    BearerToken:
+      description: 'Bearer tokens are temporary security credentials that can be used to authorize ''third parties'' (bearers) access to the Silverflow API on behalf of the agent.
+
+
+        These tokens are created by calling the [createAgentBearerToken](#operation/createAgentBearerToken) endpoint.
+
+
+        Once created the `token` field must be used in the HTTP `Authorization` header using the `Bearer` scheme.
+
+        Here''s an example of an HTTP request with a bearer token:
+
+
+        ```http
+
+        GET /v1/merchants/mct-1hPdFhmgaBzMS191nIbJ HTTP/1.1
+
+        Accept: application/json
+
+        Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...40EFOgxf_3I6mPZ16bXqHd5tUyApgl0mNOAXPm5AhnA
+
+
+        ```
+
+
+        More information on the Bearer scheme can be found in [RFC-6750 - The OAuth 2.0 Authorization Framework: Bearer Token Usage](https://datatracker.ietf.org/doc/html/rfc6750).'
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+    MutualTLS:
+      type: apiKey
+      in: header
+      name: '-'
+      description: 'The client must set up mTLS connection with a valid X.509 client certificate signed by a customer-provided CA (certificate authority) that is registered to a specific agent. The customer-provided CA certificate must be shared and added to Silverflow''s trust store prior to calling endpoints.
+
+
+        Certificate validation happens at the transport layer during TLS handshake. Tenant verification is performed by matching the agent key embedded in the client certificate against the agent key embedded in the trusted CA.
+
+        '
+x-refined-from:
+- silverflow-openapi.yml
+- silverflow-openapi.yml
+x-tagGroups:
+- name: ''
+  tags:
+  - Introduction
+  - Release Notes
+- name: Accounts
+  tags:
+  - Agents
+  - API Keys
+  - Bins
+  - Merchants
+  - Merchant Acceptors
+  - Enrollments
+  - Screenings
+- name: Event Notifications
+  tags:
+  - Event Subscriptions
+  - Charges Events
+  - Disputes Events
+  - Fraud Notification Events
+  - Processor Tokens Events
+  - Network Tokens Events
+  - Report Events
+  - Distribution Events
+  - AMMF Submission Events
+  - Reconciliation Events
+  - Clearing Events
+- name: 3DS Authentication
+  tags:
+  - 3DS Authentication
+- name: BEP Authentication
+  tags:
+  - BEP Authentication
+- name: Tokenization
+  tags:
+  - Processor Tokenization
+  - Network Tokenization
+- name: Charges
+  tags:
+  - Create Charges
+  - Create Recurring
+  - Retrieve Charges
+  - Charge Actions
+- name: Terminal-To-Cloud
+  tags:
+  - Create POS Charges
+  - Retrieve POS Charges
+  - POS Charge Actions
+- name: Card Management
+  tags:
+  - Card Management
+- name: Disputes
+  tags:
+  - Disputes
+  - Documents
+- name: Fraud Notifications
+  tags:
+  - Fraud Notifications
+- name: Card Info
+  tags:
+  - Card Info
+- name: Currency Conversion Rates
+  tags:
+  - Currency Conversion Rates
+- name: Fees
+  tags:
+  - Fees
+- name: Reconciliation
+  tags:
+  - Reconciliation Details
+  - Network Funds Transfers
+- name: Reports
+  tags:
+  - Reconciliation Reports
+  - Settlement Reports
+  - Card Network Reports
+  - Dispute Reports
+  - Fraud Notifications Reports
+  - Charges Reports
+  - Scheme Fee Reports
+  - Retrieve Reports
+  - Report Scheduling
+  - Distributions
+- name: Transaction Risk Assessment
+  tags:
+  - Transaction Risk Assessment
+- name: File Subscriptions
+  tags:
+  - File Subscriptions
