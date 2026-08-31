@@ -35,6 +35,19 @@ tags:
 - Payments
 - Card Processing
 - Acquiring
+- Financial-Services
+- Tokenization
+- 3D Secure
+- Disputes
+- Chargebacks
+- Interchange
+- Reconciliation
+- Point-of-Sale
+- Netherlands
+tags_raw:
+- Payments
+- Card Processing
+- Acquiring
 - Financial Services
 - Tokenization
 - 3-D Secure
@@ -159,6 +172,8 @@ apis:
   humanURL: https://docs.silverflow.com/
   baseURL: https://eu-west-1.api.silverflow.com/v1
   tags:
+  - APIKeys
+  tags_raw:
   - API Keys
   properties:
   - type: OpenAPI
