@@ -1,13 +1,13 @@
 openapi: 3.2.0
 info:
-  title: Silverflow File Subscriptions API
+  description: '**This OpenAPI specification cannot be used for code generation.** Please reach out to your TAM regarding code generation using the API Spec.'
   version: 1.417.0
+  title: Silverflow File Subscriptions API
   contact:
     name: API Support
     email: support@silverflow.com
   license:
     name: Commercial
-  description: 'Operations tagged File Subscriptions across 2 of this provider''s published API definitions: silverflow-openapi.yml, silverflow-openapi.yml. Each path carries the servers of the definition it was published in.'
 servers:
 - url: https://eu-west-1.api.silverflow.com/v1
   description: Production URL for Europe - Equivalent to https://api.silverflow.co/v1
@@ -26,7 +26,10 @@ paths:
     get:
       operationId: ListFileSubscriptions
       summary: List File Subscriptions [EXPERIMENTAL]
-      description: "Retrieves all file subscriptions for the authenticated agent. \n\nRequires the `fileSubscription:List` permission.\n"
+      description: 'Retrieves all file subscriptions for the authenticated agent.
+
+
+        Requires the `fileSubscription:List` permission.'
       tags:
       - File Subscriptions
       responses:
@@ -69,9 +72,7 @@ paths:
         Note: Distributions configured for email deliveries are not supported.
 
 
-        Requires the `fileSubscription:Create` permission.
-
-        '
+        Requires the `fileSubscription:Create` permission.'
       tags:
       - File Subscriptions
       requestBody:
@@ -117,13 +118,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/schemas-InternalServerError'
-    servers:
-    - url: https://eu-west-1.api.silverflow.com/v1
-      description: Production URL for Europe - Equivalent to https://api.silverflow.co/v1
-    - url: https://us-east-2.api.silverflow.com/v1
-      description: Production URL for North America
-    - url: https://eu-west-1.api-sbx.silverflow.com/v1
-      description: Sandbox URL - Equivalent to https://api-sbx.silverflow.co/v1
   /fileSubscription/{subscriptionKey}:
     put:
       operationId: PutFileSubscription
@@ -134,9 +128,7 @@ paths:
         Note: Distributions configured for email deliveries are not supported.
 
 
-        Requires the `fileSubscription:Update` permission.
-
-        '
+        Requires the `fileSubscription:Update` permission.'
       tags:
       - File Subscriptions
       parameters:
@@ -202,9 +194,7 @@ paths:
         and can no longer be used for file processing.
 
 
-        Requires the `fileSubscription:Delete` permission.
-
-        '
+        Requires the `fileSubscription:Delete` permission.'
       tags:
       - File Subscriptions
       parameters:
@@ -246,176 +236,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/schemas-InternalServerError'
-    servers:
-    - url: https://eu-west-1.api.silverflow.com/v1
-      description: Production URL for Europe - Equivalent to https://api.silverflow.co/v1
-    - url: https://us-east-2.api.silverflow.com/v1
-      description: Production URL for North America
-    - url: https://eu-west-1.api-sbx.silverflow.com/v1
-      description: Sandbox URL - Equivalent to https://api-sbx.silverflow.co/v1
 components:
   schemas:
-    DistributionKey:
-      type: string
-      pattern: ^dst-[a-zA-Z0-9]+$
-      minimum: 10
-      maximum: 120
-      description: Key of the distribution where files will be sent.
-    ListFileSubscriptionsResponse:
-      type: object
-      required:
-      - subscriptions
-      properties:
-        subscriptions:
-          type: array
-          items:
-            $ref: '#/components/schemas/FileSubscription'
-    BadRequestError:
-      type: object
-      oneOf:
-      - $ref: '#/components/schemas/schemas-InvalidInputError'
-      - $ref: '#/components/schemas/schemas-InvalidRequestError'
-    schemas-InternalServerError:
-      type: object
-      required:
-      - type
-      - title
-      - status
-      - detail
-      - instance
-      properties:
-        type:
-          allOf:
-          - $ref: '#/components/schemas/errorType'
-          - enum:
-            - /silverflow/problems/internal-server-error
-        title:
-          allOf:
-          - $ref: '#/components/schemas/errorTitle'
-          - enum:
-            - Internal Server Error
-        status:
-          allOf:
-          - $ref: '#/components/schemas/components-schemas-errorStatus'
-          - enum:
-            - 500
-        detail:
-          $ref: '#/components/schemas/errorDetail'
-        instance:
-          $ref: '#/components/schemas/errorInstance'
-    errorTitle:
-      type: string
-      description: 'A short, human-readable summary of the problem type. It does not change from occurrence to occurrence of the error.
-
-        '
-    schemas-InvalidRequestError:
-      type: object
-      required:
-      - type
-      - title
-      - status
-      - detail
-      - instance
-      properties:
-        type:
-          allOf:
-          - $ref: '#/components/schemas/errorType'
-          - enum:
-            - /silverflow/problems/invalid-request
-        title:
-          allOf:
-          - $ref: '#/components/schemas/errorTitle'
-          - enum:
-            - Invalid Request
-        status:
-          allOf:
-          - $ref: '#/components/schemas/components-schemas-errorStatus'
-          - enum:
-            - 400
-        detail:
-          $ref: '#/components/schemas/errorDetail'
-        instance:
-          $ref: '#/components/schemas/errorInstance'
-    FileSubscription:
-      type: object
-      required:
-      - subscriptionKey
-      - agentKey
-      - acquirerReferences
-      - distributionKey
-      - fileTypes
-      properties:
-        subscriptionKey:
-          $ref: '#/components/schemas/SubscriptionKey'
-        agentKey:
-          $ref: '#/components/schemas/components-schemas-AgentKey'
-        acquirerReferences:
-          $ref: '#/components/schemas/AcquirerReferences'
-        distributionKey:
-          $ref: '#/components/schemas/DistributionKey'
-        fileTypes:
-          $ref: '#/components/schemas/FileTypes'
-    errorInstance:
-      type: string
-      description: 'A reference that identifies the specific occurrence of the error. The instance is unique for every error.
-
-        '
-    schemas-UnauthorizedError:
-      type: object
-      required:
-      - type
-      - title
-      - status
-      - detail
-      - instance
-      properties:
-        type:
-          allOf:
-          - $ref: '#/components/schemas/errorType'
-          - enum:
-            - /silverflow/problems/authentication-required
-        title:
-          allOf:
-          - $ref: '#/components/schemas/errorTitle'
-          - enum:
-            - Authentication Required
-        status:
-          allOf:
-          - $ref: '#/components/schemas/components-schemas-errorStatus'
-          - enum:
-            - 401
-        detail:
-          $ref: '#/components/schemas/errorDetail'
-        instance:
-          $ref: '#/components/schemas/errorInstance'
-    NotFoundError:
-      type: object
-      required:
-      - type
-      - title
-      - status
-      - detail
-      - instance
-      properties:
-        type:
-          allOf:
-          - $ref: '#/components/schemas/errorType'
-          - enum:
-            - /silverflow/problems/not-found
-        title:
-          allOf:
-          - $ref: '#/components/schemas/errorTitle'
-          - enum:
-            - Not Found
-        status:
-          allOf:
-          - $ref: '#/components/schemas/components-schemas-errorStatus'
-          - enum:
-            - 404
-        detail:
-          $ref: '#/components/schemas/errorDetail'
-        instance:
-          $ref: '#/components/schemas/errorInstance'
+    validationErrors:
+      type: array
+      items:
+        $ref: '#/components/schemas/validationError'
     CreateFileSubscriptionRequest:
       type: object
       additionalProperties: false
@@ -463,53 +289,134 @@ components:
           =Qe/m
 
           -----END PGP PUBLIC KEY BLOCK-----'
-    SubscriptionKey:
-      type: string
-      pattern: ^rfs-[a-zA-Z0-9]+$
-      minimum: 10
-      maximum: 120
-      description: The key of a subscription.
-    validationError:
+    ConflictError:
       type: object
       required:
-      - path
-      - errorCode
-      - message
+      - type
+      - title
+      - status
+      - detail
+      - instance
       properties:
-        path:
-          type: string
-          description: A relative path to the error location within the request body.
-        errorCode:
-          type: string
-          description: A code that identifies the error.
-        message:
-          type: string
-          description: A brief description of the validation error
-    AcquirerReferences:
-      type: array
-      description: 'Network-specific references for file routing. The type of reference required depends on the card network:
-
-
-        | Card Network      | Required Value | BIN Object Field     |
-
-        |-------------------|----------------|----------------------|
-
-        | American Express  | Submitter ID   | acquirerIdCode       |
-
-        | Visa              | Acquirer BIN   | acquirerBin          |
-
-        | Mastercard        | Acquirer BIN   | acquirerBin          |
-
-        | Discover          | Acquirer BIN   | acquirerBin          |
-
-
-        These references are used to match incoming card network files to subscriptions.
+        type:
+          allOf:
+          - $ref: '#/components/schemas/errorType'
+          - enum:
+            - /silverflow/problems/conflict
+        title:
+          allOf:
+          - $ref: '#/components/schemas/errorTitle'
+          - enum:
+            - Conflict
+        status:
+          allOf:
+          - $ref: '#/components/schemas/components-schemas-errorStatus'
+          - enum:
+            - 409
+        detail:
+          $ref: '#/components/schemas/errorDetail'
+        instance:
+          $ref: '#/components/schemas/errorInstance'
+    schemas-UnauthorizedError:
+      type: object
+      required:
+      - type
+      - title
+      - status
+      - detail
+      - instance
+      properties:
+        type:
+          allOf:
+          - $ref: '#/components/schemas/errorType'
+          - enum:
+            - /silverflow/problems/authentication-required
+        title:
+          allOf:
+          - $ref: '#/components/schemas/errorTitle'
+          - enum:
+            - Authentication Required
+        status:
+          allOf:
+          - $ref: '#/components/schemas/components-schemas-errorStatus'
+          - enum:
+            - 401
+        detail:
+          $ref: '#/components/schemas/errorDetail'
+        instance:
+          $ref: '#/components/schemas/errorInstance'
+    errorTitle:
+      type: string
+      description: 'A short, human-readable summary of the problem type. It does not change from occurrence to occurrence of the error.
 
         '
-      minItems: 1
-      uniqueItems: true
-      items:
-        type: string
+    components-schemas-ForbiddenError:
+      type: object
+      required:
+      - type
+      - title
+      - status
+      - detail
+      - instance
+      properties:
+        type:
+          allOf:
+          - $ref: '#/components/schemas/errorType'
+          - enum:
+            - /silverflow/problems/forbidden
+        title:
+          allOf:
+          - $ref: '#/components/schemas/errorTitle'
+          - enum:
+            - Forbidden
+        status:
+          allOf:
+          - $ref: '#/components/schemas/components-schemas-errorStatus'
+          - enum:
+            - 403
+        detail:
+          $ref: '#/components/schemas/errorDetail'
+        instance:
+          $ref: '#/components/schemas/errorInstance'
+    FileSubscription:
+      type: object
+      required:
+      - subscriptionKey
+      - agentKey
+      - acquirerReferences
+      - distributionKey
+      - fileTypes
+      properties:
+        subscriptionKey:
+          $ref: '#/components/schemas/SubscriptionKey'
+        agentKey:
+          $ref: '#/components/schemas/components-schemas-AgentKey'
+        acquirerReferences:
+          $ref: '#/components/schemas/AcquirerReferences'
+        distributionKey:
+          $ref: '#/components/schemas/DistributionKey'
+        fileTypes:
+          $ref: '#/components/schemas/FileTypes'
+    UpdateFileSubscriptionRequest:
+      type: object
+      additionalProperties: false
+      required:
+      - acquirerReferences
+      - distributionKey
+      - fileTypes
+      properties:
+        acquirerReferences:
+          $ref: '#/components/schemas/AcquirerReferences'
+        distributionKey:
+          $ref: '#/components/schemas/DistributionKey'
+        fileTypes:
+          $ref: '#/components/schemas/FileTypes'
+    components-schemas-AgentKey:
+      type: string
+      pattern: ^cgt-[a-zA-Z0-9]+$
+      minimum: 10
+      maximum: 120
+      description: The key of an agent.
     schemas-InvalidInputError:
       type: object
       required:
@@ -541,32 +448,131 @@ components:
           $ref: '#/components/schemas/errorInstance'
         validationErrors:
           $ref: '#/components/schemas/validationErrors'
-    errorDetail:
+    errorInstance:
       type: string
-      description: 'A human readable explanation specific to this occurrence of the problem.
+      description: 'A reference that identifies the specific occurrence of the error. The instance is unique for every error.
 
         '
-    UpdateFileSubscriptionRequest:
+    SubscriptionKey:
+      type: string
+      pattern: ^rfs-[a-zA-Z0-9]+$
+      minimum: 10
+      maximum: 120
+      description: The key of a subscription.
+    schemas-InternalServerError:
       type: object
-      additionalProperties: false
       required:
-      - acquirerReferences
-      - distributionKey
-      - fileTypes
+      - type
+      - title
+      - status
+      - detail
+      - instance
       properties:
-        acquirerReferences:
-          $ref: '#/components/schemas/AcquirerReferences'
-        distributionKey:
-          $ref: '#/components/schemas/DistributionKey'
-        fileTypes:
-          $ref: '#/components/schemas/FileTypes'
-    validationErrors:
-      type: array
-      items:
-        $ref: '#/components/schemas/validationError'
+        type:
+          allOf:
+          - $ref: '#/components/schemas/errorType'
+          - enum:
+            - /silverflow/problems/internal-server-error
+        title:
+          allOf:
+          - $ref: '#/components/schemas/errorTitle'
+          - enum:
+            - Internal Server Error
+        status:
+          allOf:
+          - $ref: '#/components/schemas/components-schemas-errorStatus'
+          - enum:
+            - 500
+        detail:
+          $ref: '#/components/schemas/errorDetail'
+        instance:
+          $ref: '#/components/schemas/errorInstance'
+    schemas-InvalidRequestError:
+      type: object
+      required:
+      - type
+      - title
+      - status
+      - detail
+      - instance
+      properties:
+        type:
+          allOf:
+          - $ref: '#/components/schemas/errorType'
+          - enum:
+            - /silverflow/problems/invalid-request
+        title:
+          allOf:
+          - $ref: '#/components/schemas/errorTitle'
+          - enum:
+            - Invalid Request
+        status:
+          allOf:
+          - $ref: '#/components/schemas/components-schemas-errorStatus'
+          - enum:
+            - 400
+        detail:
+          $ref: '#/components/schemas/errorDetail'
+        instance:
+          $ref: '#/components/schemas/errorInstance'
     components-schemas-errorStatus:
       type: integer
       description: 'The HTTP status code generated by the origin server for this occurrence of the problem.
+
+        '
+    BadRequestError:
+      type: object
+      oneOf:
+      - $ref: '#/components/schemas/schemas-InvalidInputError'
+      - $ref: '#/components/schemas/schemas-InvalidRequestError'
+    ListFileSubscriptionsResponse:
+      type: object
+      required:
+      - subscriptions
+      properties:
+        subscriptions:
+          type: array
+          items:
+            $ref: '#/components/schemas/FileSubscription'
+    AcquirerReferences:
+      type: array
+      description: 'Network-specific references for file routing. The type of reference required depends on the card network:
+
+
+        | Card Network      | Required Value | BIN Object Field     |
+
+        |-------------------|----------------|----------------------|
+
+        | American Express  | Submitter ID   | acquirerIdCode       |
+
+        | Visa              | Acquirer BIN   | acquirerBin          |
+
+        | Mastercard        | Acquirer BIN   | acquirerBin          |
+
+        | Discover          | Acquirer BIN   | acquirerBin          |
+
+
+        These references are used to match incoming card network files to subscriptions.
+
+        '
+      minItems: 1
+      uniqueItems: true
+      items:
+        type: string
+    errorType:
+      type: string
+      description: 'A relative URI reference, this property can be used to perform automated error handling.
+
+        '
+    PublicKey:
+      type: string
+      pattern: '^-----BEGIN PGP PUBLIC KEY BLOCK-----
+
+
+        '
+      description: 'ASCII-armored PGP public key for file encryption.
+
+        Supported algorithms: RSA (2048+ bits), Ed25519, ECDSA.
 
         '
     FileTypes:
@@ -585,84 +591,61 @@ components:
         - visa_cas33
         - visa_dbraw
         - visa_undif
-    components-schemas-AgentKey:
+    errorDetail:
       type: string
-      pattern: ^cgt-[a-zA-Z0-9]+$
+      description: 'A human readable explanation specific to this occurrence of the problem.
+
+        '
+    NotFoundError:
+      type: object
+      required:
+      - type
+      - title
+      - status
+      - detail
+      - instance
+      properties:
+        type:
+          allOf:
+          - $ref: '#/components/schemas/errorType'
+          - enum:
+            - /silverflow/problems/not-found
+        title:
+          allOf:
+          - $ref: '#/components/schemas/errorTitle'
+          - enum:
+            - Not Found
+        status:
+          allOf:
+          - $ref: '#/components/schemas/components-schemas-errorStatus'
+          - enum:
+            - 404
+        detail:
+          $ref: '#/components/schemas/errorDetail'
+        instance:
+          $ref: '#/components/schemas/errorInstance'
+    validationError:
+      type: object
+      required:
+      - path
+      - errorCode
+      - message
+      properties:
+        path:
+          type: string
+          description: A relative path to the error location within the request body.
+        errorCode:
+          type: string
+          description: A code that identifies the error.
+        message:
+          type: string
+          description: A brief description of the validation error
+    DistributionKey:
+      type: string
+      pattern: ^dst-[a-zA-Z0-9]+$
       minimum: 10
       maximum: 120
-      description: The key of an agent.
-    errorType:
-      type: string
-      description: 'A relative URI reference, this property can be used to perform automated error handling.
-
-        '
-    components-schemas-ForbiddenError:
-      type: object
-      required:
-      - type
-      - title
-      - status
-      - detail
-      - instance
-      properties:
-        type:
-          allOf:
-          - $ref: '#/components/schemas/errorType'
-          - enum:
-            - /silverflow/problems/forbidden
-        title:
-          allOf:
-          - $ref: '#/components/schemas/errorTitle'
-          - enum:
-            - Forbidden
-        status:
-          allOf:
-          - $ref: '#/components/schemas/components-schemas-errorStatus'
-          - enum:
-            - 403
-        detail:
-          $ref: '#/components/schemas/errorDetail'
-        instance:
-          $ref: '#/components/schemas/errorInstance'
-    ConflictError:
-      type: object
-      required:
-      - type
-      - title
-      - status
-      - detail
-      - instance
-      properties:
-        type:
-          allOf:
-          - $ref: '#/components/schemas/errorType'
-          - enum:
-            - /silverflow/problems/conflict
-        title:
-          allOf:
-          - $ref: '#/components/schemas/errorTitle'
-          - enum:
-            - Conflict
-        status:
-          allOf:
-          - $ref: '#/components/schemas/components-schemas-errorStatus'
-          - enum:
-            - 409
-        detail:
-          $ref: '#/components/schemas/errorDetail'
-        instance:
-          $ref: '#/components/schemas/errorInstance'
-    PublicKey:
-      type: string
-      pattern: '^-----BEGIN PGP PUBLIC KEY BLOCK-----
-
-
-        '
-      description: 'ASCII-armored PGP public key for file encryption.
-
-        Supported algorithms: RSA (2048+ bits), Ed25519, ECDSA.
-
-        '
+      description: Key of the distribution where files will be sent.
   securitySchemes:
     ApiKey:
       description: "The primary method of authenticating to the Silverflow API is through API keys.\n\nAPI keys can be created by calling the [createApiKey](#operation/createApiKey) endpoint. You can create up to 40 API keys and also update and delete them, allowing for _credential rotation_.\n\nThe _Agent Activation_ process will generate an initial API Key for you. See [Activate Agent](#section/Getting-Started).\n\nA call to the [createApiKey](#operation/createApiKey) endpoint will return the following structure:\n\n```json\n{\n    \"key\": \"apk-1wtRxni5IsPsSpBLWpwr\",\n    \"status\": \"active\",\n    \"agentKey\": \"cgt-1wtRvFLIjDOyyUR5Q2LB\",\n    \"description\": \"Data lake API key\",\n    \"permissions\": [\n        \"charges:List\",\n        \"reports:All\"\n    ],\n    \"created\": \"2021-06-22T11:21:45.115Z\",\n    \"secret\": \"FWtnOOHAjbD6rNxWWEeVOCj7JXSEPGJQ\",\n    \"version\": 1\n}\n```\n\n> **Important:** The `secret` is only returned once in the response to the `createApiKey` call.\n\nOnce created, the `key` and `secret` fields from the API key must be used in the HTTP `Authorization` header using the `Basic` scheme.\nThe Basic scheme requires a **username** and **password** to be specified, separated by a `:` (colon) and Base64 encoded.\n\nUse the following values from the API key to construct a Basic authentication header:\n\n| Basic field | API key field | Example |\n| ----------- | ------------- | ------- |\n| username | `key` | `apk-1wtRxni5IsPsSpBLWpwr` |\n| password | `secret` | `FWtnOOHAjbD6rNxWWEeVOCj7JXSEPGJQ` |\n\nIn pseudo-code a valid HTTP Basic Authentication header would be constructed as follows:\n\n```ts\nconst apiKeyId = \"apk-1wtRxni5IsPsSpBLWpwr\";\nconst apiKeySecret = \"FWtnOOHAjbD6rNxWWEeVOCj7JXSEPGJQ\";\nconst authnValue = \"Basic \" + base64Encode(apiKeyId + \":\" + apiKeySecret);\nrequest.setHeader(\"Authorization\", authnValue);\n```\n\nUsing the values from the example a valid HTTP request would look like the following:\n\n```http\nGET /v1/agents/current HTTP/1.1\nAccept: application/json\nAuthorization: Basic YXBrLTF3dFJ4bmk1SXNQc1NwQkxXcHdyOkZXdG5PT0hBamJENnJOeFdXRWVWT0NqN0pYU0VQR0pR\n```\n\nMore information on the Basic scheme can be found in [RFC-7617 - The 'Basic' HTTP Authentication Scheme](https://datatracker.ietf.org/doc/html/rfc7617)."
@@ -706,9 +689,6 @@ components:
         Certificate validation happens at the transport layer during TLS handshake. Tenant verification is performed by matching the agent key embedded in the client certificate against the agent key embedded in the trusted CA.
 
         '
-x-refined-from:
-- silverflow-openapi.yml
-- silverflow-openapi.yml
 x-tagGroups:
 - name: ''
   tags:

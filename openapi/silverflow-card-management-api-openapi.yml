@@ -1,13 +1,13 @@
 openapi: 3.2.0
 info:
-  title: Silverflow Card Management API
+  description: '**This OpenAPI specification cannot be used for code generation.** Please reach out to your TAM regarding code generation using the API Spec.'
   version: 1.417.0
+  title: Silverflow Card Management API
   contact:
     name: API Support
     email: support@silverflow.com
   license:
     name: Commercial
-  description: 'Operations tagged Card Management across 2 of this provider''s published API definitions: silverflow-openapi.yml, silverflow-openapi.yml. Each path carries the servers of the definition it was published in.'
 servers:
 - url: https://eu-west-1.api.silverflow.com/v1
   description: Production URL for Europe - Equivalent to https://api.silverflow.co/v1
@@ -22,9 +22,7 @@ tags:
 - name: Card Management
   description: 'ATM card management actions: PIN change, PIN unblock, balance inquiry and
 
-    PIN change reversal.
-
-    '
+    PIN change reversal.'
 paths:
   /cardManagement/actions/pinUnblock:
     post:
@@ -33,9 +31,7 @@ paths:
       description: 'Unblock the PIN on a card.
 
 
-        Permissions: `cardManagement:Create`, `cardManagement:All`
-
-        '
+        Permissions: `cardManagement:Create`, `cardManagement:All`'
       tags:
       - Card Management
       requestBody:
@@ -97,301 +93,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/InternalServerError'
-    servers:
-    - url: https://eu-west-1.api.silverflow.com/v1
-      description: Production URL for Europe - Equivalent to https://api.silverflow.co/v1
-    - url: https://us-east-2.api.silverflow.com/v1
-      description: Production URL for North America
-    - url: https://eu-west-1.api-sbx.silverflow.com/v1
-      description: Sandbox URL - Equivalent to https://api-sbx.silverflow.co/v1
 components:
   schemas:
-    NewEmvData:
-      type: string
-      description: 'This field contains integrated circuit card (ICC) related binary data that is transmitted from the card issuer to the ICC. This field is formatted as 510 hexadecimal characters, which translates to 255 bytes.
-
-
-        If this field is present in the response message, it should be passed without modification to the ICC.
-
-        '
-      pattern: ^[A-Fa-f0-9]+$
-      minLength: 1
-      maxLength: 510
-      example: 5F2A0209785F34010082027C008407A0000000093510950500000080009A031104119C01009F02060000000043149F090200029F10120210A780030400009F2100000000000000FF9F1A0202509F26082E3EAB17CEEC500C9F2701809F330360A0409F34034403029F3501229F360200169F3704BC75E9B39F4005A00090F0019F4C089F21B02E0EEAC454
-    InvalidInputError:
-      type: object
-      additionalProperties: false
-      required:
-      - type
-      - title
-      - status
-      - detail
-      - instance
-      - validationErrors
-      properties:
-        type:
-          type: string
-          enum:
-          - /silverflow/problems/invalid-input
-        title:
-          type: string
-          enum:
-          - Invalid Input
-        status:
-          type: integer
-          enum:
-          - 400
-        detail:
-          $ref: '#/components/schemas/errorDetail'
-        instance:
-          $ref: '#/components/schemas/errorInstance'
-        validationErrors:
-          type: array
-          items:
-            $ref: '#/components/schemas/components-schemas-ValidationError'
-          description: A list of validation errors.
-      example:
-        type: /silverflow/problems/invalid-input
-        title: Invalid Input
-        status: 400
-        detail: The request does not adhere to the defined API schema.
-        instance: /silverflow/b4cc37a0-ab24-46b4-aa8c-cc2d6eddf1b6
-        validationErrors:
-        - path: /body/card/number
-          message: must have required property 'number'
-          errorCode: required.openapi.validation
-    MerchantAcceptorRef:
-      type: object
-      additionalProperties: false
-      required:
-      - key
-      - version
-      properties:
-        key:
-          $ref: '#/components/schemas/MerchantAcceptorKey'
-        version:
-          type: integer
-          description: The version of this object
-          format: int64
-          example: 1
-    UnauthorizedError:
-      type: object
-      additionalProperties: false
-      required:
-      - type
-      - title
-      - status
-      - detail
-      - instance
-      properties:
-        type:
-          type: string
-          enum:
-          - /silverflow/problems/authentication-required
-        title:
-          type: string
-          enum:
-          - Authentication Required
-        status:
-          type: integer
-          enum:
-          - 401
-        detail:
-          $ref: '#/components/schemas/errorDetail'
-        instance:
-          $ref: '#/components/schemas/errorInstance'
-      example:
-        type: /silverflow/problems/authentication-required
-        title: Authentication Required
-        status: 401
-        detail: Authentication Required
-        instance: /silverflow/8e445b2e-d745-4b38-a38d-781fc998e442
-    BlockedMerchantAcceptorError:
-      type: object
-      additionalProperties: false
-      required:
-      - type
-      - title
-      - status
-      - detail
-      - instance
-      properties:
-        type:
-          type: string
-          enum:
-          - /silverflow/problems/blocked-merchant-acceptor
-        title:
-          type: string
-          enum:
-          - Blocked Merchant Acceptor
-        status:
-          type: integer
-          enum:
-          - 409
-        detail:
-          $ref: '#/components/schemas/errorDetail'
-        instance:
-          $ref: '#/components/schemas/errorInstance'
-      example:
-        type: /silverflow/problems/blocked-merchant-acceptor
-        title: Blocked Merchant Acceptor
-        status: 409
-        detail: The merchant acceptor is blocked and cannot process this operation.
-        instance: /silverflow/2b6f1c9e-3a2d-4c1b-8e5f-1a2b3c4d5e6f
-    ActionResult:
-      type: string
-      description: The result of the authorization.
-      enum:
-      - approved
-      - declined
-    IncompatibleNetworkForOperationError:
-      type: object
-      additionalProperties: false
-      required:
-      - type
-      - title
-      - status
-      - detail
-      - instance
-      properties:
-        type:
-          type: string
-          enum:
-          - /silverflow/problems/incompatible-network-for-operation
-        title:
-          type: string
-          enum:
-          - Incompatible Network For Operation
-        status:
-          type: integer
-          enum:
-          - 400
-        detail:
-          $ref: '#/components/schemas/errorDetail'
-        instance:
-          $ref: '#/components/schemas/errorInstance'
-      example:
-        type: /silverflow/problems/incompatible-network-for-operation
-        title: Incompatible Network For Operation
-        status: 400
-        detail: The network is not compatible with this operation.
-        instance: /silverflow/2b6f1c9e-3a2d-4c1b-8e5f-1a2b3c4d5e6f
-    schemas-TerminalCapability:
-      type: string
-      description: ATM terminal capabilities subset
-      enum:
-      - contact_chip
-      - contactless_chip
-      - magstripe
-    NetworkSpecificFields:
-      oneOf:
-      - $ref: '#/components/schemas/VisaNetworkFields'
-      - $ref: '#/components/schemas/MastercardNetworkFields'
-    MerchantAcceptorKeyResolver:
-      type: object
-      description: 'Used to select a merchant acceptor by key.
-
-        '
-      additionalProperties: false
-      required:
-      - merchantAcceptorKey
-      properties:
-        merchantAcceptorKey:
-          $ref: '#/components/schemas/MerchantAcceptorKey'
-    CardSequenceNumber:
-      type: string
-      description: 'Distinguishes among separate cards having the same PAN.
-
-        This is required if EMV tag 5F34 is present/personalized on the card chip.
-
-        '
-      pattern: ^[0-9]+$
-      minLength: 1
-      maxLength: 3
-      example: '001'
-    errorInstance:
-      type: string
-      description: 'A reference that identifies the specific occurrence of the error. The instance is unique for every error.
-
-        '
-    ForbiddenError:
-      type: object
-      additionalProperties: false
-      required:
-      - type
-      - title
-      - status
-      - detail
-      - instance
-      properties:
-        type:
-          type: string
-          enum:
-          - /silverflow/problems/forbidden
-        title:
-          type: string
-          enum:
-          - Forbidden
-        status:
-          type: integer
-          enum:
-          - 403
-        detail:
-          $ref: '#/components/schemas/errorDetail'
-        instance:
-          $ref: '#/components/schemas/errorInstance'
-      example:
-        type: /silverflow/problems/forbidden
-        title: Forbidden
-        status: 403
-        detail: The authenticated agent is not allowed to perform this operation.
-        instance: /silverflow/6d334a1d-c634-4a27-9f2d-670eb887d331
-    components-schemas-Card:
-      type: object
-      description: Card details for ATM transactions.
-      additionalProperties: false
-      required:
-      - number
-      - expiryMonth
-      - expiryYear
-      properties:
-        number:
-          type: string
-          description: The primary account number (PAN) of the card.
-          pattern: ^[0-9]+$
-          minLength: 12
-          maxLength: 19
-          example: '5413330089010640'
-        expiryMonth:
-          type: integer
-          description: The expiry month of the card (1-12).
-          minimum: 1
-          maximum: 12
-          example: 12
-        expiryYear:
-          type: integer
-          description: The expiry year of the card (four digits).
-          minimum: 1950
-          maximum: 2200
-          example: 2025
-    Track2Data:
-      type: string
-      description: 'The information encoded on track 2 of the card magnetic stripe as defined in the ISO 7813 specification, including data element separator but excluding the beginning and ending sentinels and the LRC (Longitudinal Redundancy Check) character.
-
-        This property is mandatory when the `terminalEntryMode` is `chip`, `contactless` or `magstripe`.
-
-        '
-      pattern: ^[A-Fa-f0-9]+$
-      minLength: 1
-      maxLength: 37
-      example: 6799995700000004054D25122010875408456
-    MerchantAcceptorKey:
-      type: string
-      description: Uniquely identifies a merchant acceptor.
-      pattern: ^mac-[a-zA-Z0-9]+$
-      minLength: 5
-      maxLength: 120
-      example: mac-1eOdAHhgstYTUhlphPFf
     IncompatibleMccError:
       type: object
       additionalProperties: false
@@ -424,108 +127,6 @@ components:
         status: 400
         detail: The merchant category code is not compatible with this operation.
         instance: /silverflow/2b6f1c9e-3a2d-4c1b-8e5f-1a2b3c4d5e6f
-    schemas-Terminal:
-      type: object
-      description: Details about the ATM terminal.
-      additionalProperties: false
-      required:
-      - id
-      - capabilities
-      properties:
-        id:
-          type: string
-          description: ATM terminal's ID
-          pattern: ^[a-zA-Z0-9]+$
-          minLength: 1
-          maxLength: 8
-          example: ATM001
-        capabilities:
-          type: array
-          description: 'The capabilities of the ATM terminal. This can be one or multiple.
-
-            '
-          minItems: 1
-          items:
-            $ref: '#/components/schemas/schemas-TerminalCapability'
-          example:
-          - contact_chip
-          - contactless_chip
-          - magstripe
-    IdempotentRequestMismatchError:
-      type: object
-      additionalProperties: false
-      required:
-      - type
-      - title
-      - status
-      - detail
-      - instance
-      properties:
-        type:
-          type: string
-          enum:
-          - /silverflow/problems/idempotency/request-mismatch
-        title:
-          type: string
-          enum:
-          - Idempotent Request Mismatch
-        status:
-          type: integer
-          enum:
-          - 409
-        detail:
-          $ref: '#/components/schemas/errorDetail'
-        instance:
-          $ref: '#/components/schemas/errorInstance'
-      example:
-        type: /silverflow/problems/idempotency/request-mismatch
-        title: Idempotent Request Mismatch
-        status: 409
-        detail: The request body does not match the original request for this idempotency key.
-        instance: /silverflow/2b3c4d5e-6f7a-4b2c-9d0e-1f2a3b4c5d6e
-    MerchantAcceptorResolver:
-      description: 'The resolver is used to select the appropriate merchant acceptor for the action.
-
-        It can accept either a `merchantAcceptorKey` or a combination of `merchantKey` and an optional `route`. If the optional property for `route` is not provided
-
-        the default one generated when creating an acceptor will be used.
-
-        '
-      oneOf:
-      - $ref: '#/components/schemas/MerchantAcceptorKeyResolver'
-      - $ref: '#/components/schemas/MerchantKeyResolver'
-    TooManyRequestsError:
-      type: object
-      additionalProperties: false
-      required:
-      - type
-      - title
-      - status
-      - detail
-      - instance
-      properties:
-        type:
-          type: string
-          enum:
-          - /silverflow/problems/too-many-requests
-        title:
-          type: string
-          enum:
-          - Too Many Requests
-        status:
-          type: integer
-          enum:
-          - 429
-        detail:
-          $ref: '#/components/schemas/errorDetail'
-        instance:
-          $ref: '#/components/schemas/errorInstance'
-      example:
-        type: /silverflow/problems/too-many-requests
-        title: Too Many Requests
-        status: 429
-        detail: The rate limit for this operation has been exceeded.
-        instance: /silverflow/6f7a8b9c-0d1e-4f6a-3b4c-5d6e7f8a9b0c
     ReferencedEntityNotFoundError:
       type: object
       additionalProperties: false
@@ -558,11 +159,195 @@ components:
         status: 409
         detail: The referenced merchant acceptor could not be found.
         instance: /silverflow/1a2b3c4d-5e6f-4a1b-8c9d-0e1f2a3b4c5d
-    errorDetail:
-      type: string
-      description: 'A human readable explanation specific to this occurrence of the problem.
+    MerchantAcceptorResolver:
+      description: 'The resolver is used to select the appropriate merchant acceptor for the action.
+
+        It can accept either a `merchantAcceptorKey` or a combination of `merchantKey` and an optional `route`. If the optional property for `route` is not provided
+
+        the default one generated when creating an acceptor will be used.
 
         '
+      oneOf:
+      - $ref: '#/components/schemas/MerchantAcceptorKeyResolver'
+      - $ref: '#/components/schemas/MerchantKeyResolver'
+    MaskedCard:
+      type: object
+      description: 'Card data for ATM transactions. ATM transactions do not support processor tokenization.
+
+        '
+      additionalProperties: false
+      required:
+      - maskedNumber
+      properties:
+        maskedNumber:
+          type: string
+          description: 'The card number used to create this action, masked according to PCI standards. For card numbers with 16 or more digits, the first 8 and the last 4 digits are visible. For card numbers with 13-15 digits, the first 6 and the last 4 digits are visible. For cards numbers with less than 13 digits, the first 6 and last 2 digits are visible.
+
+            '
+    TransactionReference:
+      type: string
+      description: 'Unique ID assigned by the merchant or payment service provider for the transaction. Used to identify the transaction.
+
+        '
+      pattern: ^[a-zA-Z0-9()+,\-.:=@;$_!*\/?|]+$
+      minLength: 1
+      maxLength: 120
+      example: Dz3dIzE74EfH1HeTInyE
+    MerchantKeyResolver:
+      type: object
+      description: 'Used to select a merchant acceptor by merchant key and an optional route.
+
+        '
+      additionalProperties: false
+      required:
+      - merchantKey
+      properties:
+        merchantKey:
+          $ref: '#/components/schemas/MerchantKey'
+        route:
+          type: string
+          description: 'Route key used to uniquely reference an acceptor when used in combination
+
+            with its card network and merchant key.
+
+            '
+          pattern: ^(^$|^[a-zA-Z0-9-_:;.,]+$)
+          minLength: 0
+          maxLength: 255
+    Track2Data:
+      type: string
+      description: 'The information encoded on track 2 of the card magnetic stripe as defined in the ISO 7813 specification, including data element separator but excluding the beginning and ending sentinels and the LRC (Longitudinal Redundancy Check) character.
+
+        This property is mandatory when the `terminalEntryMode` is `chip`, `contactless` or `magstripe`.
+
+        '
+      pattern: ^[A-Fa-f0-9]+$
+      minLength: 1
+      maxLength: 37
+      example: 6799995700000004054D25122010875408456
+    schemas-PinBlock:
+      type: object
+      title: ISO-4 PIN Block
+      description: PIN block related data in `ISO-4` format.
+      additionalProperties: false
+      required:
+      - block
+      - format
+      - zoneId
+      - keyId
+      properties:
+        format:
+          type: string
+          description: The PIN block format.
+          enum:
+          - ISO-4
+        block:
+          type: string
+          title: ISO-4 Block
+          description: 'The encrypted PIN, as an `ISO-4` block of 32 hexadecimal characters.
+
+            '
+          pattern: ^[A-Fa-f0-9]+$
+          minLength: 32
+          maxLength: 32
+          example: 32CF86E514CB24FE32CF86E514CB24FE
+        zoneId:
+          type: string
+          description: ID of the encryption zone.
+          pattern: ^[a-zA-Z0-9()+,\-.:=@;$_!*\/?#|]*$
+          minLength: 1
+          maxLength: 128
+          example: my-zone
+        keyId:
+          type: string
+          description: Encryption key in the specified zone to use.
+          pattern: ^[a-zA-Z0-9()+,\-.:=@;$_!*\/?#|]*$
+          minLength: 1
+          maxLength: 128
+          example: my-encryption-key
+    ForbiddenError:
+      type: object
+      additionalProperties: false
+      required:
+      - type
+      - title
+      - status
+      - detail
+      - instance
+      properties:
+        type:
+          type: string
+          enum:
+          - /silverflow/problems/forbidden
+        title:
+          type: string
+          enum:
+          - Forbidden
+        status:
+          type: integer
+          enum:
+          - 403
+        detail:
+          $ref: '#/components/schemas/errorDetail'
+        instance:
+          $ref: '#/components/schemas/errorInstance'
+      example:
+        type: /silverflow/problems/forbidden
+        title: Forbidden
+        status: 403
+        detail: The authenticated agent is not allowed to perform this operation.
+        instance: /silverflow/6d334a1d-c634-4a27-9f2d-670eb887d331
+    InvalidRequestError:
+      type: object
+      additionalProperties: false
+      required:
+      - type
+      - title
+      - status
+      - detail
+      - instance
+      properties:
+        type:
+          type: string
+          enum:
+          - /silverflow/problems/charge/invalid-request
+        title:
+          type: string
+          enum:
+          - Invalid Request
+        status:
+          type: integer
+          enum:
+          - 400
+        detail:
+          $ref: '#/components/schemas/errorDetail'
+        instance:
+          $ref: '#/components/schemas/errorInstance'
+      example:
+        type: /silverflow/problems/charge/invalid-request
+        title: Invalid Request
+        status: 400
+        detail: Cannot create the action due to one or more errors in the request.
+        instance: /silverflow/b0451a9d-f66d-4ef7-9f5d-d48064a2bb3e
+    NewEmvData:
+      type: string
+      description: 'This field contains integrated circuit card (ICC) related binary data that is transmitted from the card issuer to the ICC. This field is formatted as 510 hexadecimal characters, which translates to 255 bytes.
+
+
+        If this field is present in the response message, it should be passed without modification to the ICC.
+
+        '
+      pattern: ^[A-Fa-f0-9]+$
+      minLength: 1
+      maxLength: 510
+      example: 5F2A0209785F34010082027C008407A0000000093510950500000080009A031104119C01009F02060000000043149F090200029F10120210A780030400009F2100000000000000FF9F1A0202509F26082E3EAB17CEEC500C9F2701809F330360A0409F34034403029F3501229F360200169F3704BC75E9B39F4005A00090F0019F4C089F21B02E0EEAC454
+    TerminalEntryMode:
+      type: string
+      description: The method used for PAN entry on the ATM terminal.
+      enum:
+      - chip
+      - contactless
+      - magstripe
     MerchantKey:
       type: string
       description: Uniquely identifies a merchant.
@@ -570,6 +355,366 @@ components:
       minLength: 5
       maxLength: 120
       example: mct-1234abcdef123
+    MastercardNetworkFields:
+      type: object
+      description: Mastercard specific ISO8583 raw values
+      additionalProperties: false
+      required:
+      - banknetReference
+      - traceId
+      properties:
+        banknetReference:
+          type: string
+          description: Contents of field 63, subfield 2
+          example: ATSGHX
+        traceId:
+          type: string
+          description: 'The trace ID can be used to refer to the original authorization when reversing it.
+
+
+            The value is constructed from the contents of field 63, subfield 1, field 63, subfield 2, and field 15. The value intentionally ends with two spaces.
+
+            '
+    CannotDetermineCardNetworkError:
+      type: object
+      additionalProperties: false
+      required:
+      - type
+      - title
+      - status
+      - detail
+      - instance
+      properties:
+        type:
+          type: string
+          enum:
+          - /silverflow/problems/card-management/cannot-determine-card-network
+        title:
+          type: string
+          enum:
+          - Cannot Determine Card Network
+        status:
+          type: integer
+          enum:
+          - 400
+        detail:
+          $ref: '#/components/schemas/errorDetail'
+        instance:
+          $ref: '#/components/schemas/errorInstance'
+      example:
+        type: /silverflow/problems/card-management/cannot-determine-card-network
+        title: Cannot Determine Card Network
+        status: 400
+        detail: Could not determine a supported card network for the provided card.
+        instance: /silverflow/3d7e8f9a-1b2c-4d3e-9f0a-1b2c3d4e5f6a
+    UnauthorizedError:
+      type: object
+      additionalProperties: false
+      required:
+      - type
+      - title
+      - status
+      - detail
+      - instance
+      properties:
+        type:
+          type: string
+          enum:
+          - /silverflow/problems/authentication-required
+        title:
+          type: string
+          enum:
+          - Authentication Required
+        status:
+          type: integer
+          enum:
+          - 401
+        detail:
+          $ref: '#/components/schemas/errorDetail'
+        instance:
+          $ref: '#/components/schemas/errorInstance'
+      example:
+        type: /silverflow/problems/authentication-required
+        title: Authentication Required
+        status: 401
+        detail: Authentication Required
+        instance: /silverflow/8e445b2e-d745-4b38-a38d-781fc998e442
+    LocalTransactionDateTime:
+      type: string
+      description: Date and time of the transaction in the local timezone.
+      format: iso-8601-date-time
+    ReferencedAcceptorNotFoundByRouteError:
+      type: object
+      additionalProperties: false
+      required:
+      - type
+      - title
+      - status
+      - detail
+      - instance
+      properties:
+        type:
+          type: string
+          enum:
+          - /silverflow/problems/card-management/referenced-acceptor-not-found-by-route
+        title:
+          type: string
+          enum:
+          - Referenced Acceptor Not Found By Route
+        status:
+          type: integer
+          enum:
+          - 409
+        detail:
+          $ref: '#/components/schemas/errorDetail'
+        instance:
+          $ref: '#/components/schemas/errorInstance'
+      example:
+        type: /silverflow/problems/card-management/referenced-acceptor-not-found-by-route
+        title: Referenced Acceptor Not Found By Route
+        status: 409
+        detail: No acceptor could be found for the provided merchant key and card network.
+        instance: /silverflow/4e5f6a7b-8c9d-4e5f-0a1b-2c3d4e5f6a7b
+    IncompatibleNetworkForOperationError:
+      type: object
+      additionalProperties: false
+      required:
+      - type
+      - title
+      - status
+      - detail
+      - instance
+      properties:
+        type:
+          type: string
+          enum:
+          - /silverflow/problems/incompatible-network-for-operation
+        title:
+          type: string
+          enum:
+          - Incompatible Network For Operation
+        status:
+          type: integer
+          enum:
+          - 400
+        detail:
+          $ref: '#/components/schemas/errorDetail'
+        instance:
+          $ref: '#/components/schemas/errorInstance'
+      example:
+        type: /silverflow/problems/incompatible-network-for-operation
+        title: Incompatible Network For Operation
+        status: 400
+        detail: The network is not compatible with this operation.
+        instance: /silverflow/2b6f1c9e-3a2d-4c1b-8e5f-1a2b3c4d5e6f
+    components-schemas-ValidationError:
+      type: object
+      additionalProperties: false
+      required:
+      - path
+      - message
+      properties:
+        path:
+          type: string
+          description: A relative path to the error location within the request body.
+        errorCode:
+          type: string
+          description: A code that identifies the error.
+        message:
+          type: string
+          description: A brief description of the validation error.
+    MerchantAcceptorKey:
+      type: string
+      description: Uniquely identifies a merchant acceptor.
+      pattern: ^mac-[a-zA-Z0-9]+$
+      minLength: 5
+      maxLength: 120
+      example: mac-1eOdAHhgstYTUhlphPFf
+    IdempotentRequestMismatchError:
+      type: object
+      additionalProperties: false
+      required:
+      - type
+      - title
+      - status
+      - detail
+      - instance
+      properties:
+        type:
+          type: string
+          enum:
+          - /silverflow/problems/idempotency/request-mismatch
+        title:
+          type: string
+          enum:
+          - Idempotent Request Mismatch
+        status:
+          type: integer
+          enum:
+          - 409
+        detail:
+          $ref: '#/components/schemas/errorDetail'
+        instance:
+          $ref: '#/components/schemas/errorInstance'
+      example:
+        type: /silverflow/problems/idempotency/request-mismatch
+        title: Idempotent Request Mismatch
+        status: 409
+        detail: The request body does not match the original request for this idempotency key.
+        instance: /silverflow/2b3c4d5e-6f7a-4b2c-9d0e-1f2a3b4c5d6e
+    TooManyRequestsError:
+      type: object
+      additionalProperties: false
+      required:
+      - type
+      - title
+      - status
+      - detail
+      - instance
+      properties:
+        type:
+          type: string
+          enum:
+          - /silverflow/problems/too-many-requests
+        title:
+          type: string
+          enum:
+          - Too Many Requests
+        status:
+          type: integer
+          enum:
+          - 429
+        detail:
+          $ref: '#/components/schemas/errorDetail'
+        instance:
+          $ref: '#/components/schemas/errorInstance'
+      example:
+        type: /silverflow/problems/too-many-requests
+        title: Too Many Requests
+        status: 429
+        detail: The rate limit for this operation has been exceeded.
+        instance: /silverflow/6f7a8b9c-0d1e-4f6a-3b4c-5d6e7f8a9b0c
+    errorInstance:
+      type: string
+      description: 'A reference that identifies the specific occurrence of the error. The instance is unique for every error.
+
+        '
+    CardSequenceNumber:
+      type: string
+      description: 'Distinguishes among separate cards having the same PAN.
+
+        This is required if EMV tag 5F34 is present/personalized on the card chip.
+
+        '
+      pattern: ^[0-9]+$
+      minLength: 1
+      maxLength: 3
+      example: '001'
+    ActionResult:
+      type: string
+      description: The result of the authorization.
+      enum:
+      - approved
+      - declined
+    AuthorizationIsoFields:
+      type: object
+      description: The values from the ISO8583 response message received from the network.
+      additionalProperties: false
+      required:
+      - responseCode
+      - responseCodeDescription
+      - networkCode
+      - systemTraceAuditNumber
+      - retrievalReferenceNumber
+      - networkSpecificFields
+      properties:
+        responseCode:
+          type: string
+          description: Contents of field 39
+          example: '00'
+        responseCodeDescription:
+          type: string
+          description: The description of the `responseCode`
+          example: Approved
+        authorizationCode:
+          type: string
+          description: Contents of field 38
+          example: 4A4316
+        networkCode:
+          type: string
+          description: Contents of field 63, subfield 1
+          example: '0000'
+        systemTraceAuditNumber:
+          type: string
+          description: Contents of field 11
+          example: '123456'
+        retrievalReferenceNumber:
+          type: string
+          description: Contents of field 37
+          example: '131608123456'
+        networkSpecificFields:
+          $ref: '#/components/schemas/NetworkSpecificFields'
+    ActionKey:
+      type: string
+      description: Uniquely identifies a card-management action.
+      pattern: ^cma-[a-zA-Z0-9]+$
+      minLength: 5
+      maxLength: 120
+      example: cma-1e1dAHhgstYTUhlphPzZ
+    schemas-TerminalCapability:
+      type: string
+      description: ATM terminal capabilities subset
+      enum:
+      - contact_chip
+      - contactless_chip
+      - magstripe
+    BlockedMerchantAcceptorError:
+      type: object
+      additionalProperties: false
+      required:
+      - type
+      - title
+      - status
+      - detail
+      - instance
+      properties:
+        type:
+          type: string
+          enum:
+          - /silverflow/problems/blocked-merchant-acceptor
+        title:
+          type: string
+          enum:
+          - Blocked Merchant Acceptor
+        status:
+          type: integer
+          enum:
+          - 409
+        detail:
+          $ref: '#/components/schemas/errorDetail'
+        instance:
+          $ref: '#/components/schemas/errorInstance'
+      example:
+        type: /silverflow/problems/blocked-merchant-acceptor
+        title: Blocked Merchant Acceptor
+        status: 409
+        detail: The merchant acceptor is blocked and cannot process this operation.
+        instance: /silverflow/2b6f1c9e-3a2d-4c1b-8e5f-1a2b3c4d5e6f
+    MerchantAcceptorKeyResolver:
+      type: object
+      description: 'Used to select a merchant acceptor by key.
+
+        '
+      additionalProperties: false
+      required:
+      - merchantAcceptorKey
+      properties:
+        merchantAcceptorKey:
+          $ref: '#/components/schemas/MerchantAcceptorKey'
+    NetworkSpecificFields:
+      oneOf:
+      - $ref: '#/components/schemas/VisaNetworkFields'
+      - $ref: '#/components/schemas/MastercardNetworkFields'
     PinUnblockResponse:
       type: object
       additionalProperties: false
@@ -640,10 +785,170 @@ components:
             traceId: 'MCS8428240527  '
         localTransactionDateTime: '2026-07-13T12:46:05.516Z'
         created: '2026-07-13T12:46:05.516Z'
-    LocalTransactionDateTime:
+    InternalServerError:
+      type: object
+      additionalProperties: false
+      required:
+      - type
+      - title
+      - status
+      - detail
+      - instance
+      properties:
+        type:
+          type: string
+          enum:
+          - /silverflow/problems/internal-server-error
+        title:
+          type: string
+          enum:
+          - Internal Server Error
+        status:
+          type: integer
+          enum:
+          - 500
+        detail:
+          $ref: '#/components/schemas/errorDetail'
+        instance:
+          $ref: '#/components/schemas/errorInstance'
+      example:
+        type: /silverflow/problems/internal-server-error
+        title: Internal Server Error
+        status: 500
+        detail: The server encountered an unexpected error.
+        instance: /silverflow/7a8b9c0d-1e2f-4a7b-4c5d-6e7f8a9b0c1d
+    VisaNetworkFields:
+      type: object
+      description: Visa specific ISO8583 raw values
+      additionalProperties: false
+      required:
+      - transactionIdentifier
+      properties:
+        transactionIdentifier:
+          type: string
+          description: Contents of field 62, subfield 2
+          example: '238210000026090'
+    errorDetail:
       type: string
-      description: Date and time of the transaction in the local timezone.
-      format: iso-8601-date-time
+      description: 'A human readable explanation specific to this occurrence of the problem.
+
+        '
+    MerchantAcceptorRef:
+      type: object
+      additionalProperties: false
+      required:
+      - key
+      - version
+      properties:
+        key:
+          $ref: '#/components/schemas/MerchantAcceptorKey'
+        version:
+          type: integer
+          description: The version of this object
+          format: int64
+          example: 1
+    components-schemas-Card:
+      type: object
+      description: Card details for ATM transactions.
+      additionalProperties: false
+      required:
+      - number
+      - expiryMonth
+      - expiryYear
+      properties:
+        number:
+          type: string
+          description: The primary account number (PAN) of the card.
+          pattern: ^[0-9]+$
+          minLength: 12
+          maxLength: 19
+          example: '5413330089010640'
+        expiryMonth:
+          type: integer
+          description: The expiry month of the card (1-12).
+          minimum: 1
+          maximum: 12
+          example: 12
+        expiryYear:
+          type: integer
+          description: The expiry year of the card (four digits).
+          minimum: 1950
+          maximum: 2200
+          example: 2025
+    InvalidInputError:
+      type: object
+      additionalProperties: false
+      required:
+      - type
+      - title
+      - status
+      - detail
+      - instance
+      - validationErrors
+      properties:
+        type:
+          type: string
+          enum:
+          - /silverflow/problems/invalid-input
+        title:
+          type: string
+          enum:
+          - Invalid Input
+        status:
+          type: integer
+          enum:
+          - 400
+        detail:
+          $ref: '#/components/schemas/errorDetail'
+        instance:
+          $ref: '#/components/schemas/errorInstance'
+        validationErrors:
+          type: array
+          items:
+            $ref: '#/components/schemas/components-schemas-ValidationError'
+          description: A list of validation errors.
+      example:
+        type: /silverflow/problems/invalid-input
+        title: Invalid Input
+        status: 400
+        detail: The request does not adhere to the defined API schema.
+        instance: /silverflow/b4cc37a0-ab24-46b4-aa8c-cc2d6eddf1b6
+        validationErrors:
+        - path: /body/card/number
+          message: must have required property 'number'
+          errorCode: required.openapi.validation
+    IdempotentRequestIsStillBeingProcessedError:
+      type: object
+      additionalProperties: false
+      required:
+      - type
+      - title
+      - status
+      - detail
+      - instance
+      properties:
+        type:
+          type: string
+          enum:
+          - /silverflow/problems/idempotency/request-is-still-being-processed
+        title:
+          type: string
+          enum:
+          - Request Is Still Being Processed
+        status:
+          type: integer
+          enum:
+          - 409
+        detail:
+          $ref: '#/components/schemas/errorDetail'
+        instance:
+          $ref: '#/components/schemas/errorInstance'
+      example:
+        type: /silverflow/problems/idempotency/request-is-still-being-processed
+        title: Request Is Still Being Processed
+        status: 409
+        detail: The original request for this idempotency key is still being processed.
+        instance: /silverflow/3c4d5e6f-7a8b-4c3d-0e1f-2a3b4c5d6e7f
     PinUnblockRequest:
       type: object
       additionalProperties: false
@@ -696,342 +1001,33 @@ components:
           block: 32CF86E514CB24FE32CF86E514CB24FE
           zoneId: atm-gateway
           keyId: '0001'
-    MerchantKeyResolver:
+    schemas-Terminal:
       type: object
-      description: 'Used to select a merchant acceptor by merchant key and an optional route.
-
-        '
+      description: Details about the ATM terminal.
       additionalProperties: false
       required:
-      - merchantKey
+      - id
+      - capabilities
       properties:
-        merchantKey:
-          $ref: '#/components/schemas/MerchantKey'
-        route:
+        id:
           type: string
-          description: 'Route key used to uniquely reference an acceptor when used in combination
-
-            with its card network and merchant key.
-
-            '
-          pattern: ^(^$|^[a-zA-Z0-9-_:;.,]+$)
-          minLength: 0
-          maxLength: 255
-    CannotDetermineCardNetworkError:
-      type: object
-      additionalProperties: false
-      required:
-      - type
-      - title
-      - status
-      - detail
-      - instance
-      properties:
-        type:
-          type: string
-          enum:
-          - /silverflow/problems/card-management/cannot-determine-card-network
-        title:
-          type: string
-          enum:
-          - Cannot Determine Card Network
-        status:
-          type: integer
-          enum:
-          - 400
-        detail:
-          $ref: '#/components/schemas/errorDetail'
-        instance:
-          $ref: '#/components/schemas/errorInstance'
-      example:
-        type: /silverflow/problems/card-management/cannot-determine-card-network
-        title: Cannot Determine Card Network
-        status: 400
-        detail: Could not determine a supported card network for the provided card.
-        instance: /silverflow/3d7e8f9a-1b2c-4d3e-9f0a-1b2c3d4e5f6a
-    schemas-PinBlock:
-      type: object
-      title: ISO-4 PIN Block
-      description: PIN block related data in `ISO-4` format.
-      additionalProperties: false
-      required:
-      - block
-      - format
-      - zoneId
-      - keyId
-      properties:
-        format:
-          type: string
-          description: The PIN block format.
-          enum:
-          - ISO-4
-        block:
-          type: string
-          title: ISO-4 Block
-          description: 'The encrypted PIN, as an `ISO-4` block of 32 hexadecimal characters.
-
-            '
-          pattern: ^[A-Fa-f0-9]+$
-          minLength: 32
-          maxLength: 32
-          example: 32CF86E514CB24FE32CF86E514CB24FE
-        zoneId:
-          type: string
-          description: ID of the encryption zone.
-          pattern: ^[a-zA-Z0-9()+,\-.:=@;$_!*\/?#|]*$
+          description: ATM terminal's ID
+          pattern: ^[a-zA-Z0-9]+$
           minLength: 1
-          maxLength: 128
-          example: my-zone
-        keyId:
-          type: string
-          description: Encryption key in the specified zone to use.
-          pattern: ^[a-zA-Z0-9()+,\-.:=@;$_!*\/?#|]*$
-          minLength: 1
-          maxLength: 128
-          example: my-encryption-key
-    IdempotentRequestIsStillBeingProcessedError:
-      type: object
-      additionalProperties: false
-      required:
-      - type
-      - title
-      - status
-      - detail
-      - instance
-      properties:
-        type:
-          type: string
-          enum:
-          - /silverflow/problems/idempotency/request-is-still-being-processed
-        title:
-          type: string
-          enum:
-          - Request Is Still Being Processed
-        status:
-          type: integer
-          enum:
-          - 409
-        detail:
-          $ref: '#/components/schemas/errorDetail'
-        instance:
-          $ref: '#/components/schemas/errorInstance'
-      example:
-        type: /silverflow/problems/idempotency/request-is-still-being-processed
-        title: Request Is Still Being Processed
-        status: 409
-        detail: The original request for this idempotency key is still being processed.
-        instance: /silverflow/3c4d5e6f-7a8b-4c3d-0e1f-2a3b4c5d6e7f
-    VisaNetworkFields:
-      type: object
-      description: Visa specific ISO8583 raw values
-      additionalProperties: false
-      required:
-      - transactionIdentifier
-      properties:
-        transactionIdentifier:
-          type: string
-          description: Contents of field 62, subfield 2
-          example: '238210000026090'
-    MastercardNetworkFields:
-      type: object
-      description: Mastercard specific ISO8583 raw values
-      additionalProperties: false
-      required:
-      - banknetReference
-      - traceId
-      properties:
-        banknetReference:
-          type: string
-          description: Contents of field 63, subfield 2
-          example: ATSGHX
-        traceId:
-          type: string
-          description: 'The trace ID can be used to refer to the original authorization when reversing it.
-
-
-            The value is constructed from the contents of field 63, subfield 1, field 63, subfield 2, and field 15. The value intentionally ends with two spaces.
+          maxLength: 8
+          example: ATM001
+        capabilities:
+          type: array
+          description: 'The capabilities of the ATM terminal. This can be one or multiple.
 
             '
-    ReferencedAcceptorNotFoundByRouteError:
-      type: object
-      additionalProperties: false
-      required:
-      - type
-      - title
-      - status
-      - detail
-      - instance
-      properties:
-        type:
-          type: string
-          enum:
-          - /silverflow/problems/card-management/referenced-acceptor-not-found-by-route
-        title:
-          type: string
-          enum:
-          - Referenced Acceptor Not Found By Route
-        status:
-          type: integer
-          enum:
-          - 409
-        detail:
-          $ref: '#/components/schemas/errorDetail'
-        instance:
-          $ref: '#/components/schemas/errorInstance'
-      example:
-        type: /silverflow/problems/card-management/referenced-acceptor-not-found-by-route
-        title: Referenced Acceptor Not Found By Route
-        status: 409
-        detail: No acceptor could be found for the provided merchant key and card network.
-        instance: /silverflow/4e5f6a7b-8c9d-4e5f-0a1b-2c3d4e5f6a7b
-    InvalidRequestError:
-      type: object
-      additionalProperties: false
-      required:
-      - type
-      - title
-      - status
-      - detail
-      - instance
-      properties:
-        type:
-          type: string
-          enum:
-          - /silverflow/problems/charge/invalid-request
-        title:
-          type: string
-          enum:
-          - Invalid Request
-        status:
-          type: integer
-          enum:
-          - 400
-        detail:
-          $ref: '#/components/schemas/errorDetail'
-        instance:
-          $ref: '#/components/schemas/errorInstance'
-      example:
-        type: /silverflow/problems/charge/invalid-request
-        title: Invalid Request
-        status: 400
-        detail: Cannot create the action due to one or more errors in the request.
-        instance: /silverflow/b0451a9d-f66d-4ef7-9f5d-d48064a2bb3e
-    MaskedCard:
-      type: object
-      description: 'Card data for ATM transactions. ATM transactions do not support processor tokenization.
-
-        '
-      additionalProperties: false
-      required:
-      - maskedNumber
-      properties:
-        maskedNumber:
-          type: string
-          description: 'The card number used to create this action, masked according to PCI standards. For card numbers with 16 or more digits, the first 8 and the last 4 digits are visible. For card numbers with 13-15 digits, the first 6 and the last 4 digits are visible. For cards numbers with less than 13 digits, the first 6 and last 2 digits are visible.
-
-            '
-    AuthorizationIsoFields:
-      type: object
-      description: The values from the ISO8583 response message received from the network.
-      additionalProperties: false
-      required:
-      - responseCode
-      - responseCodeDescription
-      - networkCode
-      - systemTraceAuditNumber
-      - retrievalReferenceNumber
-      - networkSpecificFields
-      properties:
-        responseCode:
-          type: string
-          description: Contents of field 39
-          example: '00'
-        responseCodeDescription:
-          type: string
-          description: The description of the `responseCode`
-          example: Approved
-        authorizationCode:
-          type: string
-          description: Contents of field 38
-          example: 4A4316
-        networkCode:
-          type: string
-          description: Contents of field 63, subfield 1
-          example: '0000'
-        systemTraceAuditNumber:
-          type: string
-          description: Contents of field 11
-          example: '123456'
-        retrievalReferenceNumber:
-          type: string
-          description: Contents of field 37
-          example: '131608123456'
-        networkSpecificFields:
-          $ref: '#/components/schemas/NetworkSpecificFields'
-    components-schemas-ValidationError:
-      type: object
-      additionalProperties: false
-      required:
-      - path
-      - message
-      properties:
-        path:
-          type: string
-          description: A relative path to the error location within the request body.
-        errorCode:
-          type: string
-          description: A code that identifies the error.
-        message:
-          type: string
-          description: A brief description of the validation error.
-    InternalServerError:
-      type: object
-      additionalProperties: false
-      required:
-      - type
-      - title
-      - status
-      - detail
-      - instance
-      properties:
-        type:
-          type: string
-          enum:
-          - /silverflow/problems/internal-server-error
-        title:
-          type: string
-          enum:
-          - Internal Server Error
-        status:
-          type: integer
-          enum:
-          - 500
-        detail:
-          $ref: '#/components/schemas/errorDetail'
-        instance:
-          $ref: '#/components/schemas/errorInstance'
-      example:
-        type: /silverflow/problems/internal-server-error
-        title: Internal Server Error
-        status: 500
-        detail: The server encountered an unexpected error.
-        instance: /silverflow/7a8b9c0d-1e2f-4a7b-4c5d-6e7f8a9b0c1d
-    TransactionReference:
-      type: string
-      description: 'Unique ID assigned by the merchant or payment service provider for the transaction. Used to identify the transaction.
-
-        '
-      pattern: ^[a-zA-Z0-9()+,\-.:=@;$_!*\/?|]+$
-      minLength: 1
-      maxLength: 120
-      example: Dz3dIzE74EfH1HeTInyE
-    ActionKey:
-      type: string
-      description: Uniquely identifies a card-management action.
-      pattern: ^cma-[a-zA-Z0-9]+$
-      minLength: 5
-      maxLength: 120
-      example: cma-1e1dAHhgstYTUhlphPzZ
+          minItems: 1
+          items:
+            $ref: '#/components/schemas/schemas-TerminalCapability'
+          example:
+          - contact_chip
+          - contactless_chip
+          - magstripe
     EmvData:
       type: string
       description: 'This field contains integrated circuit card (ICC) related binary data that is transmitted from the ICC to the card issuer and from the card issuer to the ICC. This field is formatted as 510 hexadecimal characters, which translates to 255 bytes.
@@ -1041,13 +1037,6 @@ components:
       minLength: 1
       maxLength: 510
       example: 5F2A0209785F34010082027C008407A0000000093510950500000080009A031104119C01009F02060000000043149F090200029F10120210A780030400009F2100000000000000FF9F1A0202509F26082E3EAB17CEEC500C9F2701809F330360A0409F34034403029F3501229F360200169F3704BC75E9B39F4005A00090F0019F4C089F21B02E0EEAC454
-    TerminalEntryMode:
-      type: string
-      description: The method used for PAN entry on the ATM terminal.
-      enum:
-      - chip
-      - contactless
-      - magstripe
   securitySchemes:
     ApiKey:
       description: "The primary method of authenticating to the Silverflow API is through API keys.\n\nAPI keys can be created by calling the [createApiKey](#operation/createApiKey) endpoint. You can create up to 40 API keys and also update and delete them, allowing for _credential rotation_.\n\nThe _Agent Activation_ process will generate an initial API Key for you. See [Activate Agent](#section/Getting-Started).\n\nA call to the [createApiKey](#operation/createApiKey) endpoint will return the following structure:\n\n```json\n{\n    \"key\": \"apk-1wtRxni5IsPsSpBLWpwr\",\n    \"status\": \"active\",\n    \"agentKey\": \"cgt-1wtRvFLIjDOyyUR5Q2LB\",\n    \"description\": \"Data lake API key\",\n    \"permissions\": [\n        \"charges:List\",\n        \"reports:All\"\n    ],\n    \"created\": \"2021-06-22T11:21:45.115Z\",\n    \"secret\": \"FWtnOOHAjbD6rNxWWEeVOCj7JXSEPGJQ\",\n    \"version\": 1\n}\n```\n\n> **Important:** The `secret` is only returned once in the response to the `createApiKey` call.\n\nOnce created, the `key` and `secret` fields from the API key must be used in the HTTP `Authorization` header using the `Basic` scheme.\nThe Basic scheme requires a **username** and **password** to be specified, separated by a `:` (colon) and Base64 encoded.\n\nUse the following values from the API key to construct a Basic authentication header:\n\n| Basic field | API key field | Example |\n| ----------- | ------------- | ------- |\n| username | `key` | `apk-1wtRxni5IsPsSpBLWpwr` |\n| password | `secret` | `FWtnOOHAjbD6rNxWWEeVOCj7JXSEPGJQ` |\n\nIn pseudo-code a valid HTTP Basic Authentication header would be constructed as follows:\n\n```ts\nconst apiKeyId = \"apk-1wtRxni5IsPsSpBLWpwr\";\nconst apiKeySecret = \"FWtnOOHAjbD6rNxWWEeVOCj7JXSEPGJQ\";\nconst authnValue = \"Basic \" + base64Encode(apiKeyId + \":\" + apiKeySecret);\nrequest.setHeader(\"Authorization\", authnValue);\n```\n\nUsing the values from the example a valid HTTP request would look like the following:\n\n```http\nGET /v1/agents/current HTTP/1.1\nAccept: application/json\nAuthorization: Basic YXBrLTF3dFJ4bmk1SXNQc1NwQkxXcHdyOkZXdG5PT0hBamJENnJOeFdXRWVWT0NqN0pYU0VQR0pR\n```\n\nMore information on the Basic scheme can be found in [RFC-7617 - The 'Basic' HTTP Authentication Scheme](https://datatracker.ietf.org/doc/html/rfc7617)."
@@ -1091,9 +1080,6 @@ components:
         Certificate validation happens at the transport layer during TLS handshake. Tenant verification is performed by matching the agent key embedded in the client certificate against the agent key embedded in the trusted CA.
 
         '
-x-refined-from:
-- silverflow-openapi.yml
-- silverflow-openapi.yml
 x-tagGroups:
 - name: ''
   tags:

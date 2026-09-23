@@ -7,7 +7,7 @@ info:
     email: support@silverflow.com
   license:
     name: Commercial
-  description: 'Operations tagged Network Tokens Events across 2 of this provider''s published API definitions: silverflow-openapi.yml, silverflow-openapi.yml. Each path carries the servers of the definition it was published in.'
+  description: 'Operations tagged Network Tokens Events across 2 of this provider''s published API definitions: silverflow-openapi.yml, silverflow-network-tokens-events-api-openapi.yml. Each path carries the servers of the definition it was published in.'
 servers:
 - url: https://eu-west-1.api.silverflow.com/v1
   description: Production URL for Europe - Equivalent to https://api.silverflow.co/v1
@@ -125,10 +125,43 @@ webhooks:
       description: Sandbox URL - Equivalent to https://api-sbx.silverflow.co/v1
 components:
   schemas:
-    source:
+    PublicCloudEvent:
+      type: object
+      required:
+      - id
+      - source
+      - specversion
+      - type
+      - datacontenttype
+      - dataschema
+      - subject
+      - time
+      - agent
+      - data
+      properties:
+        id:
+          $ref: '#/components/schemas/eventId'
+        specversion:
+          allOf:
+          - description: The version of the current spec.
+          - enum:
+            - '1.0'
+          - $ref: '#/components/schemas/openapi_components-schemas-version-3'
+        datacontenttype:
+          $ref: '#/components/schemas/dataContentType'
+        dataschema:
+          $ref: '#/components/schemas/dataschema'
+        time:
+          $ref: '#/components/schemas/time'
+        agent:
+          $ref: '#/components/schemas/common_agentKey'
+    eventId:
       type: string
-      description: Source system of the event.
-      pattern: ^https://silverflow.com/[a-zA-Z]+$
+      description: Uniquely identifies an event.
+      pattern: ^evt-[a-zA-Z0-9]+$
+      minLength: 5
+      maxLength: 120
+      example: evt-1e1dAHhgstYTUhlphPzZ
     NetworkTokenEventNotification1_0Failed:
       type: object
       allOf:
@@ -164,110 +197,31 @@ components:
           - enum:
             - https://silverflow.com/schemas/events/networkTokens/1.0
           - example: https://silverflow.com/schemas/events/networkTokens/1.0
-    time:
+    openapi_components-schemas-lastModified-3:
       type: string
+      description: The date and time this object was last modified.
       format: date-time
-      description: Date and time when the event was sent.
-    NetworkTokenEventNotification1_0Updated:
+      readOnly: false
+    dataContentType:
+      type: string
+      description: The content type of the event.
+      enum:
+      - application/json
+    tokenError:
       type: object
-      allOf:
-      - $ref: '#/components/schemas/PublicCloudEvent'
+      description: The error when the network token request failed.
       required:
-      - data
+      - code
+      - detail
       properties:
-        type:
-          allOf:
-          - $ref: '#/components/schemas/networkTokenEventType'
-          - enum:
-            - com.silverflow.networkTokens.updated
-          - example: com.silverflow.networkTokens.updated
-        data:
-          $ref: '#/components/schemas/NetworkTokenEventDataVersion1_0Updated'
-        source:
-          allOf:
-          - $ref: '#/components/schemas/source'
-          - enum:
-            - https://silverflow.com/networkTokens
-        specversion:
-          allOf:
-          - $ref: '#/components/schemas/openapi_components-schemas-version-3'
-          - enum:
-            - '1.0'
-        subject:
-          allOf:
-          - description: The subject of the notification, which is the network token key.
-          - $ref: '#/components/schemas/schemas-networkTokenKey'
-        dataschema:
-          allOf:
-          - $ref: '#/components/schemas/dataschema'
-          - enum:
-            - https://silverflow.com/schemas/events/networkTokens/1.0
-          - example: https://silverflow.com/schemas/events/networkTokens/1.0
-    PublicCloudEvent:
-      type: object
-      required:
-      - id
-      - source
-      - specversion
-      - type
-      - datacontenttype
-      - dataschema
-      - subject
-      - time
-      - agent
-      - data
-      properties:
-        id:
-          $ref: '#/components/schemas/eventId'
-        specversion:
-          allOf:
-          - description: The version of the current spec.
-          - enum:
-            - '1.0'
-          - $ref: '#/components/schemas/openapi_components-schemas-version-3'
-        datacontenttype:
-          $ref: '#/components/schemas/dataContentType'
-        dataschema:
-          $ref: '#/components/schemas/dataschema'
-        time:
-          $ref: '#/components/schemas/time'
-        agent:
-          $ref: '#/components/schemas/common_agentKey'
-    NetworkTokenEventNotification1_0Archived:
-      type: object
-      allOf:
-      - $ref: '#/components/schemas/PublicCloudEvent'
-      required:
-      - data
-      properties:
-        type:
-          allOf:
-          - $ref: '#/components/schemas/networkTokenEventType'
-          - enum:
-            - com.silverflow.networkTokens.archived
-          - example: com.silverflow.networkTokens.archived
-        data:
-          $ref: '#/components/schemas/NetworkTokenEventDataVersion1_0Archived'
-        source:
-          allOf:
-          - $ref: '#/components/schemas/source'
-          - enum:
-            - https://silverflow.com/networkTokens
-        specversion:
-          allOf:
-          - $ref: '#/components/schemas/openapi_components-schemas-version-3'
-          - enum:
-            - '1.0'
-        subject:
-          allOf:
-          - description: The subject of the notification, which is the network token key.
-          - $ref: '#/components/schemas/schemas-networkTokenKey'
-        dataschema:
-          allOf:
-          - $ref: '#/components/schemas/dataschema'
-          - enum:
-            - https://silverflow.com/schemas/events/networkTokens/1.0
-          - example: https://silverflow.com/schemas/events/networkTokens/1.0
+        code:
+          type: string
+          description: Error code from the token provider.
+          example: TOKEN_PROVISIONING_FAILED
+        detail:
+          type: string
+          description: Human-readable error message.
+          example: The card network rejected the tokenization request.
     NetworkTokenEventDataVersion1_0Failed:
       type: object
       description: The event data for network token failed notifications.
@@ -295,137 +249,9 @@ components:
           $ref: '#/components/schemas/openapi_components-schemas-lastModified-3'
         version:
           $ref: '#/components/schemas/common_version'
-    common_agentKey:
-      description: Uniquely identifies an Agent.
-      type: string
-      pattern: ^cgt-[a-zA-Z0-9]+$
-      readOnly: true
-      example: cgt-EFG67b4yPre23ZDrLX
-      title: agentKey
-    NetworkTokenEventDataVersion1_0Archived:
-      type: object
-      description: The event data for network token archived notifications.
-      required:
-      - key
-      - status
-      - created
-      - version
-      properties:
-        key:
-          $ref: '#/components/schemas/schemas-networkTokenKey'
-        status:
-          type: string
-          description: The current status of a Network Token.
-          enum:
-          - archived
-          example: archived
-        lastTokenRefresh:
-          $ref: '#/components/schemas/schemas-lastTokenRefresh'
-        created:
-          $ref: '#/components/schemas/openapi_components-schemas-created-4'
-        lastModified:
-          $ref: '#/components/schemas/openapi_components-schemas-lastModified-3'
-        version:
-          $ref: '#/components/schemas/common_version'
-    schemas-networkTokenKey:
-      description: Uniquely identifies a Network Token.
-      type: string
-      pattern: ^ntk-[a-zA-Z0-9]+$
-      minLength: 5
-      maxLength: 120
-      example: ntk-1e1dAHhgstYTUhlphPzZ
-    dataschema:
-      type: string
-      description: The event schema with the data version of the event.
-    openapi_components-schemas-version-3:
-      type: string
-      description: The version of the spec.
-      pattern: ^[1-9]+.[0-9]+$
-      example: '1.0'
-    NetworkTokenEventDataVersion1_0Updated:
-      type: object
-      description: The event data for network token updated notifications.
-      required:
-      - key
-      - status
-      - created
-      - version
-      properties:
-        key:
-          $ref: '#/components/schemas/schemas-networkTokenKey'
-        status:
-          type: string
-          description: The current status of a Network Token.
-          enum:
-          - requested
-          - active
-          - suspended
-          - archivePending
-          example: active
-        lastTokenRefresh:
-          $ref: '#/components/schemas/schemas-lastTokenRefresh'
-        created:
-          $ref: '#/components/schemas/openapi_components-schemas-created-4'
-        lastModified:
-          $ref: '#/components/schemas/openapi_components-schemas-lastModified-3'
-        version:
-          $ref: '#/components/schemas/common_version'
-    common_version:
-      type: integer
-      description: The version of this object.
-      format: int64
-      minimum: 1
-      maximum: 1000
-      example: 1
-      readOnly: false
-    tokenError:
-      type: object
-      description: The error when the network token request failed.
-      required:
-      - code
-      - detail
-      properties:
-        code:
-          type: string
-          description: Error code from the token provider.
-          example: TOKEN_PROVISIONING_FAILED
-        detail:
-          type: string
-          description: Human-readable error message.
-          example: The card network rejected the tokenization request.
-    NetworkTokenEventDataVersion1_0Created:
-      type: object
-      description: The event data for network token created notifications.
-      required:
-      - key
-      - status
-      - created
-      - version
-      properties:
-        key:
-          $ref: '#/components/schemas/schemas-networkTokenKey'
-        status:
-          type: string
-          description: The current status of a Network Token.
-          enum:
-          - active
-          example: active
-        lastTokenRefresh:
-          $ref: '#/components/schemas/schemas-lastTokenRefresh'
-        created:
-          $ref: '#/components/schemas/openapi_components-schemas-created-4'
-        lastModified:
-          $ref: '#/components/schemas/openapi_components-schemas-lastModified-3'
-        version:
-          $ref: '#/components/schemas/common_version'
     openapi_components-schemas-created-4:
       type: string
       description: The date and time this object was created.
-      format: date-time
-      readOnly: false
-    openapi_components-schemas-lastModified-3:
-      type: string
-      description: The date and time this object was last modified.
       format: date-time
       readOnly: false
     NetworkTokenEventNotification1_0Created:
@@ -463,59 +289,213 @@ components:
           - enum:
             - https://silverflow.com/schemas/events/networkTokens/1.0
           - example: https://silverflow.com/schemas/events/networkTokens/1.0
-    eventId:
-      type: string
-      description: Uniquely identifies an event.
-      pattern: ^evt-[a-zA-Z0-9]+$
-      minLength: 5
-      maxLength: 120
-      example: evt-1e1dAHhgstYTUhlphPzZ
-    networkTokenEventType:
-      type: string
-      description: The event type for network token events.
-      pattern: ^com.silverflow.networkTokens.[a-zA-Z]+$
-      example: com.silverflow.networkTokens.created
-    dataContentType:
-      type: string
-      description: The content type of the event.
-      enum:
-      - application/json
+    NetworkTokenEventDataVersion1_0Created:
+      type: object
+      description: The event data for network token created notifications.
+      required:
+      - key
+      - status
+      - created
+      - version
+      properties:
+        key:
+          $ref: '#/components/schemas/schemas-networkTokenKey'
+        status:
+          type: string
+          description: The current status of a Network Token.
+          enum:
+          - active
+          example: active
+        lastTokenRefresh:
+          $ref: '#/components/schemas/schemas-lastTokenRefresh'
+        created:
+          $ref: '#/components/schemas/openapi_components-schemas-created-4'
+        lastModified:
+          $ref: '#/components/schemas/openapi_components-schemas-lastModified-3'
+        version:
+          $ref: '#/components/schemas/common_version'
     schemas-lastTokenRefresh:
       type: string
       format: date-time
       description: The date and time this network token was last refreshed.
       example: '2024-01-31T10:03:19.949Z'
+    common_agentKey:
+      description: Uniquely identifies an Agent.
+      type: string
+      pattern: ^cgt-[a-zA-Z0-9]+$
+      readOnly: true
+      example: cgt-EFG67b4yPre23ZDrLX
+      title: agentKey
+    dataschema:
+      type: string
+      description: The event schema with the data version of the event.
+    openapi_components-schemas-version-3:
+      type: string
+      description: The version of the spec.
+      pattern: ^[1-9]+.[0-9]+$
+      example: '1.0'
+    NetworkTokenEventDataVersion1_0Archived:
+      type: object
+      description: The event data for network token archived notifications.
+      required:
+      - key
+      - status
+      - created
+      - version
+      properties:
+        key:
+          $ref: '#/components/schemas/schemas-networkTokenKey'
+        status:
+          type: string
+          description: The current status of a Network Token.
+          enum:
+          - archived
+          example: archived
+        lastTokenRefresh:
+          $ref: '#/components/schemas/schemas-lastTokenRefresh'
+        created:
+          $ref: '#/components/schemas/openapi_components-schemas-created-4'
+        lastModified:
+          $ref: '#/components/schemas/openapi_components-schemas-lastModified-3'
+        version:
+          $ref: '#/components/schemas/common_version'
+    schemas-networkTokenKey:
+      description: Uniquely identifies a Network Token.
+      type: string
+      pattern: ^ntk-[a-zA-Z0-9]+$
+      minLength: 5
+      maxLength: 120
+      example: ntk-1e1dAHhgstYTUhlphPzZ
+    NetworkTokenEventNotification1_0Updated:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/PublicCloudEvent'
+      required:
+      - data
+      properties:
+        type:
+          allOf:
+          - $ref: '#/components/schemas/networkTokenEventType'
+          - enum:
+            - com.silverflow.networkTokens.updated
+          - example: com.silverflow.networkTokens.updated
+        data:
+          $ref: '#/components/schemas/NetworkTokenEventDataVersion1_0Updated'
+        source:
+          allOf:
+          - $ref: '#/components/schemas/source'
+          - enum:
+            - https://silverflow.com/networkTokens
+        specversion:
+          allOf:
+          - $ref: '#/components/schemas/openapi_components-schemas-version-3'
+          - enum:
+            - '1.0'
+        subject:
+          allOf:
+          - description: The subject of the notification, which is the network token key.
+          - $ref: '#/components/schemas/schemas-networkTokenKey'
+        dataschema:
+          allOf:
+          - $ref: '#/components/schemas/dataschema'
+          - enum:
+            - https://silverflow.com/schemas/events/networkTokens/1.0
+          - example: https://silverflow.com/schemas/events/networkTokens/1.0
+    NetworkTokenEventNotification1_0Archived:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/PublicCloudEvent'
+      required:
+      - data
+      properties:
+        type:
+          allOf:
+          - $ref: '#/components/schemas/networkTokenEventType'
+          - enum:
+            - com.silverflow.networkTokens.archived
+          - example: com.silverflow.networkTokens.archived
+        data:
+          $ref: '#/components/schemas/NetworkTokenEventDataVersion1_0Archived'
+        source:
+          allOf:
+          - $ref: '#/components/schemas/source'
+          - enum:
+            - https://silverflow.com/networkTokens
+        specversion:
+          allOf:
+          - $ref: '#/components/schemas/openapi_components-schemas-version-3'
+          - enum:
+            - '1.0'
+        subject:
+          allOf:
+          - description: The subject of the notification, which is the network token key.
+          - $ref: '#/components/schemas/schemas-networkTokenKey'
+        dataschema:
+          allOf:
+          - $ref: '#/components/schemas/dataschema'
+          - enum:
+            - https://silverflow.com/schemas/events/networkTokens/1.0
+          - example: https://silverflow.com/schemas/events/networkTokens/1.0
+    time:
+      type: string
+      format: date-time
+      description: Date and time when the event was sent.
+    source:
+      type: string
+      description: Source system of the event.
+      pattern: ^https://silverflow.com/[a-zA-Z]+$
+    networkTokenEventType:
+      type: string
+      description: The event type for network token events.
+      pattern: ^com.silverflow.networkTokens.[a-zA-Z]+$
+      example: com.silverflow.networkTokens.created
+    common_version:
+      type: integer
+      description: The version of this object.
+      format: int64
+      minimum: 1
+      maximum: 1000
+      example: 1
+      readOnly: false
+    NetworkTokenEventDataVersion1_0Updated:
+      type: object
+      description: The event data for network token updated notifications.
+      required:
+      - key
+      - status
+      - created
+      - version
+      properties:
+        key:
+          $ref: '#/components/schemas/schemas-networkTokenKey'
+        status:
+          type: string
+          description: The current status of a Network Token.
+          enum:
+          - requested
+          - active
+          - suspended
+          - archivePending
+          example: active
+        lastTokenRefresh:
+          $ref: '#/components/schemas/schemas-lastTokenRefresh'
+        created:
+          $ref: '#/components/schemas/openapi_components-schemas-created-4'
+        lastModified:
+          $ref: '#/components/schemas/openapi_components-schemas-lastModified-3'
+        version:
+          $ref: '#/components/schemas/common_version'
   examples:
-    created-2:
-      summary: Network Token was created
+    archived-2:
+      summary: Network Token was archived
       value:
-        type: com.silverflow.networkTokens.created
+        type: com.silverflow.networkTokens.archived
         data:
           key: ntk-1e1dAHhgstYTUhlphPzZ
-          status: active
-          lastTokenRefresh: '2024-01-31T10:03:19.949Z'
+          status: archived
           created: '2024-01-31T09:57:02.201Z'
-          lastModified: '2024-01-31T10:03:19.949Z'
-          version: 2
-        source: https://silverflow.com/networkTokens
-        specversion: '1.0'
-        subject: ntk-1e1dAHhgstYTUhlphPzZ
-        dataschema: https://silverflow.com/schemas/events/networkTokens/1.0
-        id: evt-3IgSdT7DbeXNVftim0oY
-        datacontenttype: application/json
-        time: '2024-01-31T10:03:19.951Z'
-        agent: cgt-1UF2NafdfrdPMf2XrS2
-    updated:
-      summary: Network Token was updated
-      value:
-        type: com.silverflow.networkTokens.updated
-        data:
-          key: ntk-1e1dAHhgstYTUhlphPzZ
-          status: active
-          lastTokenRefresh: '2024-01-31T10:03:19.949Z'
-          created: '2024-01-31T09:57:02.201Z'
-          lastModified: '2024-01-31T10:03:19.949Z'
-          version: 3
+          lastModified: '2024-01-31T10:03:19.951Z'
+          version: 4
         source: https://silverflow.com/networkTokens
         specversion: '1.0'
         subject: ntk-1e1dAHhgstYTUhlphPzZ
@@ -545,16 +525,36 @@ components:
         datacontenttype: application/json
         time: '2024-01-31T10:03:19.951Z'
         agent: cgt-1UF2NafdfrdPMf2XrS2
-    archived-2:
-      summary: Network Token was archived
+    updated:
+      summary: Network Token was updated
       value:
-        type: com.silverflow.networkTokens.archived
+        type: com.silverflow.networkTokens.updated
         data:
           key: ntk-1e1dAHhgstYTUhlphPzZ
-          status: archived
+          status: active
+          lastTokenRefresh: '2024-01-31T10:03:19.949Z'
           created: '2024-01-31T09:57:02.201Z'
-          lastModified: '2024-01-31T10:03:19.951Z'
-          version: 4
+          lastModified: '2024-01-31T10:03:19.949Z'
+          version: 3
+        source: https://silverflow.com/networkTokens
+        specversion: '1.0'
+        subject: ntk-1e1dAHhgstYTUhlphPzZ
+        dataschema: https://silverflow.com/schemas/events/networkTokens/1.0
+        id: evt-3IgSdT7DbeXNVftim0oY
+        datacontenttype: application/json
+        time: '2024-01-31T10:03:19.951Z'
+        agent: cgt-1UF2NafdfrdPMf2XrS2
+    created-2:
+      summary: Network Token was created
+      value:
+        type: com.silverflow.networkTokens.created
+        data:
+          key: ntk-1e1dAHhgstYTUhlphPzZ
+          status: active
+          lastTokenRefresh: '2024-01-31T10:03:19.949Z'
+          created: '2024-01-31T09:57:02.201Z'
+          lastModified: '2024-01-31T10:03:19.949Z'
+          version: 2
         source: https://silverflow.com/networkTokens
         specversion: '1.0'
         subject: ntk-1e1dAHhgstYTUhlphPzZ
@@ -608,7 +608,7 @@ components:
         '
 x-refined-from:
 - silverflow-openapi.yml
-- silverflow-openapi.yml
+- silverflow-network-tokens-events-api-openapi.yml
 x-tagGroups:
 - name: ''
   tags:

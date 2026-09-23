@@ -1,13 +1,13 @@
 openapi: 3.2.0
 info:
-  title: Silverflow Network Tokenization API
+  description: '**This OpenAPI specification cannot be used for code generation.** Please reach out to your TAM regarding code generation using the API Spec.'
   version: 1.417.0
+  title: Silverflow Network Tokenization API
   contact:
     name: API Support
     email: support@silverflow.com
   license:
     name: Commercial
-  description: 'Operations tagged Network Tokenization across 2 of this provider''s published API definitions: silverflow-openapi.yml, silverflow-openapi.yml. Each path carries the servers of the definition it was published in.'
 servers:
 - url: https://eu-west-1.api.silverflow.com/v1
   description: Production URL for Europe - Equivalent to https://api.silverflow.co/v1
@@ -29,9 +29,7 @@ paths:
       description: 'Used to let Silverflow create a network token on behalf of the caller.
 
 
-        Requires the `networkTokens:Create` permission.
-
-        '
+        Requires the `networkTokens:Create` permission.'
       tags:
       - Network Tokenization
       requestBody:
@@ -127,7 +125,10 @@ paths:
     get:
       operationId: listNetworkTokens
       summary: List Network Tokens
-      description: "This operation returns a (paged) list of all the stored network tokens for the authenticated Agent. \n\nRequires `networkTokens:List` permission.\n"
+      description: 'This operation returns a (paged) list of all the stored network tokens for the authenticated Agent.
+
+
+        Requires `networkTokens:List` permission.'
       tags:
       - Network Tokenization
       parameters:
@@ -156,13 +157,6 @@ paths:
           $ref: '#/components/responses/openapi_components-responses-InternalServerError'
         '503':
           $ref: '#/components/responses/components-responses-ServiceUnavailableError'
-    servers:
-    - url: https://eu-west-1.api.silverflow.com/v1
-      description: Production URL for Europe - Equivalent to https://api.silverflow.co/v1
-    - url: https://us-east-2.api.silverflow.com/v1
-      description: Production URL for North America
-    - url: https://eu-west-1.api-sbx.silverflow.com/v1
-      description: Sandbox URL - Equivalent to https://api-sbx.silverflow.co/v1
   /networkTokens/{networkTokenKey}:
     get:
       operationId: getNetworkToken
@@ -170,9 +164,7 @@ paths:
       description: 'Returns a network token by its key.
 
 
-        Requires the `networkTokens:Get` permission.
-
-        '
+        Requires the `networkTokens:Get` permission.'
       tags:
       - Network Tokenization
       parameters:
@@ -204,9 +196,7 @@ paths:
       description: 'Used to archive a network token. This operation is not reversable, and will make the network token unusable.
 
 
-        Requires the `networkTokens:Archive` permission.
-
-        '
+        Requires the `networkTokens:Archive` permission.'
       tags:
       - Network Tokenization
       parameters:
@@ -230,18 +220,17 @@ paths:
           $ref: '#/components/responses/openapi_components-responses-InternalServerError'
         '503':
           $ref: '#/components/responses/components-responses-ServiceUnavailableError'
-    servers:
-    - url: https://eu-west-1.api.silverflow.com/v1
-      description: Production URL for Europe - Equivalent to https://api.silverflow.co/v1
-    - url: https://us-east-2.api.silverflow.com/v1
-      description: Production URL for North America
-    - url: https://eu-west-1.api-sbx.silverflow.com/v1
-      description: Sandbox URL - Equivalent to https://api-sbx.silverflow.co/v1
   /networkTokens/{networkTokenKey}/networkTokenData:
     get:
       operationId: getNetworkTokenData
       summary: Get Network Token Data
-      description: "The contents of the network token that is associated with a network token key. \n\nIt does not include the network token cryptogram, this has to be created with the [Create Network Token Cryptogram](#/operation/createNetworkTokenCryptogram) endpoint.\n\nRequires the `networkTokens:GetNetworkTokenData` permission.\n"
+      description: 'The contents of the network token that is associated with a network token key.
+
+
+        It does not include the network token cryptogram, this has to be created with the Create Network Token Cryptogram endpoint.
+
+
+        Requires the `networkTokens:GetNetworkTokenData` permission.'
       tags:
       - Network Tokenization
       parameters:
@@ -274,13 +263,6 @@ paths:
           $ref: '#/components/responses/openapi_components-responses-InternalServerError'
         '503':
           $ref: '#/components/responses/components-responses-ServiceUnavailableError'
-    servers:
-    - url: https://eu-west-1.api.silverflow.com/v1
-      description: Production URL for Europe - Equivalent to https://api.silverflow.co/v1
-    - url: https://us-east-2.api.silverflow.com/v1
-      description: Production URL for North America
-    - url: https://eu-west-1.api-sbx.silverflow.com/v1
-      description: Sandbox URL - Equivalent to https://api-sbx.silverflow.co/v1
   /networkTokens/{networkTokenKey}/cryptogram:
     post:
       operationId: createNetworkTokenCryptogram
@@ -288,9 +270,7 @@ paths:
       description: 'Used to obtain a DSRP or TAVV cryptogram for the referenced network token. These should be provided for each initial CIT and MIT charges and for all subsequent CIT charges.
 
 
-        Requires the `networkTokens:CreateNetworkTokenCryptogram` permission.
-
-        '
+        Requires the `networkTokens:CreateNetworkTokenCryptogram` permission.'
       tags:
       - Network Tokenization
       parameters:
@@ -320,157 +300,612 @@ paths:
           $ref: '#/components/responses/openapi_components-responses-InternalServerError'
         '503':
           $ref: '#/components/responses/components-responses-ServiceUnavailableError'
-    servers:
-    - url: https://eu-west-1.api.silverflow.com/v1
-      description: Production URL for Europe - Equivalent to https://api.silverflow.co/v1
-    - url: https://us-east-2.api.silverflow.com/v1
-      description: Production URL for North America
-    - url: https://eu-west-1.api-sbx.silverflow.com/v1
-      description: Sandbox URL - Equivalent to https://api-sbx.silverflow.co/v1
 components:
   schemas:
-    openapi_components-schemas-CountryCodeAlpha2:
-      type: object
-      required:
-      - alpha2
-      additionalProperties: false
-      properties:
-        alpha2:
-          $ref: '#/components/schemas/openapi_components-schemas-countryCodeAlpha2'
-    tokenType:
+    openapi_components-schemas-offsetToken:
       type: string
-      description: The type of network token.
-      enum:
-      - merchant
-    openapi_components-schemas-CountryCodeNumeric:
-      type: object
-      required:
-      - numeric
-      additionalProperties: false
-      properties:
-        numeric:
-          $ref: '#/components/schemas/openapi_components-schemas-countryCodeNumeric'
-    schemas-errorInstance:
-      description: 'An absolute URI that identifies the specific occurrence of the problem.
-
-        It may or may not yield further information if dereferenced.
-
-        '
+      pattern: ^[a-zA-Z0-9%]+$
+    openapi_components-schemas-pan-4:
       type: string
-    TokenData:
-      type: object
-      required:
-      - number
-      - expiryMonth
-      - expiryYear
-      - paymentAccountReference
-      description: Network token data
-      properties:
-        number:
-          $ref: '#/components/schemas/tokenNumber'
-        expiryMonth:
-          $ref: '#/components/schemas/tokens_expiryMonth'
-        expiryYear:
-          $ref: '#/components/schemas/tokens_expiryYear'
-        paymentAccountReference:
-          $ref: '#/components/schemas/paymentAccountReference'
+      description: Full digits of a card
+      pattern: ^\d{12,19}$
+      format: password
+      example: '1234123412341234'
     openapi_components-schemas-line1-3:
       type: string
       minLength: 1
       description: Address line 1
-    components-schemas-AddressInput:
+    openapi_components-schemas-countryCodeAlpha3:
+      type: string
+      pattern: ^[A-Z]{3}$
+      description: 'The ISO code of the country.
+
+
+        **European ISO Country Codes**
+
+
+        <details>
+
+
+        | Country | Alpha-2 code | Numeric |
+
+        | ------- | ------------ | ------- |
+
+        | Åland Islands | AX | 248 |
+
+        | Andorra | AD | 020 |
+
+        | Austria | AT | 040 |
+
+        | Belgium | BE | 056 |
+
+        | Cyprus | CY | 196 |
+
+        | Estonia | EE | 233 |  |
+
+        | Finland | FI | 246 |
+
+        | France | FR | 250 |
+
+        | French Guiana | GF | 254 |
+
+        | French Southern Territories | TF | 260 |
+
+        | Germany | DE | 280 |
+
+        | Greece | GR | 300 |
+
+        | Guadeloupe | GP | 312 |
+
+        | Ireland | IE | 372 |
+
+        | Italy | IT | 380 |
+
+        | Kosovo, United Nations Mission in Kosovo (UNMIK) | QZ | 900 |
+
+        | Latvia | LV | 428 |
+
+        | Lithuania | LT | 440 |
+
+        | Luxembourg | LU | 442 |
+
+        | Malta | MT | 470 |
+
+        | Martinique | MQ | 474 |
+
+        | Mayotte | YT | 175 |
+
+        | Monaco | MC | 492 |
+
+        | Montenegro | ME | 499 |
+
+        | Netherlands | NL | 528 |
+
+        | Portugal | PT | 620 |
+
+        | Reunion | RE | 638 |
+
+        | Saint Barthélemy | BL | 652 |
+
+        | Saint Martin (French Part) | MF | 663 |
+
+        | San Marino | SM | 674 |
+
+        | Slovakia | SK | 703 |
+
+        | Slovenia | SI | 705 |
+
+        | Spain | ES | 724 |
+
+        | St. Pierre and Miquelon | PM | 666 |
+
+        | Vatican City State (Holy See) | VA | 336 |
+
+
+        </details>
+
+
+        **US ISO Country Codes**
+
+
+        <details>
+
+
+        | Country | Alpha-2 code | Numeric |
+
+        | ------- | ------------ | ------- |
+
+        | American Samoa | AS | 016 |
+
+        | Bonaire, St. Eusasius and Saba | BQ | 535 |
+
+        | British Indian Ocean Territory | IO | 086 |
+
+        | Ecuador | EC | 218 |
+
+        | Guam | GU | 316 |
+
+        | Marshall Islands | MH | 584 |
+
+        | Micronesia, Federated States of | FM | 583 |
+
+        | Northern Mariana Islands | MP | 580 |
+
+        | Palau | PW | 585 |
+
+        | Palestine, State of | PS | 275 |
+
+        | Puerto Rico | PR | 630 |
+
+        | Timor-Leste | TP | 626 |
+
+        | Turks and Caicos Islands | TC | 796 |
+
+        | U.S. Minor Outlying Islands | UM | 581 |
+
+        | United States | US | 840 |
+
+        | Virgin Islands, British | VG | 092 |
+
+        | Virgin Islands, U.S. | VI | 850 |
+
+
+        </details>
+
+
+        **Other ISO Country Codes**
+
+
+        <details>
+
+
+        | Country | Alpha-2 code | Numeric |
+
+        | ------- | ------------ | ------- |
+
+        | Afghanistan | AF | 004 |
+
+        | Albania | AL | 008 |
+
+        | Algeria | DZ | 012 |
+
+        | Angola | AO | 024 |
+
+        | Anguilla | AI | 660 |
+
+        | Antarctica | AQ | 010 |
+
+        | Antigua and Barbuda | AG | 028 |
+
+        | Argentina | AR | 032 |
+
+        | Armenia | AM | 051 |
+
+        | Aruba | AW | 533 |
+
+        | Australia | AU | 036 |
+
+        | Azerbaijan | AZ | 031 |
+
+        | Bahamas | BS | 044 |
+
+        | Bahrain | BH | 048 |
+
+        | Bangladesh | BD | 050 |
+
+        | Barbados | BB | 052 |
+
+        | Belarus | BR | 112 |
+
+        | Belize | BZ | 084 |
+
+        | Benin | BJ | 204 |
+
+        | Bermuda | BM | 060 |
+
+        | Bhutan | BT | 064 |
+
+        | Bolivia, Plurinational State of | BO | 068 |
+
+        | Bosnia and Herzegovina | BA | 070 |
+
+        | Botswana | BW | 072 |
+
+        | Bouvet Island | BV | 074 |
+
+        | Brazil | BR | 076 |
+
+        | Brunei Darussalam | BN | 096 |
+
+        | Bulgaria | BG | 100 |
+
+        | Burkina Faso | BF | 854 |
+
+        | Burundi | BI | 108 |
+
+        | Cambodia | KH | 116 |
+
+        | Cameroon | CM | 120 |
+
+        | Canada | CA | 124 |
+
+        | Cape Verde | CV | 132 |
+
+        | Cayman Islands | KY | 136 |
+
+        | Central African Republic | CF | 140 |
+
+        | Chad | TD | 148 |
+
+        | Chile | CL | 152 |
+
+        | China | CN | 156 |
+
+        | Christmas Island | CX | 162 |
+
+        | Cocos (Keeling) Islands | CC | 166 |
+
+        | Colombia | CO | 170 |
+
+        | Comoros | KM | 174 |
+
+        | Congo | CG | 178 |
+
+        | Cook Islands | CK | 184 |
+
+        | Costa Rica | CR | 188 |
+
+        | Côte D''Ivoire | CI | 384 |
+
+        | Croatia | HR | 191 |
+
+        | Cuba | CU | 192 |
+
+        | Curacao | CW | 531 |
+
+        | Czech Republic | CZ | 203 |
+
+        | Democratic Republic of the Congo | CD | 180 |
+
+        | Denmark | DK | 208 |
+
+        | Djibouti | DJ | 262 |
+
+        | Dominica | DM | 212 |
+
+        | Dominican Republic | DO | 214 |
+
+        | Egypt | EG | 818 |
+
+        | El Salvador | SV | 222 |
+
+        | Equatorial Guinea | GQ | 226 |
+
+        | Eritrea | ER | 232 |
+
+        | Ethiopia | ET | 230 |
+
+        | Falkland Islands (Malvinas) | FK | 238 |
+
+        | Faroe Islands | FO | 234 |
+
+        | Fiji | FJ | 242 |
+
+        | French Polynesia | PF | 258 |
+
+        | Gabon | GA | 266 |
+
+        | Gambia | GM | 270 |
+
+        | Georgia | GE | 268 |
+
+        | Ghana | GH | 288 |
+
+        | Gibraltar | GI | 292 |
+
+        | Greenland | GL | 304 |
+
+        | Grenada | GD | 308 |
+
+        | Guatemala | GT | 320 |
+
+        | Guernsey | GG | 831 |
+
+        | Guinea | GN | 324 |
+
+        | Guinea-Bissau | GW | 624 |
+
+        | Guyana | GY | 328 |
+
+        | Haiti | HT | 332 |
+
+        | Heard and McDonald Islands | HM | 334 |
+
+        | Honduras | HN | 340 |
+
+        | Hong Kong | HK | 344 |
+
+        | Hungary | HU | 348 |
+
+        | Iceland | IS | 352 |
+
+        | India | IN | 356 |
+
+        | Indonesia | ID | 360 |
+
+        | Iraq | IQ | 368 |
+
+        | Isle of Man | IM | 833 |
+
+        | Israel | IL | 376 |
+
+        | Jamaica | JM | 388 |
+
+        | Japan | JP | 392 |
+
+        | Jersey | JE | 832 |
+
+        | Jordan | JO | 400 |
+
+        | Kazakhstan | KZ | 398 |
+
+        | Kenya | KE | 404 |
+
+        | Kiribati | KI | 296 |
+
+        | Korea, Republic of | KR | 410 |
+
+        | Kuwait | KW | 414 |
+
+        | Kyrgyzstan | KG | 417 |
+
+        | Lao People''s Democratic Republic | LA | 418 |
+
+        | Lebanon | LB | 422 |
+
+        | Lesotho | LS | 426 |
+
+        | Liberia | LR | 430 |
+
+        | Libyan Arab Jamahiriya | LY | 434 |
+
+        | Liechtenstein | LI | 438 |
+
+        | Macao | MO | 446 |
+
+        | Macedonia | MK | 807 |
+
+        | Madagascar | MG | 450 |
+
+        | Malawi | MW | 454 |
+
+        | Malaysia | MY | 458 |
+
+        | Maldives | MV | 462 |
+
+        | Mali | ML | 466 |
+
+        | Mauritania | MR | 478 |
+
+        | Mauritius | MU | 480 |
+
+        | Mexico | MX | 484 |
+
+        | Moldova, Republic of | MD | 498 |
+
+        | Mongolia | MN | 496 |
+
+        | Montserrat | MS | 500 |
+
+        | Morocco | MA | 504 |
+
+        | Mozambique | MZ | 508 |
+
+        | Myanmar (effective 1 November 2012) | MM | 104 |
+
+        | Namibia | NA | 516 |
+
+        | Nauru | NR | 520 |
+
+        | Nepal | NP | 524 |
+
+        | Netherlands Antilles | AN | 530 |
+
+        | New Caledonia | NC | 540 |
+
+        | New Zealand | NZ | 554 |
+
+        | Nicaragua | NI | 558 |
+
+        | Niger | NE | 562 |
+
+        | Nigeria | NG | 566 |
+
+        | Niue | NU | 570 |
+
+        | Norfolk Island | NF | 574 |
+
+        | Norway | NO | 578 |
+
+        | Oman | OM | 512 |
+
+        | Pakistan | PK | 586 |
+
+        | Panama | PA | 591 |
+
+        | Papua New Guinea | PG | 598 |
+
+        | Paraguay | PY | 600 |
+
+        | Peru | PE | 604 |
+
+        | Philippines | PH | 608 |
+
+        | Pitcairn | PN | 612 |
+
+        | Poland | PL | 616 |
+
+        | Qatar | QA | 634 |
+
+        | Republic of South Sudan | SS | 728 |
+
+        | Romania | RO | 642 |
+
+        | Russian Federation | RU | 643 |
+
+        | Rwanda | RW | 646 |
+
+        | Samoa | WS | 882 |
+
+        | Sao Tome and Principe | ST | 678 |
+
+        | Saudi Arabia | SA | 682 |
+
+        | Senegal | SN | 686 |
+
+        | Serbia | RS | 688 |
+
+        | Seychelles | SC | 690 |
+
+        | Sierra Leone | SL | 694 |
+
+        | Singapore | SG | 702 |
+
+        | Sint Maarten (Dutch Part) | SX | 534 |
+
+        | Solomon Islands | SB | 090 |
+
+        | Somalia | SO | 706 |
+
+        | South Africa | ZA | 710 |
+
+        | South Georgia and the South Sandwich Islands | GS | 239 |
+
+        | Sri Lanka | LK | 144 |
+
+        | Saint Helena, Ascension and Tristan Da Cunha | SH | 654 |
+
+        | St. Kitts and Nevis | KN | 659 |
+
+        | St. Lucia | LC | 662 |
+
+        | St. Vincent and the Grenadines | VC | 670 |
+
+        | Suriname | SR | 740 |
+
+        | Svalbard and Jan Mayen | SJ | 744 |
+
+        | Swaziland | SZ | 748 |
+
+        | Sweden | SE | 752 |
+
+        | Switzerland | CH | 756 |
+
+        | Taiwan | TW | 158 |
+
+        | Tajikistan | TJ | 762 |
+
+        | Tanzania, United Republic of | TZ | 834 |
+
+        | Thailand | TH | 764 |
+
+        | Togo | TG | 768 |
+
+        | Tokelau | TK | 772 |
+
+        | Tonga | TO | 776 |
+
+        | Trinidad and Tobago | TT | 780 |
+
+        | Tunisia | TN | 788 |
+
+        | Turkey | TR | 792 |
+
+        | Turkmenistan | TM | 795 |
+
+        | Tuvalu | TV | 798 |
+
+        | Uganda | UG | 800 |
+
+        | Ukraine | UA | 804 |
+
+        | United Arab Emirates | AE | 784 |
+
+        | United Kingdom | GB | 826 |
+
+        | Uruguay | UY | 858 |
+
+        | Uzbekistan | UZ | 860 |
+
+        | Vanuatu | VU | 548 |
+
+        | Venezuela, Bolivarian Republic of | VE | 862 |
+
+        | Vietnam | VN | 704 |
+
+        | Wallis and Futuna | WF | 876 |
+
+        | Western Sahara | EH | 732 |
+
+        | Yemen | YE | 886 |
+
+        | Zambia | ZM | 894 |
+
+        | Zimbabwe | ZW | 716 |
+
+
+        </details>'
+      externalDocs:
+        description: Find more info here
+        url: https://www.iso.org/iso-3166-country-codes.html
+      example: NLD
+    created:
+      type: string
+      description: The date and time this object was created
+      format: date-time
+    paymentAccountReference:
+      type: string
+      pattern: ^[0-9A-Za-z]+$
+      description: "A unique identifier associated with a payment account.\n\nThis field is optional for VTS tokens. If no `paymentAccountReference` is returned, we will return `unknown` instead. \n\n**On August 23, 2026, this field will be made optional. It will be returned only when it is provided by the card networks.**\n"
+      maxLength: 29
+      example: 500150F5DE22SND132Y6PR32AR5HB
+    panSequenceNumber:
+      type: string
+      description: The PAN sequence number for the network token.
+      pattern: ^\d+$
+      minLength: 2
+      maxLength: 2
+      example: '01'
+    schemas-CountryCodeInput:
+      oneOf:
+      - $ref: '#/components/schemas/openapi_components-schemas-CountryCodeAlpha3'
+      - $ref: '#/components/schemas/openapi_components-schemas-CountryCodeAlpha2'
+      - $ref: '#/components/schemas/openapi_components-schemas-CountryCodeNumeric'
+    InternalServerErrorProblemDetail:
       type: object
       required:
-      - countryCode
-      - city
-      - line1
-      - postalCode
-      additionalProperties: false
-      description: 'A physical postal address
-
-        '
+      - type
+      - title
+      - status
+      - detail
+      - instance
       properties:
-        countryCode:
-          $ref: '#/components/schemas/schemas-CountryCodeInput'
-        stateOrProvince:
-          $ref: '#/components/schemas/openapi_components-schemas-stateOrProvince-2'
-        city:
-          $ref: '#/components/schemas/openapi_components-schemas-city-2'
-        line1:
-          $ref: '#/components/schemas/openapi_components-schemas-line1-3'
-        line2:
-          $ref: '#/components/schemas/openapi_components-schemas-line2-3'
-        postalCode:
-          $ref: '#/components/schemas/openapi_components-schemas-postalCode-2'
-    tokens_expiryYear:
-      type: integer
-      description: 'The year the network token expires, including the century
-
-        '
-      minimum: 2020
-      maximum: 2050
-    schemas-track2Data:
-      type: string
-      description: 'The information encoded on track 2 of the card magnetic stripe as defined in the ISO 7813 specification, including data element separators but excluding beginning and ending sentinels.
-
-        '
-      pattern: ^[A-Fa-f0-9]+$
-      minLength: 1
-      maxLength: 40
-      example: 6799995700000004054D25122010875408456
-    common_offsetToken:
-      type: string
-      pattern: ^[a-zA-Z0-9%]+$
-      description: 'An offset token that can be used to retrieve the next page of items.
-
-        '
-    schemas-network:
-      description: The card network of the network token.
-      type: string
-      enum:
-      - mastercard
-      - visa
-    lastTokenRefresh:
-      type: string
-      description: The date and time this network token was last refreshed
-      format: date-time
-    authenticationData:
-      type: string
-      description: 'The authentication data, or cryptogram, which will be sent in an ISO authorization request for token transactions.
-
-        '
-      pattern: ^.+$
-      minLength: 1
-      maxLength: 32
-      example: AJ8IZ5aP8bHwAAzmZd4gAAADFA==
-    components-schemas-moreItems:
-      type: boolean
-      description: 'Indicates whether there are more items available.
-
-        '
-    openapi_components-schemas-offsetToken:
-      type: string
-      pattern: ^[a-zA-Z0-9%]+$
-    CardHolderInput:
-      type: object
-      description: 'Information about the card holder.
-
-        '
-      properties:
-        name:
-          $ref: '#/components/schemas/openapi_components-schemas-holderName-2'
-        email:
-          description: The email of the card holder.
+        type:
+          type: string
+          description: A relative URI that identifies the problem type.
+          enum:
+          - /silverflow/problems/internal-server-error
+        title:
+          $ref: '#/components/schemas/schemas-errorTitle'
+        status:
           allOf:
-          - $ref: '#/components/schemas/email'
-        phoneNumber:
-          description: The phone number of the card holder.
-          allOf:
-          - $ref: '#/components/schemas/schemas-phoneNumber'
-        billingAddress:
-          description: The billing address of the card holder.
-          allOf:
-          - $ref: '#/components/schemas/components-schemas-AddressInput'
+          - $ref: '#/components/schemas/openapi_components-schemas-errorStatus'
+          - enum:
+            - 500
+        detail:
+          $ref: '#/components/schemas/schemas-errorDetail'
+        instance:
+          $ref: '#/components/schemas/schemas-errorInstance'
     openapi_components-schemas-countryCodeAlpha2:
       type: string
       pattern: ^[A-Z]{2}$
@@ -1022,174 +1457,6 @@ components:
       minLength: 5
       maxLength: 120
       example: mct-3Jrv9Sq4SBQhrsHJZgYK
-    openapi_components-schemas-stateOrProvince-2:
-      type: string
-      minLength: 1
-      description: 'The state (US) or province (non-US) of the address.
-
-        '
-    openapi_components-schemas-line2-3:
-      type: string
-      minLength: 1
-      description: Address line 2
-    openapi_components-schemas-CardInput:
-      type: object
-      required:
-      - number
-      - expiryMonth
-      - expiryYear
-      additionalProperties: false
-      description: 'The PAN data required to create a network token
-
-        '
-      properties:
-        number:
-          $ref: '#/components/schemas/openapi_components-schemas-pan-4'
-        expiryMonth:
-          $ref: '#/components/schemas/expiryMonth'
-        expiryYear:
-          $ref: '#/components/schemas/expiryYear'
-        cvc:
-          $ref: '#/components/schemas/openapi_components-schemas-cvc'
-        holder:
-          $ref: '#/components/schemas/CardHolderInput'
-    expiryMonth:
-      type: integer
-      description: 'The month the card expires. January is 1
-
-        '
-      minimum: 1
-      maximum: 12
-    expiryYear:
-      type: integer
-      description: 'The year the card expires including the century
-
-        '
-      minimum: 2020
-      maximum: 2050
-    created:
-      type: string
-      description: The date and time this object was created
-      format: date-time
-    openapi_components-schemas-pan-4:
-      type: string
-      description: Full digits of a card
-      pattern: ^\d{12,19}$
-      format: password
-      example: '1234123412341234'
-    openapi_components-schemas-errorStatus:
-      description: 'The HTTP status code generated by the origin server for this occurrence
-
-        of the problem.
-
-        '
-      type: integer
-      format: int32
-      minimum: 100
-      maximum: 599
-    schemas-CountryCodeInput:
-      oneOf:
-      - $ref: '#/components/schemas/openapi_components-schemas-CountryCodeAlpha3'
-      - $ref: '#/components/schemas/openapi_components-schemas-CountryCodeAlpha2'
-      - $ref: '#/components/schemas/openapi_components-schemas-CountryCodeNumeric'
-    Token:
-      type: object
-      required:
-      - key
-      - status
-      - type
-      - network
-      - provider
-      - agentKey
-      - merchantKey
-      - enrollmentKey
-      - created
-      - version
-      properties:
-        key:
-          $ref: '#/components/schemas/networkTokenKey'
-        status:
-          $ref: '#/components/schemas/tokenStatus'
-        type:
-          $ref: '#/components/schemas/tokenType'
-        network:
-          $ref: '#/components/schemas/schemas-network'
-        provider:
-          $ref: '#/components/schemas/tokenProvider'
-        agentKey:
-          $ref: '#/components/schemas/schemas-agentKey'
-        merchantKey:
-          $ref: '#/components/schemas/openapi_components-schemas-merchantKey-2'
-        enrollmentKey:
-          $ref: '#/components/schemas/schemas-enrollmentKey'
-        lastTokenRefresh:
-          $ref: '#/components/schemas/lastTokenRefresh'
-        error:
-          $ref: '#/components/schemas/TokenError'
-        created:
-          $ref: '#/components/schemas/created'
-        lastModified:
-          $ref: '#/components/schemas/lastModified'
-        version:
-          $ref: '#/components/schemas/openapi_components-schemas-version-2'
-    InternalServerErrorProblemDetail:
-      type: object
-      required:
-      - type
-      - title
-      - status
-      - detail
-      - instance
-      properties:
-        type:
-          type: string
-          description: A relative URI that identifies the problem type.
-          enum:
-          - /silverflow/problems/internal-server-error
-        title:
-          $ref: '#/components/schemas/schemas-errorTitle'
-        status:
-          allOf:
-          - $ref: '#/components/schemas/openapi_components-schemas-errorStatus'
-          - enum:
-            - 500
-        detail:
-          $ref: '#/components/schemas/schemas-errorDetail'
-        instance:
-          $ref: '#/components/schemas/schemas-errorInstance'
-    openapi_components-schemas-ProblemDetail-3:
-      description: 'The ''problem detail'' object relays detailed information about the error that occurred. It is defined
-
-        by [RFC 7807 - Problem Details for HTTP APIs](https://tools.ietf.org/html/rfc7807).
-
-
-        Note that additional properties may be used to relay error specific information. For instance,
-
-        A Invalid Input error may hold information about the individual validation errors found in the request.
-
-        '
-      type: object
-      additionalProperties: true
-      properties:
-        type:
-          description: A relative URI that identifies the problem type.
-          type: string
-          example: /silverflow/problems/internal-server-error
-        title:
-          $ref: '#/components/schemas/schemas-errorTitle'
-        status:
-          $ref: '#/components/schemas/openapi_components-schemas-errorStatus'
-        detail:
-          $ref: '#/components/schemas/schemas-errorDetail'
-        instance:
-          $ref: '#/components/schemas/schemas-errorInstance'
-    schemas-enrollmentKey:
-      type: string
-      description: SCOF or VTS enrollment key
-      pattern: ^enr-[a-zA-Z0-9]+$
-      minLength: 10
-      maxLength: 120
-      example: enr-25os7SQOxkKeQwUKYXIG
     openapi_components-schemas-countryCodeNumeric:
       type: string
       pattern: ^[0-9]{3}$
@@ -1734,83 +2001,30 @@ components:
         description: Find more info here
         url: https://www.iso.org/iso-3166-country-codes.html
       example: '528'
+    CardHolderInput:
+      type: object
+      description: 'Information about the card holder.
+
+        '
+      properties:
+        name:
+          $ref: '#/components/schemas/openapi_components-schemas-holderName-2'
+        email:
+          description: The email of the card holder.
+          allOf:
+          - $ref: '#/components/schemas/email'
+        phoneNumber:
+          description: The phone number of the card holder.
+          allOf:
+          - $ref: '#/components/schemas/schemas-phoneNumber'
+        billingAddress:
+          description: The billing address of the card holder.
+          allOf:
+          - $ref: '#/components/schemas/components-schemas-AddressInput'
     email:
       type: string
       description: A valid email address
       pattern: \w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*
-    networkTokenKey:
-      description: Uniquely identifies a network token managed by Silverflow.
-      type: string
-      pattern: ^ntk-[a-zA-Z0-9]+$
-      minLength: 5
-      maxLength: 120
-      example: ntk-1e1dAHhgstYTUhlphPzZ
-    openapi_components-schemas-version-2:
-      type: integer
-      description: The version of this object
-      format: int64
-      minimum: 0
-    openapi_components-schemas-PageWithMoreItems:
-      type: object
-      properties:
-        moreItems:
-          $ref: '#/components/schemas/components-schemas-moreItems'
-        offsetToken:
-          $ref: '#/components/schemas/common_offsetToken'
-    schemas-phoneNumber:
-      type: string
-      description: An international phone number
-      pattern: ^\+\d{2}(\(0\))?\d{3,19}$
-      example: +31(0)850609160
-    sortOrder:
-      type: string
-      default: desc
-      enum:
-      - asc
-      - desc
-    openapi_components-schemas-postalCode-2:
-      type: string
-      pattern: ^[A-Z0-9]+$
-      description: 'The postal code of the address without any spaces.
-
-        '
-    openapi_components-schemas-cvc:
-      type: string
-      description: 'The CVC of the card
-
-        '
-      pattern: ^\d+$
-      minLength: 3
-      maxLength: 3
-      example: '123'
-    limit:
-      type: integer
-      format: int32
-      minimum: 1
-      maximum: 100
-      default: 10
-    openapi_components-schemas-holderName-2:
-      type: string
-      description: 'The name of the cardholder.
-
-        '
-      pattern: ^[A-Za-z0-9 ]+$
-      minLength: 1
-      maxLength: 120
-      example: Joe Cardholder
-    openapi_components-schemas-city-2:
-      type: string
-      minLength: 1
-      description: 'The city of the address.
-
-        '
-    panSequenceNumber:
-      type: string
-      description: The PAN sequence number for the network token.
-      pattern: ^\d+$
-      minLength: 2
-      maxLength: 2
-      example: '01'
     TokensPage:
       allOf:
       - $ref: '#/components/schemas/openapi_components-schemas-PageWithMoreItems'
@@ -1822,17 +2036,23 @@ components:
             type: array
             items:
               $ref: '#/components/schemas/Token'
-    TokenError:
+    openapi_components-schemas-CountryCodeAlpha3:
       type: object
-      description: The error when the network token request failed
       required:
-      - code
-      - detail
+      - alpha3
+      additionalProperties: false
       properties:
-        code:
-          type: string
-        detail:
-          type: string
+        alpha3:
+          $ref: '#/components/schemas/openapi_components-schemas-countryCodeAlpha3'
+    schemas-errorTitle:
+      description: 'A short, summary of the problem type. Written in english and readable
+
+        for engineers (usually not suited for non technical stakeholders and
+
+        not localized).
+
+        '
+      type: string
     tokenStatus:
       description: The status of the network token.
       type: string
@@ -1843,14 +2063,51 @@ components:
       - failed
       - archivePending
       - archived
-    openapi_components-schemas-CountryCodeAlpha3:
+    schemas-track2Data:
+      type: string
+      description: 'The information encoded on track 2 of the card magnetic stripe as defined in the ISO 7813 specification, including data element separators but excluding beginning and ending sentinels.
+
+        '
+      pattern: ^[A-Fa-f0-9]+$
+      minLength: 1
+      maxLength: 40
+      example: 6799995700000004054D25122010875408456
+    openapi_components-schemas-stateOrProvince-2:
+      type: string
+      minLength: 1
+      description: 'The state (US) or province (non-US) of the address.
+
+        '
+    lastModified:
+      type: string
+      description: The date and time this object was last modified
+      format: date-time
+    openapi_components-schemas-ProblemDetail-3:
+      description: 'The ''problem detail'' object relays detailed information about the error that occurred. It is defined
+
+        by [RFC 7807 - Problem Details for HTTP APIs](https://tools.ietf.org/html/rfc7807).
+
+
+        Note that additional properties may be used to relay error specific information. For instance,
+
+        A Invalid Input error may hold information about the individual validation errors found in the request.
+
+        '
       type: object
-      required:
-      - alpha3
-      additionalProperties: false
+      additionalProperties: true
       properties:
-        alpha3:
-          $ref: '#/components/schemas/openapi_components-schemas-countryCodeAlpha3'
+        type:
+          description: A relative URI that identifies the problem type.
+          type: string
+          example: /silverflow/problems/internal-server-error
+        title:
+          $ref: '#/components/schemas/schemas-errorTitle'
+        status:
+          $ref: '#/components/schemas/openapi_components-schemas-errorStatus'
+        detail:
+          $ref: '#/components/schemas/schemas-errorDetail'
+        instance:
+          $ref: '#/components/schemas/schemas-errorInstance'
     TokenCreate:
       type: object
       description: Fields used to create a token.
@@ -1865,550 +2122,58 @@ components:
           $ref: '#/components/schemas/tokenType'
         cardData:
           $ref: '#/components/schemas/openapi_components-schemas-CardInput'
-    openapi_components-schemas-countryCodeAlpha3:
+    openapi_components-schemas-city-2:
       type: string
-      pattern: ^[A-Z]{3}$
-      description: 'The ISO code of the country.
-
-
-        **European ISO Country Codes**
-
-
-        <details>
-
-
-        | Country | Alpha-2 code | Numeric |
-
-        | ------- | ------------ | ------- |
-
-        | Åland Islands | AX | 248 |
-
-        | Andorra | AD | 020 |
-
-        | Austria | AT | 040 |
-
-        | Belgium | BE | 056 |
-
-        | Cyprus | CY | 196 |
-
-        | Estonia | EE | 233 |  |
-
-        | Finland | FI | 246 |
-
-        | France | FR | 250 |
-
-        | French Guiana | GF | 254 |
-
-        | French Southern Territories | TF | 260 |
-
-        | Germany | DE | 280 |
-
-        | Greece | GR | 300 |
-
-        | Guadeloupe | GP | 312 |
-
-        | Ireland | IE | 372 |
-
-        | Italy | IT | 380 |
-
-        | Kosovo, United Nations Mission in Kosovo (UNMIK) | QZ | 900 |
-
-        | Latvia | LV | 428 |
-
-        | Lithuania | LT | 440 |
-
-        | Luxembourg | LU | 442 |
-
-        | Malta | MT | 470 |
-
-        | Martinique | MQ | 474 |
-
-        | Mayotte | YT | 175 |
-
-        | Monaco | MC | 492 |
-
-        | Montenegro | ME | 499 |
-
-        | Netherlands | NL | 528 |
-
-        | Portugal | PT | 620 |
-
-        | Reunion | RE | 638 |
-
-        | Saint Barthélemy | BL | 652 |
-
-        | Saint Martin (French Part) | MF | 663 |
-
-        | San Marino | SM | 674 |
-
-        | Slovakia | SK | 703 |
-
-        | Slovenia | SI | 705 |
-
-        | Spain | ES | 724 |
-
-        | St. Pierre and Miquelon | PM | 666 |
-
-        | Vatican City State (Holy See) | VA | 336 |
-
-
-        </details>
-
-
-        **US ISO Country Codes**
-
-
-        <details>
-
-
-        | Country | Alpha-2 code | Numeric |
-
-        | ------- | ------------ | ------- |
-
-        | American Samoa | AS | 016 |
-
-        | Bonaire, St. Eusasius and Saba | BQ | 535 |
-
-        | British Indian Ocean Territory | IO | 086 |
-
-        | Ecuador | EC | 218 |
-
-        | Guam | GU | 316 |
-
-        | Marshall Islands | MH | 584 |
-
-        | Micronesia, Federated States of | FM | 583 |
-
-        | Northern Mariana Islands | MP | 580 |
-
-        | Palau | PW | 585 |
-
-        | Palestine, State of | PS | 275 |
-
-        | Puerto Rico | PR | 630 |
-
-        | Timor-Leste | TP | 626 |
-
-        | Turks and Caicos Islands | TC | 796 |
-
-        | U.S. Minor Outlying Islands | UM | 581 |
-
-        | United States | US | 840 |
-
-        | Virgin Islands, British | VG | 092 |
-
-        | Virgin Islands, U.S. | VI | 850 |
-
-
-        </details>
-
-
-        **Other ISO Country Codes**
-
-
-        <details>
-
-
-        | Country | Alpha-2 code | Numeric |
-
-        | ------- | ------------ | ------- |
-
-        | Afghanistan | AF | 004 |
-
-        | Albania | AL | 008 |
-
-        | Algeria | DZ | 012 |
-
-        | Angola | AO | 024 |
-
-        | Anguilla | AI | 660 |
-
-        | Antarctica | AQ | 010 |
-
-        | Antigua and Barbuda | AG | 028 |
-
-        | Argentina | AR | 032 |
-
-        | Armenia | AM | 051 |
-
-        | Aruba | AW | 533 |
-
-        | Australia | AU | 036 |
-
-        | Azerbaijan | AZ | 031 |
-
-        | Bahamas | BS | 044 |
-
-        | Bahrain | BH | 048 |
-
-        | Bangladesh | BD | 050 |
-
-        | Barbados | BB | 052 |
-
-        | Belarus | BR | 112 |
-
-        | Belize | BZ | 084 |
-
-        | Benin | BJ | 204 |
-
-        | Bermuda | BM | 060 |
-
-        | Bhutan | BT | 064 |
-
-        | Bolivia, Plurinational State of | BO | 068 |
-
-        | Bosnia and Herzegovina | BA | 070 |
-
-        | Botswana | BW | 072 |
-
-        | Bouvet Island | BV | 074 |
-
-        | Brazil | BR | 076 |
-
-        | Brunei Darussalam | BN | 096 |
-
-        | Bulgaria | BG | 100 |
-
-        | Burkina Faso | BF | 854 |
-
-        | Burundi | BI | 108 |
-
-        | Cambodia | KH | 116 |
-
-        | Cameroon | CM | 120 |
-
-        | Canada | CA | 124 |
-
-        | Cape Verde | CV | 132 |
-
-        | Cayman Islands | KY | 136 |
-
-        | Central African Republic | CF | 140 |
-
-        | Chad | TD | 148 |
-
-        | Chile | CL | 152 |
-
-        | China | CN | 156 |
-
-        | Christmas Island | CX | 162 |
-
-        | Cocos (Keeling) Islands | CC | 166 |
-
-        | Colombia | CO | 170 |
-
-        | Comoros | KM | 174 |
-
-        | Congo | CG | 178 |
-
-        | Cook Islands | CK | 184 |
-
-        | Costa Rica | CR | 188 |
-
-        | Côte D''Ivoire | CI | 384 |
-
-        | Croatia | HR | 191 |
-
-        | Cuba | CU | 192 |
-
-        | Curacao | CW | 531 |
-
-        | Czech Republic | CZ | 203 |
-
-        | Democratic Republic of the Congo | CD | 180 |
-
-        | Denmark | DK | 208 |
-
-        | Djibouti | DJ | 262 |
-
-        | Dominica | DM | 212 |
-
-        | Dominican Republic | DO | 214 |
-
-        | Egypt | EG | 818 |
-
-        | El Salvador | SV | 222 |
-
-        | Equatorial Guinea | GQ | 226 |
-
-        | Eritrea | ER | 232 |
-
-        | Ethiopia | ET | 230 |
-
-        | Falkland Islands (Malvinas) | FK | 238 |
-
-        | Faroe Islands | FO | 234 |
-
-        | Fiji | FJ | 242 |
-
-        | French Polynesia | PF | 258 |
-
-        | Gabon | GA | 266 |
-
-        | Gambia | GM | 270 |
-
-        | Georgia | GE | 268 |
-
-        | Ghana | GH | 288 |
-
-        | Gibraltar | GI | 292 |
-
-        | Greenland | GL | 304 |
-
-        | Grenada | GD | 308 |
-
-        | Guatemala | GT | 320 |
-
-        | Guernsey | GG | 831 |
-
-        | Guinea | GN | 324 |
-
-        | Guinea-Bissau | GW | 624 |
-
-        | Guyana | GY | 328 |
-
-        | Haiti | HT | 332 |
-
-        | Heard and McDonald Islands | HM | 334 |
-
-        | Honduras | HN | 340 |
-
-        | Hong Kong | HK | 344 |
-
-        | Hungary | HU | 348 |
-
-        | Iceland | IS | 352 |
-
-        | India | IN | 356 |
-
-        | Indonesia | ID | 360 |
-
-        | Iraq | IQ | 368 |
-
-        | Isle of Man | IM | 833 |
-
-        | Israel | IL | 376 |
-
-        | Jamaica | JM | 388 |
-
-        | Japan | JP | 392 |
-
-        | Jersey | JE | 832 |
-
-        | Jordan | JO | 400 |
-
-        | Kazakhstan | KZ | 398 |
-
-        | Kenya | KE | 404 |
-
-        | Kiribati | KI | 296 |
-
-        | Korea, Republic of | KR | 410 |
-
-        | Kuwait | KW | 414 |
-
-        | Kyrgyzstan | KG | 417 |
-
-        | Lao People''s Democratic Republic | LA | 418 |
-
-        | Lebanon | LB | 422 |
-
-        | Lesotho | LS | 426 |
-
-        | Liberia | LR | 430 |
-
-        | Libyan Arab Jamahiriya | LY | 434 |
-
-        | Liechtenstein | LI | 438 |
-
-        | Macao | MO | 446 |
-
-        | Macedonia | MK | 807 |
-
-        | Madagascar | MG | 450 |
-
-        | Malawi | MW | 454 |
-
-        | Malaysia | MY | 458 |
-
-        | Maldives | MV | 462 |
-
-        | Mali | ML | 466 |
-
-        | Mauritania | MR | 478 |
-
-        | Mauritius | MU | 480 |
-
-        | Mexico | MX | 484 |
-
-        | Moldova, Republic of | MD | 498 |
-
-        | Mongolia | MN | 496 |
-
-        | Montserrat | MS | 500 |
-
-        | Morocco | MA | 504 |
-
-        | Mozambique | MZ | 508 |
-
-        | Myanmar (effective 1 November 2012) | MM | 104 |
-
-        | Namibia | NA | 516 |
-
-        | Nauru | NR | 520 |
-
-        | Nepal | NP | 524 |
-
-        | Netherlands Antilles | AN | 530 |
-
-        | New Caledonia | NC | 540 |
-
-        | New Zealand | NZ | 554 |
-
-        | Nicaragua | NI | 558 |
-
-        | Niger | NE | 562 |
-
-        | Nigeria | NG | 566 |
-
-        | Niue | NU | 570 |
-
-        | Norfolk Island | NF | 574 |
-
-        | Norway | NO | 578 |
-
-        | Oman | OM | 512 |
-
-        | Pakistan | PK | 586 |
-
-        | Panama | PA | 591 |
-
-        | Papua New Guinea | PG | 598 |
-
-        | Paraguay | PY | 600 |
-
-        | Peru | PE | 604 |
-
-        | Philippines | PH | 608 |
-
-        | Pitcairn | PN | 612 |
-
-        | Poland | PL | 616 |
-
-        | Qatar | QA | 634 |
-
-        | Republic of South Sudan | SS | 728 |
-
-        | Romania | RO | 642 |
-
-        | Russian Federation | RU | 643 |
-
-        | Rwanda | RW | 646 |
-
-        | Samoa | WS | 882 |
-
-        | Sao Tome and Principe | ST | 678 |
-
-        | Saudi Arabia | SA | 682 |
-
-        | Senegal | SN | 686 |
-
-        | Serbia | RS | 688 |
-
-        | Seychelles | SC | 690 |
-
-        | Sierra Leone | SL | 694 |
-
-        | Singapore | SG | 702 |
-
-        | Sint Maarten (Dutch Part) | SX | 534 |
-
-        | Solomon Islands | SB | 090 |
-
-        | Somalia | SO | 706 |
-
-        | South Africa | ZA | 710 |
-
-        | South Georgia and the South Sandwich Islands | GS | 239 |
-
-        | Sri Lanka | LK | 144 |
-
-        | Saint Helena, Ascension and Tristan Da Cunha | SH | 654 |
-
-        | St. Kitts and Nevis | KN | 659 |
-
-        | St. Lucia | LC | 662 |
-
-        | St. Vincent and the Grenadines | VC | 670 |
-
-        | Suriname | SR | 740 |
-
-        | Svalbard and Jan Mayen | SJ | 744 |
-
-        | Swaziland | SZ | 748 |
-
-        | Sweden | SE | 752 |
-
-        | Switzerland | CH | 756 |
-
-        | Taiwan | TW | 158 |
-
-        | Tajikistan | TJ | 762 |
-
-        | Tanzania, United Republic of | TZ | 834 |
-
-        | Thailand | TH | 764 |
-
-        | Togo | TG | 768 |
-
-        | Tokelau | TK | 772 |
-
-        | Tonga | TO | 776 |
-
-        | Trinidad and Tobago | TT | 780 |
-
-        | Tunisia | TN | 788 |
-
-        | Turkey | TR | 792 |
-
-        | Turkmenistan | TM | 795 |
-
-        | Tuvalu | TV | 798 |
-
-        | Uganda | UG | 800 |
-
-        | Ukraine | UA | 804 |
-
-        | United Arab Emirates | AE | 784 |
-
-        | United Kingdom | GB | 826 |
-
-        | Uruguay | UY | 858 |
-
-        | Uzbekistan | UZ | 860 |
-
-        | Vanuatu | VU | 548 |
-
-        | Venezuela, Bolivarian Republic of | VE | 862 |
-
-        | Vietnam | VN | 704 |
-
-        | Wallis and Futuna | WF | 876 |
-
-        | Western Sahara | EH | 732 |
-
-        | Yemen | YE | 886 |
-
-        | Zambia | ZM | 894 |
-
-        | Zimbabwe | ZW | 716 |
-
-
-        </details>'
-      externalDocs:
-        description: Find more info here
-        url: https://www.iso.org/iso-3166-country-codes.html
-      example: NLD
+      minLength: 1
+      description: 'The city of the address.
+
+        '
+    common_offsetToken:
+      type: string
+      pattern: ^[a-zA-Z0-9%]+$
+      description: 'An offset token that can be used to retrieve the next page of items.
+
+        '
+    TokenData:
+      type: object
+      required:
+      - number
+      - expiryMonth
+      - expiryYear
+      - paymentAccountReference
+      description: Network token data
+      properties:
+        number:
+          $ref: '#/components/schemas/tokenNumber'
+        expiryMonth:
+          $ref: '#/components/schemas/tokens_expiryMonth'
+        expiryYear:
+          $ref: '#/components/schemas/tokens_expiryYear'
+        paymentAccountReference:
+          $ref: '#/components/schemas/paymentAccountReference'
+    tokenType:
+      type: string
+      description: The type of network token.
+      enum:
+      - merchant
+    schemas-errorInstance:
+      description: 'An absolute URI that identifies the specific occurrence of the problem.
+
+        It may or may not yield further information if dereferenced.
+
+        '
+      type: string
+    expiryMonth:
+      type: integer
+      description: 'The month the card expires. January is 1
+
+        '
+      minimum: 1
+      maximum: 12
+    lastTokenRefresh:
+      type: string
+      description: The date and time this network token was last refreshed
+      format: date-time
     TokenCryptogram:
       type: object
       description: All details related to a network token cryptogram.
@@ -2424,15 +2189,38 @@ components:
           $ref: '#/components/schemas/authenticationData'
         created:
           $ref: '#/components/schemas/created'
-    tokenNumber:
+    openapi_components-schemas-cvc:
       type: string
-      description: The digits of a network token.
-      format: password
-      example: 1234123412341234
-    lastModified:
+      description: 'The CVC of the card
+
+        '
+      pattern: ^\d+$
+      minLength: 3
+      maxLength: 3
+      example: '123'
+    schemas-enrollmentKey:
       type: string
-      description: The date and time this object was last modified
-      format: date-time
+      description: SCOF or VTS enrollment key
+      pattern: ^enr-[a-zA-Z0-9]+$
+      minLength: 10
+      maxLength: 120
+      example: enr-25os7SQOxkKeQwUKYXIG
+    openapi_components-schemas-errorStatus:
+      description: 'The HTTP status code generated by the origin server for this occurrence
+
+        of the problem.
+
+        '
+      type: integer
+      format: int32
+      minimum: 100
+      maximum: 599
+    limit:
+      type: integer
+      format: int32
+      minimum: 1
+      maximum: 100
+      default: 10
     schemas-errorDetail:
       description: 'A human readable explanation specific to this occurrence of the
 
@@ -2441,18 +2229,16 @@ components:
         '
       type: string
       example: Connection to database timed out
+    openapi_components-schemas-line2-3:
+      type: string
+      minLength: 1
+      description: Address line 2
     tokenProvider:
       description: The network token provider
       type: string
       enum:
       - scof
       - vts
-    paymentAccountReference:
-      type: string
-      pattern: ^[0-9A-Za-z]+$
-      description: "A unique identifier associated with a payment account.\n\nThis field is optional for VTS tokens. If no `paymentAccountReference` is returned, we will return `unknown` instead. \n\n**On August 23, 2026, this field will be made optional. It will be returned only when it is provided by the card networks.**\n"
-      maxLength: 29
-      example: 500150F5DE22SND132Y6PR32AR5HB
     schemas-agentKey:
       description: Uniquely identifies an Agent
       type: string
@@ -2460,15 +2246,116 @@ components:
       minLength: 5
       maxLength: 120
       example: cgt-1UF2NafdfrdPMf2XrS2
-    schemas-errorTitle:
-      description: 'A short, summary of the problem type. Written in english and readable
-
-        for engineers (usually not suited for non technical stakeholders and
-
-        not localized).
+    Token:
+      type: object
+      required:
+      - key
+      - status
+      - type
+      - network
+      - provider
+      - agentKey
+      - merchantKey
+      - enrollmentKey
+      - created
+      - version
+      properties:
+        key:
+          $ref: '#/components/schemas/networkTokenKey'
+        status:
+          $ref: '#/components/schemas/tokenStatus'
+        type:
+          $ref: '#/components/schemas/tokenType'
+        network:
+          $ref: '#/components/schemas/schemas-network'
+        provider:
+          $ref: '#/components/schemas/tokenProvider'
+        agentKey:
+          $ref: '#/components/schemas/schemas-agentKey'
+        merchantKey:
+          $ref: '#/components/schemas/openapi_components-schemas-merchantKey-2'
+        enrollmentKey:
+          $ref: '#/components/schemas/schemas-enrollmentKey'
+        lastTokenRefresh:
+          $ref: '#/components/schemas/lastTokenRefresh'
+        error:
+          $ref: '#/components/schemas/TokenError'
+        created:
+          $ref: '#/components/schemas/created'
+        lastModified:
+          $ref: '#/components/schemas/lastModified'
+        version:
+          $ref: '#/components/schemas/openapi_components-schemas-version-2'
+    schemas-network:
+      description: The card network of the network token.
+      type: string
+      enum:
+      - mastercard
+      - visa
+    openapi_components-schemas-PageWithMoreItems:
+      type: object
+      properties:
+        moreItems:
+          $ref: '#/components/schemas/components-schemas-moreItems'
+        offsetToken:
+          $ref: '#/components/schemas/common_offsetToken'
+    openapi_components-schemas-postalCode-2:
+      type: string
+      pattern: ^[A-Z0-9]+$
+      description: 'The postal code of the address without any spaces.
 
         '
+    TokenError:
+      type: object
+      description: The error when the network token request failed
+      required:
+      - code
+      - detail
+      properties:
+        code:
+          type: string
+        detail:
+          type: string
+    tokenNumber:
       type: string
+      description: The digits of a network token.
+      format: password
+      example: 1234123412341234
+    schemas-phoneNumber:
+      type: string
+      description: An international phone number
+      pattern: ^\+\d{2}(\(0\))?\d{3,19}$
+      example: +31(0)850609160
+    openapi_components-schemas-CardInput:
+      type: object
+      required:
+      - number
+      - expiryMonth
+      - expiryYear
+      additionalProperties: false
+      description: 'The PAN data required to create a network token
+
+        '
+      properties:
+        number:
+          $ref: '#/components/schemas/openapi_components-schemas-pan-4'
+        expiryMonth:
+          $ref: '#/components/schemas/expiryMonth'
+        expiryYear:
+          $ref: '#/components/schemas/expiryYear'
+        cvc:
+          $ref: '#/components/schemas/openapi_components-schemas-cvc'
+        holder:
+          $ref: '#/components/schemas/CardHolderInput'
+    openapi_components-schemas-holderName-2:
+      type: string
+      description: 'The name of the cardholder.
+
+        '
+      pattern: ^[A-Za-z0-9 ]+$
+      minLength: 1
+      maxLength: 120
+      example: Joe Cardholder
     tokens_expiryMonth:
       type: integer
       description: 'The month the network token expires. January is 1
@@ -2476,112 +2363,93 @@ components:
         '
       minimum: 1
       maximum: 12
-  parameters:
-    tokenStatus:
-      name: status
-      description: The status of the network token.
-      in: query
-      required: false
-      schema:
-        type: string
-        enum:
-        - requested
-        - active
-        - suspended
-        - failed
-        - archivePending
-    components-parameters-limit:
-      name: limit
-      description: The number of items to return
-      in: query
-      required: false
-      schema:
-        $ref: '#/components/schemas/limit'
+    authenticationData:
+      type: string
+      description: 'The authentication data, or cryptogram, which will be sent in an ISO authorization request for token transactions.
+
+        '
+      pattern: ^.+$
+      minLength: 1
+      maxLength: 32
+      example: AJ8IZ5aP8bHwAAzmZd4gAAADFA==
+    expiryYear:
+      type: integer
+      description: 'The year the card expires including the century
+
+        '
+      minimum: 2020
+      maximum: 2050
+    openapi_components-schemas-version-2:
+      type: integer
+      description: The version of this object
+      format: int64
+      minimum: 0
+    tokens_expiryYear:
+      type: integer
+      description: 'The year the network token expires, including the century
+
+        '
+      minimum: 2020
+      maximum: 2050
+    openapi_components-schemas-CountryCodeNumeric:
+      type: object
+      required:
+      - numeric
+      additionalProperties: false
+      properties:
+        numeric:
+          $ref: '#/components/schemas/openapi_components-schemas-countryCodeNumeric'
+    components-schemas-moreItems:
+      type: boolean
+      description: 'Indicates whether there are more items available.
+
+        '
     networkTokenKey:
-      name: networkTokenKey
-      description: 'Immutable, unique identifier of the network token
+      description: Uniquely identifies a network token managed by Silverflow.
+      type: string
+      pattern: ^ntk-[a-zA-Z0-9]+$
+      minLength: 5
+      maxLength: 120
+      example: ntk-1e1dAHhgstYTUhlphPzZ
+    components-schemas-AddressInput:
+      type: object
+      required:
+      - countryCode
+      - city
+      - line1
+      - postalCode
+      additionalProperties: false
+      description: 'A physical postal address
 
         '
-      in: path
-      required: true
-      schema:
-        $ref: '#/components/schemas/networkTokenKey'
-    components-parameters-merchantKey:
-      name: merchantKey
-      description: The merchant key.
-      in: query
-      required: false
-      schema:
-        $ref: '#/components/schemas/openapi_components-schemas-merchantKey-2'
-    openapi_components-parameters-sortOrder-2:
-      name: sortOrder
-      description: The sort order, __asc__ending or __desc__ending
-      in: query
-      required: false
-      schema:
-        $ref: '#/components/schemas/sortOrder'
-    openapi_components-parameters-offsetToken:
-      name: offsetToken
-      description: The offset token. This token is returned in the response of previous request.
-      in: query
-      required: false
-      schema:
-        $ref: '#/components/schemas/openapi_components-schemas-offsetToken'
-    parameters-enrollmentKey:
-      name: enrollmentKey
-      description: SCOF or VTS enrollment key
-      in: query
-      required: false
-      schema:
-        $ref: '#/components/schemas/schemas-enrollmentKey'
-  examples:
-    get-token-data-response-mastercard:
-      summary: Mastercard Network Token Data
-      value:
-        number: '5186151969951348'
-        expiryMonth: 10
-        expiryYear: 2026
-        paymentAccountReference: 5001EUMYTT3AESCZGUEC77KPCLETI
-    get-token-data-response-visa:
-      summary: Visa Network Token Data
-      value:
-        number: '4817476114064469'
-        expiryMonth: 12
-        expiryYear: 2025
-        paymentAccountReference: 5001EUMYTT3AESCZGUEC77KPCLETI
+      properties:
+        countryCode:
+          $ref: '#/components/schemas/schemas-CountryCodeInput'
+        stateOrProvince:
+          $ref: '#/components/schemas/openapi_components-schemas-stateOrProvince-2'
+        city:
+          $ref: '#/components/schemas/openapi_components-schemas-city-2'
+        line1:
+          $ref: '#/components/schemas/openapi_components-schemas-line1-3'
+        line2:
+          $ref: '#/components/schemas/openapi_components-schemas-line2-3'
+        postalCode:
+          $ref: '#/components/schemas/openapi_components-schemas-postalCode-2'
+    sortOrder:
+      type: string
+      default: desc
+      enum:
+      - asc
+      - desc
+    openapi_components-schemas-CountryCodeAlpha2:
+      type: object
+      required:
+      - alpha2
+      additionalProperties: false
+      properties:
+        alpha2:
+          $ref: '#/components/schemas/openapi_components-schemas-countryCodeAlpha2'
   responses:
-    openapi_components-responses-NotFoundError-2:
-      description: The resource identified in the request URL was not found
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/openapi_components-schemas-ProblemDetail-3'
-          example:
-            type: https://api.silverflow.com/problem/not-found
-            title: Not Found
-            status: 404
-            instance: 1a9031a9-72d4-4534-88a5-e7777617000b
-            detail: The resource identified in the request URL was not found
-    components-responses-ConflictError:
-      description: 'The request could not be completed due to a conflict with the
-
-        current state of the resources involved in the request.
-
-        '
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/openapi_components-schemas-ProblemDetail-3'
-          example:
-            type: https://api.silverflow.com/problem/conflict
-            title: Conflict
-            status: 409
-            instance: a1bc4575-9992-46a7-970d-0ad030072a50
-            detail: 'The request could not be completed due to a conflict
-
-              with the current state of the resources involved in the request.
-
-              '
     components-responses-ServiceUnavailableError:
       description: 'The server was unable to process the request.
 
@@ -2616,6 +2484,84 @@ components:
             status: 401
             instance: 8450a79f-3457-4f63-86b7-b00b25037bed
             detail: Authentication Required
+    openapi_components-responses-BadRequestError:
+      description: 'The request was malformed. See the response body for details
+
+        '
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/openapi_components-schemas-ProblemDetail-3'
+          example:
+            type: /silverflow/problems/invalid-input
+            title: Invalid Input
+            status: 400
+            instance: /silverflow/06c93111-4cfd-47fa-b789-6080324ee7e7
+            detail: The request does not adhere to the defined API schema.
+    components-responses-ConflictError:
+      description: 'The request could not be completed due to a conflict with the
+
+        current state of the resources involved in the request.
+
+        '
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/openapi_components-schemas-ProblemDetail-3'
+          example:
+            type: https://api.silverflow.com/problem/conflict
+            title: Conflict
+            status: 409
+            instance: a1bc4575-9992-46a7-970d-0ad030072a50
+            detail: 'The request could not be completed due to a conflict
+
+              with the current state of the resources involved in the request.
+
+              '
+    responses-UnprocessableContentError:
+      description: 'The server was unable to process the request.
+
+        This is a temporary condition. Please retry the request.
+
+        '
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/openapi_components-schemas-ProblemDetail-3'
+          example:
+            type: https://api.silverflow.com/problem/unprocessable-content
+            title: Unprocessable Content
+            status: 422
+            instance: ba1243a3-72e2-442f-85b2-fd07504aa3bd
+            detail: The request body is not processable
+    openapi_components-responses-InternalServerError:
+      description: 'The server encountered an unexpected condition.
+
+        This may or may not be a temporary situation.
+
+        '
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/InternalServerErrorProblemDetail'
+          example:
+            type: /silverflow/problems/internal-server-error
+            title: Internal Server Error
+            status: 500
+            instance: b15ac28d-f854-464c-be37-6a4f6d5fe22c
+            detail: The server encountered an unexpected condition.
+    openapi_components-responses-NotFoundError-2:
+      description: The resource identified in the request URL was not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/openapi_components-schemas-ProblemDetail-3'
+          example:
+            type: https://api.silverflow.com/problem/not-found
+            title: Not Found
+            status: 404
+            instance: 1a9031a9-72d4-4534-88a5-e7777617000b
+            detail: The resource identified in the request URL was not found
     openapi_components-responses-TooManyRequestsError-4:
       description: 'The number of requests per unit of time has exceeded the
 
@@ -2651,52 +2597,79 @@ components:
             status: 403
             instance: 48a7c13b-5301-4dab-92af-c3a1d3d4ce12
             detail: The authenticated client is does not have the required permissions.
-    responses-UnprocessableContentError:
-      description: 'The server was unable to process the request.
-
-        This is a temporary condition. Please retry the request.
-
-        '
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/openapi_components-schemas-ProblemDetail-3'
-          example:
-            type: https://api.silverflow.com/problem/unprocessable-content
-            title: Unprocessable Content
-            status: 422
-            instance: ba1243a3-72e2-442f-85b2-fd07504aa3bd
-            detail: The request body is not processable
-    openapi_components-responses-BadRequestError:
-      description: 'The request was malformed. See the response body for details
-
-        '
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/openapi_components-schemas-ProblemDetail-3'
-          example:
-            type: /silverflow/problems/invalid-input
-            title: Invalid Input
-            status: 400
-            instance: /silverflow/06c93111-4cfd-47fa-b789-6080324ee7e7
-            detail: The request does not adhere to the defined API schema.
-    openapi_components-responses-InternalServerError:
-      description: 'The server encountered an unexpected condition.
-
-        This may or may not be a temporary situation.
+  parameters:
+    openapi_components-parameters-sortOrder-2:
+      name: sortOrder
+      description: The sort order, __asc__ending or __desc__ending
+      in: query
+      required: false
+      schema:
+        $ref: '#/components/schemas/sortOrder'
+    components-parameters-limit:
+      name: limit
+      description: The number of items to return
+      in: query
+      required: false
+      schema:
+        $ref: '#/components/schemas/limit'
+    openapi_components-parameters-offsetToken:
+      name: offsetToken
+      description: The offset token. This token is returned in the response of previous request.
+      in: query
+      required: false
+      schema:
+        $ref: '#/components/schemas/openapi_components-schemas-offsetToken'
+    networkTokenKey:
+      name: networkTokenKey
+      description: 'Immutable, unique identifier of the network token
 
         '
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/InternalServerErrorProblemDetail'
-          example:
-            type: /silverflow/problems/internal-server-error
-            title: Internal Server Error
-            status: 500
-            instance: b15ac28d-f854-464c-be37-6a4f6d5fe22c
-            detail: The server encountered an unexpected condition.
+      in: path
+      required: true
+      schema:
+        $ref: '#/components/schemas/networkTokenKey'
+    parameters-enrollmentKey:
+      name: enrollmentKey
+      description: SCOF or VTS enrollment key
+      in: query
+      required: false
+      schema:
+        $ref: '#/components/schemas/schemas-enrollmentKey'
+    tokenStatus:
+      name: status
+      description: The status of the network token.
+      in: query
+      required: false
+      schema:
+        type: string
+        enum:
+        - requested
+        - active
+        - suspended
+        - failed
+        - archivePending
+    components-parameters-merchantKey:
+      name: merchantKey
+      description: The merchant key.
+      in: query
+      required: false
+      schema:
+        $ref: '#/components/schemas/openapi_components-schemas-merchantKey-2'
+  examples:
+    get-token-data-response-mastercard:
+      summary: Mastercard Network Token Data
+      value:
+        number: '5186151969951348'
+        expiryMonth: 10
+        expiryYear: 2026
+        paymentAccountReference: 5001EUMYTT3AESCZGUEC77KPCLETI
+    get-token-data-response-visa:
+      summary: Visa Network Token Data
+      value:
+        number: '4817476114064469'
+        expiryMonth: 12
+        expiryYear: 2025
+        paymentAccountReference: 5001EUMYTT3AESCZGUEC77KPCLETI
   securitySchemes:
     ApiKey:
       description: "The primary method of authenticating to the Silverflow API is through API keys.\n\nAPI keys can be created by calling the [createApiKey](#operation/createApiKey) endpoint. You can create up to 40 API keys and also update and delete them, allowing for _credential rotation_.\n\nThe _Agent Activation_ process will generate an initial API Key for you. See [Activate Agent](#section/Getting-Started).\n\nA call to the [createApiKey](#operation/createApiKey) endpoint will return the following structure:\n\n```json\n{\n    \"key\": \"apk-1wtRxni5IsPsSpBLWpwr\",\n    \"status\": \"active\",\n    \"agentKey\": \"cgt-1wtRvFLIjDOyyUR5Q2LB\",\n    \"description\": \"Data lake API key\",\n    \"permissions\": [\n        \"charges:List\",\n        \"reports:All\"\n    ],\n    \"created\": \"2021-06-22T11:21:45.115Z\",\n    \"secret\": \"FWtnOOHAjbD6rNxWWEeVOCj7JXSEPGJQ\",\n    \"version\": 1\n}\n```\n\n> **Important:** The `secret` is only returned once in the response to the `createApiKey` call.\n\nOnce created, the `key` and `secret` fields from the API key must be used in the HTTP `Authorization` header using the `Basic` scheme.\nThe Basic scheme requires a **username** and **password** to be specified, separated by a `:` (colon) and Base64 encoded.\n\nUse the following values from the API key to construct a Basic authentication header:\n\n| Basic field | API key field | Example |\n| ----------- | ------------- | ------- |\n| username | `key` | `apk-1wtRxni5IsPsSpBLWpwr` |\n| password | `secret` | `FWtnOOHAjbD6rNxWWEeVOCj7JXSEPGJQ` |\n\nIn pseudo-code a valid HTTP Basic Authentication header would be constructed as follows:\n\n```ts\nconst apiKeyId = \"apk-1wtRxni5IsPsSpBLWpwr\";\nconst apiKeySecret = \"FWtnOOHAjbD6rNxWWEeVOCj7JXSEPGJQ\";\nconst authnValue = \"Basic \" + base64Encode(apiKeyId + \":\" + apiKeySecret);\nrequest.setHeader(\"Authorization\", authnValue);\n```\n\nUsing the values from the example a valid HTTP request would look like the following:\n\n```http\nGET /v1/agents/current HTTP/1.1\nAccept: application/json\nAuthorization: Basic YXBrLTF3dFJ4bmk1SXNQc1NwQkxXcHdyOkZXdG5PT0hBamJENnJOeFdXRWVWT0NqN0pYU0VQR0pR\n```\n\nMore information on the Basic scheme can be found in [RFC-7617 - The 'Basic' HTTP Authentication Scheme](https://datatracker.ietf.org/doc/html/rfc7617)."
@@ -2740,9 +2713,6 @@ components:
         Certificate validation happens at the transport layer during TLS handshake. Tenant verification is performed by matching the agent key embedded in the client certificate against the agent key embedded in the trusted CA.
 
         '
-x-refined-from:
-- silverflow-openapi.yml
-- silverflow-openapi.yml
 x-tagGroups:
 - name: ''
   tags:

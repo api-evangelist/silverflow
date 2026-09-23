@@ -7,7 +7,7 @@ info:
     email: support@silverflow.com
   license:
     name: Commercial
-  description: 'Operations tagged Report Events across 2 of this provider''s published API definitions: silverflow-openapi.yml, silverflow-openapi.yml. Each path carries the servers of the definition it was published in.'
+  description: 'Operations tagged Report Events across 2 of this provider''s published API definitions: silverflow-openapi.yml, silverflow-report-events-api-openapi.yml. Each path carries the servers of the definition it was published in.'
 servers:
 - url: https://eu-west-1.api.silverflow.com/v1
   description: Production URL for Europe - Equivalent to https://api.silverflow.co/v1
@@ -51,50 +51,6 @@ webhooks:
       description: Sandbox URL - Equivalent to https://api-sbx.silverflow.co/v1
 components:
   schemas:
-    ReportEventNotification1_0:
-      type: object
-      allOf:
-      - $ref: '#/components/schemas/PublicCloudEvent'
-      required:
-      - data
-      properties:
-        type:
-          enum:
-          - com.silverflow.reports.updated
-        data:
-          $ref: '#/components/schemas/ReportEventNotificationData1_0'
-        source:
-          allOf:
-          - $ref: '#/components/schemas/source'
-          - enum:
-            - https://silverflow.com/reports
-        specversion:
-          allOf:
-          - $ref: '#/components/schemas/openapi_components-schemas-version-3'
-          - enum:
-            - '1.0'
-        subject:
-          allOf:
-          - description: The subject of the notification, which is the report key.
-          - $ref: '#/components/schemas/schema_reportKey'
-        dataschema:
-          allOf:
-          - $ref: '#/components/schemas/dataschema'
-          - example: https://silverflow.com/schemas/events/reports/1.0
-          - enum:
-            - https://silverflow.com/schemas/events/reports/1.0
-    openapi_components-schemas-version-3:
-      type: string
-      description: The version of the spec.
-      pattern: ^[1-9]+.[0-9]+$
-      example: '1.0'
-    schema_reportKey:
-      description: Uniquely identifies a report object
-      type: string
-      pattern: ^rep-[a-zA-Z0-9]+$
-      minLength: 10
-      maxLength: 120
-      example: rep-1e1dAHhgstYTUhlphPzZ
     ReportEventNotificationData1_0:
       type: object
       required:
@@ -142,18 +98,6 @@ components:
           $ref: '#/components/schemas/openapi_components-schemas-lastModified-3'
         version:
           $ref: '#/components/schemas/common_version'
-    source:
-      type: string
-      description: Source system of the event.
-      pattern: ^https://silverflow.com/[a-zA-Z]+$
-    common_version:
-      type: integer
-      description: The version of this object.
-      format: int64
-      minimum: 1
-      maximum: 1000
-      example: 1
-      readOnly: false
     common_agentKey:
       description: Uniquely identifies an Agent.
       type: string
@@ -161,35 +105,23 @@ components:
       readOnly: true
       example: cgt-EFG67b4yPre23ZDrLX
       title: agentKey
+    dataschema:
+      type: string
+      description: The event schema with the data version of the event.
     time:
       type: string
       format: date-time
       description: Date and time when the event was sent.
-    eventId:
-      type: string
-      description: Uniquely identifies an event.
-      pattern: ^evt-[a-zA-Z0-9]+$
-      minLength: 5
-      maxLength: 120
-      example: evt-1e1dAHhgstYTUhlphPzZ
     openapi_components-schemas-created-4:
       type: string
       description: The date and time this object was created.
       format: date-time
       readOnly: false
-    openapi_components-schemas-lastModified-3:
+    openapi_components-schemas-version-3:
       type: string
-      description: The date and time this object was last modified.
-      format: date-time
-      readOnly: false
-    dataContentType:
-      type: string
-      description: The content type of the event.
-      enum:
-      - application/json
-    dataschema:
-      type: string
-      description: The event schema with the data version of the event.
+      description: The version of the spec.
+      pattern: ^[1-9]+.[0-9]+$
+      example: '1.0'
     PublicCloudEvent:
       type: object
       required:
@@ -220,28 +152,75 @@ components:
           $ref: '#/components/schemas/time'
         agent:
           $ref: '#/components/schemas/common_agentKey'
-  examples:
-    report-failed:
-      summary: Report Failed
-      value:
-        agent: cgt-5n22WlPy500PdVyGsqai
+    ReportEventNotification1_0:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/PublicCloudEvent'
+      required:
+      - data
+      properties:
+        type:
+          enum:
+          - com.silverflow.reports.updated
         data:
-          created: '2026-01-15T12:23:46.775Z'
-          key: rep-5maCw8W3hdC6ZCLN5i6R
-          lastModified: '2026-01-15T12:23:47.604Z'
-          mimeType: application/vnd.ms-excel
-          reference: Visa AMMF Report
-          reportName: AmmfReport
-          status: failed
-          version: 2
-        datacontenttype: application/json
-        dataschema: https://silverflow.com/schemas/events/reports/1.0
-        id: evt-9294PkEltHXrPG8sonEHtGOyZC7y4KPLgDase505032
-        source: https://silverflow.com/reports
-        specversion: '1.0'
-        subject: rep-5maCw8W3hdC6ZCLN5i6R
-        time: '2026-01-15T12:23:47.612Z'
-        type: com.silverflow.reports.updated
+          $ref: '#/components/schemas/ReportEventNotificationData1_0'
+        source:
+          allOf:
+          - $ref: '#/components/schemas/source'
+          - enum:
+            - https://silverflow.com/reports
+        specversion:
+          allOf:
+          - $ref: '#/components/schemas/openapi_components-schemas-version-3'
+          - enum:
+            - '1.0'
+        subject:
+          allOf:
+          - description: The subject of the notification, which is the report key.
+          - $ref: '#/components/schemas/schema_reportKey'
+        dataschema:
+          allOf:
+          - $ref: '#/components/schemas/dataschema'
+          - example: https://silverflow.com/schemas/events/reports/1.0
+          - enum:
+            - https://silverflow.com/schemas/events/reports/1.0
+    schema_reportKey:
+      description: Uniquely identifies a report object
+      type: string
+      pattern: ^rep-[a-zA-Z0-9]+$
+      minLength: 10
+      maxLength: 120
+      example: rep-1e1dAHhgstYTUhlphPzZ
+    source:
+      type: string
+      description: Source system of the event.
+      pattern: ^https://silverflow.com/[a-zA-Z]+$
+    eventId:
+      type: string
+      description: Uniquely identifies an event.
+      pattern: ^evt-[a-zA-Z0-9]+$
+      minLength: 5
+      maxLength: 120
+      example: evt-1e1dAHhgstYTUhlphPzZ
+    common_version:
+      type: integer
+      description: The version of this object.
+      format: int64
+      minimum: 1
+      maximum: 1000
+      example: 1
+      readOnly: false
+    openapi_components-schemas-lastModified-3:
+      type: string
+      description: The date and time this object was last modified.
+      format: date-time
+      readOnly: false
+    dataContentType:
+      type: string
+      description: The content type of the event.
+      enum:
+      - application/json
+  examples:
     report-completed:
       summary: Report Completed
       value:
@@ -263,6 +242,27 @@ components:
         specversion: '1.0'
         subject: rep-5n00Z6q5PB3MqRc1A3zd
         time: '2026-01-21T08:01:41.939Z'
+        type: com.silverflow.reports.updated
+    report-failed:
+      summary: Report Failed
+      value:
+        agent: cgt-5n22WlPy500PdVyGsqai
+        data:
+          created: '2026-01-15T12:23:46.775Z'
+          key: rep-5maCw8W3hdC6ZCLN5i6R
+          lastModified: '2026-01-15T12:23:47.604Z'
+          mimeType: application/vnd.ms-excel
+          reference: Visa AMMF Report
+          reportName: AmmfReport
+          status: failed
+          version: 2
+        datacontenttype: application/json
+        dataschema: https://silverflow.com/schemas/events/reports/1.0
+        id: evt-9294PkEltHXrPG8sonEHtGOyZC7y4KPLgDase505032
+        source: https://silverflow.com/reports
+        specversion: '1.0'
+        subject: rep-5maCw8W3hdC6ZCLN5i6R
+        time: '2026-01-15T12:23:47.612Z'
         type: com.silverflow.reports.updated
   securitySchemes:
     ApiKey:
@@ -309,7 +309,7 @@ components:
         '
 x-refined-from:
 - silverflow-openapi.yml
-- silverflow-openapi.yml
+- silverflow-report-events-api-openapi.yml
 x-tagGroups:
 - name: ''
   tags:

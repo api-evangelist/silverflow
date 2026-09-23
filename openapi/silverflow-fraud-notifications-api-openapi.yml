@@ -1,13 +1,13 @@
 openapi: 3.2.0
 info:
-  title: Silverflow Fraud Notifications API
+  description: '**This OpenAPI specification cannot be used for code generation.** Please reach out to your TAM regarding code generation using the API Spec.'
   version: 1.417.0
+  title: Silverflow Fraud Notifications API
   contact:
     name: API Support
     email: support@silverflow.com
   license:
     name: Commercial
-  description: 'Operations tagged Fraud Notifications across 2 of this provider''s published API definitions: silverflow-openapi.yml, silverflow-openapi.yml. Each path carries the servers of the definition it was published in.'
 servers:
 - url: https://eu-west-1.api.silverflow.com/v1
   description: Production URL for Europe - Equivalent to https://api.silverflow.co/v1
@@ -20,7 +20,10 @@ security:
 - BearerToken: []
 tags:
 - name: Fraud Notifications
-  description: "Fraud Notifications are created by the schemes when a fraudulent transaction is reported to them. \n\nThe Fraud Notification endpoints, allow to obtain more information about a Fraud Notification, including the reported Fraud Type code(s) and the related charge.\n"
+  description: 'Fraud Notifications are created by the schemes when a fraudulent transaction is reported to them.
+
+
+    The Fraud Notification endpoints, allow to obtain more information about a Fraud Notification, including the reported Fraud Type code(s) and the related charge.'
 paths:
   /fraudNotifications/{fraudNotificationKey}:
     get:
@@ -29,9 +32,7 @@ paths:
       description: 'Returns the Fraud Notification identified by the specified key.
 
 
-        Requires `fraudNotifications:Get` permission.
-
-        '
+        Requires `fraudNotifications:Get` permission.'
       tags:
       - Fraud Notifications
       parameters:
@@ -51,13 +52,6 @@ paths:
           $ref: '#/components/responses/responses-NotFoundError'
         '429':
           $ref: '#/components/responses/responses-TooManyRequestsError'
-    servers:
-    - url: https://eu-west-1.api.silverflow.com/v1
-      description: Production URL for Europe - Equivalent to https://api.silverflow.co/v1
-    - url: https://us-east-2.api.silverflow.com/v1
-      description: Production URL for North America
-    - url: https://eu-west-1.api-sbx.silverflow.com/v1
-      description: Sandbox URL - Equivalent to https://api-sbx.silverflow.co/v1
   /fraudNotifications:
     get:
       operationId: getFraudNotifications
@@ -65,9 +59,7 @@ paths:
       description: 'This operation returns a (paged) list of all Fraud Notifications for the authenticated Agent.
 
 
-        Requires `fraudNotifications:List` permission.
-
-        '
+        Requires `fraudNotifications:List` permission.'
       tags:
       - Fraud Notifications
       parameters:
@@ -90,66 +82,46 @@ paths:
           $ref: '#/components/responses/responses-ForbiddenError'
         '429':
           $ref: '#/components/responses/responses-TooManyRequestsError'
-    servers:
-    - url: https://eu-west-1.api.silverflow.com/v1
-      description: Production URL for Europe - Equivalent to https://api.silverflow.co/v1
-    - url: https://us-east-2.api.silverflow.com/v1
-      description: Production URL for North America
-    - url: https://eu-west-1.api-sbx.silverflow.com/v1
-      description: Sandbox URL - Equivalent to https://api-sbx.silverflow.co/v1
 components:
-  responses:
-    responses-ForbiddenError:
-      description: The authenticated client is forbidden to make the request for the resource identified.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/schemas-ProblemDetail'
-          example:
-            type: https://datatracker.ietf.org/doc/html/rfc2616#section-10.4.4
-            title: Forbidden
-            status: 403
-            detail: The server is refusing to execute the request for the current authenticated user
-            instance: https://api.silverflow.co/v1/merchants/mct-1hPdFqhgstYTUhlphPDp
-    responses-UnauthorizedError:
-      description: Authentication information is missing or invalid
-      headers:
-        WWW_Authenticate:
-          schema:
-            type: string
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/schemas-ProblemDetail'
-          example:
-            type: https://datatracker.ietf.org/doc/html/rfc2616#section-10.4.2
-            title: Unauthorized
-            status: 401
-            detail: The credentials supplied in the request are either missing, invalid, or not applicable in the current scope
-    responses-NotFoundError:
-      description: The requested resource was not found
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/schemas-ProblemDetail'
-          example:
-            type: https://datatracker.ietf.org/doc/html/rfc2616#section-10.4.5
-            title: Not Found
-            status: 404
-            detail: The entity referenced in the request could not be found
-            instance: https://api.silverflow.co/v1/merchants/mct-1hPdFqhgstYTUhlphPDp
-    responses-TooManyRequestsError:
-      description: The number of requests (per minute) has exceeded the configured maximum
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/schemas-ProblemDetail'
-          example:
-            type: https://api.silverflow.co/problem/too-many-requests
-            title: Too Many Requests
-            status: 429
-            detail: The number of requests performed by the client has exceeded the configured maximum for a given period
   schemas:
+    clearingDateTime:
+      type: string
+      description: Clearing datetime of the disputed authorization.
+      format: date-time
+      example: '2021-05-27T10:57:52Z'
+    fraudType:
+      description: The type of the Fraud reported by the network
+      type: object
+      required:
+      - code
+      properties:
+        typeCode:
+          type: string
+          example: '01'
+        subTypeCode:
+          type: string
+          example: N
+    acquirerReferenceNumber:
+      description: Unique identifier assigned by the acquirer at clearing. Used to identify the transaction with the card networks.
+      type: string
+      pattern: ^\d+$
+      minLength: 23
+      maxLength: 23
+      readOnly: false
+      example: '12345678901234567890123'
+    components-schemas-agentKey:
+      description: Uniquely identifies an Agent
+      type: string
+      pattern: ^cgt-[a-zA-Z0-9]+|current$
+      minLength: 1
+      maxLength: 120
+      readOnly: false
+      example: cgt-1UF2NafdfrdPMf2XrS2
+    totalItems:
+      type: number
+      format: int64
+      minLength: 0
+      example: '1'
     fraud-notifications_transactionReference:
       type: string
       description: 'Unique ID assigned by the merchant or payment service provider for the transaction. Used to identify the transaction.
@@ -159,267 +131,6 @@ components:
       minLength: 1
       maxLength: 120
       example: Dz3dIzE74EfH1HeTInyE
-    schemas-last4:
-      type: string
-      deprecated: true
-      description: The last 4 digits of the card. **This property will be removed on 24 September 2025. Use `maskedNumber` instead.**
-      readOnly: false
-      pattern: ^\d+$
-      minLength: 4
-      maxLength: 4
-      example: 0905
-    components-schemas-merchantKey:
-      description: Uniquely identifies a Merchant
-      type: string
-      pattern: ^mct-[a-zA-Z0-9]+$
-      minLength: 1
-      maxLength: 120
-      readOnly: false
-      example: mct-123dinkqFqfq3q2f2adfa
-    clearingDateTime:
-      type: string
-      description: Clearing datetime of the disputed authorization.
-      format: date-time
-      example: '2021-05-27T10:57:52Z'
-    maskedNumber:
-      type: string
-      description: The card number used to create this charge, masked according to PCI standards. For card numbers with 16 or more digits, the first 8 and the last 4 digits are visible. For card numbers with 13-15 digits, the first 6 and the last 4 digits are visible. For cards numbers with less than 13 digits, the first 6 and last 2 digits are visible.
-    components-schemas-agentKey:
-      description: Uniquely identifies an Agent
-      type: string
-      pattern: ^cgt-[a-zA-Z0-9]+|current$
-      minLength: 1
-      maxLength: 120
-      readOnly: false
-      example: cgt-1UF2NafdfrdPMf2XrS2
-    fraud-notifications_status:
-      description: The status of a Fraud Notification.
-      type: string
-      enum:
-      - active
-      - archived
-    FraudNotification:
-      type: object
-      required:
-      - key
-      - network
-      - agentKey
-      - merchantAcceptorRef
-      - merchantKey
-      - mcc
-      - mid
-      - chargeInfo
-      - cardInfo
-      - fraudAmount
-      - fraudType
-      - purchaseDate
-      - fraudReportingDate
-      - status
-      - created
-      - version
-      description: 'A Fraud Notification
-
-        '
-      properties:
-        key:
-          $ref: '#/components/schemas/fraudNotificationKey'
-        network:
-          $ref: '#/components/schemas/schemas-cardNetwork'
-        agentKey:
-          $ref: '#/components/schemas/components-schemas-agentKey'
-        merchantKey:
-          $ref: '#/components/schemas/components-schemas-merchantKey'
-        merchantAcceptorRef:
-          $ref: '#/components/schemas/merchantAcceptorRef'
-        chargeInfo:
-          $ref: '#/components/schemas/fraud-notifications_chargeInfo'
-        cardInfo:
-          $ref: '#/components/schemas/cardInfo'
-        fraudAmount:
-          $ref: '#/components/schemas/openapi_components-schemas-Amount'
-        fraudType:
-          $ref: '#/components/schemas/fraudType'
-        purchaseDate:
-          $ref: '#/components/schemas/purchaseDate'
-        fraudReportingDate:
-          $ref: '#/components/schemas/fraudReportingDate'
-        mid:
-          $ref: '#/components/schemas/schemas-mid'
-        created:
-          $ref: '#/components/schemas/openapi_components-schemas-created-3'
-        version:
-          $ref: '#/components/schemas/openapi_components-schemas-version'
-        status:
-          $ref: '#/components/schemas/fraud-notifications_status'
-    schemas-ProblemDetail:
-      type: object
-      description: 'The ''problem detail'' object relays detailed information about the error that occurred. It is defined
-
-        by [RFC 7807 - Problem Details for HTTP APIs](https://tools.ietf.org/html/rfc7807).
-
-
-        Note that additional properties may be used to relay error specific information. For instance,
-
-        A Bad Request error may hold information about the individual validation errors found in the request.
-
-        '
-      properties:
-        type:
-          type: string
-          description: 'An absolute URI that identifies the problem type.
-
-            '
-          default: about:blank
-          example: https://api.silverflow.co/problem/constraint-violation
-        title:
-          type: string
-          description: 'A short, summary of the problem type. Written in english and readable
-
-            for engineers (usually not suited for non technical stakeholders and
-
-            not localized);
-
-            '
-          example: Service Unavailable
-        status:
-          type: integer
-          format: int32
-          description: 'The HTTP status code generated by the origin server for this occurrence
-
-            of the problem.
-
-            '
-          minimum: 100
-          maximum: 599
-          example: 503
-        detail:
-          type: string
-          description: 'A human readable explanation specific to this occurrence of the
-
-            problem.
-
-            '
-          example: Connection to database timed out
-        instance:
-          type: string
-          description: 'An absolute URI that identifies the specific occurrence of the problem.
-
-            It may or may not yield further information if dereferenced.
-
-            '
-      additionalProperties: true
-      example:
-        type: https://api.silverflow.co/problem/bad-request
-        title: Bad Request
-        status: 400
-        detail: The request could not be processed as it contained an invalid request entity
-        instance: https://api.silverflow.co/v1/merchants/mct-1hPdFqhgstYTUhlphPDp
-        validationErrors:
-        - The value of property 'status' should be one of 'idle', 'active' or 'archived'
-        - The value of property 'tags.0.businessId' must not be longer than 255 characters
-    schemas-cardNetwork:
-      type: string
-      description: The card network
-      enum:
-      - mastercard
-      - visa
-      - american-express
-    components-schemas-offsetToken:
-      type: string
-      pattern: ^[a-zA-Z0-9%]+$
-      minLength: 1
-      maxLength: 2048
-      example: LUtyr0s918rNZ5WuWDYh5FNzqAli6HqKHpPDatcfdsaVlibrlO49BKcOdz9YccUOtDSoyLtc4kAiOLkmjSW5zLa8OCnOXXBRja2rDYh5FNzqAli6HqKHpPDatcfdsaVlibrlO49BKcOdz9Yc
-    openapi_components-schemas-version:
-      type: integer
-      description: The version of this object
-      format: int64
-      minimum: 1
-      maximum: 1000
-      example: 1
-      readOnly: false
-    acquirerReferenceNumber:
-      description: Unique identifier assigned by the acquirer at clearing. Used to identify the transaction with the card networks.
-      type: string
-      pattern: ^\d+$
-      minLength: 23
-      maxLength: 23
-      readOnly: false
-      example: '12345678901234567890123'
-    purchaseDate:
-      description: Date when the purchase was done
-      type: string
-      format: date
-      example: '2021-05-27'
-    openapi_components-schemas-acceptorKey:
-      description: Uniquely identifies a Merchant Acceptor.
-      type: string
-      pattern: ^mac-[a-zA-Z0-9]+$
-      minLength: 1
-      maxLength: 120
-      readOnly: false
-      example: mac-1JRadf2ffdfrdPMf2XrS2
-    merchantAcceptorRef:
-      description: Charge related information
-      type: object
-      required:
-      - key
-      - version
-      properties:
-        key:
-          $ref: '#/components/schemas/openapi_components-schemas-acceptorKey'
-        version:
-          $ref: '#/components/schemas/openapi_components-schemas-version'
-    fraud-notifications_chargeInfo:
-      description: Charge related information
-      type: object
-      required:
-      - arn
-      - amount
-      - fraudLiability
-      properties:
-        arn:
-          $ref: '#/components/schemas/acquirerReferenceNumber'
-        localTransactionDateTime:
-          $ref: '#/components/schemas/schemas-localTransactionDateTime'
-        amount:
-          $ref: '#/components/schemas/openapi_components-schemas-Amount'
-        chargeKey:
-          $ref: '#/components/schemas/schemas-chargeKey'
-        fraudLiability:
-          $ref: '#/components/schemas/fraud-notifications_fraudLiability'
-        transactionReference:
-          $ref: '#/components/schemas/fraud-notifications_transactionReference'
-        clearingDateTime:
-          $ref: '#/components/schemas/clearingDateTime'
-    schemas-mid:
-      type: string
-      description: 'Merchant ID assigned to the merchant (or Payfac) by the acquirer.
-
-        Acceptors that use the same BIN, Doing Business As name, and location must have the same `mid`.
-
-        Acceptors that use the same BIN cannot share a `mid` if they have a different Doing Business As name or location.
-
-        '
-      pattern: ^[a-zA-Z0-9-_\.]+$
-      minLength: 1
-      maxLength: 15
-    moreItems:
-      type: boolean
-    openapi_components-schemas-Amount:
-      type: object
-      required:
-      - value
-      - currency
-      additionalProperties: false
-      description: 'An amount encoded as an object with a `value` in minor units and a `currency` code.
-
-        '
-      properties:
-        value:
-          $ref: '#/components/schemas/openapi_components-schemas-amountValue-2'
-        currency:
-          $ref: '#/components/schemas/openapi_components-schemas-currencyCode-3'
     openapi_components-schemas-currencyCode-3:
       type: string
       enum:
@@ -1143,6 +854,99 @@ components:
         description: Find more info here
         url: https://www.iso.org/iso-4217-currency-codes.html
       example: EUR
+    fraud-notifications_fraudLiability:
+      description: Indicates the entity responsible for covering the losses incurred due to fraudulent activities.
+      type: string
+      enum:
+      - acquirer
+      - issuer
+    merchantAcceptorRef:
+      description: Charge related information
+      type: object
+      required:
+      - key
+      - version
+      properties:
+        key:
+          $ref: '#/components/schemas/openapi_components-schemas-acceptorKey'
+        version:
+          $ref: '#/components/schemas/openapi_components-schemas-version'
+    moreItems:
+      type: boolean
+    schemas-ProblemDetail:
+      type: object
+      description: 'The ''problem detail'' object relays detailed information about the error that occurred. It is defined
+
+        by [RFC 7807 - Problem Details for HTTP APIs](https://tools.ietf.org/html/rfc7807).
+
+
+        Note that additional properties may be used to relay error specific information. For instance,
+
+        A Bad Request error may hold information about the individual validation errors found in the request.
+
+        '
+      properties:
+        type:
+          type: string
+          description: 'An absolute URI that identifies the problem type.
+
+            '
+          default: about:blank
+          example: https://api.silverflow.co/problem/constraint-violation
+        title:
+          type: string
+          description: 'A short, summary of the problem type. Written in english and readable
+
+            for engineers (usually not suited for non technical stakeholders and
+
+            not localized);
+
+            '
+          example: Service Unavailable
+        status:
+          type: integer
+          format: int32
+          description: 'The HTTP status code generated by the origin server for this occurrence
+
+            of the problem.
+
+            '
+          minimum: 100
+          maximum: 599
+          example: 503
+        detail:
+          type: string
+          description: 'A human readable explanation specific to this occurrence of the
+
+            problem.
+
+            '
+          example: Connection to database timed out
+        instance:
+          type: string
+          description: 'An absolute URI that identifies the specific occurrence of the problem.
+
+            It may or may not yield further information if dereferenced.
+
+            '
+      additionalProperties: true
+      example:
+        type: https://api.silverflow.co/problem/bad-request
+        title: Bad Request
+        status: 400
+        detail: The request could not be processed as it contained an invalid request entity
+        instance: https://api.silverflow.co/v1/merchants/mct-1hPdFqhgstYTUhlphPDp
+        validationErrors:
+        - The value of property 'status' should be one of 'idle', 'active' or 'archived'
+        - The value of property 'tags.0.businessId' must not be longer than 255 characters
+    schemas-chargeKey:
+      description: Uniquely identifies a charge.
+      type: string
+      pattern: ^chg-[a-zA-Z0-9]+$
+      minLength: 1
+      maxLength: 120
+      readOnly: false
+      example: chg-1e1dAHhgstYTUhlphPzZ
     PageWithMoreAndTotalItems:
       type: object
       properties:
@@ -1152,40 +956,12 @@ components:
           $ref: '#/components/schemas/components-schemas-offsetToken'
         totalItems:
           $ref: '#/components/schemas/totalItems'
-    openapi_components-schemas-created-3:
+    components-schemas-offsetToken:
       type: string
-      description: The date and time this object was created
-      format: date-time
-      readOnly: false
-    schemas-localTransactionDateTime:
-      type: string
-      description: The date and time of the transaction
-      format: date-time
-      readOnly: false
-      example: '2021-05-27T10:57:52Z'
-    FraudNotificationsPage:
-      allOf:
-      - $ref: '#/components/schemas/PageWithMoreAndTotalItems'
-      - type: object
-        required:
-        - fraudNotifications
-        properties:
-          fraudNotifications:
-            type: array
-            items:
-              $ref: '#/components/schemas/FraudNotification'
-    fraudType:
-      description: The type of the Fraud reported by the network
-      type: object
-      required:
-      - code
-      properties:
-        typeCode:
-          type: string
-          example: '01'
-        subTypeCode:
-          type: string
-          example: N
+      pattern: ^[a-zA-Z0-9%]+$
+      minLength: 1
+      maxLength: 2048
+      example: LUtyr0s918rNZ5WuWDYh5FNzqAli6HqKHpPDatcfdsaVlibrlO49BKcOdz9YccUOtDSoyLtc4kAiOLkmjSW5zLa8OCnOXXBRja2rDYh5FNzqAli6HqKHpPDatcfdsaVlibrlO49BKcOdz9Yc
     openapi_components-schemas-amountValue-2:
       type: integer
       format: int64
@@ -1197,6 +973,115 @@ components:
 
         '
       example: 2599
+    FraudNotificationsPage:
+      allOf:
+      - $ref: '#/components/schemas/PageWithMoreAndTotalItems'
+      - type: object
+        required:
+        - fraudNotifications
+        properties:
+          fraudNotifications:
+            type: array
+            items:
+              $ref: '#/components/schemas/FraudNotification'
+    maskedNumber:
+      type: string
+      description: The card number used to create this charge, masked according to PCI standards. For card numbers with 16 or more digits, the first 8 and the last 4 digits are visible. For card numbers with 13-15 digits, the first 6 and the last 4 digits are visible. For cards numbers with less than 13 digits, the first 6 and last 2 digits are visible.
+    FraudNotification:
+      type: object
+      required:
+      - key
+      - network
+      - agentKey
+      - merchantAcceptorRef
+      - merchantKey
+      - mcc
+      - mid
+      - chargeInfo
+      - cardInfo
+      - fraudAmount
+      - fraudType
+      - purchaseDate
+      - fraudReportingDate
+      - status
+      - created
+      - version
+      description: 'A Fraud Notification
+
+        '
+      properties:
+        key:
+          $ref: '#/components/schemas/fraudNotificationKey'
+        network:
+          $ref: '#/components/schemas/schemas-cardNetwork'
+        agentKey:
+          $ref: '#/components/schemas/components-schemas-agentKey'
+        merchantKey:
+          $ref: '#/components/schemas/components-schemas-merchantKey'
+        merchantAcceptorRef:
+          $ref: '#/components/schemas/merchantAcceptorRef'
+        chargeInfo:
+          $ref: '#/components/schemas/fraud-notifications_chargeInfo'
+        cardInfo:
+          $ref: '#/components/schemas/cardInfo'
+        fraudAmount:
+          $ref: '#/components/schemas/openapi_components-schemas-Amount'
+        fraudType:
+          $ref: '#/components/schemas/fraudType'
+        purchaseDate:
+          $ref: '#/components/schemas/purchaseDate'
+        fraudReportingDate:
+          $ref: '#/components/schemas/fraudReportingDate'
+        mid:
+          $ref: '#/components/schemas/schemas-mid'
+        created:
+          $ref: '#/components/schemas/openapi_components-schemas-created-3'
+        version:
+          $ref: '#/components/schemas/openapi_components-schemas-version'
+        status:
+          $ref: '#/components/schemas/fraud-notifications_status'
+    schemas-last4:
+      type: string
+      deprecated: true
+      description: The last 4 digits of the card. **This property will be removed on 24 September 2025. Use `maskedNumber` instead.**
+      readOnly: false
+      pattern: ^\d+$
+      minLength: 4
+      maxLength: 4
+      example: 0905
+    components-schemas-merchantKey:
+      description: Uniquely identifies a Merchant
+      type: string
+      pattern: ^mct-[a-zA-Z0-9]+$
+      minLength: 1
+      maxLength: 120
+      readOnly: false
+      example: mct-123dinkqFqfq3q2f2adfa
+    openapi_components-schemas-Amount:
+      type: object
+      required:
+      - value
+      - currency
+      additionalProperties: false
+      description: 'An amount encoded as an object with a `value` in minor units and a `currency` code.
+
+        '
+      properties:
+        value:
+          $ref: '#/components/schemas/openapi_components-schemas-amountValue-2'
+        currency:
+          $ref: '#/components/schemas/openapi_components-schemas-currencyCode-3'
+    fraud-notifications_status:
+      description: The status of a Fraud Notification.
+      type: string
+      enum:
+      - active
+      - archived
+    purchaseDate:
+      description: Date when the purchase was done
+      type: string
+      format: date
+      example: '2021-05-27'
     fraudNotificationKey:
       description: Uniquely identifies a Fraud Notification
       type: string
@@ -1205,25 +1090,24 @@ components:
       maxLength: 120
       readOnly: false
       example: frn-1JRadf2ffdfrdPMf2XrS2
-    fraud-notifications_fraudLiability:
-      description: Indicates the entity responsible for covering the losses incurred due to fraudulent activities.
-      type: string
-      enum:
-      - acquirer
-      - issuer
     fraudReportingDate:
       description: Date when the Fraud Notification was received by the Card Network. This is specific for each network. For Mastercard this is the TLL8 "Fraud Posted Date". For VISA this is the TC90 "Processing Date".
       type: string
       format: date
       example: '2021-05-28'
-    schemas-chargeKey:
-      description: Uniquely identifies a charge.
+    openapi_components-schemas-created-3:
       type: string
-      pattern: ^chg-[a-zA-Z0-9]+$
-      minLength: 1
-      maxLength: 120
+      description: The date and time this object was created
+      format: date-time
       readOnly: false
-      example: chg-1e1dAHhgstYTUhlphPzZ
+    openapi_components-schemas-version:
+      type: integer
+      description: The version of this object
+      format: int64
+      minimum: 1
+      maximum: 1000
+      example: 1
+      readOnly: false
     cardInfo:
       description: Card related information
       type: object
@@ -1237,19 +1121,62 @@ components:
         issuerName:
           type: string
           readOnly: false
-    totalItems:
-      type: number
-      format: int64
-      minLength: 0
-      example: '1'
+    schemas-mid:
+      type: string
+      description: 'Merchant ID assigned to the merchant (or Payfac) by the acquirer.
+
+        Acceptors that use the same BIN, Doing Business As name, and location must have the same `mid`.
+
+        Acceptors that use the same BIN cannot share a `mid` if they have a different Doing Business As name or location.
+
+        '
+      pattern: ^[a-zA-Z0-9-_\.]+$
+      minLength: 1
+      maxLength: 15
+    schemas-localTransactionDateTime:
+      type: string
+      description: The date and time of the transaction
+      format: date-time
+      readOnly: false
+      example: '2021-05-27T10:57:52Z'
+    fraud-notifications_chargeInfo:
+      description: Charge related information
+      type: object
+      required:
+      - arn
+      - amount
+      - fraudLiability
+      properties:
+        arn:
+          $ref: '#/components/schemas/acquirerReferenceNumber'
+        localTransactionDateTime:
+          $ref: '#/components/schemas/schemas-localTransactionDateTime'
+        amount:
+          $ref: '#/components/schemas/openapi_components-schemas-Amount'
+        chargeKey:
+          $ref: '#/components/schemas/schemas-chargeKey'
+        fraudLiability:
+          $ref: '#/components/schemas/fraud-notifications_fraudLiability'
+        transactionReference:
+          $ref: '#/components/schemas/fraud-notifications_transactionReference'
+        clearingDateTime:
+          $ref: '#/components/schemas/clearingDateTime'
+    openapi_components-schemas-acceptorKey:
+      description: Uniquely identifies a Merchant Acceptor.
+      type: string
+      pattern: ^mac-[a-zA-Z0-9]+$
+      minLength: 1
+      maxLength: 120
+      readOnly: false
+      example: mac-1JRadf2ffdfrdPMf2XrS2
+    schemas-cardNetwork:
+      type: string
+      description: The card network
+      enum:
+      - mastercard
+      - visa
+      - american-express
   parameters:
-    components-parameters-offsetToken:
-      name: offsetToken
-      description: The offset token. This token is returned in the response of previous request.
-      in: query
-      required: false
-      schema:
-        $ref: '#/components/schemas/components-schemas-offsetToken'
     fraudNotificationKey:
       name: fraudNotificationKey
       in: path
@@ -1259,15 +1186,15 @@ components:
         '
       schema:
         $ref: '#/components/schemas/fraudNotificationKey'
-    components-parameters-to:
-      name: to
-      description: Include only items that have a created date _less than_ the specified date
+    parameters-merchantKeyQs:
+      name: merchantKey
+      description: 'Immutable, unique identifier of the merchant
+
+        '
       in: query
       required: false
       schema:
-        type: string
-        format: date-time
-      example: '2022-08-15T14:15:23Z'
+        $ref: '#/components/schemas/components-schemas-merchantKey'
     parameters-sortOrder:
       name: sortOrder
       description: The sort order (ascending or descending)
@@ -1279,15 +1206,15 @@ components:
         - asc
         - desc
       example: desc
-    parameters-merchantKeyQs:
-      name: merchantKey
-      description: 'Immutable, unique identifier of the merchant
-
-        '
+    components-parameters-to:
+      name: to
+      description: Include only items that have a created date _less than_ the specified date
       in: query
       required: false
       schema:
-        $ref: '#/components/schemas/components-schemas-merchantKey'
+        type: string
+        format: date-time
+      example: '2022-08-15T14:15:23Z'
     components-parameters-from:
       name: from
       description: Include only items that have a created date _greater than or equal to_ the specified date
@@ -1309,6 +1236,64 @@ components:
         maximum: 100
         default: 10
       example: 1
+    components-parameters-offsetToken:
+      name: offsetToken
+      description: The offset token. This token is returned in the response of previous request.
+      in: query
+      required: false
+      schema:
+        $ref: '#/components/schemas/components-schemas-offsetToken'
+  responses:
+    responses-TooManyRequestsError:
+      description: The number of requests (per minute) has exceeded the configured maximum
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/schemas-ProblemDetail'
+          example:
+            type: https://api.silverflow.co/problem/too-many-requests
+            title: Too Many Requests
+            status: 429
+            detail: The number of requests performed by the client has exceeded the configured maximum for a given period
+    responses-UnauthorizedError:
+      description: Authentication information is missing or invalid
+      headers:
+        WWW_Authenticate:
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/schemas-ProblemDetail'
+          example:
+            type: https://datatracker.ietf.org/doc/html/rfc2616#section-10.4.2
+            title: Unauthorized
+            status: 401
+            detail: The credentials supplied in the request are either missing, invalid, or not applicable in the current scope
+    responses-ForbiddenError:
+      description: The authenticated client is forbidden to make the request for the resource identified.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/schemas-ProblemDetail'
+          example:
+            type: https://datatracker.ietf.org/doc/html/rfc2616#section-10.4.4
+            title: Forbidden
+            status: 403
+            detail: The server is refusing to execute the request for the current authenticated user
+            instance: https://api.silverflow.co/v1/merchants/mct-1hPdFqhgstYTUhlphPDp
+    responses-NotFoundError:
+      description: The requested resource was not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/schemas-ProblemDetail'
+          example:
+            type: https://datatracker.ietf.org/doc/html/rfc2616#section-10.4.5
+            title: Not Found
+            status: 404
+            detail: The entity referenced in the request could not be found
+            instance: https://api.silverflow.co/v1/merchants/mct-1hPdFqhgstYTUhlphPDp
   securitySchemes:
     ApiKey:
       description: "The primary method of authenticating to the Silverflow API is through API keys.\n\nAPI keys can be created by calling the [createApiKey](#operation/createApiKey) endpoint. You can create up to 40 API keys and also update and delete them, allowing for _credential rotation_.\n\nThe _Agent Activation_ process will generate an initial API Key for you. See [Activate Agent](#section/Getting-Started).\n\nA call to the [createApiKey](#operation/createApiKey) endpoint will return the following structure:\n\n```json\n{\n    \"key\": \"apk-1wtRxni5IsPsSpBLWpwr\",\n    \"status\": \"active\",\n    \"agentKey\": \"cgt-1wtRvFLIjDOyyUR5Q2LB\",\n    \"description\": \"Data lake API key\",\n    \"permissions\": [\n        \"charges:List\",\n        \"reports:All\"\n    ],\n    \"created\": \"2021-06-22T11:21:45.115Z\",\n    \"secret\": \"FWtnOOHAjbD6rNxWWEeVOCj7JXSEPGJQ\",\n    \"version\": 1\n}\n```\n\n> **Important:** The `secret` is only returned once in the response to the `createApiKey` call.\n\nOnce created, the `key` and `secret` fields from the API key must be used in the HTTP `Authorization` header using the `Basic` scheme.\nThe Basic scheme requires a **username** and **password** to be specified, separated by a `:` (colon) and Base64 encoded.\n\nUse the following values from the API key to construct a Basic authentication header:\n\n| Basic field | API key field | Example |\n| ----------- | ------------- | ------- |\n| username | `key` | `apk-1wtRxni5IsPsSpBLWpwr` |\n| password | `secret` | `FWtnOOHAjbD6rNxWWEeVOCj7JXSEPGJQ` |\n\nIn pseudo-code a valid HTTP Basic Authentication header would be constructed as follows:\n\n```ts\nconst apiKeyId = \"apk-1wtRxni5IsPsSpBLWpwr\";\nconst apiKeySecret = \"FWtnOOHAjbD6rNxWWEeVOCj7JXSEPGJQ\";\nconst authnValue = \"Basic \" + base64Encode(apiKeyId + \":\" + apiKeySecret);\nrequest.setHeader(\"Authorization\", authnValue);\n```\n\nUsing the values from the example a valid HTTP request would look like the following:\n\n```http\nGET /v1/agents/current HTTP/1.1\nAccept: application/json\nAuthorization: Basic YXBrLTF3dFJ4bmk1SXNQc1NwQkxXcHdyOkZXdG5PT0hBamJENnJOeFdXRWVWT0NqN0pYU0VQR0pR\n```\n\nMore information on the Basic scheme can be found in [RFC-7617 - The 'Basic' HTTP Authentication Scheme](https://datatracker.ietf.org/doc/html/rfc7617)."
@@ -1352,9 +1337,6 @@ components:
         Certificate validation happens at the transport layer during TLS handshake. Tenant verification is performed by matching the agent key embedded in the client certificate against the agent key embedded in the trusted CA.
 
         '
-x-refined-from:
-- silverflow-openapi.yml
-- silverflow-openapi.yml
 x-tagGroups:
 - name: ''
   tags:

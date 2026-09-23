@@ -7,7 +7,7 @@ info:
     email: support@silverflow.com
   license:
     name: Commercial
-  description: 'Operations tagged BEP Authentication across 2 of this provider''s published API definitions: silverflow-openapi.yml, silverflow-openapi.yml. Each path carries the servers of the definition it was published in.'
+  description: 'Operations tagged BEP Authentication across 2 of this provider''s published API definitions: silverflow-openapi.yml, silverflow-bep-authentication-api-openapi.yml. Each path carries the servers of the definition it was published in.'
 servers:
 - url: https://eu-west-1.api.silverflow.com/v1
   description: Production URL for Europe - Equivalent to https://api.silverflow.co/v1
@@ -25,7 +25,12 @@ paths:
     get:
       operationId: getCompleteBep
       summary: Get BEP
-      description: "Retrieve a BEP entity. If it is authenticated, it will contain the authentication information necessary \nto create charges with Bancontact.\n\nRequires the `bep:Get` permission.\n"
+      description: 'Retrieve a BEP entity. If it is authenticated, it will contain the authentication information necessary
+
+        to create charges with Bancontact.
+
+
+        Requires the `bep:Get` permission.'
       tags:
       - BEP Authentication
       parameters:
@@ -67,7 +72,12 @@ paths:
     post:
       operationId: bep
       summary: Create BEP Authentication Intent
-      description: "Generate a unique BEP payment initiation and return a QR code and an app intent to be used \nby the Bancontact app.\n\nRequires the `bep:Create` permission.\n"
+      description: 'Generate a unique BEP payment initiation and return a QR code and an app intent to be used
+
+        by the Bancontact app.
+
+
+        Requires the `bep:Create` permission.'
       tags:
       - BEP Authentication
       requestBody:
@@ -129,9 +139,7 @@ paths:
       description: 'Finalize a BEP authentication flow by providing the authorization result.
 
 
-        Requires the `bep:Update` permission.
-
-        '
+        Requires the `bep:Update` permission.'
       tags:
       - BEP Authentication
       parameters:
@@ -189,7 +197,9 @@ webhooks:
     post:
       operationId: bepWebhook
       summary: BEP Authentication Status Update
-      description: "The authentication status updates will be sent to the `webhook` registered during \nthe [creation of a BEP](#operation/bep) authentication intent.\n"
+      description: 'The authentication status updates will be sent to the `webhook` registered during
+
+        the creation of a BEP authentication intent.'
       tags:
       - BEP Authentication
       security: []
@@ -210,95 +220,19 @@ webhooks:
       description: Sandbox URL - Equivalent to https://api-sbx.silverflow.co/v1
 components:
   schemas:
-    schemas-pan:
+    BepResponse:
+      oneOf:
+      - $ref: '#/components/schemas/BepInitiatedResponse'
+      - $ref: '#/components/schemas/BepSuccessResponse'
+      - $ref: '#/components/schemas/BepFailResponse'
+    schemas-acceptorRoute:
       type: string
-      description: Full digits of a card
-      pattern: ^\d{13,19}$
-      format: password
-      example: '1234123412341234'
-    AuthenticationMethod:
-      type: string
-      enum:
-      - bancontactIntent
-      - qrCode
-    ResolverByMerchant:
-      type: object
-      required:
-      - merchantKey
-      description: 'Used to select a merchant acceptor by merchant key and an optional route.
+      pattern: ^(^$|^[a-zA-Z0-9-_:;.,]+$)
+      minLength: 0
+      maxLength: 255
+      description: 'Route key used to uniquely reference an acceptor when used in combination
 
-        '
-      properties:
-        merchantKey:
-          $ref: '#/components/schemas/schemas-merchantKey'
-        route:
-          $ref: '#/components/schemas/schemas-acceptorRoute'
-    AuthorizationResultAlreadySubmittedErrorDetails:
-      type: object
-      required:
-      - type
-      - title
-      - status
-      - detail
-      - instance
-      properties:
-        type:
-          allOf:
-          - $ref: '#/components/schemas/errorType'
-          - enum:
-            - /silverflow/problems/bep/authorization-result-already-submitted
-        title:
-          allOf:
-          - $ref: '#/components/schemas/errorTitle'
-          - enum:
-            - Authorization Result Already Submitted
-        status:
-          allOf:
-          - $ref: '#/components/schemas/errorStatus'
-          - enum:
-            - 409
-        detail:
-          $ref: '#/components/schemas/errorDetail'
-        instance:
-          $ref: '#/components/schemas/errorInstance'
-    InternalServerErrorDetails:
-      type: object
-      required:
-      - type
-      - title
-      - status
-      - detail
-      - instance
-      properties:
-        type:
-          allOf:
-          - $ref: '#/components/schemas/errorType'
-          - enum:
-            - /silverflow/problems/internal-server-error
-        title:
-          allOf:
-          - $ref: '#/components/schemas/errorTitle'
-          - enum:
-            - Internal Server Error
-        status:
-          allOf:
-          - $ref: '#/components/schemas/errorStatus'
-          - enum:
-            - 500
-        detail:
-          $ref: '#/components/schemas/errorDetail'
-        instance:
-          $ref: '#/components/schemas/errorInstance'
-    schemas-expiryMonth:
-      type: integer
-      description: 'The month the card expires. January is 1.
-
-        '
-      minimum: 1
-      maximum: 12
-    errorTitle:
-      type: string
-      description: 'A short, human-readable summary of the problem type. It does not change from occurrence to occurrence of the error.
+        with its card network and merchant key.
 
         '
     schemas-amountValue:
@@ -311,7 +245,132 @@ components:
         currencies have 2 minor units. Some have three or zero.
 
         '
-    BepInitiatedResponse:
+    BSPAuthorizationResultCode:
+      type: string
+      pattern: ^[0-9]{3}$
+      description: Bancontact Authorization action code
+      example: '000'
+    schemas-AuthenticationStatus:
+      type: string
+      description: The current state of the authentication.
+      enum:
+      - started
+      - success
+      - fail
+      - finalized
+    InitiateBEPRequest:
+      type: object
+      required:
+      - merchantAcceptorResolver
+      - amount
+      - webhook
+      description: Request to create new a BEP authentication intent
+      properties:
+        merchantAcceptorResolver:
+          $ref: '#/components/schemas/AcceptorResolver'
+        webhook:
+          $ref: '#/components/schemas/webhook'
+        amount:
+          $ref: '#/components/schemas/schemas-Amount'
+        completionUrl:
+          $ref: '#/components/schemas/completionUrl'
+        description:
+          $ref: '#/components/schemas/authenticationDescription'
+    errorTitle:
+      type: string
+      description: 'A short, human-readable summary of the problem type. It does not change from occurrence to occurrence of the error.
+
+        '
+    ForbiddenErrorDetails:
+      type: object
+      required:
+      - type
+      - title
+      - status
+      - detail
+      - instance
+      properties:
+        type:
+          allOf:
+          - $ref: '#/components/schemas/errorType'
+          - enum:
+            - /silverflow/problems/forbidden
+        title:
+          allOf:
+          - $ref: '#/components/schemas/errorTitle'
+          - enum:
+            - Forbidden
+        status:
+          allOf:
+          - $ref: '#/components/schemas/errorStatus'
+          - enum:
+            - 403
+        detail:
+          $ref: '#/components/schemas/errorDetail'
+        instance:
+          $ref: '#/components/schemas/errorInstance'
+    timestamp:
+      type: string
+      format: iso-8601-date-time
+    schemas-Amount:
+      type: object
+      required:
+      - value
+      - currency
+      additionalProperties: false
+      description: 'An amount encoded as an object with a `value` in minor units and a `currency` code.
+
+        '
+      properties:
+        value:
+          $ref: '#/components/schemas/schemas-amountValue'
+        currency:
+          $ref: '#/components/schemas/components-schemas-currencyCode'
+    schemas-expiryMonth:
+      type: integer
+      description: 'The month the card expires. January is 1.
+
+        '
+      minimum: 1
+      maximum: 12
+    schemas-pan:
+      type: string
+      description: Full digits of a card
+      pattern: ^\d{13,19}$
+      format: password
+      example: '1234123412341234'
+    AuthenticationNotification:
+      type: object
+      description: The notification message emitted per each initiated BEP authentication.
+      required:
+      - bepKey
+      - authenticationStatus
+      - routing
+      properties:
+        bepKey:
+          $ref: '#/components/schemas/bepKey'
+        authenticationStatus:
+          $ref: '#/components/schemas/schemas-AuthenticationStatus'
+        routing:
+          allOf:
+          - deprecated: true
+          - $ref: '#/components/schemas/AuthenticationMethod'
+    schemas-ValidationError:
+      type: object
+      required:
+      - path
+      - message
+      properties:
+        path:
+          type: string
+          description: The path to the error location in the request params or body.
+        errorCode:
+          type: string
+          description: The error code identifying the error type.
+        message:
+          type: string
+          description: The error message.
+    BepFailResponse:
       type: object
       description: BEP data which does not include sensitive information.
       required:
@@ -325,7 +384,7 @@ components:
         authenticationStatus:
           type: string
           enum:
-          - initiated
+          - non-authenticated
         key:
           $ref: '#/components/schemas/bepKey'
         amount:
@@ -343,144 +402,6 @@ components:
               '
         version:
           $ref: '#/components/schemas/schemas-version'
-    schemas-acceptorRoute:
-      type: string
-      pattern: ^(^$|^[a-zA-Z0-9-_:;.,]+$)
-      minLength: 0
-      maxLength: 255
-      description: 'Route key used to uniquely reference an acceptor when used in combination
-
-        with its card network and merchant key.
-
-        '
-    components-schemas-InvalidInputErrorDetails:
-      type: object
-      required:
-      - type
-      - title
-      - status
-      - detail
-      - instance
-      - validationErrors
-      properties:
-        type:
-          allOf:
-          - $ref: '#/components/schemas/errorType'
-          - enum:
-            - /silverflow/problems/invalid-input
-        title:
-          allOf:
-          - $ref: '#/components/schemas/errorTitle'
-          - enum:
-            - Invalid Input
-        status:
-          allOf:
-          - $ref: '#/components/schemas/errorStatus'
-          - enum:
-            - 400
-        detail:
-          $ref: '#/components/schemas/errorDetail'
-        instance:
-          $ref: '#/components/schemas/errorInstance'
-        validationErrors:
-          type: array
-          items:
-            $ref: '#/components/schemas/schemas-ValidationError'
-          description: A list of validation errors.
-    schemas-merchantKey:
-      description: Uniquely identifies a merchant.
-      type: string
-      pattern: ^mct-[a-zA-Z0-9]+$
-      minLength: 5
-      maxLength: 120
-      example: mct-1234abcdef123
-    schemas-EntityNotFoundErrorDetails:
-      type: object
-      required:
-      - type
-      - title
-      - status
-      - detail
-      - instance
-      properties:
-        type:
-          allOf:
-          - $ref: '#/components/schemas/errorType'
-          - enum:
-            - /silverflow/problems/entity-not-found
-        title:
-          allOf:
-          - $ref: '#/components/schemas/errorTitle'
-          - enum:
-            - Not Found
-        status:
-          allOf:
-          - $ref: '#/components/schemas/errorStatus'
-          - enum:
-            - 404
-        detail:
-          $ref: '#/components/schemas/errorDetail'
-        instance:
-          $ref: '#/components/schemas/errorInstance'
-    errorInstance:
-      type: string
-      description: 'A reference that identifies the specific occurrence of the error. The instance is unique for every error.
-
-        '
-    AcceptorResolver:
-      type: object
-      description: 'Resolver used to pick what merchant acceptor will be used to create the charge.
-
-        It can accept either a combination of merchantKey and an optional route, or
-
-        a merchant acceptor key. If the optional property for route is not provided
-
-        the default one generated when creating an acceptor will be used.
-
-        '
-      oneOf:
-      - $ref: '#/components/schemas/ResolverByAcceptorKey'
-      - $ref: '#/components/schemas/ResolverByMerchant'
-    ResolverByAcceptorKey:
-      type: object
-      required:
-      - merchantAcceptorKey
-      description: 'Used to select a merchant acceptor by key.
-
-        '
-      properties:
-        merchantAcceptorKey:
-          $ref: '#/components/schemas/schemas-acceptorKeyRef'
-    webhook:
-      allOf:
-      - description: A webhook URL to send [notifications](#operation/bepWebhook) to with updates regarding the status of the BEP authentication.
-      - $ref: '#/components/schemas/components-schemas-url'
-    components-schemas-url:
-      type: string
-      description: A valid URL
-      pattern: ^http(s)?:\/\/[a-z0-9-_]+(\.[a-z0-9-_]+)+(/.*)?$
-      example: https://example.com
-      maxLength: 255
-    errorStatus:
-      type: integer
-      format: int32
-      description: 'The HTTP status code generated by the origin server for this occurrence
-
-        of the problem.
-
-        '
-    components-schemas-created:
-      allOf:
-      - description: The date and time this object was created
-      - readOnly: true
-      - $ref: '#/components/schemas/timestamp'
-    schemas-acceptorKeyRef:
-      description: Uniquely identifies a merchant acceptor.
-      type: string
-      pattern: ^mac-[a-zA-Z0-9]+$
-      minLength: 5
-      maxLength: 120
-      example: mac-1eOdAHhgstYTUhlphPFf
     InitiateBEPResponse:
       type: object
       required:
@@ -520,9 +441,196 @@ components:
           format: iso-8601-date-time
         version:
           $ref: '#/components/schemas/schemas-version'
-    timestamp:
+    authenticationDescription:
       type: string
-      format: iso-8601-date-time
+      maxLength: 300
+      pattern: ^[\w \-+=.,:;!?$@\/#|*()]+$
+      description: An optional description to provide additional information to the cardholder in the payment approval screen of the Bancontact app.
+      example: Payment description
+    AuthenticationMethod:
+      type: string
+      enum:
+      - bancontactIntent
+      - qrCode
+    errorStatus:
+      type: integer
+      format: int32
+      description: 'The HTTP status code generated by the origin server for this occurrence
+
+        of the problem.
+
+        '
+    schemas-EntityNotFoundErrorDetails:
+      type: object
+      required:
+      - type
+      - title
+      - status
+      - detail
+      - instance
+      properties:
+        type:
+          allOf:
+          - $ref: '#/components/schemas/errorType'
+          - enum:
+            - /silverflow/problems/entity-not-found
+        title:
+          allOf:
+          - $ref: '#/components/schemas/errorTitle'
+          - enum:
+            - Not Found
+        status:
+          allOf:
+          - $ref: '#/components/schemas/errorStatus'
+          - enum:
+            - 404
+        detail:
+          $ref: '#/components/schemas/errorDetail'
+        instance:
+          $ref: '#/components/schemas/errorInstance'
+    schemas-merchantKey:
+      description: Uniquely identifies a merchant.
+      type: string
+      pattern: ^mct-[a-zA-Z0-9]+$
+      minLength: 5
+      maxLength: 120
+      example: mct-1234abcdef123
+    AuthorizationResult:
+      type: object
+      required:
+      - authorizationResultCode
+      - authorizationDateTime
+      properties:
+        authorizationResultCode:
+          $ref: '#/components/schemas/BSPAuthorizationResultCode'
+        authorizationDateTime:
+          type: string
+          description: The date and time in ISO format.
+          format: iso-8601-date-time
+          example: '2021-07-02T06:07:00Z'
+    errorInstance:
+      type: string
+      description: 'A reference that identifies the specific occurrence of the error. The instance is unique for every error.
+
+        '
+    AuthorizationResultAlreadySubmittedErrorDetails:
+      type: object
+      required:
+      - type
+      - title
+      - status
+      - detail
+      - instance
+      properties:
+        type:
+          allOf:
+          - $ref: '#/components/schemas/errorType'
+          - enum:
+            - /silverflow/problems/bep/authorization-result-already-submitted
+        title:
+          allOf:
+          - $ref: '#/components/schemas/errorTitle'
+          - enum:
+            - Authorization Result Already Submitted
+        status:
+          allOf:
+          - $ref: '#/components/schemas/errorStatus'
+          - enum:
+            - 409
+        detail:
+          $ref: '#/components/schemas/errorDetail'
+        instance:
+          $ref: '#/components/schemas/errorInstance'
+    schemas-AuthenticationRequiredErrorDetails:
+      type: object
+      required:
+      - type
+      - title
+      - status
+      - detail
+      - instance
+      properties:
+        type:
+          allOf:
+          - $ref: '#/components/schemas/errorType'
+          - enum:
+            - /silverflow/problems/authentication-required
+        title:
+          allOf:
+          - $ref: '#/components/schemas/errorTitle'
+          - enum:
+            - Authentication Required
+        status:
+          allOf:
+          - $ref: '#/components/schemas/errorStatus'
+          - enum:
+            - 401
+        detail:
+          $ref: '#/components/schemas/errorDetail'
+        instance:
+          $ref: '#/components/schemas/errorInstance'
+    components-schemas-currencyCode:
+      type: string
+      enum:
+      - EUR
+      description: 'The three-letter ISO code of the currency.
+
+        For Bancontact only transactions with currency code `EUR` are allowed.
+
+        '
+      example: EUR
+    schemas-acceptorKeyRef:
+      description: Uniquely identifies a merchant acceptor.
+      type: string
+      pattern: ^mac-[a-zA-Z0-9]+$
+      minLength: 5
+      maxLength: 120
+      example: mac-1eOdAHhgstYTUhlphPFf
+    BepInitiatedResponse:
+      type: object
+      description: BEP data which does not include sensitive information.
+      required:
+      - authenticationStatus
+      - key
+      - amount
+      - authenticationMethod
+      - version
+      - created
+      properties:
+        authenticationStatus:
+          type: string
+          enum:
+          - initiated
+        key:
+          $ref: '#/components/schemas/bepKey'
+        amount:
+          $ref: '#/components/schemas/schemas-Amount'
+        authenticationMethod:
+          type: string
+          enum:
+          - bancontactIntent
+          - qrCode
+        created:
+          allOf:
+          - $ref: '#/components/schemas/components-schemas-created'
+          - description: 'The date and time this BEP authentication was created.
+
+              '
+        version:
+          $ref: '#/components/schemas/schemas-version'
+    schemas-version:
+      type: integer
+      description: The version of this object
+      format: int64
+      example: 1
+      readOnly: true
+    schemas-expiryYear:
+      type: integer
+      description: 'The year the card expires including the century.
+
+        '
+      minimum: 2020
+      maximum: 2050
     IncompatibleCardNetworkErrorDetails:
       type: object
       required:
@@ -551,55 +659,43 @@ components:
           $ref: '#/components/schemas/errorDetail'
         instance:
           $ref: '#/components/schemas/errorInstance'
-    schemas-expiryYear:
-      type: integer
-      description: 'The year the card expires including the century.
-
-        '
-      minimum: 2020
-      maximum: 2050
-    components-schemas-currencyCode:
+    components-schemas-url:
       type: string
-      enum:
-      - EUR
-      description: 'The three-letter ISO code of the currency.
-
-        For Bancontact only transactions with currency code `EUR` are allowed.
+      description: A valid URL
+      pattern: ^http(s)?:\/\/[a-z0-9-_]+(\.[a-z0-9-_]+)+(/.*)?$
+      example: https://example.com
+      maxLength: 255
+    ResolverByMerchant:
+      type: object
+      required:
+      - merchantKey
+      description: 'Used to select a merchant acceptor by merchant key and an optional route.
 
         '
-      example: EUR
-    BepFailResponse:
-      type: object
-      description: BEP data which does not include sensitive information.
-      required:
-      - authenticationStatus
-      - key
-      - amount
-      - authenticationMethod
-      - version
-      - created
       properties:
-        authenticationStatus:
-          type: string
-          enum:
-          - non-authenticated
-        key:
-          $ref: '#/components/schemas/bepKey'
-        amount:
-          $ref: '#/components/schemas/schemas-Amount'
-        authenticationMethod:
-          type: string
-          enum:
-          - bancontactIntent
-          - qrCode
-        created:
-          allOf:
-          - $ref: '#/components/schemas/components-schemas-created'
-          - description: 'The date and time this BEP authentication was created.
+        merchantKey:
+          $ref: '#/components/schemas/schemas-merchantKey'
+        route:
+          $ref: '#/components/schemas/schemas-acceptorRoute'
+    AcceptorResolver:
+      type: object
+      description: 'Resolver used to pick what merchant acceptor will be used to create the charge.
 
-              '
-        version:
-          $ref: '#/components/schemas/schemas-version'
+        It can accept either a combination of merchantKey and an optional route, or
+
+        a merchant acceptor key. If the optional property for route is not provided
+
+        the default one generated when creating an acceptor will be used.
+
+        '
+      oneOf:
+      - $ref: '#/components/schemas/ResolverByAcceptorKey'
+      - $ref: '#/components/schemas/ResolverByMerchant'
+    errorType:
+      type: string
+      description: 'A relative URI reference, this property can be used to perform automated error handling.
+
+        '
     TooManyRequestsErrorDetails:
       type: object
       required:
@@ -628,11 +724,20 @@ components:
           $ref: '#/components/schemas/errorDetail'
         instance:
           $ref: '#/components/schemas/errorInstance'
+    webhook:
+      allOf:
+      - description: A webhook URL to send [notifications](#operation/bepWebhook) to with updates regarding the status of the BEP authentication.
+      - $ref: '#/components/schemas/components-schemas-url'
     errorDetail:
       type: string
       description: 'A human readable explanation specific to this occurrence of the problem.
 
         '
+    bepKey:
+      description: Uniquely identifies a BEP authentication request flow.
+      type: string
+      pattern: ^bep-[a-zA-Z0-9]+$
+      example: bep-1e1dAHhgstYTUhlphPzZ
     UnauthenticatedBepEntityErrorDetails:
       type: object
       required:
@@ -661,24 +766,66 @@ components:
           $ref: '#/components/schemas/errorDetail'
         instance:
           $ref: '#/components/schemas/errorInstance'
-    InitiateBEPRequest:
+    completionUrl:
+      allOf:
+      - description: A URL where the cardholder will be redirected to after completing the authentication flow in the Bancontact app.
+      - $ref: '#/components/schemas/components-schemas-url'
+    ReferencedEntityNotFoundErrorDetails:
       type: object
       required:
-      - merchantAcceptorResolver
-      - amount
-      - webhook
-      description: Request to create new a BEP authentication intent
+      - type
+      - title
+      - status
+      - detail
+      - instance
       properties:
-        merchantAcceptorResolver:
-          $ref: '#/components/schemas/AcceptorResolver'
-        webhook:
-          $ref: '#/components/schemas/webhook'
-        amount:
-          $ref: '#/components/schemas/schemas-Amount'
-        completionUrl:
-          $ref: '#/components/schemas/completionUrl'
-        description:
-          $ref: '#/components/schemas/authenticationDescription'
+        type:
+          allOf:
+          - $ref: '#/components/schemas/errorType'
+          - enum:
+            - /silverflow/problems/referenced-entity-not-found
+        title:
+          allOf:
+          - $ref: '#/components/schemas/errorTitle'
+          - enum:
+            - Referenced Entity Not Found
+        status:
+          allOf:
+          - $ref: '#/components/schemas/errorStatus'
+          - enum:
+            - 409
+        detail:
+          $ref: '#/components/schemas/errorDetail'
+        instance:
+          $ref: '#/components/schemas/errorInstance'
+    InternalServerErrorDetails:
+      type: object
+      required:
+      - type
+      - title
+      - status
+      - detail
+      - instance
+      properties:
+        type:
+          allOf:
+          - $ref: '#/components/schemas/errorType'
+          - enum:
+            - /silverflow/problems/internal-server-error
+        title:
+          allOf:
+          - $ref: '#/components/schemas/errorTitle'
+          - enum:
+            - Internal Server Error
+        status:
+          allOf:
+          - $ref: '#/components/schemas/errorStatus'
+          - enum:
+            - 500
+        detail:
+          $ref: '#/components/schemas/errorDetail'
+        instance:
+          $ref: '#/components/schemas/errorInstance'
     BepSuccessResponse:
       type: object
       description: BEP data which includes the sensitive authentication information.
@@ -730,192 +877,55 @@ components:
               '
         version:
           $ref: '#/components/schemas/schemas-version'
-    AuthorizationResult:
+    ResolverByAcceptorKey:
       type: object
       required:
-      - authorizationResultCode
-      - authorizationDateTime
-      properties:
-        authorizationResultCode:
-          $ref: '#/components/schemas/BSPAuthorizationResultCode'
-        authorizationDateTime:
-          type: string
-          description: The date and time in ISO format.
-          format: iso-8601-date-time
-          example: '2021-07-02T06:07:00Z'
-    ReferencedEntityNotFoundErrorDetails:
-      type: object
-      required:
-      - type
-      - title
-      - status
-      - detail
-      - instance
-      properties:
-        type:
-          allOf:
-          - $ref: '#/components/schemas/errorType'
-          - enum:
-            - /silverflow/problems/referenced-entity-not-found
-        title:
-          allOf:
-          - $ref: '#/components/schemas/errorTitle'
-          - enum:
-            - Referenced Entity Not Found
-        status:
-          allOf:
-          - $ref: '#/components/schemas/errorStatus'
-          - enum:
-            - 409
-        detail:
-          $ref: '#/components/schemas/errorDetail'
-        instance:
-          $ref: '#/components/schemas/errorInstance'
-    BepResponse:
-      oneOf:
-      - $ref: '#/components/schemas/BepInitiatedResponse'
-      - $ref: '#/components/schemas/BepSuccessResponse'
-      - $ref: '#/components/schemas/BepFailResponse'
-    errorType:
-      type: string
-      description: 'A relative URI reference, this property can be used to perform automated error handling.
-
-        '
-    schemas-AuthenticationRequiredErrorDetails:
-      type: object
-      required:
-      - type
-      - title
-      - status
-      - detail
-      - instance
-      properties:
-        type:
-          allOf:
-          - $ref: '#/components/schemas/errorType'
-          - enum:
-            - /silverflow/problems/authentication-required
-        title:
-          allOf:
-          - $ref: '#/components/schemas/errorTitle'
-          - enum:
-            - Authentication Required
-        status:
-          allOf:
-          - $ref: '#/components/schemas/errorStatus'
-          - enum:
-            - 401
-        detail:
-          $ref: '#/components/schemas/errorDetail'
-        instance:
-          $ref: '#/components/schemas/errorInstance'
-    BSPAuthorizationResultCode:
-      type: string
-      pattern: ^[0-9]{3}$
-      description: Bancontact Authorization action code
-      example: '000'
-    AuthenticationNotification:
-      type: object
-      description: The notification message emitted per each initiated BEP authentication.
-      required:
-      - bepKey
-      - authenticationStatus
-      - routing
-      properties:
-        bepKey:
-          $ref: '#/components/schemas/bepKey'
-        authenticationStatus:
-          $ref: '#/components/schemas/schemas-AuthenticationStatus'
-        routing:
-          allOf:
-          - deprecated: true
-          - $ref: '#/components/schemas/AuthenticationMethod'
-    schemas-Amount:
-      type: object
-      required:
-      - value
-      - currency
-      additionalProperties: false
-      description: 'An amount encoded as an object with a `value` in minor units and a `currency` code.
+      - merchantAcceptorKey
+      description: 'Used to select a merchant acceptor by key.
 
         '
       properties:
-        value:
-          $ref: '#/components/schemas/schemas-amountValue'
-        currency:
-          $ref: '#/components/schemas/components-schemas-currencyCode'
-    schemas-AuthenticationStatus:
-      type: string
-      description: The current state of the authentication.
-      enum:
-      - started
-      - success
-      - fail
-      - finalized
-    ForbiddenErrorDetails:
-      type: object
-      required:
-      - type
-      - title
-      - status
-      - detail
-      - instance
-      properties:
-        type:
-          allOf:
-          - $ref: '#/components/schemas/errorType'
-          - enum:
-            - /silverflow/problems/forbidden
-        title:
-          allOf:
-          - $ref: '#/components/schemas/errorTitle'
-          - enum:
-            - Forbidden
-        status:
-          allOf:
-          - $ref: '#/components/schemas/errorStatus'
-          - enum:
-            - 403
-        detail:
-          $ref: '#/components/schemas/errorDetail'
-        instance:
-          $ref: '#/components/schemas/errorInstance'
-    bepKey:
-      description: Uniquely identifies a BEP authentication request flow.
-      type: string
-      pattern: ^bep-[a-zA-Z0-9]+$
-      example: bep-1e1dAHhgstYTUhlphPzZ
-    completionUrl:
+        merchantAcceptorKey:
+          $ref: '#/components/schemas/schemas-acceptorKeyRef'
+    components-schemas-created:
       allOf:
-      - description: A URL where the cardholder will be redirected to after completing the authentication flow in the Bancontact app.
-      - $ref: '#/components/schemas/components-schemas-url'
-    schemas-ValidationError:
+      - description: The date and time this object was created
+      - readOnly: true
+      - $ref: '#/components/schemas/timestamp'
+    components-schemas-InvalidInputErrorDetails:
       type: object
       required:
-      - path
-      - message
+      - type
+      - title
+      - status
+      - detail
+      - instance
+      - validationErrors
       properties:
-        path:
-          type: string
-          description: The path to the error location in the request params or body.
-        errorCode:
-          type: string
-          description: The error code identifying the error type.
-        message:
-          type: string
-          description: The error message.
-    authenticationDescription:
-      type: string
-      maxLength: 300
-      pattern: ^[\w \-+=.,:;!?$@\/#|*()]+$
-      description: An optional description to provide additional information to the cardholder in the payment approval screen of the Bancontact app.
-      example: Payment description
-    schemas-version:
-      type: integer
-      description: The version of this object
-      format: int64
-      example: 1
-      readOnly: true
+        type:
+          allOf:
+          - $ref: '#/components/schemas/errorType'
+          - enum:
+            - /silverflow/problems/invalid-input
+        title:
+          allOf:
+          - $ref: '#/components/schemas/errorTitle'
+          - enum:
+            - Invalid Input
+        status:
+          allOf:
+          - $ref: '#/components/schemas/errorStatus'
+          - enum:
+            - 400
+        detail:
+          $ref: '#/components/schemas/errorDetail'
+        instance:
+          $ref: '#/components/schemas/errorInstance'
+        validationErrors:
+          type: array
+          items:
+            $ref: '#/components/schemas/schemas-ValidationError'
+          description: A list of validation errors.
   examples:
     examples-InternalServerErrorExample:
       value:
@@ -924,19 +934,26 @@ components:
         title: Internal Server Error
         detail: The server encountered an unexpected condition.
         instance: /silverflow/8e445b2e-d745-4b38-a38d-781fc998e442
-    IncompatibleCardNetworkErrorExample:
+    AuthorizationResultAlreadySubmittedErrorExample:
       value:
         status: 409
-        type: /silverflow/problems/bin/unexpected-network
-        title: Incompatible Card Network
-        detail: The merchant acceptor with key 'mac-1JRadf2ffdfrdPMf2XrS2' and network 'visa' is unsupported for creating BEP authentications. The expected network is 'bancontact'.
+        type: /silverflow/problems/bep/authorization-result-already-submitted
+        title: Authorization Result Already Submitted
+        detail: An authorization result has already been submitted for the BEP entity with key 'bep-1eOdAHhgstYTUhlphPFf'.
         instance: /silverflow/8e445b2e-d745-4b38-a38d-781fc998e442
-    UnauthenticatedBepEntityErrorExample:
+    ForbiddenErrorExample:
+      value:
+        status: 403
+        type: /silverflow/problems/forbidden
+        title: Forbidden
+        detail: 'Authenticated user ''apk-33GjasQdWl4781OsErvi'' is missing the following permission(s): bep:Create.'
+        instance: /silverflow/8e445b2e-d745-4b38-a38d-781fc998e442
+    examples-ReferencedEntityNotFoundErrorExample:
       value:
         status: 409
-        type: /silverflow/problems/bep/unauthenticated
-        title: Unauthenticated BEP Entity
-        detail: The referenced BEP entity with key 'bep-1eOdAHhgstYTUhlphPFf' is negatively authenticated. It is not possible to submit an authorization result for it.
+        type: /silverflow/problems/referenced-entity-not-found
+        title: Referenced Entity Not Found
+        detail: The referenced acceptor for merchant 'mct-1eOdAHhgstYTUhlphPFf' with network 'bancontact' and route 'example-route' was not found.
         instance: /silverflow/8e445b2e-d745-4b38-a38d-781fc998e442
     examples-InvalidInputErrorExample:
       value:
@@ -949,12 +966,12 @@ components:
         - path: /body/amount/value
           errorCode: type.openapi.validation
           message: must be integer
-    AuthorizationResultAlreadySubmittedErrorExample:
+    UnauthenticatedBepEntityErrorExample:
       value:
         status: 409
-        type: /silverflow/problems/bep/authorization-result-already-submitted
-        title: Authorization Result Already Submitted
-        detail: An authorization result has already been submitted for the BEP entity with key 'bep-1eOdAHhgstYTUhlphPFf'.
+        type: /silverflow/problems/bep/unauthenticated
+        title: Unauthenticated BEP Entity
+        detail: The referenced BEP entity with key 'bep-1eOdAHhgstYTUhlphPFf' is negatively authenticated. It is not possible to submit an authorization result for it.
         instance: /silverflow/8e445b2e-d745-4b38-a38d-781fc998e442
     EntityNotFoundErrorExample:
       value:
@@ -970,6 +987,13 @@ components:
         title: Authentication Required
         detail: The credentials supplied in the request are either missing, invalid, or not applicable in the current scope.
         instance: /silverflow/8e445b2e-d745-4b38-a38d-781fc998e442
+    IncompatibleCardNetworkErrorExample:
+      value:
+        status: 409
+        type: /silverflow/problems/bin/unexpected-network
+        title: Incompatible Card Network
+        detail: The merchant acceptor with key 'mac-1JRadf2ffdfrdPMf2XrS2' and network 'visa' is unsupported for creating BEP authentications. The expected network is 'bancontact'.
+        instance: /silverflow/8e445b2e-d745-4b38-a38d-781fc998e442
     TooManyRequestsErrorExample:
       value:
         type: /silverflow/problems/too-many-requests
@@ -977,21 +1001,25 @@ components:
         status: 429
         detail: You have exceeded the rate limit. Please try again after the specified delay.
         instance: /silverflow/b0451a9d-f66d-4ef7-9f5d-d48064a2bb3e
-    ForbiddenErrorExample:
-      value:
-        status: 403
-        type: /silverflow/problems/forbidden
-        title: Forbidden
-        detail: 'Authenticated user ''apk-33GjasQdWl4781OsErvi'' is missing the following permission(s): bep:Create.'
-        instance: /silverflow/8e445b2e-d745-4b38-a38d-781fc998e442
-    examples-ReferencedEntityNotFoundErrorExample:
-      value:
-        status: 409
-        type: /silverflow/problems/referenced-entity-not-found
-        title: Referenced Entity Not Found
-        detail: The referenced acceptor for merchant 'mct-1eOdAHhgstYTUhlphPFf' with network 'bancontact' and route 'example-route' was not found.
-        instance: /silverflow/8e445b2e-d745-4b38-a38d-781fc998e442
   responses:
+    ForbiddenErrorResponse:
+      description: Forbidden
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ForbiddenErrorDetails'
+          examples:
+            ForbiddenErrorExample:
+              $ref: '#/components/examples/ForbiddenErrorExample'
+    BadRequestErrorResponse:
+      description: Bad Request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/components-schemas-InvalidInputErrorDetails'
+          examples:
+            InvalidInputErrorExample:
+              $ref: '#/components/examples/examples-InvalidInputErrorExample'
     InternalServerErrorResponse:
       description: Internal Server Error
       content:
@@ -1019,24 +1047,6 @@ components:
           examples:
             AuthenticationRequiredErrorExample:
               $ref: '#/components/examples/AuthenticationRequiredErrorExample'
-    ForbiddenErrorResponse:
-      description: Forbidden
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ForbiddenErrorDetails'
-          examples:
-            ForbiddenErrorExample:
-              $ref: '#/components/examples/ForbiddenErrorExample'
-    BadRequestErrorResponse:
-      description: Bad Request
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/components-schemas-InvalidInputErrorDetails'
-          examples:
-            InvalidInputErrorExample:
-              $ref: '#/components/examples/examples-InvalidInputErrorExample'
   parameters:
     bepKey:
       name: bepKey
@@ -1092,7 +1102,7 @@ components:
         '
 x-refined-from:
 - silverflow-openapi.yml
-- silverflow-openapi.yml
+- silverflow-bep-authentication-api-openapi.yml
 x-tagGroups:
 - name: ''
   tags:

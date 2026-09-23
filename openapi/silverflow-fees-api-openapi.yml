@@ -1,13 +1,13 @@
 openapi: 3.2.0
 info:
-  title: Silverflow Fees API
+  description: '**This OpenAPI specification cannot be used for code generation.** Please reach out to your TAM regarding code generation using the API Spec.'
   version: 1.417.0
+  title: Silverflow Fees API
   contact:
     name: API Support
     email: support@silverflow.com
   license:
     name: Commercial
-  description: 'Operations tagged Fees across 2 of this provider''s published API definitions: silverflow-openapi.yml, silverflow-openapi.yml. Each path carries the servers of the definition it was published in.'
 servers:
 - url: https://eu-west-1.api.silverflow.com/v1
   description: Production URL for Europe - Equivalent to https://api.silverflow.co/v1
@@ -25,7 +25,10 @@ paths:
     post:
       operationId: estimateInterchangeFee
       summary: Estimate interchange fee
-      description: "Obtain an estimate for the interchange fee of a future transaction.\n\nRequires `fees:Interchange` permission.\n<!-- \nThe resulting estimate will be inaccurate due to any of the following sources:\n* Graduated products\n* Authorization fallbacks\n* Foreign exchange rate dates\n\n### Interchange product \nThe selected interchange program is surfaced in the API response in the `designator` field which is not scheme agnostic and will return different sub-fields for Visa `feeDescriptor` and Mastercard `ird`. More information on the fee programs can be found in the interchange manuals of the respective scheme. \n\n### Fee components and amount\nThe API endpoint will return the total interchange fee amount in the `amount` field and this information should be sufficient for interchange fee estimation.\n\nAll individual fee components will  be returned in a `segments` structure which contains the elements used in the calculation of the total amount. This could consist of a fixed component as well as a variable component. The variable component might be capped. \n\n* `fixed` - Fixed component of the interchange fee in minor units\n* `basisPoints` - Variable component of the interchange fee in basis points (0.01%)\n* `max` - Maximum fee amount in minor units, fee capped at this amount also if transaction amount is higher \n* `min` - Minimum fee amount in minor units, fee will not get lower also if transaction amount is lower\n\nIt is advised to use the `amount` field where all of this logic has already been applied. These elements are returned in order to give a complete picture of the interchange fee inner workings and allows for reconstruction of the interchange fee.\n\n### Currency conversion\nThe fee components are not necessarily in the same currency as the transaction currency but the fee service takes care of this conversion to simplify the usage of this endpoint. The used currency conversion rates are sourced from the card scheme rate tables which are published and updated on a daily basis. The version of the used rate table file is returned in `feeDate`.\n\nThe `amount` is always in the transaction currency and the conversion rates used are listed in the `rates` structure containing all necessary elements to reconstruct the conversion operation. -->"
+      description: 'Obtain an estimate for the interchange fee of a future transaction.
+
+
+        Requires `fees:Interchange` permission.'
       tags:
       - Fees
       requestBody:
@@ -57,13 +60,6 @@ paths:
           $ref: '#/components/responses/responses-NotFoundError'
         '429':
           $ref: '#/components/responses/responses-TooManyRequestsError'
-    servers:
-    - url: https://eu-west-1.api.silverflow.com/v1
-      description: Production URL for Europe - Equivalent to https://api.silverflow.co/v1
-    - url: https://us-east-2.api.silverflow.com/v1
-      description: Production URL for North America
-    - url: https://eu-west-1.api-sbx.silverflow.com/v1
-      description: Sandbox URL - Equivalent to https://api-sbx.silverflow.co/v1
   /fees/scheme/estimate:
     post:
       operationId: getSchemeFeeEstimation
@@ -71,12 +67,7 @@ paths:
       description: '**This endpoint is still under development; it currently has a limited library of scheme fees, and will not provide fee estimates for all supported card networks.**
 
 
-        This API endpoint will perform a scheme fee estimation, returning a list of predicted scheme fees when passing some parameters similar to a charge.
-
-        <!-- These scheme fees can be either a `fixed` or `basisPoints` scheme fee, and contain a calculated `amount` based on the input amount and the scheme fee amount.
-
-
-        There is no currency conversion applied; the amounts of these individual scheme fees will always be denominated in the currency of the scheme fee itself. -->'
+        This API endpoint will perform a scheme fee estimation, returning a list of predicted scheme fees when passing some parameters similar to a charge.'
       tags:
       - Fees
       requestBody:
@@ -123,15 +114,79 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundErrorDetails'
-    servers:
-    - url: https://eu-west-1.api.silverflow.com/v1
-      description: Production URL for Europe - Equivalent to https://api.silverflow.co/v1
-    - url: https://us-east-2.api.silverflow.com/v1
-      description: Production URL for North America
-    - url: https://eu-west-1.api-sbx.silverflow.com/v1
-      description: Sandbox URL - Equivalent to https://api-sbx.silverflow.co/v1
 components:
   schemas:
+    feeDescription:
+      type: string
+      pattern: ^[a-zA-Z0-9-\/ \.—&()]+$
+      minLength: 1
+      maxLength: 120
+      description: 'The Mastercard _"Event description"_ or the Visa _"Description"_, as they appear on the corresponding
+
+        invoices.
+
+        '
+    NonTieredFeeRate:
+      title: Non Tiered Fee Rate
+      description: 'A _(non-tiered)_ fee rate.
+
+        '
+      type: object
+      required:
+      - tiers
+      properties:
+        tiers:
+          type: array
+          items:
+            $ref: '#/components/schemas/NonTieredFeeRateTier'
+          minItems: 1
+          maxItems: 1
+    openapi_components-schemas-pan-2:
+      type: string
+      description: Full digits of a card
+      pattern: ^\d{12,19}$
+      format: password
+      example: 1234123412341234
+    NotFoundErrorDetails:
+      type: object
+      required:
+      - type
+      - title
+      - status
+      - detail
+      - instance
+      properties:
+        type:
+          allOf:
+          - $ref: '#/components/schemas/schemas-errorType'
+          - enum:
+            - /silverflow/problems/schemeFees/not-found
+        title:
+          allOf:
+          - $ref: '#/components/schemas/errorTitle'
+          - enum:
+            - Not found
+        status:
+          allOf:
+          - $ref: '#/components/schemas/errorStatus'
+          - enum:
+            - 404
+        detail:
+          $ref: '#/components/schemas/errorDetail'
+        instance:
+          $ref: '#/components/schemas/errorInstance'
+    billingFrequency:
+      type: string
+      enum:
+      - daily
+      - weekly
+      - monthly
+      - quarterly
+      description: 'The _frequency_ or _interval_ at which this fee is witheld from settlement (or
+
+        invoiced separately). This frequency also defines the _aggregation period_ for _tiered fees_.
+
+        '
     sourceAmountValue:
       type: string
       pattern: ^\d+(\.\d+)?$
@@ -143,6 +198,1436 @@ components:
         Use a _platform specific number parser_ to convert this string into a numeric value
 
         without loosing precision.
+
+        '
+    openapi_components-schemas-acceptorKeyRef:
+      description: Uniquely identifies a Merchant Acceptor.
+      type: string
+      pattern: ^mac-[a-zA-Z0-9]+$
+    TieredEnum:
+      type: string
+      description: 'The type of tiering. The value `volume` indicates that the applicable fee _tier_ is determined
+
+        using the total `sourceAmount` for a given period. The value `count` indicates that the
+
+        applicable _tier_ is determined using the total number of fees (transactions). The value `none`
+
+        indicates that this fee is not tiered.
+
+        '
+      enum:
+      - count
+      - volume
+    FeeSegments:
+      type: object
+      description: Segments of which the total interchange fee is made up
+      properties:
+        currency:
+          description: Currency the fee is calculated in
+          $ref: '#/components/schemas/openapi_components-schemas-currencyCode-4'
+        fixed:
+          description: Fixed fee in minor units
+          type: number
+          format: float
+        basisPoints:
+          description: Basis points of transaction amount fee
+          type: number
+          format: float
+        max:
+          description: Maximum fee in minor units
+          type: number
+          format: float
+        min:
+          description: Minimum fee in minor units
+          type: number
+          format: float
+    NonTieredBillingAmount:
+      type: object
+      required:
+      - amounts
+      properties:
+        amounts:
+          type: array
+          items:
+            $ref: '#/components/schemas/NonTieredBillingAmountTier'
+          minItems: 1
+          maxItems: 1
+    conversionRateDate:
+      type: string
+      format: date
+      description: "The date of the conversion rate. Conversion rates are published (daily) by the _card schemes_. \nThe method of publication introduces certain delays. Hence, this date may lie before the `feeDate`.\n"
+    schemas-ProblemDetail:
+      type: object
+      description: 'The ''problem detail'' object relays detailed information about the error that occurred. It is defined
+
+        by [RFC 7807 - Problem Details for HTTP APIs](https://tools.ietf.org/html/rfc7807).
+
+
+        Note that additional properties may be used to relay error specific information. For instance,
+
+        A Bad Request error may hold information about the individual validation errors found in the request.
+
+        '
+      properties:
+        type:
+          type: string
+          description: 'An absolute URI that identifies the problem type.
+
+            '
+          default: about:blank
+          example: https://api.silverflow.co/problem/constraint-violation
+        title:
+          type: string
+          description: 'A short, summary of the problem type. Written in english and readable
+
+            for engineers (usually not suited for non technical stakeholders and
+
+            not localized);
+
+            '
+          example: Service Unavailable
+        status:
+          type: integer
+          format: int32
+          description: 'The HTTP status code generated by the origin server for this occurrence
+
+            of the problem.
+
+            '
+          minimum: 100
+          maximum: 599
+          example: 503
+        detail:
+          type: string
+          description: 'A human readable explanation specific to this occurrence of the
+
+            problem.
+
+            '
+          example: Connection to database timed out
+        instance:
+          type: string
+          description: 'An absolute URI that identifies the specific occurrence of the problem.
+
+            It may or may not yield further information if dereferenced.
+
+            '
+      additionalProperties: true
+      example:
+        type: https://api.silverflow.co/problem/bad-request
+        title: Bad Request
+        status: 400
+        detail: The request could not be processed as it contained an invalid request entity
+        instance: https://api.silverflow.co/v1/merchants/mct-1hPdFqhgstYTUhlphPDp
+        validationErrors:
+        - The value of property 'status' should be one of 'idle', 'active' or 'archived'
+        - The value of property 'tags.0.businessId' must not be longer than 255 characters
+    PublicSchemeFeeEstimateFees:
+      type: object
+      required:
+      - fees
+      properties:
+        fees:
+          type: array
+          description: List of scheme fees hit.
+          items:
+            $ref: '#/components/schemas/PublicFee'
+    errorStatus:
+      type: integer
+      format: int32
+      description: 'The HTTP status code generated by the origin server for this occurrence
+
+        of the problem.
+
+        '
+    TieredFeeRateTierProperties:
+      type: object
+      required:
+      - tierNumber
+      properties:
+        tierNumber:
+          $ref: '#/components/schemas/tierNumber'
+        upToIncluding:
+          $ref: '#/components/schemas/upToIncluding'
+        above:
+          $ref: '#/components/schemas/above'
+    upToIncluding:
+      type: integer
+      minimum: 0
+      description: 'This field indicates the value up to (including) which this _tier_ applies.
+
+        If `tiering` is set to `volume`, this value indicates the total `sourceAmount`
+
+        (in `feeRate` currency). If `tiering` is set to `count`, this value indicates the
+
+        total number of fees.
+
+        '
+    BaseSchemeFeeEstimate:
+      type: object
+      description: The scheme fee estimation.
+      required:
+      - cardNetwork
+      properties:
+        cardNetwork:
+          $ref: '#/components/schemas/components-schemas-cardNetwork'
+        conversionRates:
+          type: array
+          description: 'A list of conversion rates, used to convert the `sourceAmount` into the `convertedSourceAmount`.
+
+            This list is only present if currency conversion was applied. Currency conversion is only applied
+
+            if the `feeRate` currency is different from the `sourceAmount` currency. Note that for certain
+
+            currency conversions there is no single rate available. In such a case, multiple conversions are
+
+            applied to convert the source amount into the fee rate currency.
+
+            '
+          items:
+            $ref: '#/components/schemas/ConversionRate'
+          minItems: 1
+    feeRateType:
+      type: string
+      enum:
+      - fixed
+      - basisPoints
+      description: 'The type of fee. The value `fixed` indicates that the `value` field holds a _fixed_ fee amount,
+
+        denominated in the specified `currency`. The value `basisPoints` indicates that the `value`
+
+        fields holds the (decimal) number of basis points of the fee, applied to the `sourceAmount`
+
+        or `convertedSourceAmount` in case the `currency` does not match the `sourceAmount` currency.
+
+        '
+    TieredFeeProperties:
+      type: object
+      required:
+      - tiering
+      - numberOfTiers
+      - feeRate
+      - billingAmount
+      properties:
+        tiering:
+          $ref: '#/components/schemas/TieredEnum'
+        numberOfTiers:
+          $ref: '#/components/schemas/numberOfTiers'
+        feeRate:
+          allOf:
+          - $ref: '#/components/schemas/BaseFeeRate'
+          - $ref: '#/components/schemas/TieredFeeRate'
+        billingAmount:
+          $ref: '#/components/schemas/TieredFeeBillingAmount'
+    BaseBillingAmountTier:
+      title: Base Billing Amount Tier
+      type: object
+      required:
+      - impact
+      - value
+      properties:
+        impact:
+          $ref: '#/components/schemas/impact'
+        value:
+          $ref: '#/components/schemas/value'
+    TieredFeeRateTier:
+      title: Tiered Fee Rate Tier
+      allOf:
+      - $ref: '#/components/schemas/BaseFeeRateTier'
+      - $ref: '#/components/schemas/TieredFeeRateTierProperties'
+    components-schemas-terminalEntryMode:
+      description: 'Required when `cardEntry` is `terminal`. This field indicates the method used for PAN entry on the terminal to initiate the transaction.
+
+        '
+      type: string
+      enum:
+      - contactless
+      - manual-entry
+      - chip
+      - magstripe
+      - magstripe-fallback
+    errorInstance:
+      type: string
+      description: 'A reference that identifies the specific occurrence of the error. The instance is unique for every error.
+
+        '
+    payoutType:
+      description: '- `online-gambling` - payouts of online casino winnings
+
+        - `general-funds-disbursement` - generic funds disbursement transaction used to push funds from a business to an individual cardholder for various purposes. **Currently not supported for Mastercard.**
+
+        '
+      type: string
+      enum:
+      - general-funds-disbursement
+      - online-gambling
+    BancontactFeeDesignator:
+      type: object
+      properties:
+        description:
+          type: string
+        feeCode:
+          type: string
+    intent:
+      description: 'The intention of the cardholder.
+
+        '
+      type: string
+      enum:
+      - purchase
+      - reservation
+      - account-status
+      - payout
+      - payout-status
+      - funding
+      - advice
+      - refund
+    components-schemas-order:
+      description: 'The method used to place the order.
+
+        '
+      type: string
+      enum:
+      - checkout
+      - unspecified
+      - mail
+      - phone
+      - one-click
+      - recurring
+      - ucof
+      - installment
+      - counter
+    BaseFeeRate:
+      title: Base Fee Rate
+      type: object
+      required:
+      - type
+      properties:
+        type:
+          $ref: '#/components/schemas/feeRateType'
+        currency:
+          $ref: '#/components/schemas/openapi_components-schemas-currencyCode-5'
+    openapi_components-schemas-currencyCode-5:
+      type: string
+      enum:
+      - EUR
+      - USD
+      - AFN
+      - ALL
+      - DZD
+      - AOA
+      - XCD
+      - ARS
+      - AMD
+      - AWG
+      - AUD
+      - AZN
+      - BSD
+      - BHD
+      - BDT
+      - BBD
+      - BYN
+      - BZD
+      - XOF
+      - BMD
+      - INR
+      - BTN
+      - BOB
+      - BAM
+      - BWP
+      - NOK
+      - BRL
+      - BND
+      - BGN
+      - BIF
+      - CVE
+      - KHR
+      - XAF
+      - CAD
+      - KYD
+      - CLP
+      - CNY
+      - COP
+      - KMF
+      - CDF
+      - NZD
+      - CRC
+      - HRK
+      - CUP
+      - CUC
+      - ANG
+      - CZK
+      - DKK
+      - DJF
+      - DOP
+      - EGP
+      - SVC
+      - ERN
+      - ETB
+      - FKP
+      - FJD
+      - XPF
+      - GMD
+      - GEL
+      - GHS
+      - GIP
+      - GTQ
+      - GBP
+      - GNF
+      - GYD
+      - HTG
+      - HNL
+      - HKD
+      - HUF
+      - ISK
+      - IDR
+      - IRR
+      - IQD
+      - ILS
+      - JMD
+      - JPY
+      - JOD
+      - KZT
+      - KES
+      - KPW
+      - KRW
+      - KWD
+      - KGS
+      - LAK
+      - LBP
+      - LSL
+      - ZAR
+      - LRD
+      - LYD
+      - CHF
+      - MOP
+      - MKD
+      - MGA
+      - MWK
+      - MYR
+      - MVR
+      - MRU
+      - MUR
+      - MXN
+      - MDL
+      - MNT
+      - MAD
+      - MZN
+      - MMK
+      - NAD
+      - NPR
+      - NIO
+      - NGN
+      - OMR
+      - PKR
+      - PAB
+      - PGK
+      - PYG
+      - PEN
+      - PHP
+      - PLN
+      - QAR
+      - RON
+      - RUB
+      - RWF
+      - SHP
+      - WST
+      - STN
+      - SAR
+      - RSD
+      - SCR
+      - SLL
+      - SGD
+      - SBD
+      - SOS
+      - SSP
+      - LKR
+      - SDG
+      - SRD
+      - SZL
+      - SEK
+      - SYP
+      - TWD
+      - TJS
+      - TZS
+      - THB
+      - TOP
+      - TTD
+      - TND
+      - TRY
+      - TMT
+      - UGX
+      - UAH
+      - AED
+      - UYU
+      - UYW
+      - UZS
+      - VUV
+      - VES
+      - VND
+      - YER
+      - ZMW
+      - ZWL
+      description: 'The three-letter ISO code of the currency.
+
+
+
+        **European ISO Currency Codes**
+
+
+        <details>
+
+
+        | Country — Currency | Code | Numeric | Minor Units |
+
+        | ------------------ | ---- | ------- | ----------- |
+
+        | Åland Islands — Euro | EUR | 978 | 2 |
+
+        | Andorra — Euro | EUR | 978 | 2 |
+
+        | Austria — Euro | EUR | 978 | 2 |
+
+        | Belgium — Euro | EUR | 978 | 2 |
+
+        | Cyprus — Euro | EUR | 978 | 2 |
+
+        | Estonia — Euro | EUR | 978 | 2 |
+
+        | European Union — Euro | EUR | 978 | 2 |
+
+        | Finland — Euro | EUR | 978 | 2 |
+
+        | France — Euro | EUR | 978 | 2 |
+
+        | French Guiana — Euro | EUR | 978 | 2 |
+
+        | French Southern Territories (The) — Euro | EUR | 978 | 2 |
+
+        | Germany — Euro | EUR | 978 | 2 |
+
+        | Greece — Euro | EUR | 978 | 2 |
+
+        | Guadeloupe — Euro | EUR | 978 | 2 |
+
+        | Holy See (The) — Euro | EUR | 978 | 2 |
+
+        | Ireland — Euro | EUR | 978 | 2 |
+
+        | Italy — Euro | EUR | 978 | 2 |
+
+        | Latvia — Euro | EUR | 978 | 2 |
+
+        | Lithuania — Euro | EUR | 978 | 2 |
+
+        | Luxembourg — Euro | EUR | 978 | 2 |
+
+        | Malta — Euro | EUR | 978 | 2 |
+
+        | Martinique — Euro | EUR | 978 | 2 |
+
+        | Mayotte — Euro | EUR | 978 | 2 |
+
+        | Monaco — Euro | EUR | 978 | 2 |
+
+        | Montenegro — Euro | EUR | 978 | 2 |
+
+        | Netherlands (The) — Euro | EUR | 978 | 2 |
+
+        | Portugal — Euro | EUR | 978 | 2 |
+
+        | Réunion — Euro | EUR | 978 | 2 |
+
+        | Saint Barthélemy — Euro | EUR | 978 | 2 |
+
+        | Saint Martin (French Part) — Euro | EUR | 978 | 2 |
+
+        | Saint Pierre And Miquelon — Euro | EUR | 978 | 2 |
+
+        | San Marino — Euro | EUR | 978 | 2 |
+
+        | Slovakia — Euro | EUR | 978 | 2 |
+
+        | Slovenia — Euro | EUR | 978 | 2 |
+
+        | Spain — Euro | EUR | 978 | 2 |
+
+
+        </details>
+
+
+        **US ISO Currency Codes**
+
+
+        <details>
+
+
+        | Country — Currency | Code | Numeric | Minor Units |
+
+        | ------------------ | ---- | ------- | ----------- |
+
+        | American Samoa — US Dollar | USD | 840 | 2 |
+
+        | Bonaire, Sint Eustatius And Saba — US Dollar | USD | 840 | 2 |
+
+        | British Indian Ocean Territory (The) — US Dollar | USD | 840 | 2 |
+
+        | Ecuador — US Dollar | USD | 840 | 2 |
+
+        | El Salvador — US Dollar | USD | 840 | 2 |
+
+        | Guam — US Dollar | USD | 840 | 2 |
+
+        | Haiti — US Dollar | USD | 840 | 2 |
+
+        | Marshall Islands (The) — US Dollar | USD | 840 | 2 |
+
+        | Micronesia (Federated States Of) — US Dollar | USD | 840 | 2 |
+
+        | Northern Mariana Islands (The) — US Dollar | USD | 840 | 2 |
+
+        | Palau — US Dollar | USD | 840 | 2 |
+
+        | Panama — US Dollar | USD | 840 | 2 |
+
+        | Puerto Rico — US Dollar | USD | 840 | 2 |
+
+        | Timor-leste — US Dollar | USD | 840 | 2 |
+
+        | Turks And Caicos Islands (The) — US Dollar | USD | 840 | 2 |
+
+        | United States Minor Outlying Islands (The) — US Dollar | USD | 840 | 2 |
+
+        | United States Of America (The) — US Dollar | USD | 840 | 2 |
+
+        | Virgin Islands (British) — US Dollar | USD | 840 | 2 |
+
+        | Virgin Islands (U.s.) — US Dollar | USD | 840 | 2 |
+
+
+        </details>
+
+
+        **Other ISO Currency Codes**
+
+
+        <details>
+
+
+        | Country — Currency | Code | Numeric | Minor Units |
+
+        | ------------------ | ---- | ------- | ----------- |
+
+        | Afghanistan — Afghani | AFN | 971 | 2 |
+
+        | Albania — Lek | ALL | 008 | 2 |
+
+        | Algeria — Algerian Dinar | DZD | 012 | 2 |
+
+        | Angola — Kwanza | AOA | 973 | 2 |
+
+        | Anguilla — East Caribbean Dollar | XCD | 951 | 2 |
+
+        | Antigua And Barbuda — East Caribbean Dollar | XCD | 951 | 2 |
+
+        | Argentina — Argentine Peso | ARS | 032 | 2 |
+
+        | Armenia — Armenian Dram | AMD | 051 | 2 |
+
+        | Aruba — Aruban Florin | AWG | 533 | 2 |
+
+        | Australia — Australian Dollar | AUD | 036 | 2 |
+
+        | Azerbaijan — Azerbaijan Manat | AZN | 944 | 2 |
+
+        | Bahamas (The) — Bahamian Dollar | BSD | 044 | 2 |
+
+        | Bahrain — Bahraini Dinar | BHD | 048 | 3 |
+
+        | Bangladesh — Taka | BDT | 050 | 2 |
+
+        | Barbados — Barbados Dollar | BBD | 052 | 2 |
+
+        | Belarus — Belarusian Ruble | BYN | 933 | 2 |
+
+        | Belize — Belize Dollar | BZD | 084 | 2 |
+
+        | Benin — CFA Franc BCEAO | XOF | 952 | 0 |
+
+        | Bermuda — Bermudian Dollar | BMD | 060 | 2 |
+
+        | Bhutan — Indian Rupee | INR | 356 | 2 |
+
+        | Bhutan — Ngultrum | BTN | 064 | 2 |
+
+        | Bolivia (Plurinational State Of) — Boliviano | BOB | 068 | 2 |
+
+        | Bosnia And Herzegovina — Convertible Mark | BAM | 977 | 2 |
+
+        | Botswana — Pula | BWP | 072 | 2 |
+
+        | Bouvet Island — Norwegian Krone | NOK | 578 | 2 |
+
+        | Brazil — Brazilian Real | BRL | 986 | 2 |
+
+        | Brunei Darussalam — Brunei Dollar | BND | 096 | 2 |
+
+        | Bulgaria — Bulgarian Lev | BGN | 975 | 2 |
+
+        | Burkina Faso — CFA Franc BCEAO | XOF | 952 | 0 |
+
+        | Burundi — Burundi Franc | BIF | 108 | 0 |
+
+        | Cabo Verde — Cabo Verde Escudo | CVE | 132 | 2 |
+
+        | Cambodia — Riel | KHR | 116 | 2 |
+
+        | Cameroon — CFA Franc BEAC | XAF | 950 | 0 |
+
+        | Canada — Canadian Dollar | CAD | 124 | 2 |
+
+        | Cayman Islands (The) — Cayman Islands Dollar | KYD | 136 | 2 |
+
+        | Central African Republic (The) — CFA Franc BEAC | XAF | 950 | 0 |
+
+        | Chad — CFA Franc BEAC | XAF | 950 | 0 |
+
+        | Chile — Chilean Peso | CLP | 152 | 0 |
+
+        | China — Yuan Renminbi | CNY | 156 | 2 |
+
+        | Christmas Island — Australian Dollar | AUD | 036 | 2 |
+
+        | Cocos (Keeling) Islands (The) — Australian Dollar | AUD | 036 | 2 |
+
+        | Colombia — Colombian Peso | COP | 170 | 2 |
+
+        | Comoros (The) — Comorian Franc | KMF | 174 | 0 |
+
+        | Congo (The Democratic Republic Of The) — Congolese Franc | CDF | 976 | 2 |
+
+        | Congo (The) — CFA Franc BEAC | XAF | 950 | 0 |
+
+        | Cook Islands (The) — New Zealand Dollar | NZD | 554 | 2 |
+
+        | Costa Rica — Costa Rican Colon | CRC | 188 | 2 |
+
+        | Côte D''ivoire — CFA Franc BCEAO | XOF | 952 | 0 |
+
+        | Croatia — Kuna | HRK | 191 | 2 |
+
+        | Cuba — Cuban Peso | CUP | 192 | 2 |
+
+        | Cuba — Peso Convertible | CUC | 931 | 2 |
+
+        | Curaçao — Netherlands Antillean Guilder | ANG | 532 | 2 |
+
+        | Czechia — Czech Koruna | CZK | 203 | 2 |
+
+        | Denmark — Danish Krone | DKK | 208 | 2 |
+
+        | Djibouti — Djibouti Franc | DJF | 262 | 0 |
+
+        | Dominica — East Caribbean Dollar | XCD | 951 | 2 |
+
+        | Dominican Republic (The) — Dominican Peso | DOP | 214 | 2 |
+
+        | Egypt — Egyptian Pound | EGP | 818 | 2 |
+
+        | El Salvador — El Salvador Colon | SVC | 222 | 2 |
+
+        | Equatorial Guinea — CFA Franc BEAC | XAF | 950 | 0 |
+
+        | Eritrea — Nakfa | ERN | 232 | 2 |
+
+        | Ethiopia — Ethiopian Birr | ETB | 230 | 2 |
+
+        | Falkland Islands (The) [Malvinas] — Falkland Islands Pound | FKP | 238 | 2 |
+
+        | Faroe Islands (The) — Danish Krone | DKK | 208 | 2 |
+
+        | Fiji — Fiji Dollar | FJD | 242 | 2 |
+
+        | French Polynesia — CFP Franc | XPF | 953 | 0 |
+
+        | Gabon — CFA Franc BEAC | XAF | 950 | 0 |
+
+        | Gambia (The) — Dalasi | GMD | 270 | 2 |
+
+        | Georgia — Lari | GEL | 981 | 2 |
+
+        | Ghana — Ghana Cedi | GHS | 936 | 2 |
+
+        | Gibraltar — Gibraltar Pound | GIP | 292 | 2 |
+
+        | Greenland — Danish Krone | DKK | 208 | 2 |
+
+        | Grenada — East Caribbean Dollar | XCD | 951 | 2 |
+
+        | Guatemala — Quetzal | GTQ | 320 | 2 |
+
+        | Guernsey — Pound Sterling | GBP | 826 | 2 |
+
+        | Guinea — Guinean Franc | GNF | 324 | 0 |
+
+        | Guinea-bissau — CFA Franc BCEAO | XOF | 952 | 0 |
+
+        | Guyana — Guyana Dollar | GYD | 328 | 2 |
+
+        | Haiti — Gourde | HTG | 332 | 2 |
+
+        | Heard Island And Mcdonald Islands — Australian Dollar | AUD | 036 | 2 |
+
+        | Honduras — Lempira | HNL | 340 | 2 |
+
+        | Hong Kong — Hong Kong Dollar | HKD | 344 | 2 |
+
+        | Hungary — Forint | HUF | 348 | 2 |
+
+        | Iceland — Iceland Krona | ISK | 352 | 0 |
+
+        | India — Indian Rupee | INR | 356 | 2 |
+
+        | Indonesia — Rupiah | IDR | 360 | 2 |
+
+        | Iran (Islamic Republic Of) — Iranian Rial | IRR | 364 | 2 |
+
+        | Iraq — Iraqi Dinar | IQD | 368 | 3 |
+
+        | Isle Of Man — Pound Sterling | GBP | 826 | 2 |
+
+        | Israel — New Israeli Sheqel | ILS | 376 | 2 |
+
+        | Jamaica — Jamaican Dollar | JMD | 388 | 2 |
+
+        | Japan — Yen | JPY | 392 | 0 |
+
+        | Jersey — Pound Sterling | GBP | 826 | 2 |
+
+        | Jordan — Jordanian Dinar | JOD | 400 | 3 |
+
+        | Kazakhstan — Tenge | KZT | 398 | 2 |
+
+        | Kenya — Kenyan Shilling | KES | 404 | 2 |
+
+        | Kiribati — Australian Dollar | AUD | 036 | 2 |
+
+        | Korea (The Democratic People’s Republic Of) — North Korean Won | KPW | 408 | 2 |
+
+        | Korea (The Republic Of) — Won | KRW | 410 | 0 |
+
+        | Kuwait — Kuwaiti Dinar | KWD | 414 | 3 |
+
+        | Kyrgyzstan — Som | KGS | 417 | 2 |
+
+        | Lao People’s Democratic Republic (The) — Lao Kip | LAK | 418 | 2 |
+
+        | Lebanon — Lebanese Pound | LBP | 422 | 2 |
+
+        | Lesotho — Loti | LSL | 426 | 2 |
+
+        | Lesotho — Rand | ZAR | 710 | 2 |
+
+        | Liberia — Liberian Dollar | LRD | 430 | 2 |
+
+        | Libya — Libyan Dinar | LYD | 434 | 3 |
+
+        | Liechtenstein — Swiss Franc | CHF | 756 | 2 |
+
+        | Macao — Pataca | MOP | 446 | 2 |
+
+        | Macedonia (The Former Yugoslav Republic Of) — Denar | MKD | 807 | 2 |
+
+        | Madagascar — Malagasy Ariary | MGA | 969 | 2 |
+
+        | Malawi — Malawi Kwacha | MWK | 454 | 2 |
+
+        | Malaysia — Malaysian Ringgit | MYR | 458 | 2 |
+
+        | Maldives — Rufiyaa | MVR | 462 | 2 |
+
+        | Mali — CFA Franc BCEAO | XOF | 952 | 0 |
+
+        | Mauritania — Ouguiya | MRU | 929 | 2 |
+
+        | Mauritius — Mauritius Rupee | MUR | 480 | 2 |
+
+        | Mexico — Mexican Peso | MXN | 484 | 2 |
+
+        | Moldova (The Republic Of) — Moldovan Leu | MDL | 498 | 2 |
+
+        | Mongolia — Tugrik | MNT | 496 | 2 |
+
+        | Montserrat — East Caribbean Dollar | XCD | 951 | 2 |
+
+        | Morocco — Moroccan Dirham | MAD | 504 | 2 |
+
+        | Mozambique — Mozambique Metical | MZN | 943 | 2 |
+
+        | Myanmar — Kyat | MMK | 104 | 2 |
+
+        | Namibia — Namibia Dollar | NAD | 516 | 2 |
+
+        | Namibia — Rand | ZAR | 710 | 2 |
+
+        | Nauru — Australian Dollar | AUD | 036 | 2 |
+
+        | Nepal — Nepalese Rupee | NPR | 524 | 2 |
+
+        | New Caledonia — CFP Franc | XPF | 953 | 0 |
+
+        | New Zealand — New Zealand Dollar | NZD | 554 | 2 |
+
+        | Nicaragua — Cordoba Oro | NIO | 558 | 2 |
+
+        | Niger (The) — CFA Franc BCEAO | XOF | 952 | 0 |
+
+        | Nigeria — Naira | NGN | 566 | 2 |
+
+        | Niue — New Zealand Dollar | NZD | 554 | 2 |
+
+        | Norfolk Island — Australian Dollar | AUD | 036 | 2 |
+
+        | Norway — Norwegian Krone | NOK | 578 | 2 |
+
+        | Oman — Rial Omani | OMR | 512 | 3 |
+
+        | Pakistan — Pakistan Rupee | PKR | 586 | 2 |
+
+        | Panama — Balboa | PAB | 590 | 2 |
+
+        | Papua New Guinea — Kina | PGK | 598 | 2 |
+
+        | Paraguay — Guarani | PYG | 600 | 0 |
+
+        | Peru — Sol | PEN | 604 | 2 |
+
+        | Philippines (The) — Philippine Peso | PHP | 608 | 2 |
+
+        | Pitcairn — New Zealand Dollar | NZD | 554 | 2 |
+
+        | Poland — Zloty | PLN | 985 | 2 |
+
+        | Qatar — Qatari Rial | QAR | 634 | 2 |
+
+        | Romania — Romanian Leu | RON | 946 | 2 |
+
+        | Russian Federation (The) — Russian Ruble | RUB | 643 | 2 |
+
+        | Rwanda — Rwanda Franc | RWF | 646 | 0 |
+
+        | Saint Helena, Ascension And Tristan Da Cunha — Saint Helena Pound | SHP | 654 | 2 |
+
+        | Saint Kitts And Nevis — East Caribbean Dollar | XCD | 951 | 2 |
+
+        | Saint Lucia — East Caribbean Dollar | XCD | 951 | 2 |
+
+        | Saint Vincent And The Grenadines — East Caribbean Dollar | XCD | 951 | 2 |
+
+        | Samoa — Tala | WST | 882 | 2 |
+
+        | Sao Tome And Principe — Dobra | STN | 930 | 2 |
+
+        | Saudi Arabia — Saudi Riyal | SAR | 682 | 2 |
+
+        | Senegal — CFA Franc BCEAO | XOF | 952 | 0 |
+
+        | Serbia — Serbian Dinar | RSD | 941 | 2 |
+
+        | Seychelles — Seychelles Rupee | SCR | 690 | 2 |
+
+        | Sierra Leone — Leone | SLL | 694 | 2 |
+
+        | Singapore — Singapore Dollar | SGD | 702 | 2 |
+
+        | Sint Maarten (Dutch Part) — Netherlands Antillean Guilder | ANG | 532 | 2 |
+
+        | Solomon Islands — Solomon Islands Dollar | SBD | 090 | 2 |
+
+        | Somalia — Somali Shilling | SOS | 706 | 2 |
+
+        | South Africa — Rand | ZAR | 710 | 2 |
+
+        | South Sudan — South Sudanese Pound | SSP | 728 | 2 |
+
+        | Sri Lanka — Sri Lanka Rupee | LKR | 144 | 2 |
+
+        | Sudan (The) — Sudanese Pound | SDG | 938 | 2 |
+
+        | Suriname — Surinam Dollar | SRD | 968 | 2 |
+
+        | Svalbard And Jan Mayen — Norwegian Krone | NOK | 578 | 2 |
+
+        | Eswatini — Lilangeni | SZL | 748 | 2 |
+
+        | Sweden — Swedish Krona | SEK | 752 | 2 |
+
+        | Switzerland — Swiss Franc | CHF | 756 | 2 |
+
+        | Syrian Arab Republic — Syrian Pound | SYP | 760 | 2 |
+
+        | Taiwan (Province Of China) — New Taiwan Dollar | TWD | 901 | 2 |
+
+        | Tajikistan — Somoni | TJS | 972 | 2 |
+
+        | Tanzania, United Republic Of — Tanzanian Shilling | TZS | 834 | 2 |
+
+        | Thailand — Baht | THB | 764 | 2 |
+
+        | Togo — CFA Franc BCEAO | XOF | 952 | 0 |
+
+        | Tokelau — New Zealand Dollar | NZD | 554 | 2 |
+
+        | Tonga — Pa’anga | TOP | 776 | 2 |
+
+        | Trinidad And Tobago — Trinidad and Tobago Dollar | TTD | 780 | 2 |
+
+        | Tunisia — Tunisian Dinar | TND | 788 | 3 |
+
+        | Turkey — Turkish Lira | TRY | 949 | 2 |
+
+        | Turkmenistan — Turkmenistan New Manat | TMT | 934 | 2 |
+
+        | Tuvalu — Australian Dollar | AUD | 036 | 2 |
+
+        | Uganda — Uganda Shilling | UGX | 800 | 0 |
+
+        | Ukraine — Hryvnia | UAH | 980 | 2 |
+
+        | United Arab Emirates (The) — UAE Dirham | AED | 784 | 2 |
+
+        | United Kingdom Of Great Britain And Northern Ireland (The) — Pound Sterling | GBP | 826 | 2 |
+
+        | Uruguay — Peso Uruguayo | UYU | 858 | 2 |
+
+        | Uruguay — Unidad Previsional | UYW | 927 | 4 |
+
+        | Uzbekistan — Uzbekistan Sum | UZS | 860 | 2 |
+
+        | Vanuatu — Vatu | VUV | 548 | 0 |
+
+        | Venezuela (Bolivarian Republic Of) — Bolívar Soberano | VES | 928 | 2 |
+
+        | Viet Nam — Dong | VND | 704 | 0 |
+
+        | Wallis And Futuna — CFP Franc | XPF | 953 | 0 |
+
+        | Western Sahara — Moroccan Dirham | MAD | 504 | 2 |
+
+        | Yemen — Yemeni Rial | YER | 886 | 2 |
+
+        | Zambia — Zambian Kwacha | ZMW | 967 | 2 |
+
+        | Zimbabwe — Zimbabwe Dollar | ZWL | 932 | 2 |
+
+
+        </details>'
+      externalDocs:
+        description: Find more info here
+        url: https://www.iso.org/iso-4217-currency-codes.html
+      example: EUR
+    terminal:
+      type: object
+      description: Details about the terminal.
+      oneOf:
+      - $ref: '#/components/schemas/pos'
+      - $ref: '#/components/schemas/mPos'
+      - $ref: '#/components/schemas/softPos'
+    CardNetworkMismatchErrorDetails:
+      type: object
+      required:
+      - type
+      - title
+      - status
+      - detail
+      - instance
+      properties:
+        type:
+          allOf:
+          - $ref: '#/components/schemas/schemas-errorType'
+          - enum:
+            - /silverflow/problems/schemeFees/card-network-mismatch
+        title:
+          allOf:
+          - $ref: '#/components/schemas/errorTitle'
+          - enum:
+            - Card network mismatch
+        status:
+          allOf:
+          - $ref: '#/components/schemas/errorStatus'
+          - enum:
+            - 400
+        detail:
+          $ref: '#/components/schemas/errorDetail'
+        instance:
+          $ref: '#/components/schemas/errorInstance'
+    TieredFeeRate:
+      title: Tiered Fee Rate
+      description: 'A _tiered_ fee rate defines multiple fee rates or _tiers_. Tier applicability is determined by the `upToIncluding`
+
+        and `above` values. For a fee with `tiering` set to `count`, these properties hold the thresholds for the
+
+        total number of fees in the defined period. Conversely, for a fee with `tiering` set to `volume` these
+
+        properties define the threshold for the total source amount (denominated in the `feeRate` currency). The
+
+        aggregation period is defined by the `billingFrequency` field.
+
+        '
+      type: object
+      required:
+      - tiers
+      properties:
+        tiers:
+          type: array
+          items:
+            $ref: '#/components/schemas/TieredFeeRateTier'
+          minItems: 2
+          maxItems: 6
+    errorDetail:
+      type: string
+      description: 'A human readable explanation specific to this occurrence of the problem.
+
+        '
+    VisaFeeDesignator:
+      type: object
+      required:
+      - feeDescriptor
+      properties:
+        feeDescriptor:
+          type: string
+        feeProgramIndicator:
+          type: string
+    softPos:
+      allOf:
+      - type: object
+        required:
+        - type
+        properties:
+          type:
+            type: string
+            enum:
+            - softpos
+      - $ref: '#/components/schemas/baseTerminal'
+      - type: object
+        required:
+        - attended
+        - capabilities
+        properties:
+          attended:
+            type: boolean
+            enum:
+            - true
+          capabilities:
+            type: array
+            description: 'The capabilities of the terminal. This can be one or multiple, and if more than one is specified it means that it is capable of all of those things.
+
+              '
+            items:
+              $ref: '#/components/schemas/softPosTerminalCapability'
+            example:
+            - onlinePin
+            - contactlessChip
+            - noCvm
+            - oneTap
+    TieredBillingAmountTierProperties:
+      type: object
+      required:
+      - tierNumber
+      properties:
+        tierNumber:
+          $ref: '#/components/schemas/tierNumber'
+        upToIncluding:
+          $ref: '#/components/schemas/upToIncluding'
+        above:
+          $ref: '#/components/schemas/above'
+    operation:
+      type: string
+      enum:
+      - divide
+      - multiply
+    errorTitle:
+      type: string
+      description: 'A short, human-readable summary of the problem type. It does not change from occurrence to occurrence of the error.
+
+        '
+    openapi_components-schemas-cardEntry-2:
+      description: 'The method used to capture the card details.
+
+        '
+      type: string
+      enum:
+      - e-commerce
+      - manual
+      - card-on-file
+      - token
+      - token-on-file
+      - terminal
+      example: e-commerce
+    SchemeFeeRequest:
+      type: object
+      additionalProperties: false
+      required:
+      - cardNumber
+      - amount
+      - merchantAcceptorKey
+      - chargeType
+      - threeDsAuthentication
+      description: The request body format for a scheme fee estimation
+      properties:
+        cardNumber:
+          $ref: '#/components/schemas/openapi_components-schemas-pan-2'
+        amount:
+          $ref: '#/components/schemas/AmountRequest'
+        merchantAcceptorKey:
+          $ref: '#/components/schemas/AcceptorKey'
+        chargeType:
+          $ref: '#/components/schemas/openapi_components-schemas-ChargeType'
+        threeDsAuthentication:
+          $ref: '#/components/schemas/schemas-ThreeDsAuthentication'
+    softPosTerminalCapability:
+      type: string
+      enum:
+      - contactlessChip
+      - onlinePin
+      - signature
+      - noCvm
+      - oneTap
+    openapi_components-schemas-cardEntry:
+      description: 'The method used to capture the card details.
+
+        '
+      type: string
+      enum:
+      - e-commerce
+      - manual
+      - card-on-file
+      - token
+      - token-on-file
+      - terminal
+    rate:
+      type: object
+      properties:
+        date:
+          description: The date of currency rate
+          type: string
+          format: date
+        source:
+          $ref: '#/components/schemas/openapi_components-schemas-currencyCode-4'
+        target:
+          $ref: '#/components/schemas/openapi_components-schemas-currencyCode-4'
+        rate:
+          description: Rate used to convert from source to target
+          type: integer
+          format: int32
+        exponent:
+          description: Indicates precision of the rate
+          type: integer
+          format: int32
+        operation:
+          type: string
+          enum:
+          - multiply
+          - divide
+        type:
+          type: string
+          enum:
+          - buy
+          - mid
+          - sell
+    components-schemas-sequence:
+      description: 'Required for recurring charges. This field indicates whether a charge is part of a recurring sequence. The initial charge of a recurring sequence should be flagged as `initial`,
+
+        all subsequent transactions should be flagged as `subsequent` and must be sent to the `/charges/{initialChargeKey}/mit` endpoint.
+
+        '
+      type: string
+      enum:
+      - initial
+      - subsequent
+    PublicFee:
+      type: object
+      required:
+      - tiering
+      oneOf:
+      - $ref: '#/components/schemas/TieredFee'
+      - $ref: '#/components/schemas/NonTieredFee'
+    convertedSourceAmount:
+      title: Amount
+      description: 'The _source_ amount denominated in the `feeRate` currency. This field is only present when currency
+
+        conversion has been applied. Currency conversion is only applied if the `feeRate` currency is
+
+        different from the `sourceAmount` currency.
+
+        '
+      type: object
+      required:
+      - impact
+      - currency
+      - value
+      properties:
+        impact:
+          $ref: '#/components/schemas/sourceAmountImpact'
+        currency:
+          $ref: '#/components/schemas/openapi_components-schemas-currencyCode-5'
+        value:
+          $ref: '#/components/schemas/sourceAmountValue'
+    numberOfTiers:
+      type: integer
+      description: 'The number of tiers defined for this fee.
+
+        '
+      minimum: 2
+      maximum: 6
+    pos:
+      allOf:
+      - type: object
+        required:
+        - type
+        properties:
+          type:
+            type: string
+            enum:
+            - pos
+      - $ref: '#/components/schemas/baseTerminal'
+      - type: object
+        required:
+        - capabilities
+        properties:
+          capabilities:
+            type: array
+            description: 'The capabilities of the terminal. This can be one or multiple, and if more than one is specified it means that it is capable of all of those things.
+
+              '
+            items:
+              $ref: '#/components/schemas/terminalCapability'
+            example:
+            - contactChip
+            - contactlessChip
+            - contactMagStripe
+            - oneTap
+    impact:
+      type: string
+      enum:
+      - debit
+      - credit
+    TieredFee:
+      title: Tiered Fee
+      description: A tiered scheme fee estimate. A _tiered_ fee defines multiple fee rates. When `tiering` is set to `count` the applicable tier is selected based on the total number of fees in a given period. When `tiering` is set to `volume` the applicable tier is selected based on the total source amount (denominated in the `feeRate` currency) of the fees in a given period. Tier applicability is determined by the `upToIncluding` and `above` values. For a fee with `tiering` set to `count`, these properties hold the thresholds for the total number of fees in the defined period. Conversely, for a fee with `tiering` set to `volume` these properties define the threshold for the total source amount (denominated in the `feeRate` currency). The aggregation period is defined by the `billingFrequency` field.
+      allOf:
+      - $ref: '#/components/schemas/BaseFee'
+      - $ref: '#/components/schemas/TieredFeeProperties'
+    sourceAmount:
+      title: Amount
+      description: The _source_ amount of the transaction event, in either the original (transaction) currency or the settlement currency. This amount is the amount to which the fee applies.
+      type: object
+      required:
+      - impact
+      - currency
+      - value
+      properties:
+        impact:
+          $ref: '#/components/schemas/sourceAmountImpact'
+        currency:
+          $ref: '#/components/schemas/openapi_components-schemas-currencyCode-5'
+        value:
+          $ref: '#/components/schemas/sourceAmountValue'
+    tierNumber:
+      type: integer
+      description: The _logical_ (1-based) tier number.
+      minimum: 1
+      maximum: 6
+    sourceAmountImpact:
+      type: string
+      enum:
+      - debit
+      - credit
+      description: "The impact of the source amount. This value has no relation to the the _direction_ of the funds\nof the transaction. By default every amount will have the impact set to `debit`. Only _corrections_ \nwill have a value set to `credit`. Note that corrections are not yet supported.\n"
+    InterchangeFeeEstimateResponse:
+      type: object
+      description: Estimated value under conditions of dates
+      required:
+      - segments
+      - feeDate
+      - amount
+      - rates
+      - designator
+      properties:
+        segments:
+          $ref: '#/components/schemas/FeeSegments'
+        feeDate:
+          type: string
+          format: date
+          description: The date of network references files used to calculate the fee
+        amount:
+          description: The converted total interchange fee amount
+          $ref: '#/components/schemas/FloatAmount'
+        rates:
+          type: array
+          items:
+            $ref: '#/components/schemas/rate'
+            minItems: 0
+        designator:
+          oneOf:
+          - $ref: '#/components/schemas/VisaFeeDesignator'
+          - $ref: '#/components/schemas/MastercardFeeDesignator'
+          - $ref: '#/components/schemas/BancontactFeeDesignator'
+    IntegerAmount:
+      type: object
+      required:
+      - value
+      - currency
+      additionalProperties: false
+      description: 'An amount encoded as an object with a `value` in minor units and a `currency` code.
+
+        '
+      properties:
+        value:
+          $ref: '#/components/schemas/schemas-amountValue'
+        currency:
+          $ref: '#/components/schemas/currencyCodeEnum'
+    components-schemas-cardNetwork:
+      type: string
+      description: The card network
+      enum:
+      - mastercard
+      - visa
+      - discover
+      - bancontact
+      example: mastercard
+    amountValueInteger:
+      type: number
+      format: int64
+      minimum: 0
+      description: 'The amount in minor units. For example `$12.34` should be encoded as `1234`. Note that not all
+
+        currencies have 2 minor units. Some have three or zero.
+
+        '
+    NonTieredBillingAmountTier:
+      title: Non-Tiered Billing Amount Tier
+      allOf:
+      - $ref: '#/components/schemas/BaseBillingAmountTier'
+    tierId:
+      type: string
+      description: 'The (optional) Mastercard _"Tier ID"_ for this fee, as it appears on the Mastercard invoice.
+
+        Note that the presence of this field does not indicate if this fee has multiple _tiers_.
+
+        See the `tiering` field.
+
+        '
+      pattern: ^[A-Z0-9-]+$
+      default: '-'
+      minLength: 1
+      maxLength: 120
+    floatAmountValue:
+      type: number
+      format: float
+      description: 'The amount in minor units with decimal precision. For example `$0.345` should be encoded as `34.5`. Note that not all
+
+        currencies have 2 minor units. Some have three or zero.
 
         '
     currencyCodeEnum:
@@ -867,27 +2352,96 @@ components:
         description: Find more info here
         url: https://www.iso.org/iso-4217-currency-codes.html
       example: EUR
-    fundingType:
+    AcceptorKey:
+      description: Uniquely identifies a Merchant Acceptor.
       type: string
-      enum:
-      - account-to-account
-      - wallet-transfer
-    amountValueInteger:
-      type: number
-      format: int64
-      minimum: 0
-      description: 'The amount in minor units. For example `$12.34` should be encoded as `1234`. Note that not all
-
-        currencies have 2 minor units. Some have three or zero.
-
-        '
-    numberOfTiers:
-      type: integer
-      description: 'The number of tiers defined for this fee.
+      pattern: ^mac-[a-zA-Z0-9]+$
+      example: mac-1JRadf2ffdfrdPMf2XrS2
+    AmountRequest:
+      type: object
+      required:
+      - value
+      - currency
+      additionalProperties: false
+      description: 'An amount encoded as an object with a `value` in minor units and a `currency` code.
 
         '
-      minimum: 2
-      maximum: 6
+      properties:
+        value:
+          $ref: '#/components/schemas/amountValueInteger'
+        currency:
+          $ref: '#/components/schemas/openapi_components-schemas-currencyCode-5'
+    NonTieredFeeBillingAmount:
+      allOf:
+      - $ref: '#/components/schemas/BaseBillingAmount'
+      - $ref: '#/components/schemas/NonTieredBillingAmount'
+    mPos:
+      allOf:
+      - type: object
+        required:
+        - type
+        properties:
+          type:
+            type: string
+            enum:
+            - mpos
+      - $ref: '#/components/schemas/baseTerminal'
+      - type: object
+        required:
+        - attended
+        - capabilities
+        properties:
+          attended:
+            type: boolean
+            enum:
+            - true
+          capabilities:
+            type: array
+            description: 'The capabilities of the terminal. This can be one or multiple, and if more than one is specified it means that it is capable of all of those things.
+
+              '
+            items:
+              $ref: '#/components/schemas/terminalCapability'
+            example:
+            - contactChip
+            - contactlessChip
+            - contactMagStripe
+            - oneTap
+    BaseBillingAmount:
+      type: object
+      description: 'The actual billing amount for this fee, denominated in the `feeRate` currency (if defined) or
+
+        the `sourceAmount` currency.
+
+        '
+      required:
+      - currency
+      properties:
+        currency:
+          $ref: '#/components/schemas/openapi_components-schemas-currencyCode-5'
+    MastercardFeeDesignator:
+      type: object
+      required:
+      - ird
+      - businessServiceArrangement
+      properties:
+        ird:
+          type: string
+        businessServiceArrangement:
+          $ref: '#/components/schemas/BusinessServiceArrangement'
+    currencyRateValue:
+      type: string
+      pattern: ^\d+(\.\d+)?$
+      minLength: 1
+      description: 'The currency rate (decimal) value, encoded as string. If this value holds a fraction,
+
+        it will use a `.` "dot" as _decimal separator_. Note that it may hold up to 11 decimals.
+
+        Use a _platform specific number parser_ to convert this string into a numeric value
+
+        without loosing precision.
+
+        '
     above:
       type: integer
       minimum: 0
@@ -900,8 +2454,9 @@ components:
         total number of fees.
 
         '
-    SchemeFeeRequest:
+    InterchangeFeeEstimateRequest:
       type: object
+      description: Elements required to construct an authorization request
       additionalProperties: false
       required:
       - cardNumber
@@ -909,59 +2464,49 @@ components:
       - merchantAcceptorKey
       - chargeType
       - threeDsAuthentication
-      description: The request body format for a scheme fee estimation
+      - isRefund
       properties:
         cardNumber:
           $ref: '#/components/schemas/openapi_components-schemas-pan-2'
         amount:
-          $ref: '#/components/schemas/AmountRequest'
+          description: The transaction amount
+          $ref: '#/components/schemas/IntegerAmount'
         merchantAcceptorKey:
-          $ref: '#/components/schemas/AcceptorKey'
+          $ref: '#/components/schemas/openapi_components-schemas-acceptorKeyRef'
         chargeType:
-          $ref: '#/components/schemas/openapi_components-schemas-ChargeType'
+          $ref: '#/components/schemas/components-schemas-ChargeType'
         threeDsAuthentication:
-          $ref: '#/components/schemas/schemas-ThreeDsAuthentication'
-    components-schemas-order:
-      description: 'The method used to place the order.
+          description: 3DS settings
+          type: string
+          enum:
+          - none
+          - attempt
+          - success
+        isRefund:
+          description: Whether the transaction is a refund.
+          type: boolean
+        additionalNetworkProperties:
+          type: object
+          oneOf:
+          - $ref: '#/components/schemas/BancontactAdditionalNetworkProperties'
+    openapi_components-schemas-ChargeType:
+      description: 'Describes the kind of charge the merchant wants to submit.
 
         '
-      type: string
-      enum:
-      - checkout
-      - unspecified
-      - mail
-      - phone
-      - one-click
-      - recurring
-      - ucof
-      - installment
-      - counter
-    components-schemas-terminalEntryMode:
-      description: 'Required when `cardEntry` is `terminal`. This field indicates the method used for PAN entry on the terminal to initiate the transaction.
-
-        '
-      type: string
-      enum:
-      - contactless
-      - manual-entry
-      - chip
-      - magstripe
-      - magstripe-fallback
-    softPosTerminalCapability:
-      type: string
-      enum:
-      - contactlessChip
-      - onlinePin
-      - signature
-      - noCvm
-      - oneTap
-    BancontactFeeDesignator:
       type: object
+      required:
+      - intent
+      - cardEntry
+      additionalProperties: true
       properties:
-        description:
-          type: string
-        feeCode:
-          type: string
+        intent:
+          $ref: '#/components/schemas/intent'
+        cardEntry:
+          $ref: '#/components/schemas/openapi_components-schemas-cardEntry-2'
+        payoutType:
+          $ref: '#/components/schemas/payoutType'
+        fundingType:
+          $ref: '#/components/schemas/fundingType'
     value:
       type: string
       description: 'The value of the fee rate, encoded as string. If this value holds a fraction,
@@ -983,102 +2528,93 @@ components:
         '
       pattern: ^\d+(\.\d+)?$
       minLength: 1
-    impact:
+    NonTieredEnum:
       type: string
-      enum:
-      - debit
-      - credit
-    upToIncluding:
-      type: integer
-      minimum: 0
-      description: 'This field indicates the value up to (including) which this _tier_ applies.
-
-        If `tiering` is set to `volume`, this value indicates the total `sourceAmount`
-
-        (in `feeRate` currency). If `tiering` is set to `count`, this value indicates the
-
-        total number of fees.
+      description: 'The type of tiering. The value `none` indicates that this fee is not tiered.
 
         '
-    TieredBillingAmountTier:
-      title: Tiered Billing Amount Tier
-      allOf:
-      - $ref: '#/components/schemas/BaseBillingAmountTier'
-      - $ref: '#/components/schemas/TieredBillingAmountTierProperties'
-    NonTieredBillingAmountTier:
-      title: Non-Tiered Billing Amount Tier
-      allOf:
-      - $ref: '#/components/schemas/BaseBillingAmountTier'
-    TieredBillingAmount:
-      title: Tiered Billing Amount
-      type: object
-      required:
-      - amounts
-      properties:
-        amounts:
-          type: array
-          description: 'A list of amounts. Each amount defines a billing amount value for the given tier, and a
-
-            threshold value (`upToIncluding` or `above`) to which it applies.
-
-            '
-          items:
-            $ref: '#/components/schemas/TieredBillingAmountTier'
-          minItems: 2
-          maxItems: 6
-    sourceAmountImpact:
-      type: string
       enum:
-      - debit
-      - credit
-      description: "The impact of the source amount. This value has no relation to the the _direction_ of the funds\nof the transaction. By default every amount will have the impact set to `debit`. Only _corrections_ \nwill have a value set to `credit`. Note that corrections are not yet supported.\n"
-    baseTerminal:
+      - none
+    components-schemas-ChargeType:
+      description: 'Describes the kind of charge the merchant wants to submit.
+
+        '
       type: object
+      additionalProperties: false
       required:
-      - attended
+      - intent
+      - cardEntry
+      - order
       properties:
-        attended:
+        intent:
+          $ref: '#/components/schemas/intent'
+        cardEntry:
+          $ref: '#/components/schemas/openapi_components-schemas-cardEntry'
+        order:
+          $ref: '#/components/schemas/components-schemas-order'
+        sequence:
+          $ref: '#/components/schemas/components-schemas-sequence'
+        terminalEntryMode:
+          $ref: '#/components/schemas/components-schemas-terminalEntryMode'
+        terminal:
+          $ref: '#/components/schemas/terminal'
+        pinUsed:
           type: boolean
-          description: Whether the terminal is attended or not.
-    TieredFeeProperties:
+    BaseFeeRateTier:
+      title: Base Fee Rate Tier
       type: object
       required:
-      - tiering
-      - numberOfTiers
-      - feeRate
-      - billingAmount
+      - impact
+      - value
       properties:
-        tiering:
-          $ref: '#/components/schemas/TieredEnum'
-        numberOfTiers:
-          $ref: '#/components/schemas/numberOfTiers'
-        feeRate:
-          allOf:
-          - $ref: '#/components/schemas/BaseFeeRate'
-          - $ref: '#/components/schemas/TieredFeeRate'
-        billingAmount:
-          $ref: '#/components/schemas/TieredFeeBillingAmount'
-    schemas-errorType:
-      type: string
-      description: 'A relative URI reference, this property can be used to perform automated error handling.
+        impact:
+          $ref: '#/components/schemas/impact'
+        value:
+          $ref: '#/components/schemas/value'
+    BaseFee:
+      type: object
+      required:
+      - billingFrequency
+      - feeId
+      - feeDescription
+      - sourceAmount
+      properties:
+        billingFrequency:
+          $ref: '#/components/schemas/billingFrequency'
+        feeId:
+          $ref: '#/components/schemas/feeId'
+        feeDescription:
+          $ref: '#/components/schemas/feeDescription'
+        sourceAmount:
+          $ref: '#/components/schemas/sourceAmount'
+        convertedSourceAmount:
+          $ref: '#/components/schemas/convertedSourceAmount'
+        tierId:
+          $ref: '#/components/schemas/tierId'
+    TieredFeeBillingAmount:
+      allOf:
+      - $ref: '#/components/schemas/BaseBillingAmount'
+      - $ref: '#/components/schemas/TieredBillingAmount'
+    schemas-amountValue:
+      type: integer
+      format: int64
+      minimum: 0
+      maximum: 900000000
+      description: 'The amount in minor units. For example `$12.34` should be encoded as `1234`. Note that not all
+
+        currencies have 2 minor units. Some have three or zero.
 
         '
-      enum:
-      - /silverflow/problems/schemeFees/not-found
-      - /silverflow/problems/schemeFees/card-network-mismatch
-      - /silverflow/problems/schemeFees/card-network-not-supported
-      - /silverflow/problems/bad-request
-      - /silverflow/problems/internal-server-error
-    feeDescription:
-      type: string
-      pattern: ^[a-zA-Z0-9-\/ \.—&()]+$
-      minLength: 1
-      maxLength: 120
-      description: 'The Mastercard _"Event description"_ or the Visa _"Description"_, as they appear on the corresponding
-
-        invoices.
-
-        '
+    NonTieredFeeRateTier:
+      title: Non-Tiered Fee Rate Tier
+      allOf:
+      - $ref: '#/components/schemas/BaseFeeRateTier'
+    NonTieredFee:
+      title: Non-Tiered Fee
+      description: A non-tiered scheme fee estimate.
+      allOf:
+      - $ref: '#/components/schemas/BaseFee'
+      - $ref: '#/components/schemas/NonTieredFeeProperties'
     openapi_components-schemas-currencyCode-4:
       type: string
       pattern: ^[A-Z]{3}$
@@ -1640,813 +3176,35 @@ components:
         description: Find more info here
         url: https://www.iso.org/iso-4217-currency-codes.html
       example: EUR
-    TieredEnum:
+    feeId:
       type: string
-      description: 'The type of tiering. The value `volume` indicates that the applicable fee _tier_ is determined
-
-        using the total `sourceAmount` for a given period. The value `count` indicates that the
-
-        applicable _tier_ is determined using the total number of fees (transactions). The value `none`
-
-        indicates that this fee is not tiered.
-
-        '
-      enum:
-      - count
-      - volume
-    openapi_components-schemas-acceptorKeyRef:
-      description: Uniquely identifies a Merchant Acceptor.
-      type: string
-      pattern: ^mac-[a-zA-Z0-9]+$
-    AcceptorKey:
-      description: Uniquely identifies a Merchant Acceptor.
-      type: string
-      pattern: ^mac-[a-zA-Z0-9]+$
-      example: mac-1JRadf2ffdfrdPMf2XrS2
-    errorTitle:
-      type: string
-      description: 'A short, human-readable summary of the problem type. It does not change from occurrence to occurrence of the error.
-
-        '
-    components-schemas-sequence:
-      description: 'Required for recurring charges. This field indicates whether a charge is part of a recurring sequence. The initial charge of a recurring sequence should be flagged as `initial`,
-
-        all subsequent transactions should be flagged as `subsequent` and must be sent to the `/charges/{initialChargeKey}/mit` endpoint.
-
-        '
-      type: string
-      enum:
-      - initial
-      - subsequent
-    PublicFee:
-      type: object
-      required:
-      - tiering
-      oneOf:
-      - $ref: '#/components/schemas/TieredFee'
-      - $ref: '#/components/schemas/NonTieredFee'
-    TieredBillingAmountTierProperties:
-      type: object
-      required:
-      - tierNumber
-      properties:
-        tierNumber:
-          $ref: '#/components/schemas/tierNumber'
-        upToIncluding:
-          $ref: '#/components/schemas/upToIncluding'
-        above:
-          $ref: '#/components/schemas/above'
-    TieredFee:
-      title: Tiered Fee
-      description: A tiered scheme fee estimate. A _tiered_ fee defines multiple fee rates. When `tiering` is set to `count` the applicable tier is selected based on the total number of fees in a given period. When `tiering` is set to `volume` the applicable tier is selected based on the total source amount (denominated in the `feeRate` currency) of the fees in a given period. Tier applicability is determined by the `upToIncluding` and `above` values. For a fee with `tiering` set to `count`, these properties hold the thresholds for the total number of fees in the defined period. Conversely, for a fee with `tiering` set to `volume` these properties define the threshold for the total source amount (denominated in the `feeRate` currency). The aggregation period is defined by the `billingFrequency` field.
-      allOf:
-      - $ref: '#/components/schemas/BaseFee'
-      - $ref: '#/components/schemas/TieredFeeProperties'
-    BusinessServiceArrangement:
-      type: object
-      required:
-      - cardProgramIdentifier
-      - type
-      - idCode
-      properties:
-        cardProgramIdentifier:
-          type: string
-        type:
-          type: string
-        idCode:
-          type: string
-        priority:
-          type: string
-        selectionEnforcementIndicator:
-          type: string
-    BaseFeeRateTier:
-      title: Base Fee Rate Tier
-      type: object
-      required:
-      - impact
-      - value
-      properties:
-        impact:
-          $ref: '#/components/schemas/impact'
-        value:
-          $ref: '#/components/schemas/value'
-    InterchangeFeeEstimateResponse:
-      type: object
-      description: Estimated value under conditions of dates
-      required:
-      - segments
-      - feeDate
-      - amount
-      - rates
-      - designator
-      properties:
-        segments:
-          $ref: '#/components/schemas/FeeSegments'
-        feeDate:
-          type: string
-          format: date
-          description: The date of network references files used to calculate the fee
-        amount:
-          description: The converted total interchange fee amount
-          $ref: '#/components/schemas/FloatAmount'
-        rates:
-          type: array
-          items:
-            $ref: '#/components/schemas/rate'
-            minItems: 0
-        designator:
-          oneOf:
-          - $ref: '#/components/schemas/VisaFeeDesignator'
-          - $ref: '#/components/schemas/MastercardFeeDesignator'
-          - $ref: '#/components/schemas/BancontactFeeDesignator'
-    rate:
-      type: object
-      properties:
-        date:
-          description: The date of currency rate
-          type: string
-          format: date
-        source:
-          $ref: '#/components/schemas/openapi_components-schemas-currencyCode-4'
-        target:
-          $ref: '#/components/schemas/openapi_components-schemas-currencyCode-4'
-        rate:
-          description: Rate used to convert from source to target
-          type: integer
-          format: int32
-        exponent:
-          description: Indicates precision of the rate
-          type: integer
-          format: int32
-        operation:
-          type: string
-          enum:
-          - multiply
-          - divide
-        type:
-          type: string
-          enum:
-          - buy
-          - mid
-          - sell
-    AmountRequest:
-      type: object
-      required:
-      - value
-      - currency
-      additionalProperties: false
-      description: 'An amount encoded as an object with a `value` in minor units and a `currency` code.
-
-        '
-      properties:
-        value:
-          $ref: '#/components/schemas/amountValueInteger'
-        currency:
-          $ref: '#/components/schemas/openapi_components-schemas-currencyCode-5'
-    BaseFee:
-      type: object
-      required:
-      - billingFrequency
-      - feeId
-      - feeDescription
-      - sourceAmount
-      properties:
-        billingFrequency:
-          $ref: '#/components/schemas/billingFrequency'
-        feeId:
-          $ref: '#/components/schemas/feeId'
-        feeDescription:
-          $ref: '#/components/schemas/feeDescription'
-        sourceAmount:
-          $ref: '#/components/schemas/sourceAmount'
-        convertedSourceAmount:
-          $ref: '#/components/schemas/convertedSourceAmount'
-        tierId:
-          $ref: '#/components/schemas/tierId'
-    NonTieredBillingAmount:
-      type: object
-      required:
-      - amounts
-      properties:
-        amounts:
-          type: array
-          items:
-            $ref: '#/components/schemas/NonTieredBillingAmountTier'
-          minItems: 1
-          maxItems: 1
-    CardNetworkMismatchErrorDetails:
-      type: object
-      required:
-      - type
-      - title
-      - status
-      - detail
-      - instance
-      properties:
-        type:
-          allOf:
-          - $ref: '#/components/schemas/schemas-errorType'
-          - enum:
-            - /silverflow/problems/schemeFees/card-network-mismatch
-        title:
-          allOf:
-          - $ref: '#/components/schemas/errorTitle'
-          - enum:
-            - Card network mismatch
-        status:
-          allOf:
-          - $ref: '#/components/schemas/errorStatus'
-          - enum:
-            - 400
-        detail:
-          $ref: '#/components/schemas/errorDetail'
-        instance:
-          $ref: '#/components/schemas/errorInstance'
-    currencyRateValue:
-      type: string
-      pattern: ^\d+(\.\d+)?$
-      minLength: 1
-      description: 'The currency rate (decimal) value, encoded as string. If this value holds a fraction,
-
-        it will use a `.` "dot" as _decimal separator_. Note that it may hold up to 11 decimals.
-
-        Use a _platform specific number parser_ to convert this string into a numeric value
-
-        without loosing precision.
-
-        '
-    terminal:
-      type: object
-      description: Details about the terminal.
-      oneOf:
-      - $ref: '#/components/schemas/pos'
-      - $ref: '#/components/schemas/mPos'
-      - $ref: '#/components/schemas/softPos'
-    components-schemas-cardNetwork:
-      type: string
-      description: The card network
-      enum:
-      - mastercard
-      - visa
-      - discover
-      - bancontact
-      example: mastercard
-    tierNumber:
-      type: integer
-      description: The _logical_ (1-based) tier number.
-      minimum: 1
-      maximum: 6
-    BaseFeeRate:
-      title: Base Fee Rate
-      type: object
-      required:
-      - type
-      properties:
-        type:
-          $ref: '#/components/schemas/feeRateType'
-        currency:
-          $ref: '#/components/schemas/openapi_components-schemas-currencyCode-5'
-    intent:
-      description: 'The intention of the cardholder.
-
-        '
-      type: string
-      enum:
-      - purchase
-      - reservation
-      - account-status
-      - payout
-      - payout-status
-      - funding
-      - advice
-      - refund
-    schemas-ThreeDsAuthentication:
-      description: 3DS settings
-      type: string
-      enum:
-      - none
-      - attempt
-      - success
-    VisaFeeDesignator:
-      type: object
-      required:
-      - feeDescriptor
-      properties:
-        feeDescriptor:
-          type: string
-        feeProgramIndicator:
-          type: string
-    openapi_components-schemas-cardEntry-2:
-      description: 'The method used to capture the card details.
-
-        '
-      type: string
-      enum:
-      - e-commerce
-      - manual
-      - card-on-file
-      - token
-      - token-on-file
-      - terminal
-      example: e-commerce
-    TieredFeeBillingAmount:
-      allOf:
-      - $ref: '#/components/schemas/BaseBillingAmount'
-      - $ref: '#/components/schemas/TieredBillingAmount'
-    openapi_components-schemas-cardEntry:
-      description: 'The method used to capture the card details.
-
-        '
-      type: string
-      enum:
-      - e-commerce
-      - manual
-      - card-on-file
-      - token
-      - token-on-file
-      - terminal
-    billingFrequency:
-      type: string
-      enum:
-      - daily
-      - weekly
-      - monthly
-      - quarterly
-      description: 'The _frequency_ or _interval_ at which this fee is witheld from settlement (or
-
-        invoiced separately). This frequency also defines the _aggregation period_ for _tiered fees_.
-
-        '
-    BaseSchemeFeeEstimate:
-      type: object
-      description: The scheme fee estimation.
-      required:
-      - cardNetwork
-      properties:
-        cardNetwork:
-          $ref: '#/components/schemas/components-schemas-cardNetwork'
-        conversionRates:
-          type: array
-          description: 'A list of conversion rates, used to convert the `sourceAmount` into the `convertedSourceAmount`.
-
-            This list is only present if currency conversion was applied. Currency conversion is only applied
-
-            if the `feeRate` currency is different from the `sourceAmount` currency. Note that for certain
-
-            currency conversions there is no single rate available. In such a case, multiple conversions are
-
-            applied to convert the source amount into the fee rate currency.
-
-            '
-          items:
-            $ref: '#/components/schemas/ConversionRate'
-          minItems: 1
-    NotFoundErrorDetails:
-      type: object
-      required:
-      - type
-      - title
-      - status
-      - detail
-      - instance
-      properties:
-        type:
-          allOf:
-          - $ref: '#/components/schemas/schemas-errorType'
-          - enum:
-            - /silverflow/problems/schemeFees/not-found
-        title:
-          allOf:
-          - $ref: '#/components/schemas/errorTitle'
-          - enum:
-            - Not found
-        status:
-          allOf:
-          - $ref: '#/components/schemas/errorStatus'
-          - enum:
-            - 404
-        detail:
-          $ref: '#/components/schemas/errorDetail'
-        instance:
-          $ref: '#/components/schemas/errorInstance'
-    NonTieredFee:
-      title: Non-Tiered Fee
-      description: A non-tiered scheme fee estimate.
-      allOf:
-      - $ref: '#/components/schemas/BaseFee'
-      - $ref: '#/components/schemas/NonTieredFeeProperties'
-    openapi_components-schemas-pan-2:
-      type: string
-      description: Full digits of a card
-      pattern: ^\d{12,19}$
-      format: password
-      example: 1234123412341234
-    payoutType:
-      description: '- `online-gambling` - payouts of online casino winnings
-
-        - `general-funds-disbursement` - generic funds disbursement transaction used to push funds from a business to an individual cardholder for various purposes. **Currently not supported for Mastercard.**
-
-        '
-      type: string
-      enum:
-      - general-funds-disbursement
-      - online-gambling
-    FloatAmount:
-      type: object
-      required:
-      - value
-      - currency
-      additionalProperties: false
-      description: 'An amount encoded as an object with a `value` in minor units and a `currency` code.
-
-        '
-      properties:
-        value:
-          $ref: '#/components/schemas/floatAmountValue'
-        currency:
-          $ref: '#/components/schemas/openapi_components-schemas-currencyCode-4'
-    NonTieredEnum:
-      type: string
-      description: 'The type of tiering. The value `none` indicates that this fee is not tiered.
-
-        '
-      enum:
-      - none
-    InterchangeFeeEstimateRequest:
-      type: object
-      description: Elements required to construct an authorization request
-      additionalProperties: false
-      required:
-      - cardNumber
-      - amount
-      - merchantAcceptorKey
-      - chargeType
-      - threeDsAuthentication
-      - isRefund
-      properties:
-        cardNumber:
-          $ref: '#/components/schemas/openapi_components-schemas-pan-2'
-        amount:
-          description: The transaction amount
-          $ref: '#/components/schemas/IntegerAmount'
-        merchantAcceptorKey:
-          $ref: '#/components/schemas/openapi_components-schemas-acceptorKeyRef'
-        chargeType:
-          $ref: '#/components/schemas/components-schemas-ChargeType'
-        threeDsAuthentication:
-          description: 3DS settings
-          type: string
-          enum:
-          - none
-          - attempt
-          - success
-        isRefund:
-          description: Whether the transaction is a refund.
-          type: boolean
-        additionalNetworkProperties:
-          type: object
-          oneOf:
-          - $ref: '#/components/schemas/BancontactAdditionalNetworkProperties'
-    BancontactAdditionalNetworkProperties:
-      type: object
-      additionalProperties: false
-      properties:
-        transactionRoutingMeans:
-          description: 'Required for Bancontact fee estimate. Fee is based on the flow used.
-
-            '
-          type: string
-          enum:
-          - qr
-          - url
-          - wip
-          - man
-    TieredFeeRateTierProperties:
-      type: object
-      required:
-      - tierNumber
-      properties:
-        tierNumber:
-          $ref: '#/components/schemas/tierNumber'
-        upToIncluding:
-          $ref: '#/components/schemas/upToIncluding'
-        above:
-          $ref: '#/components/schemas/above'
-    mPos:
-      allOf:
-      - type: object
-        required:
-        - type
-        properties:
-          type:
-            type: string
-            enum:
-            - mpos
-      - $ref: '#/components/schemas/baseTerminal'
-      - type: object
-        required:
-        - attended
-        - capabilities
-        properties:
-          attended:
-            type: boolean
-            enum:
-            - true
-          capabilities:
-            type: array
-            description: 'The capabilities of the terminal. This can be one or multiple, and if more than one is specified it means that it is capable of all of those things.
-
-              '
-            items:
-              $ref: '#/components/schemas/terminalCapability'
-            example:
-            - contactChip
-            - contactlessChip
-            - contactMagStripe
-            - oneTap
-    openapi_components-schemas-ChargeType:
-      description: 'Describes the kind of charge the merchant wants to submit.
-
-        '
-      type: object
-      required:
-      - intent
-      - cardEntry
-      additionalProperties: true
-      properties:
-        intent:
-          $ref: '#/components/schemas/intent'
-        cardEntry:
-          $ref: '#/components/schemas/openapi_components-schemas-cardEntry-2'
-        payoutType:
-          $ref: '#/components/schemas/payoutType'
-        fundingType:
-          $ref: '#/components/schemas/fundingType'
-    NonTieredFeeBillingAmount:
-      allOf:
-      - $ref: '#/components/schemas/BaseBillingAmount'
-      - $ref: '#/components/schemas/NonTieredBillingAmount'
-    NonTieredFeeProperties:
-      type: object
-      required:
-      - tiering
-      - feeRate
-      - billingAmount
-      properties:
-        tiering:
-          $ref: '#/components/schemas/NonTieredEnum'
-        feeRate:
-          allOf:
-          - $ref: '#/components/schemas/BaseFeeRate'
-          - $ref: '#/components/schemas/NonTieredFeeRate'
-        billingAmount:
-          $ref: '#/components/schemas/NonTieredFeeBillingAmount'
-    conversionRateDate:
-      type: string
-      format: date
-      description: "The date of the conversion rate. Conversion rates are published (daily) by the _card schemes_. \nThe method of publication introduces certain delays. Hence, this date may lie before the `feeDate`.\n"
-    NonTieredFeeRate:
-      title: Non Tiered Fee Rate
-      description: 'A _(non-tiered)_ fee rate.
-
-        '
-      type: object
-      required:
-      - tiers
-      properties:
-        tiers:
-          type: array
-          items:
-            $ref: '#/components/schemas/NonTieredFeeRateTier'
-          minItems: 1
-          maxItems: 1
-    TieredFeeRate:
-      title: Tiered Fee Rate
-      description: 'A _tiered_ fee rate defines multiple fee rates or _tiers_. Tier applicability is determined by the `upToIncluding`
-
-        and `above` values. For a fee with `tiering` set to `count`, these properties hold the thresholds for the
-
-        total number of fees in the defined period. Conversely, for a fee with `tiering` set to `volume` these
-
-        properties define the threshold for the total source amount (denominated in the `feeRate` currency). The
-
-        aggregation period is defined by the `billingFrequency` field.
-
-        '
-      type: object
-      required:
-      - tiers
-      properties:
-        tiers:
-          type: array
-          items:
-            $ref: '#/components/schemas/TieredFeeRateTier'
-          minItems: 2
-          maxItems: 6
-    schemas-amountValue:
-      type: integer
-      format: int64
-      minimum: 0
-      maximum: 900000000
-      description: 'The amount in minor units. For example `$12.34` should be encoded as `1234`. Note that not all
-
-        currencies have 2 minor units. Some have three or zero.
-
-        '
-    tierId:
-      type: string
-      description: 'The (optional) Mastercard _"Tier ID"_ for this fee, as it appears on the Mastercard invoice.
-
-        Note that the presence of this field does not indicate if this fee has multiple _tiers_.
-
-        See the `tiering` field.
-
-        '
-      pattern: ^[A-Z0-9-]+$
-      default: '-'
+      pattern: ^[A-Z0-9]+$
       minLength: 1
       maxLength: 120
-    convertedSourceAmount:
-      title: Amount
-      description: 'The _source_ amount denominated in the `feeRate` currency. This field is only present when currency
+      description: 'The Mastercard _"Event ID"_ or the Visa _"Billing line"_, as they appear on the corresponding
 
-        conversion has been applied. Currency conversion is only applied if the `feeRate` currency is
-
-        different from the `sourceAmount` currency.
+        invoices.
 
         '
-      type: object
-      required:
-      - impact
-      - currency
-      - value
-      properties:
-        impact:
-          $ref: '#/components/schemas/sourceAmountImpact'
-        currency:
-          $ref: '#/components/schemas/openapi_components-schemas-currencyCode-5'
-        value:
-          $ref: '#/components/schemas/sourceAmountValue'
-    sourceAmount:
-      title: Amount
-      description: The _source_ amount of the transaction event, in either the original (transaction) currency or the settlement currency. This amount is the amount to which the fee applies.
-      type: object
-      required:
-      - impact
-      - currency
-      - value
-      properties:
-        impact:
-          $ref: '#/components/schemas/sourceAmountImpact'
-        currency:
-          $ref: '#/components/schemas/openapi_components-schemas-currencyCode-5'
-        value:
-          $ref: '#/components/schemas/sourceAmountValue'
-    IntegerAmount:
-      type: object
-      required:
-      - value
-      - currency
-      additionalProperties: false
-      description: 'An amount encoded as an object with a `value` in minor units and a `currency` code.
-
-        '
-      properties:
-        value:
-          $ref: '#/components/schemas/schemas-amountValue'
-        currency:
-          $ref: '#/components/schemas/currencyCodeEnum'
+    terminalCapability:
+      type: string
+      enum:
+      - contactChip
+      - contactlessChip
+      - contactMagStripe
+      - contactlessMagStripe
+      - offlineEncipheredPin
+      - offlinePlaintextPin
+      - onlinePin
+      - signature
+      - keyEntry
+      - noCvm
+      - oneTap
     PublicSchemeFeeEstimate:
       description: The scheme fee estimation.
       allOf:
       - $ref: '#/components/schemas/BaseSchemeFeeEstimate'
       - $ref: '#/components/schemas/PublicSchemeFeeEstimateFees'
-    PublicSchemeFeeEstimateFees:
-      type: object
-      required:
-      - fees
-      properties:
-        fees:
-          type: array
-          description: List of scheme fees hit.
-          items:
-            $ref: '#/components/schemas/PublicFee'
-    BaseBillingAmount:
-      type: object
-      description: 'The actual billing amount for this fee, denominated in the `feeRate` currency (if defined) or
-
-        the `sourceAmount` currency.
-
-        '
-      required:
-      - currency
-      properties:
-        currency:
-          $ref: '#/components/schemas/openapi_components-schemas-currencyCode-5'
-    MastercardFeeDesignator:
-      type: object
-      required:
-      - ird
-      - businessServiceArrangement
-      properties:
-        ird:
-          type: string
-        businessServiceArrangement:
-          $ref: '#/components/schemas/BusinessServiceArrangement'
-    FeeSegments:
-      type: object
-      description: Segments of which the total interchange fee is made up
-      properties:
-        currency:
-          description: Currency the fee is calculated in
-          $ref: '#/components/schemas/openapi_components-schemas-currencyCode-4'
-        fixed:
-          description: Fixed fee in minor units
-          type: number
-          format: float
-        basisPoints:
-          description: Basis points of transaction amount fee
-          type: number
-          format: float
-        max:
-          description: Maximum fee in minor units
-          type: number
-          format: float
-        min:
-          description: Minimum fee in minor units
-          type: number
-          format: float
-    errorInstance:
-      type: string
-      description: 'A reference that identifies the specific occurrence of the error. The instance is unique for every error.
-
-        '
-    schemas-ProblemDetail:
-      type: object
-      description: 'The ''problem detail'' object relays detailed information about the error that occurred. It is defined
-
-        by [RFC 7807 - Problem Details for HTTP APIs](https://tools.ietf.org/html/rfc7807).
-
-
-        Note that additional properties may be used to relay error specific information. For instance,
-
-        A Bad Request error may hold information about the individual validation errors found in the request.
-
-        '
-      properties:
-        type:
-          type: string
-          description: 'An absolute URI that identifies the problem type.
-
-            '
-          default: about:blank
-          example: https://api.silverflow.co/problem/constraint-violation
-        title:
-          type: string
-          description: 'A short, summary of the problem type. Written in english and readable
-
-            for engineers (usually not suited for non technical stakeholders and
-
-            not localized);
-
-            '
-          example: Service Unavailable
-        status:
-          type: integer
-          format: int32
-          description: 'The HTTP status code generated by the origin server for this occurrence
-
-            of the problem.
-
-            '
-          minimum: 100
-          maximum: 599
-          example: 503
-        detail:
-          type: string
-          description: 'A human readable explanation specific to this occurrence of the
-
-            problem.
-
-            '
-          example: Connection to database timed out
-        instance:
-          type: string
-          description: 'An absolute URI that identifies the specific occurrence of the problem.
-
-            It may or may not yield further information if dereferenced.
-
-            '
-      additionalProperties: true
-      example:
-        type: https://api.silverflow.co/problem/bad-request
-        title: Bad Request
-        status: 400
-        detail: The request could not be processed as it contained an invalid request entity
-        instance: https://api.silverflow.co/v1/merchants/mct-1hPdFqhgstYTUhlphPDp
-        validationErrors:
-        - The value of property 'status' should be one of 'idle', 'active' or 'archived'
-        - The value of property 'tags.0.businessId' must not be longer than 255 characters
     ConversionRate:
       title: Conversion Rate
       type: object
@@ -2468,893 +3226,185 @@ components:
           $ref: '#/components/schemas/currencyRateValue'
         operation:
           $ref: '#/components/schemas/operation'
-    errorStatus:
-      type: integer
-      format: int32
-      description: 'The HTTP status code generated by the origin server for this occurrence
-
-        of the problem.
-
-        '
-    terminalCapability:
-      type: string
-      enum:
-      - contactChip
-      - contactlessChip
-      - contactMagStripe
-      - contactlessMagStripe
-      - offlineEncipheredPin
-      - offlinePlaintextPin
-      - onlinePin
-      - signature
-      - keyEntry
-      - noCvm
-      - oneTap
-    feeId:
-      type: string
-      pattern: ^[A-Z0-9]+$
-      minLength: 1
-      maxLength: 120
-      description: 'The Mastercard _"Event ID"_ or the Visa _"Billing line"_, as they appear on the corresponding
-
-        invoices.
-
-        '
-    operation:
-      type: string
-      enum:
-      - divide
-      - multiply
-    errorDetail:
-      type: string
-      description: 'A human readable explanation specific to this occurrence of the problem.
-
-        '
-    BaseBillingAmountTier:
-      title: Base Billing Amount Tier
+    baseTerminal:
       type: object
       required:
-      - impact
-      - value
+      - attended
       properties:
-        impact:
-          $ref: '#/components/schemas/impact'
-        value:
-          $ref: '#/components/schemas/value'
-    openapi_components-schemas-currencyCode-5:
+        attended:
+          type: boolean
+          description: Whether the terminal is attended or not.
+    TieredBillingAmountTier:
+      title: Tiered Billing Amount Tier
+      allOf:
+      - $ref: '#/components/schemas/BaseBillingAmountTier'
+      - $ref: '#/components/schemas/TieredBillingAmountTierProperties'
+    fundingType:
       type: string
       enum:
-      - EUR
-      - USD
-      - AFN
-      - ALL
-      - DZD
-      - AOA
-      - XCD
-      - ARS
-      - AMD
-      - AWG
-      - AUD
-      - AZN
-      - BSD
-      - BHD
-      - BDT
-      - BBD
-      - BYN
-      - BZD
-      - XOF
-      - BMD
-      - INR
-      - BTN
-      - BOB
-      - BAM
-      - BWP
-      - NOK
-      - BRL
-      - BND
-      - BGN
-      - BIF
-      - CVE
-      - KHR
-      - XAF
-      - CAD
-      - KYD
-      - CLP
-      - CNY
-      - COP
-      - KMF
-      - CDF
-      - NZD
-      - CRC
-      - HRK
-      - CUP
-      - CUC
-      - ANG
-      - CZK
-      - DKK
-      - DJF
-      - DOP
-      - EGP
-      - SVC
-      - ERN
-      - ETB
-      - FKP
-      - FJD
-      - XPF
-      - GMD
-      - GEL
-      - GHS
-      - GIP
-      - GTQ
-      - GBP
-      - GNF
-      - GYD
-      - HTG
-      - HNL
-      - HKD
-      - HUF
-      - ISK
-      - IDR
-      - IRR
-      - IQD
-      - ILS
-      - JMD
-      - JPY
-      - JOD
-      - KZT
-      - KES
-      - KPW
-      - KRW
-      - KWD
-      - KGS
-      - LAK
-      - LBP
-      - LSL
-      - ZAR
-      - LRD
-      - LYD
-      - CHF
-      - MOP
-      - MKD
-      - MGA
-      - MWK
-      - MYR
-      - MVR
-      - MRU
-      - MUR
-      - MXN
-      - MDL
-      - MNT
-      - MAD
-      - MZN
-      - MMK
-      - NAD
-      - NPR
-      - NIO
-      - NGN
-      - OMR
-      - PKR
-      - PAB
-      - PGK
-      - PYG
-      - PEN
-      - PHP
-      - PLN
-      - QAR
-      - RON
-      - RUB
-      - RWF
-      - SHP
-      - WST
-      - STN
-      - SAR
-      - RSD
-      - SCR
-      - SLL
-      - SGD
-      - SBD
-      - SOS
-      - SSP
-      - LKR
-      - SDG
-      - SRD
-      - SZL
-      - SEK
-      - SYP
-      - TWD
-      - TJS
-      - TZS
-      - THB
-      - TOP
-      - TTD
-      - TND
-      - TRY
-      - TMT
-      - UGX
-      - UAH
-      - AED
-      - UYU
-      - UYW
-      - UZS
-      - VUV
-      - VES
-      - VND
-      - YER
-      - ZMW
-      - ZWL
-      description: 'The three-letter ISO code of the currency.
-
-
-
-        **European ISO Currency Codes**
-
-
-        <details>
-
-
-        | Country — Currency | Code | Numeric | Minor Units |
-
-        | ------------------ | ---- | ------- | ----------- |
-
-        | Åland Islands — Euro | EUR | 978 | 2 |
-
-        | Andorra — Euro | EUR | 978 | 2 |
-
-        | Austria — Euro | EUR | 978 | 2 |
-
-        | Belgium — Euro | EUR | 978 | 2 |
-
-        | Cyprus — Euro | EUR | 978 | 2 |
-
-        | Estonia — Euro | EUR | 978 | 2 |
-
-        | European Union — Euro | EUR | 978 | 2 |
-
-        | Finland — Euro | EUR | 978 | 2 |
-
-        | France — Euro | EUR | 978 | 2 |
-
-        | French Guiana — Euro | EUR | 978 | 2 |
-
-        | French Southern Territories (The) — Euro | EUR | 978 | 2 |
-
-        | Germany — Euro | EUR | 978 | 2 |
-
-        | Greece — Euro | EUR | 978 | 2 |
-
-        | Guadeloupe — Euro | EUR | 978 | 2 |
-
-        | Holy See (The) — Euro | EUR | 978 | 2 |
-
-        | Ireland — Euro | EUR | 978 | 2 |
-
-        | Italy — Euro | EUR | 978 | 2 |
-
-        | Latvia — Euro | EUR | 978 | 2 |
-
-        | Lithuania — Euro | EUR | 978 | 2 |
-
-        | Luxembourg — Euro | EUR | 978 | 2 |
-
-        | Malta — Euro | EUR | 978 | 2 |
-
-        | Martinique — Euro | EUR | 978 | 2 |
-
-        | Mayotte — Euro | EUR | 978 | 2 |
-
-        | Monaco — Euro | EUR | 978 | 2 |
-
-        | Montenegro — Euro | EUR | 978 | 2 |
-
-        | Netherlands (The) — Euro | EUR | 978 | 2 |
-
-        | Portugal — Euro | EUR | 978 | 2 |
-
-        | Réunion — Euro | EUR | 978 | 2 |
-
-        | Saint Barthélemy — Euro | EUR | 978 | 2 |
-
-        | Saint Martin (French Part) — Euro | EUR | 978 | 2 |
-
-        | Saint Pierre And Miquelon — Euro | EUR | 978 | 2 |
-
-        | San Marino — Euro | EUR | 978 | 2 |
-
-        | Slovakia — Euro | EUR | 978 | 2 |
-
-        | Slovenia — Euro | EUR | 978 | 2 |
-
-        | Spain — Euro | EUR | 978 | 2 |
-
-
-        </details>
-
-
-        **US ISO Currency Codes**
-
-
-        <details>
-
-
-        | Country — Currency | Code | Numeric | Minor Units |
-
-        | ------------------ | ---- | ------- | ----------- |
-
-        | American Samoa — US Dollar | USD | 840 | 2 |
-
-        | Bonaire, Sint Eustatius And Saba — US Dollar | USD | 840 | 2 |
-
-        | British Indian Ocean Territory (The) — US Dollar | USD | 840 | 2 |
-
-        | Ecuador — US Dollar | USD | 840 | 2 |
-
-        | El Salvador — US Dollar | USD | 840 | 2 |
-
-        | Guam — US Dollar | USD | 840 | 2 |
-
-        | Haiti — US Dollar | USD | 840 | 2 |
-
-        | Marshall Islands (The) — US Dollar | USD | 840 | 2 |
-
-        | Micronesia (Federated States Of) — US Dollar | USD | 840 | 2 |
-
-        | Northern Mariana Islands (The) — US Dollar | USD | 840 | 2 |
-
-        | Palau — US Dollar | USD | 840 | 2 |
-
-        | Panama — US Dollar | USD | 840 | 2 |
-
-        | Puerto Rico — US Dollar | USD | 840 | 2 |
-
-        | Timor-leste — US Dollar | USD | 840 | 2 |
-
-        | Turks And Caicos Islands (The) — US Dollar | USD | 840 | 2 |
-
-        | United States Minor Outlying Islands (The) — US Dollar | USD | 840 | 2 |
-
-        | United States Of America (The) — US Dollar | USD | 840 | 2 |
-
-        | Virgin Islands (British) — US Dollar | USD | 840 | 2 |
-
-        | Virgin Islands (U.s.) — US Dollar | USD | 840 | 2 |
-
-
-        </details>
-
-
-        **Other ISO Currency Codes**
-
-
-        <details>
-
-
-        | Country — Currency | Code | Numeric | Minor Units |
-
-        | ------------------ | ---- | ------- | ----------- |
-
-        | Afghanistan — Afghani | AFN | 971 | 2 |
-
-        | Albania — Lek | ALL | 008 | 2 |
-
-        | Algeria — Algerian Dinar | DZD | 012 | 2 |
-
-        | Angola — Kwanza | AOA | 973 | 2 |
-
-        | Anguilla — East Caribbean Dollar | XCD | 951 | 2 |
-
-        | Antigua And Barbuda — East Caribbean Dollar | XCD | 951 | 2 |
-
-        | Argentina — Argentine Peso | ARS | 032 | 2 |
-
-        | Armenia — Armenian Dram | AMD | 051 | 2 |
-
-        | Aruba — Aruban Florin | AWG | 533 | 2 |
-
-        | Australia — Australian Dollar | AUD | 036 | 2 |
-
-        | Azerbaijan — Azerbaijan Manat | AZN | 944 | 2 |
-
-        | Bahamas (The) — Bahamian Dollar | BSD | 044 | 2 |
-
-        | Bahrain — Bahraini Dinar | BHD | 048 | 3 |
-
-        | Bangladesh — Taka | BDT | 050 | 2 |
-
-        | Barbados — Barbados Dollar | BBD | 052 | 2 |
-
-        | Belarus — Belarusian Ruble | BYN | 933 | 2 |
-
-        | Belize — Belize Dollar | BZD | 084 | 2 |
-
-        | Benin — CFA Franc BCEAO | XOF | 952 | 0 |
-
-        | Bermuda — Bermudian Dollar | BMD | 060 | 2 |
-
-        | Bhutan — Indian Rupee | INR | 356 | 2 |
-
-        | Bhutan — Ngultrum | BTN | 064 | 2 |
-
-        | Bolivia (Plurinational State Of) — Boliviano | BOB | 068 | 2 |
-
-        | Bosnia And Herzegovina — Convertible Mark | BAM | 977 | 2 |
-
-        | Botswana — Pula | BWP | 072 | 2 |
-
-        | Bouvet Island — Norwegian Krone | NOK | 578 | 2 |
-
-        | Brazil — Brazilian Real | BRL | 986 | 2 |
-
-        | Brunei Darussalam — Brunei Dollar | BND | 096 | 2 |
-
-        | Bulgaria — Bulgarian Lev | BGN | 975 | 2 |
-
-        | Burkina Faso — CFA Franc BCEAO | XOF | 952 | 0 |
-
-        | Burundi — Burundi Franc | BIF | 108 | 0 |
-
-        | Cabo Verde — Cabo Verde Escudo | CVE | 132 | 2 |
-
-        | Cambodia — Riel | KHR | 116 | 2 |
-
-        | Cameroon — CFA Franc BEAC | XAF | 950 | 0 |
-
-        | Canada — Canadian Dollar | CAD | 124 | 2 |
-
-        | Cayman Islands (The) — Cayman Islands Dollar | KYD | 136 | 2 |
-
-        | Central African Republic (The) — CFA Franc BEAC | XAF | 950 | 0 |
-
-        | Chad — CFA Franc BEAC | XAF | 950 | 0 |
-
-        | Chile — Chilean Peso | CLP | 152 | 0 |
-
-        | China — Yuan Renminbi | CNY | 156 | 2 |
-
-        | Christmas Island — Australian Dollar | AUD | 036 | 2 |
-
-        | Cocos (Keeling) Islands (The) — Australian Dollar | AUD | 036 | 2 |
-
-        | Colombia — Colombian Peso | COP | 170 | 2 |
-
-        | Comoros (The) — Comorian Franc | KMF | 174 | 0 |
-
-        | Congo (The Democratic Republic Of The) — Congolese Franc | CDF | 976 | 2 |
-
-        | Congo (The) — CFA Franc BEAC | XAF | 950 | 0 |
-
-        | Cook Islands (The) — New Zealand Dollar | NZD | 554 | 2 |
-
-        | Costa Rica — Costa Rican Colon | CRC | 188 | 2 |
-
-        | Côte D''ivoire — CFA Franc BCEAO | XOF | 952 | 0 |
-
-        | Croatia — Kuna | HRK | 191 | 2 |
-
-        | Cuba — Cuban Peso | CUP | 192 | 2 |
-
-        | Cuba — Peso Convertible | CUC | 931 | 2 |
-
-        | Curaçao — Netherlands Antillean Guilder | ANG | 532 | 2 |
-
-        | Czechia — Czech Koruna | CZK | 203 | 2 |
-
-        | Denmark — Danish Krone | DKK | 208 | 2 |
-
-        | Djibouti — Djibouti Franc | DJF | 262 | 0 |
-
-        | Dominica — East Caribbean Dollar | XCD | 951 | 2 |
-
-        | Dominican Republic (The) — Dominican Peso | DOP | 214 | 2 |
-
-        | Egypt — Egyptian Pound | EGP | 818 | 2 |
-
-        | El Salvador — El Salvador Colon | SVC | 222 | 2 |
-
-        | Equatorial Guinea — CFA Franc BEAC | XAF | 950 | 0 |
-
-        | Eritrea — Nakfa | ERN | 232 | 2 |
-
-        | Ethiopia — Ethiopian Birr | ETB | 230 | 2 |
-
-        | Falkland Islands (The) [Malvinas] — Falkland Islands Pound | FKP | 238 | 2 |
-
-        | Faroe Islands (The) — Danish Krone | DKK | 208 | 2 |
-
-        | Fiji — Fiji Dollar | FJD | 242 | 2 |
-
-        | French Polynesia — CFP Franc | XPF | 953 | 0 |
-
-        | Gabon — CFA Franc BEAC | XAF | 950 | 0 |
-
-        | Gambia (The) — Dalasi | GMD | 270 | 2 |
-
-        | Georgia — Lari | GEL | 981 | 2 |
-
-        | Ghana — Ghana Cedi | GHS | 936 | 2 |
-
-        | Gibraltar — Gibraltar Pound | GIP | 292 | 2 |
-
-        | Greenland — Danish Krone | DKK | 208 | 2 |
-
-        | Grenada — East Caribbean Dollar | XCD | 951 | 2 |
-
-        | Guatemala — Quetzal | GTQ | 320 | 2 |
-
-        | Guernsey — Pound Sterling | GBP | 826 | 2 |
-
-        | Guinea — Guinean Franc | GNF | 324 | 0 |
-
-        | Guinea-bissau — CFA Franc BCEAO | XOF | 952 | 0 |
-
-        | Guyana — Guyana Dollar | GYD | 328 | 2 |
-
-        | Haiti — Gourde | HTG | 332 | 2 |
-
-        | Heard Island And Mcdonald Islands — Australian Dollar | AUD | 036 | 2 |
-
-        | Honduras — Lempira | HNL | 340 | 2 |
-
-        | Hong Kong — Hong Kong Dollar | HKD | 344 | 2 |
-
-        | Hungary — Forint | HUF | 348 | 2 |
-
-        | Iceland — Iceland Krona | ISK | 352 | 0 |
-
-        | India — Indian Rupee | INR | 356 | 2 |
-
-        | Indonesia — Rupiah | IDR | 360 | 2 |
-
-        | Iran (Islamic Republic Of) — Iranian Rial | IRR | 364 | 2 |
-
-        | Iraq — Iraqi Dinar | IQD | 368 | 3 |
-
-        | Isle Of Man — Pound Sterling | GBP | 826 | 2 |
-
-        | Israel — New Israeli Sheqel | ILS | 376 | 2 |
-
-        | Jamaica — Jamaican Dollar | JMD | 388 | 2 |
-
-        | Japan — Yen | JPY | 392 | 0 |
-
-        | Jersey — Pound Sterling | GBP | 826 | 2 |
-
-        | Jordan — Jordanian Dinar | JOD | 400 | 3 |
-
-        | Kazakhstan — Tenge | KZT | 398 | 2 |
-
-        | Kenya — Kenyan Shilling | KES | 404 | 2 |
-
-        | Kiribati — Australian Dollar | AUD | 036 | 2 |
-
-        | Korea (The Democratic People’s Republic Of) — North Korean Won | KPW | 408 | 2 |
-
-        | Korea (The Republic Of) — Won | KRW | 410 | 0 |
-
-        | Kuwait — Kuwaiti Dinar | KWD | 414 | 3 |
-
-        | Kyrgyzstan — Som | KGS | 417 | 2 |
-
-        | Lao People’s Democratic Republic (The) — Lao Kip | LAK | 418 | 2 |
-
-        | Lebanon — Lebanese Pound | LBP | 422 | 2 |
-
-        | Lesotho — Loti | LSL | 426 | 2 |
-
-        | Lesotho — Rand | ZAR | 710 | 2 |
-
-        | Liberia — Liberian Dollar | LRD | 430 | 2 |
-
-        | Libya — Libyan Dinar | LYD | 434 | 3 |
-
-        | Liechtenstein — Swiss Franc | CHF | 756 | 2 |
-
-        | Macao — Pataca | MOP | 446 | 2 |
-
-        | Macedonia (The Former Yugoslav Republic Of) — Denar | MKD | 807 | 2 |
-
-        | Madagascar — Malagasy Ariary | MGA | 969 | 2 |
-
-        | Malawi — Malawi Kwacha | MWK | 454 | 2 |
-
-        | Malaysia — Malaysian Ringgit | MYR | 458 | 2 |
-
-        | Maldives — Rufiyaa | MVR | 462 | 2 |
-
-        | Mali — CFA Franc BCEAO | XOF | 952 | 0 |
-
-        | Mauritania — Ouguiya | MRU | 929 | 2 |
-
-        | Mauritius — Mauritius Rupee | MUR | 480 | 2 |
-
-        | Mexico — Mexican Peso | MXN | 484 | 2 |
-
-        | Moldova (The Republic Of) — Moldovan Leu | MDL | 498 | 2 |
-
-        | Mongolia — Tugrik | MNT | 496 | 2 |
-
-        | Montserrat — East Caribbean Dollar | XCD | 951 | 2 |
-
-        | Morocco — Moroccan Dirham | MAD | 504 | 2 |
-
-        | Mozambique — Mozambique Metical | MZN | 943 | 2 |
-
-        | Myanmar — Kyat | MMK | 104 | 2 |
-
-        | Namibia — Namibia Dollar | NAD | 516 | 2 |
-
-        | Namibia — Rand | ZAR | 710 | 2 |
-
-        | Nauru — Australian Dollar | AUD | 036 | 2 |
-
-        | Nepal — Nepalese Rupee | NPR | 524 | 2 |
-
-        | New Caledonia — CFP Franc | XPF | 953 | 0 |
-
-        | New Zealand — New Zealand Dollar | NZD | 554 | 2 |
-
-        | Nicaragua — Cordoba Oro | NIO | 558 | 2 |
-
-        | Niger (The) — CFA Franc BCEAO | XOF | 952 | 0 |
-
-        | Nigeria — Naira | NGN | 566 | 2 |
-
-        | Niue — New Zealand Dollar | NZD | 554 | 2 |
-
-        | Norfolk Island — Australian Dollar | AUD | 036 | 2 |
-
-        | Norway — Norwegian Krone | NOK | 578 | 2 |
-
-        | Oman — Rial Omani | OMR | 512 | 3 |
-
-        | Pakistan — Pakistan Rupee | PKR | 586 | 2 |
-
-        | Panama — Balboa | PAB | 590 | 2 |
-
-        | Papua New Guinea — Kina | PGK | 598 | 2 |
-
-        | Paraguay — Guarani | PYG | 600 | 0 |
-
-        | Peru — Sol | PEN | 604 | 2 |
-
-        | Philippines (The) — Philippine Peso | PHP | 608 | 2 |
-
-        | Pitcairn — New Zealand Dollar | NZD | 554 | 2 |
-
-        | Poland — Zloty | PLN | 985 | 2 |
-
-        | Qatar — Qatari Rial | QAR | 634 | 2 |
-
-        | Romania — Romanian Leu | RON | 946 | 2 |
-
-        | Russian Federation (The) — Russian Ruble | RUB | 643 | 2 |
-
-        | Rwanda — Rwanda Franc | RWF | 646 | 0 |
-
-        | Saint Helena, Ascension And Tristan Da Cunha — Saint Helena Pound | SHP | 654 | 2 |
-
-        | Saint Kitts And Nevis — East Caribbean Dollar | XCD | 951 | 2 |
-
-        | Saint Lucia — East Caribbean Dollar | XCD | 951 | 2 |
-
-        | Saint Vincent And The Grenadines — East Caribbean Dollar | XCD | 951 | 2 |
-
-        | Samoa — Tala | WST | 882 | 2 |
-
-        | Sao Tome And Principe — Dobra | STN | 930 | 2 |
-
-        | Saudi Arabia — Saudi Riyal | SAR | 682 | 2 |
-
-        | Senegal — CFA Franc BCEAO | XOF | 952 | 0 |
-
-        | Serbia — Serbian Dinar | RSD | 941 | 2 |
-
-        | Seychelles — Seychelles Rupee | SCR | 690 | 2 |
-
-        | Sierra Leone — Leone | SLL | 694 | 2 |
-
-        | Singapore — Singapore Dollar | SGD | 702 | 2 |
-
-        | Sint Maarten (Dutch Part) — Netherlands Antillean Guilder | ANG | 532 | 2 |
-
-        | Solomon Islands — Solomon Islands Dollar | SBD | 090 | 2 |
-
-        | Somalia — Somali Shilling | SOS | 706 | 2 |
-
-        | South Africa — Rand | ZAR | 710 | 2 |
-
-        | South Sudan — South Sudanese Pound | SSP | 728 | 2 |
-
-        | Sri Lanka — Sri Lanka Rupee | LKR | 144 | 2 |
-
-        | Sudan (The) — Sudanese Pound | SDG | 938 | 2 |
-
-        | Suriname — Surinam Dollar | SRD | 968 | 2 |
-
-        | Svalbard And Jan Mayen — Norwegian Krone | NOK | 578 | 2 |
-
-        | Eswatini — Lilangeni | SZL | 748 | 2 |
-
-        | Sweden — Swedish Krona | SEK | 752 | 2 |
-
-        | Switzerland — Swiss Franc | CHF | 756 | 2 |
-
-        | Syrian Arab Republic — Syrian Pound | SYP | 760 | 2 |
-
-        | Taiwan (Province Of China) — New Taiwan Dollar | TWD | 901 | 2 |
-
-        | Tajikistan — Somoni | TJS | 972 | 2 |
-
-        | Tanzania, United Republic Of — Tanzanian Shilling | TZS | 834 | 2 |
-
-        | Thailand — Baht | THB | 764 | 2 |
-
-        | Togo — CFA Franc BCEAO | XOF | 952 | 0 |
-
-        | Tokelau — New Zealand Dollar | NZD | 554 | 2 |
-
-        | Tonga — Pa’anga | TOP | 776 | 2 |
-
-        | Trinidad And Tobago — Trinidad and Tobago Dollar | TTD | 780 | 2 |
-
-        | Tunisia — Tunisian Dinar | TND | 788 | 3 |
-
-        | Turkey — Turkish Lira | TRY | 949 | 2 |
-
-        | Turkmenistan — Turkmenistan New Manat | TMT | 934 | 2 |
-
-        | Tuvalu — Australian Dollar | AUD | 036 | 2 |
-
-        | Uganda — Uganda Shilling | UGX | 800 | 0 |
-
-        | Ukraine — Hryvnia | UAH | 980 | 2 |
-
-        | United Arab Emirates (The) — UAE Dirham | AED | 784 | 2 |
-
-        | United Kingdom Of Great Britain And Northern Ireland (The) — Pound Sterling | GBP | 826 | 2 |
-
-        | Uruguay — Peso Uruguayo | UYU | 858 | 2 |
-
-        | Uruguay — Unidad Previsional | UYW | 927 | 4 |
-
-        | Uzbekistan — Uzbekistan Sum | UZS | 860 | 2 |
-
-        | Vanuatu — Vatu | VUV | 548 | 0 |
-
-        | Venezuela (Bolivarian Republic Of) — Bolívar Soberano | VES | 928 | 2 |
-
-        | Viet Nam — Dong | VND | 704 | 0 |
-
-        | Wallis And Futuna — CFP Franc | XPF | 953 | 0 |
-
-        | Western Sahara — Moroccan Dirham | MAD | 504 | 2 |
-
-        | Yemen — Yemeni Rial | YER | 886 | 2 |
-
-        | Zambia — Zambian Kwacha | ZMW | 967 | 2 |
-
-        | Zimbabwe — Zimbabwe Dollar | ZWL | 932 | 2 |
-
-
-        </details>'
-      externalDocs:
-        description: Find more info here
-        url: https://www.iso.org/iso-4217-currency-codes.html
-      example: EUR
-    pos:
-      allOf:
-      - type: object
-        required:
-        - type
-        properties:
-          type:
-            type: string
-            enum:
-            - pos
-      - $ref: '#/components/schemas/baseTerminal'
-      - type: object
-        required:
-        - capabilities
-        properties:
-          capabilities:
-            type: array
-            description: 'The capabilities of the terminal. This can be one or multiple, and if more than one is specified it means that it is capable of all of those things.
-
-              '
-            items:
-              $ref: '#/components/schemas/terminalCapability'
-            example:
-            - contactChip
-            - contactlessChip
-            - contactMagStripe
-            - oneTap
-    TieredFeeRateTier:
-      title: Tiered Fee Rate Tier
-      allOf:
-      - $ref: '#/components/schemas/BaseFeeRateTier'
-      - $ref: '#/components/schemas/TieredFeeRateTierProperties'
-    components-schemas-ChargeType:
-      description: 'Describes the kind of charge the merchant wants to submit.
+      - account-to-account
+      - wallet-transfer
+    schemas-errorType:
+      type: string
+      description: 'A relative URI reference, this property can be used to perform automated error handling.
 
         '
+      enum:
+      - /silverflow/problems/schemeFees/not-found
+      - /silverflow/problems/schemeFees/card-network-mismatch
+      - /silverflow/problems/schemeFees/card-network-not-supported
+      - /silverflow/problems/bad-request
+      - /silverflow/problems/internal-server-error
+    TieredBillingAmount:
+      title: Tiered Billing Amount
+      type: object
+      required:
+      - amounts
+      properties:
+        amounts:
+          type: array
+          description: 'A list of amounts. Each amount defines a billing amount value for the given tier, and a
+
+            threshold value (`upToIncluding` or `above`) to which it applies.
+
+            '
+          items:
+            $ref: '#/components/schemas/TieredBillingAmountTier'
+          minItems: 2
+          maxItems: 6
+    schemas-ThreeDsAuthentication:
+      description: 3DS settings
+      type: string
+      enum:
+      - none
+      - attempt
+      - success
+    BusinessServiceArrangement:
+      type: object
+      required:
+      - cardProgramIdentifier
+      - type
+      - idCode
+      properties:
+        cardProgramIdentifier:
+          type: string
+        type:
+          type: string
+        idCode:
+          type: string
+        priority:
+          type: string
+        selectionEnforcementIndicator:
+          type: string
+    FloatAmount:
+      type: object
+      required:
+      - value
+      - currency
+      additionalProperties: false
+      description: 'An amount encoded as an object with a `value` in minor units and a `currency` code.
+
+        '
+      properties:
+        value:
+          $ref: '#/components/schemas/floatAmountValue'
+        currency:
+          $ref: '#/components/schemas/openapi_components-schemas-currencyCode-4'
+    NonTieredFeeProperties:
+      type: object
+      required:
+      - tiering
+      - feeRate
+      - billingAmount
+      properties:
+        tiering:
+          $ref: '#/components/schemas/NonTieredEnum'
+        feeRate:
+          allOf:
+          - $ref: '#/components/schemas/BaseFeeRate'
+          - $ref: '#/components/schemas/NonTieredFeeRate'
+        billingAmount:
+          $ref: '#/components/schemas/NonTieredFeeBillingAmount'
+    BancontactAdditionalNetworkProperties:
       type: object
       additionalProperties: false
-      required:
-      - intent
-      - cardEntry
-      - order
       properties:
-        intent:
-          $ref: '#/components/schemas/intent'
-        cardEntry:
-          $ref: '#/components/schemas/openapi_components-schemas-cardEntry'
-        order:
-          $ref: '#/components/schemas/components-schemas-order'
-        sequence:
-          $ref: '#/components/schemas/components-schemas-sequence'
-        terminalEntryMode:
-          $ref: '#/components/schemas/components-schemas-terminalEntryMode'
-        terminal:
-          $ref: '#/components/schemas/terminal'
-        pinUsed:
-          type: boolean
-    feeRateType:
-      type: string
-      enum:
-      - fixed
-      - basisPoints
-      description: 'The type of fee. The value `fixed` indicates that the `value` field holds a _fixed_ fee amount,
+        transactionRoutingMeans:
+          description: 'Required for Bancontact fee estimate. Fee is based on the flow used.
 
-        denominated in the specified `currency`. The value `basisPoints` indicates that the `value`
-
-        fields holds the (decimal) number of basis points of the fee, applied to the `sourceAmount`
-
-        or `convertedSourceAmount` in case the `currency` does not match the `sourceAmount` currency.
-
-        '
-    floatAmountValue:
-      type: number
-      format: float
-      description: 'The amount in minor units with decimal precision. For example `$0.345` should be encoded as `34.5`. Note that not all
-
-        currencies have 2 minor units. Some have three or zero.
-
-        '
-    NonTieredFeeRateTier:
-      title: Non-Tiered Fee Rate Tier
-      allOf:
-      - $ref: '#/components/schemas/BaseFeeRateTier'
-    softPos:
-      allOf:
-      - type: object
-        required:
-        - type
-        properties:
-          type:
+            '
+          type: string
+          enum:
+          - qr
+          - url
+          - wip
+          - man
+  responses:
+    responses-BadRequestError:
+      description: The request was malformed. See the response body for details
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/schemas-ProblemDetail'
+          example:
+            type: https://datatracker.ietf.org/doc/html/rfc2616#section-10.4.1
+            title: Bad Request
+            status: 400
+            detail: The request could not be processed as it contained an invalid request entity
+            instance: https://api.silverflow.co/v1/merchants/mct-1hPdFqhgstYTUhlphPDp
+            validationErrors:
+            - The value of property 'status' should be one of 'idle', 'active' or 'archived'
+            - The value of property 'tags.0.businessId' must not be longer than 255 characters
+    responses-NotFoundError:
+      description: The requested resource was not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/schemas-ProblemDetail'
+          example:
+            type: https://datatracker.ietf.org/doc/html/rfc2616#section-10.4.5
+            title: Not Found
+            status: 404
+            detail: The entity referenced in the request could not be found
+            instance: https://api.silverflow.co/v1/merchants/mct-1hPdFqhgstYTUhlphPDp
+    responses-TooManyRequestsError:
+      description: The number of requests (per minute) has exceeded the configured maximum
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/schemas-ProblemDetail'
+          example:
+            type: https://api.silverflow.co/problem/too-many-requests
+            title: Too Many Requests
+            status: 429
+            detail: The number of requests performed by the client has exceeded the configured maximum for a given period
+    responses-ForbiddenError:
+      description: The authenticated client is forbidden to make the request for the resource identified.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/schemas-ProblemDetail'
+          example:
+            type: https://datatracker.ietf.org/doc/html/rfc2616#section-10.4.4
+            title: Forbidden
+            status: 403
+            detail: The server is refusing to execute the request for the current authenticated user
+            instance: https://api.silverflow.co/v1/merchants/mct-1hPdFqhgstYTUhlphPDp
+    responses-UnauthorizedError:
+      description: Authentication information is missing or invalid
+      headers:
+        WWW_Authenticate:
+          schema:
             type: string
-            enum:
-            - softpos
-      - $ref: '#/components/schemas/baseTerminal'
-      - type: object
-        required:
-        - attended
-        - capabilities
-        properties:
-          attended:
-            type: boolean
-            enum:
-            - true
-          capabilities:
-            type: array
-            description: 'The capabilities of the terminal. This can be one or multiple, and if more than one is specified it means that it is capable of all of those things.
-
-              '
-            items:
-              $ref: '#/components/schemas/softPosTerminalCapability'
-            example:
-            - onlinePin
-            - contactlessChip
-            - noCvm
-            - oneTap
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/schemas-ProblemDetail'
+          example:
+            type: https://datatracker.ietf.org/doc/html/rfc2616#section-10.4.2
+            title: Unauthorized
+            status: 401
+            detail: The credentials supplied in the request are either missing, invalid, or not applicable in the current scope
   examples:
     non-tiered-fee:
       summary: Non-Tiered Fee
@@ -3391,48 +3441,6 @@ components:
           target: USD
           rate: '1.05'
           operation: multiply
-    fee-request-visa:
-      summary: Fee Request Visa
-      value:
-        cardNumber: '4200350000000801'
-        amount:
-          value: 3000
-          currency: EUR
-        merchantAcceptorKey: mac-1JRadf2ffdfrdPMf2XrS2
-        chargeType:
-          intent: purchase
-          cardEntry: e-commerce
-          order: checkout
-        threeDsAuthentication: none
-        isRefund: false
-    fees-interchange-estimate-response:
-      summary: Example of an Fee Interchange Estimate response
-      value:
-        segments:
-          currency: USD
-          fixed: 10
-          basisPoints: 15
-          max: 200
-          min: 20
-        feeDate: '2021-12-01'
-        amount:
-          value: 99
-          currency: EUR
-        rates:
-        - date: '2021-12-04'
-          source: USD
-          target: EUR
-          operation: multiply
-          type: buy
-          rate: 84596
-          exponent: 5
-        designator:
-          ird: '73'
-          businessServiceArrangement:
-            cardProgramIdentifier: DMC
-            type: '2'
-            idCode: '050002'
-            priority: '04'
     tiered-fee:
       summary: Tiered Fee
       value:
@@ -3518,72 +3526,48 @@ components:
           target: USD
           rate: '1.05'
           operation: multiply
-  responses:
-    responses-ForbiddenError:
-      description: The authenticated client is forbidden to make the request for the resource identified.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/schemas-ProblemDetail'
-          example:
-            type: https://datatracker.ietf.org/doc/html/rfc2616#section-10.4.4
-            title: Forbidden
-            status: 403
-            detail: The server is refusing to execute the request for the current authenticated user
-            instance: https://api.silverflow.co/v1/merchants/mct-1hPdFqhgstYTUhlphPDp
-    responses-BadRequestError:
-      description: The request was malformed. See the response body for details
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/schemas-ProblemDetail'
-          example:
-            type: https://datatracker.ietf.org/doc/html/rfc2616#section-10.4.1
-            title: Bad Request
-            status: 400
-            detail: The request could not be processed as it contained an invalid request entity
-            instance: https://api.silverflow.co/v1/merchants/mct-1hPdFqhgstYTUhlphPDp
-            validationErrors:
-            - The value of property 'status' should be one of 'idle', 'active' or 'archived'
-            - The value of property 'tags.0.businessId' must not be longer than 255 characters
-    responses-TooManyRequestsError:
-      description: The number of requests (per minute) has exceeded the configured maximum
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/schemas-ProblemDetail'
-          example:
-            type: https://api.silverflow.co/problem/too-many-requests
-            title: Too Many Requests
-            status: 429
-            detail: The number of requests performed by the client has exceeded the configured maximum for a given period
-    responses-UnauthorizedError:
-      description: Authentication information is missing or invalid
-      headers:
-        WWW_Authenticate:
-          schema:
-            type: string
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/schemas-ProblemDetail'
-          example:
-            type: https://datatracker.ietf.org/doc/html/rfc2616#section-10.4.2
-            title: Unauthorized
-            status: 401
-            detail: The credentials supplied in the request are either missing, invalid, or not applicable in the current scope
-    responses-NotFoundError:
-      description: The requested resource was not found
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/schemas-ProblemDetail'
-          example:
-            type: https://datatracker.ietf.org/doc/html/rfc2616#section-10.4.5
-            title: Not Found
-            status: 404
-            detail: The entity referenced in the request could not be found
-            instance: https://api.silverflow.co/v1/merchants/mct-1hPdFqhgstYTUhlphPDp
+    fees-interchange-estimate-response:
+      summary: Example of an Fee Interchange Estimate response
+      value:
+        segments:
+          currency: USD
+          fixed: 10
+          basisPoints: 15
+          max: 200
+          min: 20
+        feeDate: '2021-12-01'
+        amount:
+          value: 99
+          currency: EUR
+        rates:
+        - date: '2021-12-04'
+          source: USD
+          target: EUR
+          operation: multiply
+          type: buy
+          rate: 84596
+          exponent: 5
+        designator:
+          ird: '73'
+          businessServiceArrangement:
+            cardProgramIdentifier: DMC
+            type: '2'
+            idCode: '050002'
+            priority: '04'
+    fee-request-visa:
+      summary: Fee Request Visa
+      value:
+        cardNumber: '4200350000000801'
+        amount:
+          value: 3000
+          currency: EUR
+        merchantAcceptorKey: mac-1JRadf2ffdfrdPMf2XrS2
+        chargeType:
+          intent: purchase
+          cardEntry: e-commerce
+          order: checkout
+        threeDsAuthentication: none
+        isRefund: false
   securitySchemes:
     ApiKey:
       description: "The primary method of authenticating to the Silverflow API is through API keys.\n\nAPI keys can be created by calling the [createApiKey](#operation/createApiKey) endpoint. You can create up to 40 API keys and also update and delete them, allowing for _credential rotation_.\n\nThe _Agent Activation_ process will generate an initial API Key for you. See [Activate Agent](#section/Getting-Started).\n\nA call to the [createApiKey](#operation/createApiKey) endpoint will return the following structure:\n\n```json\n{\n    \"key\": \"apk-1wtRxni5IsPsSpBLWpwr\",\n    \"status\": \"active\",\n    \"agentKey\": \"cgt-1wtRvFLIjDOyyUR5Q2LB\",\n    \"description\": \"Data lake API key\",\n    \"permissions\": [\n        \"charges:List\",\n        \"reports:All\"\n    ],\n    \"created\": \"2021-06-22T11:21:45.115Z\",\n    \"secret\": \"FWtnOOHAjbD6rNxWWEeVOCj7JXSEPGJQ\",\n    \"version\": 1\n}\n```\n\n> **Important:** The `secret` is only returned once in the response to the `createApiKey` call.\n\nOnce created, the `key` and `secret` fields from the API key must be used in the HTTP `Authorization` header using the `Basic` scheme.\nThe Basic scheme requires a **username** and **password** to be specified, separated by a `:` (colon) and Base64 encoded.\n\nUse the following values from the API key to construct a Basic authentication header:\n\n| Basic field | API key field | Example |\n| ----------- | ------------- | ------- |\n| username | `key` | `apk-1wtRxni5IsPsSpBLWpwr` |\n| password | `secret` | `FWtnOOHAjbD6rNxWWEeVOCj7JXSEPGJQ` |\n\nIn pseudo-code a valid HTTP Basic Authentication header would be constructed as follows:\n\n```ts\nconst apiKeyId = \"apk-1wtRxni5IsPsSpBLWpwr\";\nconst apiKeySecret = \"FWtnOOHAjbD6rNxWWEeVOCj7JXSEPGJQ\";\nconst authnValue = \"Basic \" + base64Encode(apiKeyId + \":\" + apiKeySecret);\nrequest.setHeader(\"Authorization\", authnValue);\n```\n\nUsing the values from the example a valid HTTP request would look like the following:\n\n```http\nGET /v1/agents/current HTTP/1.1\nAccept: application/json\nAuthorization: Basic YXBrLTF3dFJ4bmk1SXNQc1NwQkxXcHdyOkZXdG5PT0hBamJENnJOeFdXRWVWT0NqN0pYU0VQR0pR\n```\n\nMore information on the Basic scheme can be found in [RFC-7617 - The 'Basic' HTTP Authentication Scheme](https://datatracker.ietf.org/doc/html/rfc7617)."
@@ -3627,9 +3611,6 @@ components:
         Certificate validation happens at the transport layer during TLS handshake. Tenant verification is performed by matching the agent key embedded in the client certificate against the agent key embedded in the trusted CA.
 
         '
-x-refined-from:
-- silverflow-openapi.yml
-- silverflow-openapi.yml
 x-tagGroups:
 - name: ''
   tags:

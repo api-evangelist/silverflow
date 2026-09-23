@@ -1,13 +1,13 @@
 openapi: 3.2.0
 info:
-  title: Silverflow Currency Conversion Rates API
+  description: '**This OpenAPI specification cannot be used for code generation.** Please reach out to your TAM regarding code generation using the API Spec.'
   version: 1.417.0
+  title: Silverflow Currency Conversion Rates API
   contact:
     name: API Support
     email: support@silverflow.com
   license:
     name: Commercial
-  description: 'Operations tagged Currency Conversion Rates across 2 of this provider''s published API definitions: silverflow-openapi.yml, silverflow-openapi.yml. Each path carries the servers of the definition it was published in.'
 servers:
 - url: https://eu-west-1.api.silverflow.com/v1
   description: Production URL for Europe - Equivalent to https://api.silverflow.co/v1
@@ -25,14 +25,10 @@ paths:
     get:
       operationId: getCurrencyRates
       summary: Get a list of currency conversion rates
-      description: '
-
-        Get all currency conversion rates for a specific effective date.
+      description: 'Get all currency conversion rates for a specific effective date.
 
 
-        Requires `currencyRate:GetInfo` permission.
-
-        '
+        Requires `currencyRate:GetInfo` permission.'
       tags:
       - Currency Conversion Rates
       parameters:
@@ -58,147 +54,13 @@ paths:
           $ref: '#/components/responses/responses-ForbiddenError'
         '429':
           $ref: '#/components/responses/responses-TooManyRequestsError'
-    servers:
-    - url: https://eu-west-1.api.silverflow.com/v1
-      description: Production URL for Europe - Equivalent to https://api.silverflow.co/v1
-    - url: https://us-east-2.api.silverflow.com/v1
-      description: Production URL for North America
-    - url: https://eu-west-1.api-sbx.silverflow.com/v1
-      description: Sandbox URL - Equivalent to https://api-sbx.silverflow.co/v1
 components:
-  responses:
-    responses-ForbiddenError:
-      description: The authenticated client is forbidden to make the request for the resource identified.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/schemas-ProblemDetail'
-          example:
-            type: https://datatracker.ietf.org/doc/html/rfc2616#section-10.4.4
-            title: Forbidden
-            status: 403
-            detail: The server is refusing to execute the request for the current authenticated user
-            instance: https://api.silverflow.co/v1/merchants/mct-1hPdFqhgstYTUhlphPDp
-    responses-UnauthorizedError:
-      description: Authentication information is missing or invalid
-      headers:
-        WWW_Authenticate:
-          schema:
-            type: string
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/schemas-ProblemDetail'
-          example:
-            type: https://datatracker.ietf.org/doc/html/rfc2616#section-10.4.2
-            title: Unauthorized
-            status: 401
-            detail: The credentials supplied in the request are either missing, invalid, or not applicable in the current scope
-    responses-TooManyRequestsError:
-      description: The number of requests (per minute) has exceeded the configured maximum
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/schemas-ProblemDetail'
-          example:
-            type: https://api.silverflow.co/problem/too-many-requests
-            title: Too Many Requests
-            status: 429
-            detail: The number of requests performed by the client has exceeded the configured maximum for a given period
-    responses-BadRequestError:
-      description: The request was malformed. See the response body for details
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/schemas-ProblemDetail'
-          example:
-            type: https://datatracker.ietf.org/doc/html/rfc2616#section-10.4.1
-            title: Bad Request
-            status: 400
-            detail: The request could not be processed as it contained an invalid request entity
-            instance: https://api.silverflow.co/v1/merchants/mct-1hPdFqhgstYTUhlphPDp
-            validationErrors:
-            - The value of property 'status' should be one of 'idle', 'active' or 'archived'
-            - The value of property 'tags.0.businessId' must not be longer than 255 characters
-  parameters:
-    effectiveDate:
-      name: effectiveDate
-      description: The date for which the currency rates are effective. Ex:2022-10-30.
-      in: path
-      required: true
-      schema:
-        type: string
-        format: date
-    openapi_components-parameters-offsetToken:
-      name: offsetToken
-      description: The offset token. This token is returned in the response of previous request.
-      in: query
-      required: false
-      schema:
-        $ref: '#/components/schemas/openapi_components-schemas-offsetToken'
-    limit:
-      name: limit
-      description: The number of items to return
-      in: query
-      required: false
-      schema:
-        type: integer
-        format: int32
-        minimum: 1
-        maximum: 100
-        default: 10
-      example: 1
-    network:
-      name: network
-      description: The card network for which the currency rates are requested.
-      in: path
-      required: true
-      schema:
-        type: string
-        enum:
-        - mastercard
-        - visa
-  examples:
-    response-currency-rates-visa:
-      summary: Example of a Currency Rate Response for a Visa network and effectiveDate
-      value:
-        offsetToken: string
-        items:
-        - id: visa#EUR#USD#2021-10-30
-          network: visa
-          effectiveDate: '2022-10-30'
-          effectiveFrom: '2022-10-30T11:00:00.000Z'
-          buy:
-            rate: 120000
-            exponent: 6
-          sell:
-            rate: 110000
-            exponent: 6
-          sourceCurrency:
-            code: EUR
-            exponent: 6
-          targetCurrency:
-            code: USD
-            exponent: 6
-        - id: visa#EUR#SEK#2021-10-30
-          network: visa
-          effectiveDate: '2021-10-30'
-          effectiveFrom: '2021-10-30T11:00:00.000Z'
-          buy:
-            rate: 90000
-            exponent: 6
-          sell:
-            rate: 70000
-            exponent: 6
-          sourceCurrency:
-            code: EUR
-            exponent: 6
-          targetCurrency:
-            code: SEK
-            exponent: 6
   schemas:
-    MidRate:
-      description: The mid rate.
+    openapi_components-schemas-offsetToken:
+      type: string
+      pattern: ^[a-zA-Z0-9%]+$
+    SellRate:
+      description: The sell rate.
       type: object
       required:
       - rate
@@ -315,6 +177,19 @@ components:
         validationErrors:
         - The value of property 'status' should be one of 'idle', 'active' or 'archived'
         - The value of property 'tags.0.businessId' must not be longer than 255 characters
+    BuyRate:
+      description: The buy rate.
+      type: object
+      required:
+      - rate
+      - exponent
+      properties:
+        rate:
+          type: integer
+          format: int64
+        exponent:
+          type: integer
+          format: int64
     cardNetwork:
       type: string
       description: The card network
@@ -331,8 +206,8 @@ components:
             type: array
             items:
               $ref: '#/components/schemas/CurrencyRate'
-    BuyRate:
-      description: The buy rate.
+    MidRate:
+      description: The mid rate.
       type: object
       required:
       - rate
@@ -344,11 +219,6 @@ components:
         exponent:
           type: integer
           format: int64
-    components-schemas-Page:
-      type: object
-      properties:
-        offsetToken:
-          $ref: '#/components/schemas/openapi_components-schemas-offsetToken'
     CurrencyExponent:
       description: The source or target currency.
       type: object
@@ -361,22 +231,141 @@ components:
         exponent:
           type: integer
           format: int64
-    openapi_components-schemas-offsetToken:
-      type: string
-      pattern: ^[a-zA-Z0-9%]+$
-    SellRate:
-      description: The sell rate.
+    components-schemas-Page:
       type: object
-      required:
-      - rate
-      - exponent
       properties:
-        rate:
-          type: integer
-          format: int64
-        exponent:
-          type: integer
-          format: int64
+        offsetToken:
+          $ref: '#/components/schemas/openapi_components-schemas-offsetToken'
+  responses:
+    responses-BadRequestError:
+      description: The request was malformed. See the response body for details
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/schemas-ProblemDetail'
+          example:
+            type: https://datatracker.ietf.org/doc/html/rfc2616#section-10.4.1
+            title: Bad Request
+            status: 400
+            detail: The request could not be processed as it contained an invalid request entity
+            instance: https://api.silverflow.co/v1/merchants/mct-1hPdFqhgstYTUhlphPDp
+            validationErrors:
+            - The value of property 'status' should be one of 'idle', 'active' or 'archived'
+            - The value of property 'tags.0.businessId' must not be longer than 255 characters
+    responses-TooManyRequestsError:
+      description: The number of requests (per minute) has exceeded the configured maximum
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/schemas-ProblemDetail'
+          example:
+            type: https://api.silverflow.co/problem/too-many-requests
+            title: Too Many Requests
+            status: 429
+            detail: The number of requests performed by the client has exceeded the configured maximum for a given period
+    responses-UnauthorizedError:
+      description: Authentication information is missing or invalid
+      headers:
+        WWW_Authenticate:
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/schemas-ProblemDetail'
+          example:
+            type: https://datatracker.ietf.org/doc/html/rfc2616#section-10.4.2
+            title: Unauthorized
+            status: 401
+            detail: The credentials supplied in the request are either missing, invalid, or not applicable in the current scope
+    responses-ForbiddenError:
+      description: The authenticated client is forbidden to make the request for the resource identified.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/schemas-ProblemDetail'
+          example:
+            type: https://datatracker.ietf.org/doc/html/rfc2616#section-10.4.4
+            title: Forbidden
+            status: 403
+            detail: The server is refusing to execute the request for the current authenticated user
+            instance: https://api.silverflow.co/v1/merchants/mct-1hPdFqhgstYTUhlphPDp
+  parameters:
+    openapi_components-parameters-offsetToken:
+      name: offsetToken
+      description: The offset token. This token is returned in the response of previous request.
+      in: query
+      required: false
+      schema:
+        $ref: '#/components/schemas/openapi_components-schemas-offsetToken'
+    network:
+      name: network
+      description: The card network for which the currency rates are requested.
+      in: path
+      required: true
+      schema:
+        type: string
+        enum:
+        - mastercard
+        - visa
+    effectiveDate:
+      name: effectiveDate
+      description: The date for which the currency rates are effective. Ex:2022-10-30.
+      in: path
+      required: true
+      schema:
+        type: string
+        format: date
+    limit:
+      name: limit
+      description: The number of items to return
+      in: query
+      required: false
+      schema:
+        type: integer
+        format: int32
+        minimum: 1
+        maximum: 100
+        default: 10
+      example: 1
+  examples:
+    response-currency-rates-visa:
+      summary: Example of a Currency Rate Response for a Visa network and effectiveDate
+      value:
+        offsetToken: string
+        items:
+        - id: visa#EUR#USD#2021-10-30
+          network: visa
+          effectiveDate: '2022-10-30'
+          effectiveFrom: '2022-10-30T11:00:00.000Z'
+          buy:
+            rate: 120000
+            exponent: 6
+          sell:
+            rate: 110000
+            exponent: 6
+          sourceCurrency:
+            code: EUR
+            exponent: 6
+          targetCurrency:
+            code: USD
+            exponent: 6
+        - id: visa#EUR#SEK#2021-10-30
+          network: visa
+          effectiveDate: '2021-10-30'
+          effectiveFrom: '2021-10-30T11:00:00.000Z'
+          buy:
+            rate: 90000
+            exponent: 6
+          sell:
+            rate: 70000
+            exponent: 6
+          sourceCurrency:
+            code: EUR
+            exponent: 6
+          targetCurrency:
+            code: SEK
+            exponent: 6
   securitySchemes:
     ApiKey:
       description: "The primary method of authenticating to the Silverflow API is through API keys.\n\nAPI keys can be created by calling the [createApiKey](#operation/createApiKey) endpoint. You can create up to 40 API keys and also update and delete them, allowing for _credential rotation_.\n\nThe _Agent Activation_ process will generate an initial API Key for you. See [Activate Agent](#section/Getting-Started).\n\nA call to the [createApiKey](#operation/createApiKey) endpoint will return the following structure:\n\n```json\n{\n    \"key\": \"apk-1wtRxni5IsPsSpBLWpwr\",\n    \"status\": \"active\",\n    \"agentKey\": \"cgt-1wtRvFLIjDOyyUR5Q2LB\",\n    \"description\": \"Data lake API key\",\n    \"permissions\": [\n        \"charges:List\",\n        \"reports:All\"\n    ],\n    \"created\": \"2021-06-22T11:21:45.115Z\",\n    \"secret\": \"FWtnOOHAjbD6rNxWWEeVOCj7JXSEPGJQ\",\n    \"version\": 1\n}\n```\n\n> **Important:** The `secret` is only returned once in the response to the `createApiKey` call.\n\nOnce created, the `key` and `secret` fields from the API key must be used in the HTTP `Authorization` header using the `Basic` scheme.\nThe Basic scheme requires a **username** and **password** to be specified, separated by a `:` (colon) and Base64 encoded.\n\nUse the following values from the API key to construct a Basic authentication header:\n\n| Basic field | API key field | Example |\n| ----------- | ------------- | ------- |\n| username | `key` | `apk-1wtRxni5IsPsSpBLWpwr` |\n| password | `secret` | `FWtnOOHAjbD6rNxWWEeVOCj7JXSEPGJQ` |\n\nIn pseudo-code a valid HTTP Basic Authentication header would be constructed as follows:\n\n```ts\nconst apiKeyId = \"apk-1wtRxni5IsPsSpBLWpwr\";\nconst apiKeySecret = \"FWtnOOHAjbD6rNxWWEeVOCj7JXSEPGJQ\";\nconst authnValue = \"Basic \" + base64Encode(apiKeyId + \":\" + apiKeySecret);\nrequest.setHeader(\"Authorization\", authnValue);\n```\n\nUsing the values from the example a valid HTTP request would look like the following:\n\n```http\nGET /v1/agents/current HTTP/1.1\nAccept: application/json\nAuthorization: Basic YXBrLTF3dFJ4bmk1SXNQc1NwQkxXcHdyOkZXdG5PT0hBamJENnJOeFdXRWVWT0NqN0pYU0VQR0pR\n```\n\nMore information on the Basic scheme can be found in [RFC-7617 - The 'Basic' HTTP Authentication Scheme](https://datatracker.ietf.org/doc/html/rfc7617)."
@@ -420,9 +409,6 @@ components:
         Certificate validation happens at the transport layer during TLS handshake. Tenant verification is performed by matching the agent key embedded in the client certificate against the agent key embedded in the trusted CA.
 
         '
-x-refined-from:
-- silverflow-openapi.yml
-- silverflow-openapi.yml
 x-tagGroups:
 - name: ''
   tags:

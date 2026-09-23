@@ -1,13 +1,13 @@
 openapi: 3.2.0
 info:
-  title: Silverflow Documents API
+  description: '**This OpenAPI specification cannot be used for code generation.** Please reach out to your TAM regarding code generation using the API Spec.'
   version: 1.417.0
+  title: Silverflow Documents API
   contact:
     name: API Support
     email: support@silverflow.com
   license:
     name: Commercial
-  description: 'Operations tagged Documents across 2 of this provider''s published API definitions: silverflow-openapi.yml, silverflow-openapi.yml. Each path carries the servers of the definition it was published in.'
 servers:
 - url: https://eu-west-1.api.silverflow.com/v1
   description: Production URL for Europe - Equivalent to https://api.silverflow.co/v1
@@ -20,24 +20,7 @@ security:
 - BearerToken: []
 tags:
 - name: Documents
-  description: 'A Document is a file with associated metadata that can be uploaded and downloaded. Documents have to be attached to a business entity, for example `Dispute Documents`. The Document upload process starts with creating metadata information, see [Add Dispute Document](#operation/addDisputeDocumentsMetadata). New Documents will be created with status `pending`.
-
-
-    Adding a Document returns a key which can be used to upload the file using [Upload Document](#operation/uploadDocumentFile). Once the file is successfully updated, the status will be changed to `active`.
-
-
-    The maximum size for a Document is 10MB and the maximum combined size of all documents uploaded for a Dispute is 14.5MB.
-
-
-    Supported MIME types:
-
-    -   image/jpeg
-
-    -   application/pdf
-
-    -   image/tiff
-
-    '
+  description: A Document is a file with associated metadata that can be uploaded and downloaded.
 paths:
   /documents/{documentKey}:
     get:
@@ -46,9 +29,7 @@ paths:
       description: 'This operations returns the Document metadata identified by the specified key.
 
 
-        Requires `disputes:GetDocument` or `documents:Get` permissions.
-
-        '
+        Requires `disputes:GetDocument` or `documents:Get` permissions.'
       tags:
       - Documents
       parameters:
@@ -74,9 +55,7 @@ paths:
       description: 'This operation archives a Document.
 
 
-        Requires `disputes:ArchiveDocument` or `documents:Archive` permission.
-
-        '
+        Requires `disputes:ArchiveDocument` or `documents:Archive` permission.'
       tags:
       - Documents
       parameters:
@@ -95,13 +74,6 @@ paths:
           $ref: '#/components/responses/responses-PreconditionFailedError'
         '429':
           $ref: '#/components/responses/responses-TooManyRequestsError'
-    servers:
-    - url: https://eu-west-1.api.silverflow.com/v1
-      description: Production URL for Europe - Equivalent to https://api.silverflow.co/v1
-    - url: https://us-east-2.api.silverflow.com/v1
-      description: Production URL for North America
-    - url: https://eu-west-1.api-sbx.silverflow.com/v1
-      description: Sandbox URL - Equivalent to https://api-sbx.silverflow.co/v1
   /documents/{documentKey}/file:
     get:
       operationId: downloadDocumentFile
@@ -109,9 +81,7 @@ paths:
       description: 'This operation downloads the file for the specified key.
 
 
-        Requires `disputes:DownloadFile` or `documents:Download` permission.
-
-        '
+        Requires `disputes:DownloadFile` or `documents:Download` permission.'
       tags:
       - Documents
       parameters:
@@ -130,15 +100,13 @@ paths:
     put:
       operationId: uploadDocumentFile
       summary: Upload Document File
-      description: 'This operation uploads a file. A Document with matching content type and content length must have been created prior to that call. See [Add Dispute Document](#operation/addDisputeDocumentsMetadata).
+      description: 'This operation uploads a file. A Document with matching content type and content length must have been created prior to that call. See Add Dispute Document.
 
 
         The maximum file size is **10MB** and the maximum combined size of all documents uploaded for a Dispute is **14.5MB**.
 
 
-        Requires `disputes:UploadFile` or `documents:Upload` permission.
-
-        '
+        Requires `disputes:UploadFile` or `documents:Upload` permission.'
       tags:
       - Documents
       parameters:
@@ -180,149 +148,20 @@ paths:
           $ref: '#/components/responses/UnsupportedMediaTypeError'
         '429':
           $ref: '#/components/responses/responses-TooManyRequestsError'
-    servers:
-    - url: https://eu-west-1.api.silverflow.com/v1
-      description: Production URL for Europe - Equivalent to https://api.silverflow.co/v1
-    - url: https://us-east-2.api.silverflow.com/v1
-      description: Production URL for North America
-    - url: https://eu-west-1.api-sbx.silverflow.com/v1
-      description: Sandbox URL - Equivalent to https://api-sbx.silverflow.co/v1
 components:
-  responses:
-    responses-ForbiddenError:
-      description: The authenticated client is forbidden to make the request for the resource identified.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/schemas-ProblemDetail'
-          example:
-            type: https://datatracker.ietf.org/doc/html/rfc2616#section-10.4.4
-            title: Forbidden
-            status: 403
-            detail: The server is refusing to execute the request for the current authenticated user
-            instance: https://api.silverflow.co/v1/merchants/mct-1hPdFqhgstYTUhlphPDp
-    responses-PreconditionFailedError:
-      description: The conditions specified in the HTTP headers of the request were not met.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/schemas-ProblemDetail'
-          example:
-            type: https://datatracker.ietf.org/doc/html/rfc2616#section-10.4.13
-            title: Precondition failed
-            status: 412
-            detail: The version of the entity did not match the required version specified in the precondition of the request
-            instance: https://api.silverflow.co/v1/merchants/mct-1hPdFqhgstYTUhlphPDp
-            preconditionVersion: 3
-            actualVersion: 4
-    responses-UnauthorizedError:
-      description: Authentication information is missing or invalid
-      headers:
-        WWW_Authenticate:
-          schema:
-            type: string
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/schemas-ProblemDetail'
-          example:
-            type: https://datatracker.ietf.org/doc/html/rfc2616#section-10.4.2
-            title: Unauthorized
-            status: 401
-            detail: The credentials supplied in the request are either missing, invalid, or not applicable in the current scope
-    LengthRequiredError:
-      description: The server doesn't accept requests without a defined 'content-Length'
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/schemas-ProblemDetail'
-          example:
-            type: https://datatracker.ietf.org/doc/html/rfc2616#section-10.4.12
-            title: Length Required
-            status: 411
-            detail: The server refuses to accept the request without a defined Content-Length
-            instance: https://api.silverflow.co/v1/merchants/mct-1hPdFqhgstYTUhlphPDp
-    responses-ConflictError:
-      description: The request could not be completed due to a conflict with the current state of the resources involved in the request.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/schemas-ProblemDetail'
-    PayloadTooLargeError:
-      description: Request payload is larger than limits defined by server.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/schemas-ProblemDetail'
-          example:
-            type: https://datatracker.ietf.org/doc/html/rfc2616#section-10.4.14
-            title: Payload too Large
-            status: 413
-            detail: The server is refused the request because the size of the request entity is larger than that defined by the server
-            instance: https://api.silverflow.co/v1/merchants/mct-1hPdFqhgstYTUhlphPDp
-    responses-NotFoundError:
-      description: The requested resource was not found
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/schemas-ProblemDetail'
-          example:
-            type: https://datatracker.ietf.org/doc/html/rfc2616#section-10.4.5
-            title: Not Found
-            status: 404
-            detail: The entity referenced in the request could not be found
-            instance: https://api.silverflow.co/v1/merchants/mct-1hPdFqhgstYTUhlphPDp
-    responses-TooManyRequestsError:
-      description: The number of requests (per minute) has exceeded the configured maximum
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/schemas-ProblemDetail'
-          example:
-            type: https://api.silverflow.co/problem/too-many-requests
-            title: Too Many Requests
-            status: 429
-            detail: The number of requests performed by the client has exceeded the configured maximum for a given period
-    UnsupportedMediaTypeError:
-      description: The format of the request payload is not supported by the server
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/schemas-ProblemDetail'
-          example:
-            type: https://datatracker.ietf.org/doc/html/rfc2616#section-10.4.16
-            title: Unsupported Media Type
-            status: 415
-            detail: The server is refusing the request because the entity of the request is in a format that is not supported
-            instance: https://api.silverflow.co/v1/merchants/mct-1hPdFqhgstYTUhlphPDp
   schemas:
-    disputeStage:
-      description: The current stage of a Dispute
+    openapi_components-schemas-lastModified-2:
+      type: string
+      description: The date and time this object was last modified
+      format: date-time
+      readOnly: false
+    documents_status:
+      description: The current status of the document.
       type: string
       enum:
-      - rapidDisputeResolution
-      - collaboration
-      - requestForInformation
-      - requestForInformationResponse
-      - collaborationResponse
-      - chargeback
-      - chargebackResponse
-      - preArbitration
-      - preArbitrationResponse
-      - arbitration
-    components-schemas-merchantKey:
-      description: Uniquely identifies a Merchant
-      type: string
-      pattern: ^mct-[a-zA-Z0-9]+$
-      minLength: 1
-      maxLength: 120
-      readOnly: false
-      example: mct-123dinkqFqfq3q2f2adfa
-    originalFilename:
-      description: Name of the file. Allows letters, numbers, whitespaces and characters _()
-      type: string
-      pattern: ^([\w() ])+(.jpg|.jpeg|.pdf|.tiff|.tif)$
-      readOnly: false
+      - pending
+      - active
+      - archived
     components-schemas-agentKey:
       description: Uniquely identifies an Agent
       type: string
@@ -331,13 +170,6 @@ components:
       maxLength: 120
       readOnly: false
       example: cgt-1UF2NafdfrdPMf2XrS2
-    documents_status:
-      description: The current status of the document.
-      type: string
-      enum:
-      - pending
-      - active
-      - archived
     schemas-ProblemDetail:
       type: object
       description: 'The ''problem detail'' object relays detailed information about the error that occurred. It is defined
@@ -404,14 +236,14 @@ components:
         validationErrors:
         - The value of property 'status' should be one of 'idle', 'active' or 'archived'
         - The value of property 'tags.0.businessId' must not be longer than 255 characters
-    openapi_components-schemas-version:
-      type: integer
-      description: The version of this object
-      format: int64
-      minimum: 1
-      maximum: 1000
-      example: 1
-      readOnly: false
+    owner:
+      description: The owner of a Dispute Document
+      type: string
+      enum:
+      - issuer
+      - acquirer
+      - merchant
+      - card-network
     contentType:
       description: 'Accepted Content-Types
 
@@ -421,32 +253,6 @@ components:
       - image/jpeg
       - application/pdf
       - image/tiff
-    owner:
-      description: The owner of a Dispute Document
-      type: string
-      enum:
-      - issuer
-      - acquirer
-      - merchant
-      - card-network
-    documentKey:
-      description: Uniquely identifies a document
-      type: string
-      pattern: ^dok-[a-zA-Z0-9]+$
-      minLength: 1
-      maxLength: 120
-      readOnly: false
-      example: dok-1UF2NafdfrdPMf2XrS2
-    schemas-FreeTextField:
-      type: string
-      pattern: ^[\w +-=.,:;!?$@()]+$
-      minLength: 1
-      maxLength: 160
-    openapi_components-schemas-lastModified-2:
-      type: string
-      description: The date and time this object was last modified
-      format: date-time
-      readOnly: false
     disputeKey:
       description: Uniquely identifies a Dispute.
       type: string
@@ -455,11 +261,14 @@ components:
       maxLength: 120
       readOnly: false
       example: dsp-1JRadf2ffdfrdPMf2XrS2
-    openapi_components-schemas-created-3:
+    components-schemas-merchantKey:
+      description: Uniquely identifies a Merchant
       type: string
-      description: The date and time this object was created
-      format: date-time
+      pattern: ^mct-[a-zA-Z0-9]+$
+      minLength: 1
+      maxLength: 120
       readOnly: false
+      example: mct-123dinkqFqfq3q2f2adfa
     Document:
       type: object
       required:
@@ -504,15 +313,159 @@ components:
           $ref: '#/components/schemas/openapi_components-schemas-lastModified-2'
         version:
           $ref: '#/components/schemas/openapi_components-schemas-version'
+    openapi_components-schemas-created-3:
+      type: string
+      description: The date and time this object was created
+      format: date-time
+      readOnly: false
+    openapi_components-schemas-version:
+      type: integer
+      description: The version of this object
+      format: int64
+      minimum: 1
+      maximum: 1000
+      example: 1
+      readOnly: false
+    originalFilename:
+      description: Name of the file. Allows letters, numbers, whitespaces and characters _()
+      type: string
+      pattern: ^([\w() ])+(.jpg|.jpeg|.pdf|.tiff|.tif)$
+      readOnly: false
+    disputeStage:
+      description: The current stage of a Dispute
+      type: string
+      enum:
+      - rapidDisputeResolution
+      - collaboration
+      - requestForInformation
+      - requestForInformationResponse
+      - collaborationResponse
+      - chargeback
+      - chargebackResponse
+      - preArbitration
+      - preArbitrationResponse
+      - arbitration
+    schemas-FreeTextField:
+      type: string
+      pattern: ^[\w +-=.,:;!?$@()]+$
+      minLength: 1
+      maxLength: 160
+    documentKey:
+      description: Uniquely identifies a document
+      type: string
+      pattern: ^dok-[a-zA-Z0-9]+$
+      minLength: 1
+      maxLength: 120
+      readOnly: false
+      example: dok-1UF2NafdfrdPMf2XrS2
+  responses:
+    responses-PreconditionFailedError:
+      description: The conditions specified in the HTTP headers of the request were not met.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/schemas-ProblemDetail'
+          example:
+            type: https://datatracker.ietf.org/doc/html/rfc2616#section-10.4.13
+            title: Precondition failed
+            status: 412
+            detail: The version of the entity did not match the required version specified in the precondition of the request
+            instance: https://api.silverflow.co/v1/merchants/mct-1hPdFqhgstYTUhlphPDp
+            preconditionVersion: 3
+            actualVersion: 4
+    responses-TooManyRequestsError:
+      description: The number of requests (per minute) has exceeded the configured maximum
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/schemas-ProblemDetail'
+          example:
+            type: https://api.silverflow.co/problem/too-many-requests
+            title: Too Many Requests
+            status: 429
+            detail: The number of requests performed by the client has exceeded the configured maximum for a given period
+    UnsupportedMediaTypeError:
+      description: The format of the request payload is not supported by the server
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/schemas-ProblemDetail'
+          example:
+            type: https://datatracker.ietf.org/doc/html/rfc2616#section-10.4.16
+            title: Unsupported Media Type
+            status: 415
+            detail: The server is refusing the request because the entity of the request is in a format that is not supported
+            instance: https://api.silverflow.co/v1/merchants/mct-1hPdFqhgstYTUhlphPDp
+    responses-UnauthorizedError:
+      description: Authentication information is missing or invalid
+      headers:
+        WWW_Authenticate:
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/schemas-ProblemDetail'
+          example:
+            type: https://datatracker.ietf.org/doc/html/rfc2616#section-10.4.2
+            title: Unauthorized
+            status: 401
+            detail: The credentials supplied in the request are either missing, invalid, or not applicable in the current scope
+    LengthRequiredError:
+      description: The server doesn't accept requests without a defined 'content-Length'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/schemas-ProblemDetail'
+          example:
+            type: https://datatracker.ietf.org/doc/html/rfc2616#section-10.4.12
+            title: Length Required
+            status: 411
+            detail: The server refuses to accept the request without a defined Content-Length
+            instance: https://api.silverflow.co/v1/merchants/mct-1hPdFqhgstYTUhlphPDp
+    responses-ForbiddenError:
+      description: The authenticated client is forbidden to make the request for the resource identified.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/schemas-ProblemDetail'
+          example:
+            type: https://datatracker.ietf.org/doc/html/rfc2616#section-10.4.4
+            title: Forbidden
+            status: 403
+            detail: The server is refusing to execute the request for the current authenticated user
+            instance: https://api.silverflow.co/v1/merchants/mct-1hPdFqhgstYTUhlphPDp
+    responses-NotFoundError:
+      description: The requested resource was not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/schemas-ProblemDetail'
+          example:
+            type: https://datatracker.ietf.org/doc/html/rfc2616#section-10.4.5
+            title: Not Found
+            status: 404
+            detail: The entity referenced in the request could not be found
+            instance: https://api.silverflow.co/v1/merchants/mct-1hPdFqhgstYTUhlphPDp
+    responses-ConflictError:
+      description: The request could not be completed due to a conflict with the current state of the resources involved in the request.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/schemas-ProblemDetail'
+    PayloadTooLargeError:
+      description: Request payload is larger than limits defined by server.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/schemas-ProblemDetail'
+          example:
+            type: https://datatracker.ietf.org/doc/html/rfc2616#section-10.4.14
+            title: Payload too Large
+            status: 413
+            detail: The server is refused the request because the size of the request entity is larger than that defined by the server
+            instance: https://api.silverflow.co/v1/merchants/mct-1hPdFqhgstYTUhlphPDp
   parameters:
-    ifMatch:
-      name: If-Match
-      description: The request condition
-      in: header
-      required: false
-      schema:
-        type: integer
-        format: int32
     documentKey:
       name: documentKey
       in: path
@@ -522,6 +475,14 @@ components:
         '
       schema:
         $ref: '#/components/schemas/documentKey'
+    ifMatch:
+      name: If-Match
+      description: The request condition
+      in: header
+      required: false
+      schema:
+        type: integer
+        format: int32
   securitySchemes:
     ApiKey:
       description: "The primary method of authenticating to the Silverflow API is through API keys.\n\nAPI keys can be created by calling the [createApiKey](#operation/createApiKey) endpoint. You can create up to 40 API keys and also update and delete them, allowing for _credential rotation_.\n\nThe _Agent Activation_ process will generate an initial API Key for you. See [Activate Agent](#section/Getting-Started).\n\nA call to the [createApiKey](#operation/createApiKey) endpoint will return the following structure:\n\n```json\n{\n    \"key\": \"apk-1wtRxni5IsPsSpBLWpwr\",\n    \"status\": \"active\",\n    \"agentKey\": \"cgt-1wtRvFLIjDOyyUR5Q2LB\",\n    \"description\": \"Data lake API key\",\n    \"permissions\": [\n        \"charges:List\",\n        \"reports:All\"\n    ],\n    \"created\": \"2021-06-22T11:21:45.115Z\",\n    \"secret\": \"FWtnOOHAjbD6rNxWWEeVOCj7JXSEPGJQ\",\n    \"version\": 1\n}\n```\n\n> **Important:** The `secret` is only returned once in the response to the `createApiKey` call.\n\nOnce created, the `key` and `secret` fields from the API key must be used in the HTTP `Authorization` header using the `Basic` scheme.\nThe Basic scheme requires a **username** and **password** to be specified, separated by a `:` (colon) and Base64 encoded.\n\nUse the following values from the API key to construct a Basic authentication header:\n\n| Basic field | API key field | Example |\n| ----------- | ------------- | ------- |\n| username | `key` | `apk-1wtRxni5IsPsSpBLWpwr` |\n| password | `secret` | `FWtnOOHAjbD6rNxWWEeVOCj7JXSEPGJQ` |\n\nIn pseudo-code a valid HTTP Basic Authentication header would be constructed as follows:\n\n```ts\nconst apiKeyId = \"apk-1wtRxni5IsPsSpBLWpwr\";\nconst apiKeySecret = \"FWtnOOHAjbD6rNxWWEeVOCj7JXSEPGJQ\";\nconst authnValue = \"Basic \" + base64Encode(apiKeyId + \":\" + apiKeySecret);\nrequest.setHeader(\"Authorization\", authnValue);\n```\n\nUsing the values from the example a valid HTTP request would look like the following:\n\n```http\nGET /v1/agents/current HTTP/1.1\nAccept: application/json\nAuthorization: Basic YXBrLTF3dFJ4bmk1SXNQc1NwQkxXcHdyOkZXdG5PT0hBamJENnJOeFdXRWVWT0NqN0pYU0VQR0pR\n```\n\nMore information on the Basic scheme can be found in [RFC-7617 - The 'Basic' HTTP Authentication Scheme](https://datatracker.ietf.org/doc/html/rfc7617)."
@@ -565,9 +526,6 @@ components:
         Certificate validation happens at the transport layer during TLS handshake. Tenant verification is performed by matching the agent key embedded in the client certificate against the agent key embedded in the trusted CA.
 
         '
-x-refined-from:
-- silverflow-openapi.yml
-- silverflow-openapi.yml
 x-tagGroups:
 - name: ''
   tags:

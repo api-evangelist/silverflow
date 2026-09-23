@@ -1,13 +1,13 @@
 openapi: 3.2.0
 info:
-  title: Silverflow Transaction Risk Assessment API
+  description: '**This OpenAPI specification cannot be used for code generation.** Please reach out to your TAM regarding code generation using the API Spec.'
   version: 1.417.0
+  title: Silverflow Transaction Risk Assessment API
   contact:
     name: API Support
     email: support@silverflow.com
   license:
     name: Commercial
-  description: 'Operations tagged Transaction Risk Assessment across 2 of this provider''s published API definitions: silverflow-openapi.yml, silverflow-openapi.yml. Each path carries the servers of the definition it was published in.'
 servers:
 - url: https://eu-west-1.api.silverflow.com/v1
   description: Production URL for Europe - Equivalent to https://api.silverflow.co/v1
@@ -29,9 +29,7 @@ paths:
       description: 'This endpoint is used to do a risk assessment outside of the transaction flow. It returns a risk assessment, along with a response from the given provider.
 
 
-        Requires the `riskAsessments:Create` permission.
-
-        '
+        Requires the `riskAsessments:Create` permission.'
       tags:
       - Transaction Risk Assessment
       requestBody:
@@ -99,88 +97,171 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/RiskProviderUnexpectedError'
-    servers:
-    - url: https://eu-west-1.api.silverflow.com/v1
-      description: Production URL for Europe - Equivalent to https://api.silverflow.co/v1
-    - url: https://us-east-2.api.silverflow.com/v1
-      description: Production URL for North America
-    - url: https://eu-west-1.api-sbx.silverflow.com/v1
-      description: Sandbox URL - Equivalent to https://api-sbx.silverflow.co/v1
 components:
   schemas:
-    score:
-      type: number
-      description: The score of the Fraudio risk assessment.
-      example: 0.533506949459276
+    openapi_components-schemas-AcceptorRef:
+      type: object
+      description: Reference key and status of the acceptor
+      required:
+      - key
+      - version
+      properties:
+        key:
+          $ref: '#/components/schemas/AcceptorKey'
+        version:
+          $ref: '#/components/schemas/components-schemas-version'
+    AvsResult:
+      enum:
+      - none
+      - match
+      - partial-match
+      - no-match
+      - not-processed
+      description: The result of the AVS verification.
+    CybersourceCustomer:
+      type: object
+      additionalProperties: false
+      description: Details of the customer carrying out the transaction
+      required:
+      - firstName
+      - lastName
+      - email
+      - phoneNumber
+      - billingAddress
+      properties:
+        firstName:
+          description: The first name of the customer.
+          allOf:
+          - $ref: '#/components/schemas/components-schemas-NameOfPeopleAndPlaces'
+        lastName:
+          description: The last name of the customer.
+          allOf:
+          - $ref: '#/components/schemas/components-schemas-NameOfPeopleAndPlaces'
+        email:
+          description: The email of the customer.
+          allOf:
+          - $ref: '#/components/schemas/email'
+        phoneNumber:
+          description: The phone number of the customer.
+          allOf:
+          - $ref: '#/components/schemas/schemas-phoneNumber'
+        billingAddress:
+          description: The billing address of the customer.
+          $ref: '#/components/schemas/AddressInputAlpha2'
+    RiskAssessmentKey:
+      description: Uniquely identifies a risk assessment.
+      type: string
+      pattern: ^rak-[a-zA-Z0-9]+$
+      minLength: 5
+      maxLength: 120
+      example: rak-1e1dAHhgstYTUhlphPzZ
+    schemas-amountValue:
+      type: integer
+      format: int64
+      minimum: 0
+      maximum: 900000000
+      description: 'The amount in minor units. For example `$12.34` should be encoded as `1234`. Note that not all
+
+        currencies have 2 minor units. Some have three or zero.
+
+        '
+    openapi_components-schemas-ChargeType-2:
+      description: 'Describes the kind of charge the merchant wants to submit.
+
+        '
+      type: object
+      required:
+      - intent
+      - cardEntry
+      - order
+      properties:
+        intent:
+          $ref: '#/components/schemas/intent'
+        cardEntry:
+          $ref: '#/components/schemas/openapi_components-schemas-cardEntry-2'
+        order:
+          $ref: '#/components/schemas/components-schemas-order'
+        sequence:
+          $ref: '#/components/schemas/openapi_components-schemas-sequence'
+        terminalEntryMode:
+          $ref: '#/components/schemas/openapi_components-schemas-terminalEntryMode'
+    components-schemas-eci:
+      type: string
+      description: E-commerce Indicator
+    RiskProviderTimeoutError:
+      type: object
+      required:
+      - type
+      - title
+      - status
+      - detail
+      - instance
+      properties:
+        type:
+          allOf:
+          - $ref: '#/components/schemas/errorType'
+          - enum:
+            - /silverflow/problems/riskAssessments/provider-timeout
+        title:
+          allOf:
+          - $ref: '#/components/schemas/errorTitle'
+          - enum:
+            - Request timed out
+        status:
+          allOf:
+          - $ref: '#/components/schemas/errorStatus'
+          - enum:
+            - 408
+        detail:
+          $ref: '#/components/schemas/errorDetail'
+        instance:
+          $ref: '#/components/schemas/errorInstance'
+    CybersourceResult:
+      type: object
+      additionalProperties: false
+      required:
+      - id
+      - score
+      - status
+      description: A risk assessment result from Cybersource.
+      properties:
+        id:
+          $ref: '#/components/schemas/cybersourceId'
+        score:
+          $ref: '#/components/schemas/cybersource_score'
+        status:
+          $ref: '#/components/schemas/openapi_components-schemas-status'
     AcceptorKey:
       description: Uniquely identifies a Merchant Acceptor.
       type: string
       pattern: ^mac-[a-zA-Z0-9]+$
       example: mac-1JRadf2ffdfrdPMf2XrS2
-    cybersourceId:
-      type: string
-      description: The id of the Cybersource risk assessment.
-      example: '5526663169230178269497'
-    Authentication:
-      description: Details related to authentication of the transaction
-      type: object
-      properties:
-        cvc:
-          $ref: '#/components/schemas/CvcResult'
-        avs:
-          $ref: '#/components/schemas/AvsResult'
-        threeDsResult:
-          $ref: '#/components/schemas/ThreeDsResult'
-    cybersourceProvider:
-      type: string
-      description: Indicator that risk assessment has been done with Cybersource.
-      enum:
-      - cybersource
-    components-schemas-version:
-      type: integer
-      description: The version of this object
-      format: int64
-      readOnly: true
-    openapi_components-schemas-city-2:
-      type: string
-      minLength: 1
-      description: 'The city of the address.
-
-        '
-    CybersourceRequest:
-      type: object
-      additionalProperties: false
-      required:
-      - provider
-      - merchantAcceptorKey
-      - card
-      - amount
-      - chargeType
-      - customer
-      properties:
-        provider:
-          $ref: '#/components/schemas/cybersourceProvider'
-        merchantAcceptorKey:
-          $ref: '#/components/schemas/AcceptorKey'
-        card:
-          $ref: '#/components/schemas/components-schemas-CardInput'
-        amount:
-          $ref: '#/components/schemas/openapi_components-schemas-Amount-3'
-        chargeType:
-          $ref: '#/components/schemas/openapi_components-schemas-ChargeType-2'
-        customer:
-          $ref: '#/components/schemas/CybersourceCustomer'
-        localTransactionDateTime:
-          $ref: '#/components/schemas/schemas-LocalTransactionDateTime'
-        authentication:
-          $ref: '#/components/schemas/Authentication'
-        authorizationFields:
-          $ref: '#/components/schemas/Authorization'
     errorTitle:
       type: string
       description: 'A short, human-readable summary of the problem type. It does not change from occurrence to occurrence of the error.
 
         '
+    Authorization:
+      description: The authorization fields received in the ISO response message.
+      type: object
+      properties:
+        responseCode:
+          $ref: '#/components/schemas/responseCode'
+        eci:
+          $ref: '#/components/schemas/components-schemas-eci'
+    openapi_components-schemas-cardEntry-2:
+      description: 'The method used to capture the card details.
+
+        '
+      type: string
+      enum:
+      - e-commerce
+      - manual
+      - card-on-file
+      - token
+      - token-on-file
+      - terminal
+      example: e-commerce
     openapi_components-schemas-InvalidInputErrorDetails:
       type: object
       required:
@@ -215,16 +296,72 @@ components:
           items:
             $ref: '#/components/schemas/ValidationError'
           description: A list of validation errors.
-    schemas-amountValue:
-      type: integer
-      format: int64
-      minimum: 0
-      maximum: 900000000
-      description: 'The amount in minor units. For example `$12.34` should be encoded as `1234`. Note that not all
-
-        currencies have 2 minor units. Some have three or zero.
+    openapi_components-schemas-line1-2:
+      type: string
+      minLength: 1
+      description: 'Address line 1
 
         '
+    openapi_components-schemas-stateOrProvince-2:
+      type: string
+      minLength: 1
+      description: 'The state (US) or province (non-US) of the address.
+
+        '
+    ChargeKey:
+      description: Uniquely identifies a charge.
+      type: string
+      pattern: ^chg-[a-zA-Z0-9]+$
+      minLength: 5
+      maxLength: 120
+      example: chg-1e1dAHhgstYTUhlphPzZ
+    openapi_components-schemas-line2-2:
+      type: string
+      minLength: 1
+      description: 'Address line 2
+
+        '
+    openapi_components-schemas-terminalEntryMode:
+      description: 'Required when `cardEntry` is `terminal`. This field indicates the method used for PAN entry on the terminal to initiate the transaction.
+
+        '
+      type: string
+      enum:
+      - contactless
+      - chip
+    schemas-LocalTransactionDateTime:
+      type: string
+      format: date-time
+      description: Date and time of the transaction in the local timezone.
+    AddressInputAlpha2:
+      type: object
+      required:
+      - countryCode
+      - city
+      - line1
+      - postalCode
+      additionalProperties: false
+      description: 'A physical postal address
+
+        '
+      properties:
+        countryCode:
+          $ref: '#/components/schemas/openapi_components-schemas-countryCodeAlpha2'
+        stateOrProvince:
+          $ref: '#/components/schemas/openapi_components-schemas-stateOrProvince-2'
+        city:
+          $ref: '#/components/schemas/openapi_components-schemas-city-2'
+        line1:
+          $ref: '#/components/schemas/openapi_components-schemas-line1-2'
+        line2:
+          $ref: '#/components/schemas/openapi_components-schemas-line2-2'
+        postalCode:
+          $ref: '#/components/schemas/openapi_components-schemas-postalCode-2'
+    openapi_components-schemas-lastModified:
+      type: string
+      description: The date and time this object was last modified
+      format: date-time
+      readOnly: true
     openapi_components-schemas-currencyCode-6:
       type: string
       pattern: ^[A-Z]{3}$
@@ -233,7 +370,23 @@ components:
         description: Find more info here
         url: https://www.iso.org/iso-4217-currency-codes.html
       example: EUR
-    schemas-NotAuthorizedErrorDetails:
+    openapi_components-schemas-created-2:
+      type: string
+      description: The date and time this object was created
+      format: date-time
+      readOnly: true
+    components-schemas-NameOfPeopleAndPlaces:
+      type: string
+      pattern: ^[\w -,\.\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u00FF]+$
+      minLength: 1
+      maxLength: 120
+      example: Name
+    components-schemas-version:
+      type: integer
+      description: The version of this object
+      format: int64
+      readOnly: true
+    MerchantAcceptorNotFoundError:
       type: object
       required:
       - type
@@ -246,43 +399,95 @@ components:
           allOf:
           - $ref: '#/components/schemas/errorType'
           - enum:
-            - /silverflow/problems/riskAssessments/not-authorized
+            - /silverflow/problems/riskAssessments/merchant-acceptor-not-found
         title:
           allOf:
           - $ref: '#/components/schemas/errorTitle'
           - enum:
-            - Not authorized
+            - The merchant acceptor was not found.
         status:
           allOf:
           - $ref: '#/components/schemas/errorStatus'
           - enum:
-            - 401
+            - 422
         detail:
           $ref: '#/components/schemas/errorDetail'
         instance:
           $ref: '#/components/schemas/errorInstance'
-    AvsResult:
+    openapi_components-schemas-status:
+      type: string
+      description: The status associated with the Cybersource risk assessment.
       enum:
-      - none
-      - match
-      - partial-match
-      - no-match
-      - not-processed
-      description: The result of the AVS verification.
-    expiryYear:
+      - ACCEPTED
+      - REJECTED
+      - PENDING_REVIEW
+      - DECLINED
+      - PENDING_AUTHENTICATION
+      - INVALID_REQUEST
+      - AUTHENTICATION_FAILED
+      - CHALLENGE
+    errorStatus:
       type: integer
-      description: 'The year the card expires including the century
+      format: int32
+      description: 'The HTTP status code generated by the origin server for this occurrence
+
+        of the problem.
 
         '
-      minimum: 2020
-      maximum: 2050
-    openapi_components-schemas-pan-3:
+    openapi_components-schemas-Amount-3:
+      type: object
+      required:
+      - value
+      - currency
+      additionalProperties: false
+      description: 'An amount encoded as an object with a `value` in minor units and a `currency` code.
+
+        '
+      properties:
+        value:
+          $ref: '#/components/schemas/schemas-amountValue'
+        currency:
+          $ref: '#/components/schemas/openapi_components-schemas-currencyCode-6'
+    schemas-OutputCard:
+      type: object
+      required:
+      - last4
+      additionalProperties: false
+      description: 'Card data
+
+        '
+      properties:
+        last4:
+          type: string
+          pattern: ^[0-9]+$
+          minLength: 4
+          maxLength: 4
+          example: 0905
+    FraudioCustomer:
+      type: object
+      additionalProperties: false
+      description: Details of the customer carrying out the transaction
+      properties:
+        firstName:
+          description: The first name of the customer.
+          allOf:
+          - $ref: '#/components/schemas/components-schemas-NameOfPeopleAndPlaces'
+        lastName:
+          description: The last name of the customer.
+          allOf:
+          - $ref: '#/components/schemas/components-schemas-NameOfPeopleAndPlaces'
+        email:
+          description: The email of the customer.
+          allOf:
+          - $ref: '#/components/schemas/email'
+        phoneNumber:
+          description: The phone number of the customer.
+          allOf:
+          - $ref: '#/components/schemas/schemas-phoneNumber'
+    cybersourceId:
       type: string
-      writeOnly: true
-      description: Full digits of a card
-      pattern: ^\d{12,19}$
-      format: password
-      example: '1234123412341234'
+      description: The id of the Cybersource risk assessment.
+      example: '5526663169230178269497'
     FraudioRequest:
       description: Fields used for a Fraudio request.
       required:
@@ -312,82 +517,104 @@ components:
           $ref: '#/components/schemas/Authentication'
         authorizationFields:
           $ref: '#/components/schemas/Authorization'
-    components-schemas-eci:
-      type: string
-      description: E-commerce Indicator
-    openapi_components-schemas-AcceptorRef:
+    RiskProviderNoCustomerTokenError:
       type: object
-      description: Reference key and status of the acceptor
       required:
-      - key
-      - version
+      - type
+      - title
+      - status
+      - detail
+      - instance
       properties:
-        key:
-          $ref: '#/components/schemas/AcceptorKey'
-        version:
-          $ref: '#/components/schemas/components-schemas-version'
-    intent:
-      description: 'The intention of the cardholder.
+        type:
+          allOf:
+          - $ref: '#/components/schemas/errorType'
+          - enum:
+            - /silverflow/problems/riskAssessments/no-customer-token
+        title:
+          allOf:
+          - $ref: '#/components/schemas/errorTitle'
+          - enum:
+            - No risk provider token found for given agent key
+        status:
+          allOf:
+          - $ref: '#/components/schemas/errorStatus'
+          - enum:
+            - 409
+        detail:
+          $ref: '#/components/schemas/errorDetail'
+        instance:
+          $ref: '#/components/schemas/errorInstance'
+    components-schemas-CardInput:
+      type: object
+      required:
+      - number
+      - expiryMonth
+      - expiryYear
+      additionalProperties: false
+      description: 'Card data
 
         '
+      properties:
+        number:
+          $ref: '#/components/schemas/openapi_components-schemas-pan-3'
+        expiryMonth:
+          $ref: '#/components/schemas/expiryMonth'
+        expiryYear:
+          $ref: '#/components/schemas/expiryYear'
+        holderName:
+          $ref: '#/components/schemas/openapi_components-schemas-holderName'
+    responseCode:
       type: string
-      enum:
-      - purchase
-      - reservation
-      - account-status
-      - payout
-      - payout-status
-      - funding
-      - advice
-      - refund
-    components-schemas-NameOfPeopleAndPlaces:
-      type: string
-      pattern: ^[\w -,\.\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u00FF]+$
-      minLength: 1
-      maxLength: 120
-      example: Name
+      description: Contents of field 39
+    expiryYear:
+      type: integer
+      description: 'The year the card expires including the century
+
+        '
+      minimum: 2020
+      maximum: 2050
     errorInstance:
       type: string
       description: 'A reference that identifies the specific occurrence of the error. The instance is unique for every error.
 
         '
-    ChargeKey:
-      description: Uniquely identifies a charge.
+    cybersource_score:
+      type: integer
+      description: The score of the Cybersource risk assessment.
+      example: 10
+    openapi_components-schemas-city-2:
       type: string
-      pattern: ^chg-[a-zA-Z0-9]+$
-      minLength: 5
+      minLength: 1
+      description: 'The city of the address.
+
+        '
+    RiskAssessmentRequest:
+      oneOf:
+      - $ref: '#/components/schemas/FraudioRequest'
+      - $ref: '#/components/schemas/CybersourceRequest'
+    CvcResult:
+      enum:
+      - none
+      - match
+      - no-match
+      - not-processed
+      description: The result of cvc verification.
+    openapi_components-schemas-holderName:
+      type: string
+      description: "The name of the cardholder. In case of AVS, value will be trimmed by the scheme if greater than 26 characters (Visa) or 22 characters (Mastercard).\n\nFor 3DS it will be trimmed if greater than 45 characters  . \n\nMore information here: [Cardholder name restrictions](#section/Cardholder-name-restrictions)\n"
+      pattern: ^[\x20-\x7E\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u00FF]+$
+      minLength: 1
       maxLength: 120
-      example: chg-1e1dAHhgstYTUhlphPzZ
-    CybersourceCustomer:
-      type: object
-      additionalProperties: false
-      description: Details of the customer carrying out the transaction
-      required:
-      - firstName
-      - lastName
-      - email
-      - phoneNumber
-      - billingAddress
-      properties:
-        firstName:
-          description: The first name of the customer.
-          allOf:
-          - $ref: '#/components/schemas/components-schemas-NameOfPeopleAndPlaces'
-        lastName:
-          description: The last name of the customer.
-          allOf:
-          - $ref: '#/components/schemas/components-schemas-NameOfPeopleAndPlaces'
-        email:
-          description: The email of the customer.
-          allOf:
-          - $ref: '#/components/schemas/email'
-        phoneNumber:
-          description: The phone number of the customer.
-          allOf:
-          - $ref: '#/components/schemas/schemas-phoneNumber'
-        billingAddress:
-          description: The billing address of the customer.
-          $ref: '#/components/schemas/AddressInputAlpha2'
+      example: Joe Cardholder
+    recommendation:
+      description: The recommendation of the Fraudio risk assessment.
+      type: string
+      enum:
+      - green
+      - amber
+      - red
+      example: green
     components-schemas-order:
       description: 'The method used to place the order.
 
@@ -403,58 +630,7 @@ components:
       - ucof
       - installment
       - counter
-    openapi_components-schemas-Amount-3:
-      type: object
-      required:
-      - value
-      - currency
-      additionalProperties: false
-      description: 'An amount encoded as an object with a `value` in minor units and a `currency` code.
-
-        '
-      properties:
-        value:
-          $ref: '#/components/schemas/schemas-amountValue'
-        currency:
-          $ref: '#/components/schemas/openapi_components-schemas-currencyCode-6'
-    errorStatus:
-      type: integer
-      format: int32
-      description: 'The HTTP status code generated by the origin server for this occurrence
-
-        of the problem.
-
-        '
-    openapi_components-schemas-cardEntry-2:
-      description: 'The method used to capture the card details.
-
-        '
-      type: string
-      enum:
-      - e-commerce
-      - manual
-      - card-on-file
-      - token
-      - token-on-file
-      - terminal
-      example: e-commerce
-    Authorization:
-      description: The authorization fields received in the ISO response message.
-      type: object
-      properties:
-        responseCode:
-          $ref: '#/components/schemas/responseCode'
-        eci:
-          $ref: '#/components/schemas/components-schemas-eci'
-    schemas-LocalTransactionDateTime:
-      type: string
-      format: date-time
-      description: Date and time of the transaction in the local timezone.
-    cybersource_score:
-      type: integer
-      description: The score of the Cybersource risk assessment.
-      example: 10
-    RiskProviderTimeoutError:
+    schemas-NotAuthorizedErrorDetails:
       type: object
       required:
       - type
@@ -467,157 +643,67 @@ components:
           allOf:
           - $ref: '#/components/schemas/errorType'
           - enum:
-            - /silverflow/problems/riskAssessments/provider-timeout
+            - /silverflow/problems/riskAssessments/not-authorized
         title:
           allOf:
           - $ref: '#/components/schemas/errorTitle'
           - enum:
-            - Request timed out
+            - Not authorized
         status:
           allOf:
           - $ref: '#/components/schemas/errorStatus'
           - enum:
-            - 408
+            - 401
         detail:
           $ref: '#/components/schemas/errorDetail'
         instance:
           $ref: '#/components/schemas/errorInstance'
-    RiskAssessmentKey:
-      description: Uniquely identifies a risk assessment.
-      type: string
-      pattern: ^rak-[a-zA-Z0-9]+$
-      minLength: 5
-      maxLength: 120
-      example: rak-1e1dAHhgstYTUhlphPzZ
-    Provider:
-      type: string
-      description: The supported risk assessment providers.
-      oneOf:
-      - $ref: '#/components/schemas/fraudioProvider'
-      - $ref: '#/components/schemas/cybersourceProvider'
-    expiryMonth:
-      type: integer
-      description: 'The month the card expires. January is 1
+    intent:
+      description: 'The intention of the cardholder.
 
         '
-      minimum: 1
-      maximum: 12
-    openapi_components-schemas-status:
       type: string
-      description: The status associated with the Cybersource risk assessment.
       enum:
-      - ACCEPTED
-      - REJECTED
-      - PENDING_REVIEW
-      - DECLINED
-      - PENDING_AUTHENTICATION
-      - INVALID_REQUEST
-      - AUTHENTICATION_FAILED
-      - CHALLENGE
-    email:
-      type: string
-      description: A valid email address
-      pattern: \w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*
-    CybersourceResult:
+      - purchase
+      - reservation
+      - account-status
+      - payout
+      - payout-status
+      - funding
+      - advice
+      - refund
+    score:
+      type: number
+      description: The score of the Fraudio risk assessment.
+      example: 0.533506949459276
+    RiskProviderUnexpectedError:
       type: object
-      additionalProperties: false
       required:
-      - id
-      - score
+      - type
+      - title
       - status
-      description: A risk assessment result from Cybersource.
+      - detail
+      - instance
       properties:
-        id:
-          $ref: '#/components/schemas/cybersourceId'
-        score:
-          $ref: '#/components/schemas/cybersource_score'
+        type:
+          allOf:
+          - $ref: '#/components/schemas/errorType'
+          - enum:
+            - /silverflow/problems/riskAssessments/provider-unexpected
+        title:
+          allOf:
+          - $ref: '#/components/schemas/errorTitle'
+          - enum:
+            - Request to risk provider returned with unexpected error
         status:
-          $ref: '#/components/schemas/openapi_components-schemas-status'
-    RiskAssessmentRequest:
-      oneOf:
-      - $ref: '#/components/schemas/FraudioRequest'
-      - $ref: '#/components/schemas/CybersourceRequest'
-    fraudioProvider:
-      type: string
-      description: Indicator that risk assessment has been done with Fraudio.
-      enum:
-      - fraudio
-    recommendation:
-      description: The recommendation of the Fraudio risk assessment.
-      type: string
-      enum:
-      - green
-      - amber
-      - red
-      example: green
-    errorDetail:
-      type: string
-      description: 'A human readable explanation specific to this occurrence of the problem.
-
-        '
-    openapi_components-schemas-terminalEntryMode:
-      description: 'Required when `cardEntry` is `terminal`. This field indicates the method used for PAN entry on the terminal to initiate the transaction.
-
-        '
-      type: string
-      enum:
-      - contactless
-      - chip
-    responseCode:
-      type: string
-      description: Contents of field 39
-    RiskAssessmentResult:
-      type: object
-      additionalProperties: false
-      required:
-      - key
-      - provider
-      - merchantAcceptorRef
-      - card
-      - amount
-      - chargeType
-      - result
-      - created
-      - status
-      - version
-      description: The risk assessment response.
-      properties:
-        key:
-          $ref: '#/components/schemas/RiskAssessmentKey'
-        provider:
-          $ref: '#/components/schemas/Provider'
-        merchantAcceptorRef:
-          $ref: '#/components/schemas/openapi_components-schemas-AcceptorRef'
-        chargeKey:
-          $ref: '#/components/schemas/ChargeKey'
-        card:
-          $ref: '#/components/schemas/schemas-OutputCard'
-        amount:
-          $ref: '#/components/schemas/openapi_components-schemas-Amount-3'
-        chargeType:
-          $ref: '#/components/schemas/openapi_components-schemas-ChargeType-2'
-        localTransactionDateTime:
-          $ref: '#/components/schemas/schemas-LocalTransactionDateTime'
-        customer:
-          oneOf:
-          - $ref: '#/components/schemas/FraudioCustomer'
-          - $ref: '#/components/schemas/CybersourceCustomer'
-        authentication:
-          $ref: '#/components/schemas/Authentication'
-        authorizationFields:
-          $ref: '#/components/schemas/Authorization'
-        result:
-          oneOf:
-          - $ref: '#/components/schemas/schemas-FraudioResult'
-          - $ref: '#/components/schemas/CybersourceResult'
-        created:
-          $ref: '#/components/schemas/openapi_components-schemas-created-2'
-        lastModified:
-          $ref: '#/components/schemas/openapi_components-schemas-lastModified'
-        status:
-          $ref: '#/components/schemas/common_status'
-        version:
-          $ref: '#/components/schemas/components-schemas-version'
+          allOf:
+          - $ref: '#/components/schemas/errorStatus'
+          - enum:
+            - 500
+        detail:
+          $ref: '#/components/schemas/errorDetail'
+        instance:
+          $ref: '#/components/schemas/errorInstance'
     openapi_components-schemas-countryCodeAlpha2:
       type: string
       pattern: ^[A-Z]{2}$
@@ -1162,16 +1248,109 @@ components:
         description: Find more info here
         url: https://www.iso.org/iso-3166-country-codes.html
       example: NL
-    ThreeDsResult:
+    openapi_components-schemas-postalCode-2:
       type: string
-      description: 'The result of the 3DS authentication.
+      pattern: ^[A-Z0-9]+$
+      description: 'The postal code of the address without any spaces.
 
         '
+    expiryMonth:
+      type: integer
+      description: 'The month the card expires. January is 1
+
+        '
+      minimum: 1
+      maximum: 12
+    errorType:
+      type: string
+      description: 'A relative URI reference, this property can be used to perform automated error handling.
+
+        '
+    email:
+      type: string
+      description: A valid email address
+      pattern: \w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*
+    fraudioProvider:
+      type: string
+      description: Indicator that risk assessment has been done with Fraudio.
       enum:
-      - authenticated
-      - non-authenticated
-      - attempt
-      default: none
+      - fraudio
+    errorDetail:
+      type: string
+      description: 'A human readable explanation specific to this occurrence of the problem.
+
+        '
+    RiskAssessmentResult:
+      type: object
+      additionalProperties: false
+      required:
+      - key
+      - provider
+      - merchantAcceptorRef
+      - card
+      - amount
+      - chargeType
+      - result
+      - created
+      - status
+      - version
+      description: The risk assessment response.
+      properties:
+        key:
+          $ref: '#/components/schemas/RiskAssessmentKey'
+        provider:
+          $ref: '#/components/schemas/Provider'
+        merchantAcceptorRef:
+          $ref: '#/components/schemas/openapi_components-schemas-AcceptorRef'
+        chargeKey:
+          $ref: '#/components/schemas/ChargeKey'
+        card:
+          $ref: '#/components/schemas/schemas-OutputCard'
+        amount:
+          $ref: '#/components/schemas/openapi_components-schemas-Amount-3'
+        chargeType:
+          $ref: '#/components/schemas/openapi_components-schemas-ChargeType-2'
+        localTransactionDateTime:
+          $ref: '#/components/schemas/schemas-LocalTransactionDateTime'
+        customer:
+          oneOf:
+          - $ref: '#/components/schemas/FraudioCustomer'
+          - $ref: '#/components/schemas/CybersourceCustomer'
+        authentication:
+          $ref: '#/components/schemas/Authentication'
+        authorizationFields:
+          $ref: '#/components/schemas/Authorization'
+        result:
+          oneOf:
+          - $ref: '#/components/schemas/schemas-FraudioResult'
+          - $ref: '#/components/schemas/CybersourceResult'
+        created:
+          $ref: '#/components/schemas/openapi_components-schemas-created-2'
+        lastModified:
+          $ref: '#/components/schemas/openapi_components-schemas-lastModified'
+        status:
+          $ref: '#/components/schemas/common_status'
+        version:
+          $ref: '#/components/schemas/components-schemas-version'
+    cybersourceProvider:
+      type: string
+      description: Indicator that risk assessment has been done with Cybersource.
+      enum:
+      - cybersource
+    openapi_components-schemas-sequence:
+      description: 'Required for recurring charges. This field indicates whether a charge is part of a recurring sequence. The initial charge of a recurring sequence should be flagged as `initial`,
+
+        all subsequent transactions should be flagged as `subsequent` and must be sent to the `/charges/{initialChargeKey}/mit` endpoint.
+
+
+        **From November 22, 2026 this field will be removed since it is not used.**
+
+        '
+      type: string
+      enum:
+      - initial
+      - subsequent
+      deprecated: true
     ValidationError:
       type: object
       required:
@@ -1187,197 +1366,52 @@ components:
         message:
           type: string
           description: A brief description of the validation error.
-    common_status:
+    ThreeDsResult:
       type: string
-      description: The status of the object
+      description: 'The result of the 3DS authentication.
+
+        '
       enum:
-      - active
-      - archived
-    RiskProviderNoCustomerTokenError:
-      type: object
-      required:
-      - type
-      - title
-      - status
-      - detail
-      - instance
-      properties:
-        type:
-          allOf:
-          - $ref: '#/components/schemas/errorType'
-          - enum:
-            - /silverflow/problems/riskAssessments/no-customer-token
-        title:
-          allOf:
-          - $ref: '#/components/schemas/errorTitle'
-          - enum:
-            - No risk provider token found for given agent key
-        status:
-          allOf:
-          - $ref: '#/components/schemas/errorStatus'
-          - enum:
-            - 409
-        detail:
-          $ref: '#/components/schemas/errorDetail'
-        instance:
-          $ref: '#/components/schemas/errorInstance'
-    schemas-phoneNumber:
-      type: string
-      description: An international phone number
-      pattern: ^\+\d{2}(\(0\))?\d{3,19}$
-      example: +31(0)850609160
-    CvcResult:
-      enum:
-      - none
-      - match
-      - no-match
-      - not-processed
-      description: The result of cvc verification.
-    openapi_components-schemas-stateOrProvince-2:
-      type: string
-      minLength: 1
-      description: 'The state (US) or province (non-US) of the address.
-
-        '
-    AddressInputAlpha2:
-      type: object
-      required:
-      - countryCode
-      - city
-      - line1
-      - postalCode
-      additionalProperties: false
-      description: 'A physical postal address
-
-        '
-      properties:
-        countryCode:
-          $ref: '#/components/schemas/openapi_components-schemas-countryCodeAlpha2'
-        stateOrProvince:
-          $ref: '#/components/schemas/openapi_components-schemas-stateOrProvince-2'
-        city:
-          $ref: '#/components/schemas/openapi_components-schemas-city-2'
-        line1:
-          $ref: '#/components/schemas/openapi_components-schemas-line1-2'
-        line2:
-          $ref: '#/components/schemas/openapi_components-schemas-line2-2'
-        postalCode:
-          $ref: '#/components/schemas/openapi_components-schemas-postalCode-2'
-    openapi_components-schemas-line2-2:
-      type: string
-      minLength: 1
-      description: 'Address line 2
-
-        '
-    MerchantAcceptorNotFoundError:
-      type: object
-      required:
-      - type
-      - title
-      - status
-      - detail
-      - instance
-      properties:
-        type:
-          allOf:
-          - $ref: '#/components/schemas/errorType'
-          - enum:
-            - /silverflow/problems/riskAssessments/merchant-acceptor-not-found
-        title:
-          allOf:
-          - $ref: '#/components/schemas/errorTitle'
-          - enum:
-            - The merchant acceptor was not found.
-        status:
-          allOf:
-          - $ref: '#/components/schemas/errorStatus'
-          - enum:
-            - 422
-        detail:
-          $ref: '#/components/schemas/errorDetail'
-        instance:
-          $ref: '#/components/schemas/errorInstance'
-    openapi_components-schemas-sequence:
-      description: 'Required for recurring charges. This field indicates whether a charge is part of a recurring sequence. The initial charge of a recurring sequence should be flagged as `initial`,
-
-        all subsequent transactions should be flagged as `subsequent` and must be sent to the `/charges/{initialChargeKey}/mit` endpoint.
-
-
-        **From November 22, 2026 this field will be removed since it is not used.**
-
-        '
-      type: string
-      enum:
-      - initial
-      - subsequent
-      deprecated: true
-    openapi_components-schemas-holderName:
-      type: string
-      description: "The name of the cardholder. In case of AVS, value will be trimmed by the scheme if greater than 26 characters (Visa) or 22 characters (Mastercard).\n\nFor 3DS it will be trimmed if greater than 45 characters  . \n\nMore information here: [Cardholder name restrictions](#section/Cardholder-name-restrictions)\n"
-      pattern: ^[\x20-\x7E\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u00FF]+$
-      minLength: 1
-      maxLength: 120
-      example: Joe Cardholder
-    RiskProviderUnexpectedError:
-      type: object
-      required:
-      - type
-      - title
-      - status
-      - detail
-      - instance
-      properties:
-        type:
-          allOf:
-          - $ref: '#/components/schemas/errorType'
-          - enum:
-            - /silverflow/problems/riskAssessments/provider-unexpected
-        title:
-          allOf:
-          - $ref: '#/components/schemas/errorTitle'
-          - enum:
-            - Request to risk provider returned with unexpected error
-        status:
-          allOf:
-          - $ref: '#/components/schemas/errorStatus'
-          - enum:
-            - 500
-        detail:
-          $ref: '#/components/schemas/errorDetail'
-        instance:
-          $ref: '#/components/schemas/errorInstance'
-    errorType:
-      type: string
-      description: 'A relative URI reference, this property can be used to perform automated error handling.
-
-        '
-    FraudioCustomer:
+      - authenticated
+      - non-authenticated
+      - attempt
+      default: none
+    CybersourceRequest:
       type: object
       additionalProperties: false
-      description: Details of the customer carrying out the transaction
+      required:
+      - provider
+      - merchantAcceptorKey
+      - card
+      - amount
+      - chargeType
+      - customer
       properties:
-        firstName:
-          description: The first name of the customer.
-          allOf:
-          - $ref: '#/components/schemas/components-schemas-NameOfPeopleAndPlaces'
-        lastName:
-          description: The last name of the customer.
-          allOf:
-          - $ref: '#/components/schemas/components-schemas-NameOfPeopleAndPlaces'
-        email:
-          description: The email of the customer.
-          allOf:
-          - $ref: '#/components/schemas/email'
-        phoneNumber:
-          description: The phone number of the customer.
-          allOf:
-          - $ref: '#/components/schemas/schemas-phoneNumber'
-    openapi_components-schemas-postalCode-2:
+        provider:
+          $ref: '#/components/schemas/cybersourceProvider'
+        merchantAcceptorKey:
+          $ref: '#/components/schemas/AcceptorKey'
+        card:
+          $ref: '#/components/schemas/components-schemas-CardInput'
+        amount:
+          $ref: '#/components/schemas/openapi_components-schemas-Amount-3'
+        chargeType:
+          $ref: '#/components/schemas/openapi_components-schemas-ChargeType-2'
+        customer:
+          $ref: '#/components/schemas/CybersourceCustomer'
+        localTransactionDateTime:
+          $ref: '#/components/schemas/schemas-LocalTransactionDateTime'
+        authentication:
+          $ref: '#/components/schemas/Authentication'
+        authorizationFields:
+          $ref: '#/components/schemas/Authorization'
+    openapi_components-schemas-pan-3:
       type: string
-      pattern: ^[A-Z0-9]+$
-      description: 'The postal code of the address without any spaces.
-
-        '
+      writeOnly: true
+      description: Full digits of a card
+      pattern: ^\d{12,19}$
+      format: password
+      example: '1234123412341234'
     schemas-FraudioResult:
       type: object
       additionalProperties: false
@@ -1390,95 +1424,45 @@ components:
           $ref: '#/components/schemas/score'
         recommendation:
           $ref: '#/components/schemas/recommendation'
-    openapi_components-schemas-lastModified:
+    Provider:
       type: string
-      description: The date and time this object was last modified
-      format: date-time
-      readOnly: true
-    schemas-OutputCard:
-      type: object
-      required:
-      - last4
-      additionalProperties: false
-      description: 'Card data
-
-        '
-      properties:
-        last4:
-          type: string
-          pattern: ^[0-9]+$
-          minLength: 4
-          maxLength: 4
-          example: 0905
-    openapi_components-schemas-created-2:
+      description: The supported risk assessment providers.
+      oneOf:
+      - $ref: '#/components/schemas/fraudioProvider'
+      - $ref: '#/components/schemas/cybersourceProvider'
+    common_status:
       type: string
-      description: The date and time this object was created
-      format: date-time
-      readOnly: true
-    openapi_components-schemas-line1-2:
+      description: The status of the object
+      enum:
+      - active
+      - archived
+    Authentication:
+      description: Details related to authentication of the transaction
+      type: object
+      properties:
+        cvc:
+          $ref: '#/components/schemas/CvcResult'
+        avs:
+          $ref: '#/components/schemas/AvsResult'
+        threeDsResult:
+          $ref: '#/components/schemas/ThreeDsResult'
+    schemas-phoneNumber:
       type: string
-      minLength: 1
-      description: 'Address line 1
-
-        '
-    components-schemas-CardInput:
-      type: object
-      required:
-      - number
-      - expiryMonth
-      - expiryYear
-      additionalProperties: false
-      description: 'Card data
-
-        '
-      properties:
-        number:
-          $ref: '#/components/schemas/openapi_components-schemas-pan-3'
-        expiryMonth:
-          $ref: '#/components/schemas/expiryMonth'
-        expiryYear:
-          $ref: '#/components/schemas/expiryYear'
-        holderName:
-          $ref: '#/components/schemas/openapi_components-schemas-holderName'
-    openapi_components-schemas-ChargeType-2:
-      description: 'Describes the kind of charge the merchant wants to submit.
-
-        '
-      type: object
-      required:
-      - intent
-      - cardEntry
-      - order
-      properties:
-        intent:
-          $ref: '#/components/schemas/intent'
-        cardEntry:
-          $ref: '#/components/schemas/openapi_components-schemas-cardEntry-2'
-        order:
-          $ref: '#/components/schemas/components-schemas-order'
-        sequence:
-          $ref: '#/components/schemas/openapi_components-schemas-sequence'
-        terminalEntryMode:
-          $ref: '#/components/schemas/openapi_components-schemas-terminalEntryMode'
+      description: An international phone number
+      pattern: ^\+\d{2}(\(0\))?\d{3,19}$
+      example: +31(0)850609160
   examples:
-    perform-risk-assessment-fraudio:
+    components-examples-InvalidInputErrorExample:
       value:
-        provider: fraudio
-        merchantAcceptorKey: mac-1JRadf2ffdfrdPMf2XrS2
-        card:
-          number: '1234123412341234'
-          expiryMonth: 1
-          expiryYear: 2020
-          holderName: Joe Cardholder
-        amount:
-          value: 900000000
-          currency: EUR
-        chargeType:
-          intent: purchase
-          cardEntry: e-commerce
-          order: checkout
-          sequence: initial
-          terminalEntryMode: contactless
+        type: /silverflow/problems/invalid-input
+        title: Invalid Input
+        status: 400
+        detail: The request does not adhere to the defined API schema.
+        instance: /silverflow/b4cc37a0-ab24-46b4-aa8c-cc2d6eddf1b6
+        validationErrors:
+        - path: /body/card/number
+          message: must have required property 'number'
+          errorCode: required.openapi.validation
     perform-risk-assessment-cybersource:
       value:
         provider: cybersource
@@ -1517,17 +1501,24 @@ components:
         authorizationFields:
           responseCode: '00'
           eci: '5'
-    components-examples-InvalidInputErrorExample:
+    perform-risk-assessment-fraudio:
       value:
-        type: /silverflow/problems/invalid-input
-        title: Invalid Input
-        status: 400
-        detail: The request does not adhere to the defined API schema.
-        instance: /silverflow/b4cc37a0-ab24-46b4-aa8c-cc2d6eddf1b6
-        validationErrors:
-        - path: /body/card/number
-          message: must have required property 'number'
-          errorCode: required.openapi.validation
+        provider: fraudio
+        merchantAcceptorKey: mac-1JRadf2ffdfrdPMf2XrS2
+        card:
+          number: '1234123412341234'
+          expiryMonth: 1
+          expiryYear: 2020
+          holderName: Joe Cardholder
+        amount:
+          value: 900000000
+          currency: EUR
+        chargeType:
+          intent: purchase
+          cardEntry: e-commerce
+          order: checkout
+          sequence: initial
+          terminalEntryMode: contactless
   securitySchemes:
     ApiKey:
       description: "The primary method of authenticating to the Silverflow API is through API keys.\n\nAPI keys can be created by calling the [createApiKey](#operation/createApiKey) endpoint. You can create up to 40 API keys and also update and delete them, allowing for _credential rotation_.\n\nThe _Agent Activation_ process will generate an initial API Key for you. See [Activate Agent](#section/Getting-Started).\n\nA call to the [createApiKey](#operation/createApiKey) endpoint will return the following structure:\n\n```json\n{\n    \"key\": \"apk-1wtRxni5IsPsSpBLWpwr\",\n    \"status\": \"active\",\n    \"agentKey\": \"cgt-1wtRvFLIjDOyyUR5Q2LB\",\n    \"description\": \"Data lake API key\",\n    \"permissions\": [\n        \"charges:List\",\n        \"reports:All\"\n    ],\n    \"created\": \"2021-06-22T11:21:45.115Z\",\n    \"secret\": \"FWtnOOHAjbD6rNxWWEeVOCj7JXSEPGJQ\",\n    \"version\": 1\n}\n```\n\n> **Important:** The `secret` is only returned once in the response to the `createApiKey` call.\n\nOnce created, the `key` and `secret` fields from the API key must be used in the HTTP `Authorization` header using the `Basic` scheme.\nThe Basic scheme requires a **username** and **password** to be specified, separated by a `:` (colon) and Base64 encoded.\n\nUse the following values from the API key to construct a Basic authentication header:\n\n| Basic field | API key field | Example |\n| ----------- | ------------- | ------- |\n| username | `key` | `apk-1wtRxni5IsPsSpBLWpwr` |\n| password | `secret` | `FWtnOOHAjbD6rNxWWEeVOCj7JXSEPGJQ` |\n\nIn pseudo-code a valid HTTP Basic Authentication header would be constructed as follows:\n\n```ts\nconst apiKeyId = \"apk-1wtRxni5IsPsSpBLWpwr\";\nconst apiKeySecret = \"FWtnOOHAjbD6rNxWWEeVOCj7JXSEPGJQ\";\nconst authnValue = \"Basic \" + base64Encode(apiKeyId + \":\" + apiKeySecret);\nrequest.setHeader(\"Authorization\", authnValue);\n```\n\nUsing the values from the example a valid HTTP request would look like the following:\n\n```http\nGET /v1/agents/current HTTP/1.1\nAccept: application/json\nAuthorization: Basic YXBrLTF3dFJ4bmk1SXNQc1NwQkxXcHdyOkZXdG5PT0hBamJENnJOeFdXRWVWT0NqN0pYU0VQR0pR\n```\n\nMore information on the Basic scheme can be found in [RFC-7617 - The 'Basic' HTTP Authentication Scheme](https://datatracker.ietf.org/doc/html/rfc7617)."
@@ -1571,9 +1562,6 @@ components:
         Certificate validation happens at the transport layer during TLS handshake. Tenant verification is performed by matching the agent key embedded in the client certificate against the agent key embedded in the trusted CA.
 
         '
-x-refined-from:
-- silverflow-openapi.yml
-- silverflow-openapi.yml
 x-tagGroups:
 - name: ''
   tags:

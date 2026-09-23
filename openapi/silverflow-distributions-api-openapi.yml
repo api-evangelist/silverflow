@@ -1,13 +1,13 @@
 openapi: 3.2.0
 info:
-  title: Silverflow Distributions API
+  description: '**This OpenAPI specification cannot be used for code generation.** Please reach out to your TAM regarding code generation using the API Spec.'
   version: 1.417.0
+  title: Silverflow Distributions API
   contact:
     name: API Support
     email: support@silverflow.com
   license:
     name: Commercial
-  description: 'Operations tagged Distributions across 2 of this provider''s published API definitions: silverflow-openapi.yml, silverflow-openapi.yml. Each path carries the servers of the definition it was published in.'
 servers:
 - url: https://eu-west-1.api.silverflow.com/v1
   description: Production URL for Europe - Equivalent to https://api.silverflow.co/v1
@@ -31,9 +31,7 @@ paths:
         When a report associated to the distribution is completed, we will send a link to the generated report to distribution object specified targets.
 
 
-        Requires the `distributions:Create` permission.
-
-        '
+        Requires the `distributions:Create` permission.'
       tags:
       - Distributions
       requestBody:
@@ -106,9 +104,7 @@ paths:
       description: 'Lists all active distributions objects.
 
 
-        Requires the `distributions:List` permission.
-
-        '
+        Requires the `distributions:List` permission.'
       tags:
       - Distributions
       parameters:
@@ -161,13 +157,6 @@ paths:
               examples:
                 TooManyRequestsError:
                   $ref: '#/components/examples/TooManyRequestsError'
-    servers:
-    - url: https://eu-west-1.api.silverflow.com/v1
-      description: Production URL for Europe - Equivalent to https://api.silverflow.co/v1
-    - url: https://us-east-2.api.silverflow.com/v1
-      description: Production URL for North America
-    - url: https://eu-west-1.api-sbx.silverflow.com/v1
-      description: Sandbox URL - Equivalent to https://api-sbx.silverflow.co/v1
   /distributions/{distributionKey}:
     get:
       operationId: getDistribution
@@ -175,9 +164,7 @@ paths:
       description: 'Returns a distribution object.
 
 
-        Requires the `distributions:Get` permission.
-
-        '
+        Requires the `distributions:Get` permission.'
       tags:
       - Distributions
       parameters:
@@ -245,9 +232,7 @@ paths:
       description: 'Updates a distribution object reference and targets.
 
 
-        Requires the `distributions:Update` permission.
-
-        '
+        Requires the `distributions:Update` permission.'
       tags:
       - Distributions
       parameters:
@@ -321,9 +306,7 @@ paths:
       description: 'Archives a distribution object. Distributions will not be used by their associated entities if they are archived.
 
 
-        Requires the `distributions:Archive` permission.
-
-        '
+        Requires the `distributions:Archive` permission.'
       tags:
       - Distributions
       parameters:
@@ -381,193 +364,36 @@ paths:
               examples:
                 TooManyRequestsError:
                   $ref: '#/components/examples/TooManyRequestsError'
-    servers:
-    - url: https://eu-west-1.api.silverflow.com/v1
-      description: Production URL for Europe - Equivalent to https://api.silverflow.co/v1
-    - url: https://us-east-2.api.silverflow.com/v1
-      description: Production URL for North America
-    - url: https://eu-west-1.api-sbx.silverflow.com/v1
-      description: Sandbox URL - Equivalent to https://api-sbx.silverflow.co/v1
 components:
-  examples:
-    InputValidationError:
-      summary: Input Validation Error
-      value:
-        type: /silverflow/problems/invalid-input
-        title: Invalid Input
-        status: 400
-        detail: The request does not adhere to the defined API schema.
-        instance: /silverflow/b4cc37a0-ab24-46b4-aa8c-cc2d6eddf1b6
-        validationErrors:
-        - path: /body/type
-          errorCode: enum.openapi.validation
-          message: 'must be equal to one of the allowed values: email'
-    ForbiddenError:
-      summary: Forbidden Error
-      value:
-        type: /silverflow/problems/forbidden
-        title: Forbidden
-        status: 403
-        detail: The server is refusing to execute the request for the current authenticated user
-        instance: /silverflow/8e445b2e-d745-4b38-a38d-781fc998e442
-    CreateS3DistributionRequest:
-      summary: Create S3 Distribution Request
-      value:
-        type: s3
-        targets:
-          accountId: '123456789012'
-          bucketName: test-bucket
-          directory: test-directory
-          externalId: hiddenid
-          roleArn: arn:aws:iam::123456789012:role/test-role
-        reference: S3
-    CreateS3DistributionResponse:
-      summary: Create S3 Distribution Response
-      value:
-        type: s3
-        targets:
-          accountId: '123456789012'
-          bucketName: test-bucket
-          directory: test-directory
-          externalId: hiddenid
-          roleArn: arn:aws:iam::123456789012:role/test-role
-        key: dst-5qJEzBHZ1vsYSBgKs1dK
-        status: active
-        agentKey: cgt-5qJCIJOofB9n0cYKZTUD
-        created: '2025-04-24T14:15:22Z'
-        version: 1
-        reference: S3
-    CreateEmailDistributionResponse:
-      summary: Create Email Distribution Response
-      value:
-        type: email
-        targets:
-          recipients:
-          - to:
-            - to-example@example.com
-            cc:
-            - cc-example@example.com
-            bcc:
-            - bcc-example@example.com
-        key: dst-1e1dAHhgstYTUhlphPzZ
-        status: active
-        agentKey: cgt-1e1dAHhgstYTUhlphPzZ
-        created: '2025-01-24T14:15:22Z'
-        version: 1
-        reference: DistributionReference
-    CreateSftpDistributionResponse:
-      summary: Create SFTP Distribution Response
-      value:
-        type: sftp
-        targets:
-          host: file-server.company.com
-          username: ssh-username
-          dirPath: /files/reports/received/
-        key: dst-1e1dAHhgstYTUhlphPzZ
-        status: active
-        agentKey: cgt-1e1dAHhgstYTUhlphPzZ
-        created: '2025-04-24T14:15:22Z'
-        version: 1
-        reference: sftp-distribution-reference
-    CreateEmailDistributionRequest:
-      summary: Create Email Distribution Request
-      value:
-        type: email
-        targets:
-          recipients:
-          - to:
-            - to-example@example.com
-            cc:
-            - cc-example@example.com
-            bcc:
-            - bcc-example@example.com
-        reference: DistributionReference
-    DistributionNotFoundError:
-      summary: Distribution Not Found Error
-      value:
-        type: /silverflow/problems/distribution/not-found
-        title: Distribution not found
-        status: 404
-        detail: The distribution dst-1e1dAHhgstYTUhlphPzZ is not found
-        instance: /silverflow/8e445b2e-d745-4b38-a38d-781fc998e442
-    TooManyRequestsError:
-      summary: Too Many Requests Error
-      value:
-        type: /silverflow/problems/too-many-requests
-        title: Too Many Requests
-        status: 429
-        detail: The number of requests performed by the client has exceeded the configured maximum for a given period
-        instance: /silverflow/8e445b2e-d745-4b38-a38d-781fc998e442
-    UnauthorizedError:
-      summary: Unauthorized Error
-      value:
-        type: /silverflow/problems/authentication-required
-        title: Authentication Required
-        status: 401
-        detail: The credentials supplied in the request are either missing, invalid, or not applicable in the current scope
-        instance: /silverflow/8e445b2e-d745-4b38-a38d-781fc998e442
-    CreateSftpDistributionRequest:
-      summary: Create SFTP Distribution Request
-      value:
-        type: sftp
-        targets:
-          host: file-server.company.com
-          username: ssh-username
-          dirPath: /files/reports/received/
-        reference: sftp-distribution-reference
   schemas:
-    BaseDistribution:
+    S3Distribution:
       type: object
-      required:
-      - key
-      - status
-      - agentKey
-      - created
-      - version
-      description: A distribution
-      properties:
-        key:
-          $ref: '#/components/schemas/distributionKey'
-        status:
-          $ref: '#/components/schemas/status'
-        agentKey:
-          $ref: '#/components/schemas/schemas-AgentKey'
-        created:
-          $ref: '#/components/schemas/openapi_components-schemas-created-2'
-        lastModified:
-          $ref: '#/components/schemas/openapi_components-schemas-lastModified'
-        version:
-          $ref: '#/components/schemas/components-schemas-version'
-        reference:
-          $ref: '#/components/schemas/DistributionReference'
-    DistributionNotFoundError:
-      type: object
-      required:
-      - type
-      - title
-      - status
-      - detail
-      - instance
-      properties:
-        type:
-          allOf:
-          - $ref: '#/components/schemas/errorType'
-          - enum:
-            - /silverflow/problems/distribution/not-found
-        title:
-          allOf:
-          - $ref: '#/components/schemas/errorTitle'
-          - enum:
-            - Distribution not found
-        status:
-          allOf:
-          - $ref: '#/components/schemas/schemas-errorStatus'
-          - enum:
-            - 404
-        detail:
-          $ref: '#/components/schemas/errorDetail'
-        instance:
-          $ref: '#/components/schemas/errorInstance'
+      allOf:
+      - $ref: '#/components/schemas/BaseDistribution'
+      - type: object
+        required:
+        - type
+        - targets
+        properties:
+          type:
+            $ref: '#/components/schemas/S3DistributionType'
+          targets:
+            $ref: '#/components/schemas/S3DistributionTargets'
+    openapi_components-schemas-offsetToken:
+      type: string
+      pattern: ^[a-zA-Z0-9%]+$
+    distributionKey:
+      description: Uniquely identifies a distribution object
+      type: string
+      pattern: ^dst-[a-zA-Z0-9]+$
+      minLength: 10
+      maxLength: 120
+      example: dst-1e1dAHhgstYTUhlphPzZ
+    SftpHost:
+      type: string
+      description: The SFTP Host name or IP address.
+      allOf:
+      - $ref: '#/components/schemas/host'
     openapi_components-schemas-ValidationError:
       type: object
       required:
@@ -584,91 +410,17 @@ components:
         message:
           type: string
           description: The error message.
-    SftpDistributionType:
-      type: string
-      description: SFTP distribution type.
-      enum:
-      - sftp
-    host:
-      type: string
-      description: A valid hostname or IP
-      pattern: (^([a-zA-Z0-9-]+\.)*[a-zA-Z0-9-]+\.[a-zA-Z]{2,})|(^((25[0-5]|(2[0-4]|1\d|[1-9]|)\d)\.?\b){4})$
-      maxLength: 255
-    accountId:
-      type: string
-      description: AWS account ID that owns the S3 bucket. For security reasons, the file is delivered only if the bucket is still owned by this account.
-      minLength: 12
-      maxLength: 12
-      pattern: ^[0-9]{12}$
-    externalId:
-      type: string
-      description: External ID used when assuming the IAM role. Share it only with Silverflow; the role trust policy should require this value.
-      minLength: 1
-    components-schemas-version:
-      type: integer
-      description: The version of this object
-      format: int64
-      readOnly: true
-    UpdateDistributionRequest:
-      type: object
-      additionalProperties: false
-      properties:
-        reference:
-          $ref: '#/components/schemas/DistributionReference'
-        targets:
-          oneOf:
-          - $ref: '#/components/schemas/EmailDistributionTargets'
-          - $ref: '#/components/schemas/SftpDistributionTargets'
-          - $ref: '#/components/schemas/S3DistributionTargets'
-    directory:
-      type: string
-      description: Optional prefix (subdirectory) inside the bucket where the files will be delivered (e.g., `reports/daily/`).
-      minLength: 1
-    schemas-ForbiddenError:
-      type: object
-      required:
-      - type
-      - title
-      - status
-      - detail
-      - instance
-      properties:
-        type:
-          allOf:
-          - $ref: '#/components/schemas/errorType'
-          - enum:
-            - /silverflow/problems/forbidden
-        title:
-          allOf:
-          - $ref: '#/components/schemas/errorTitle'
-          - enum:
-            - Forbidden
-        status:
-          allOf:
-          - $ref: '#/components/schemas/schemas-errorStatus'
-          - enum:
-            - 403
-        detail:
-          $ref: '#/components/schemas/errorDetail'
-        instance:
-          $ref: '#/components/schemas/errorInstance'
-    errorTitle:
-      type: string
-      description: 'A short, human-readable summary of the problem type. It does not change from occurrence to occurrence of the error.
-
-        '
-    EmailDistributionTargets:
-      type: object
-      description: The targets of the email distribution.
-      additionalProperties: false
-      required:
-      - recipients
-      properties:
-        recipients:
-          type: array
-          description: List of recipients
-          items:
-            $ref: '#/components/schemas/EmailRecipients'
+    ListDistributionResponse:
+      allOf:
+      - $ref: '#/components/schemas/schemas-PageWithMoreItems'
+      - type: object
+        required:
+        - distributions
+        properties:
+          distributions:
+            type: array
+            items:
+              $ref: '#/components/schemas/Distribution'
     SftpDistributionTargets:
       type: object
       description: The targets of the SFTP distribution.
@@ -686,26 +438,6 @@ components:
           $ref: '#/components/schemas/sftpUsername'
         dirPath:
           $ref: '#/components/schemas/SftpDirPath'
-    errorInstance:
-      type: string
-      description: 'A reference that identifies the specific occurrence of the error. The instance is unique for every error.
-
-        '
-    Distribution:
-      oneOf:
-      - $ref: '#/components/schemas/EmailDistribution'
-      - $ref: '#/components/schemas/SftpDistribution'
-      - $ref: '#/components/schemas/S3Distribution'
-    bucketName:
-      type: string
-      description: Name of the AWS S3 bucket where the files will be delivered.
-      minLength: 3
-      maxLength: 63
-      pattern: ^(?!(^(\d+\.){3}\d+$))(?!.*[-.]{2})[a-z0-9]([a-z0-9.-]{1,61})[a-z0-9]$
-    roleArn:
-      type: string
-      description: IAM role ARN that the Silverflow service will assume to access the bucket.
-      pattern: ^arn:(aws|aws-us-gov|aws-cn):iam::[0-9]{12}:role\/.+$
     NotAuthorizedError:
       type: object
       required:
@@ -734,79 +466,83 @@ components:
           $ref: '#/components/schemas/errorDetail'
         instance:
           $ref: '#/components/schemas/errorInstance'
-    SftpHost:
+    errorTitle:
       type: string
-      description: The SFTP Host name or IP address.
-      allOf:
-      - $ref: '#/components/schemas/host'
-    SftpDirPath:
-      type: string
-      description: The directory path in the SFTP server where the files will be uploaded.
-    S3DistributionTargets:
+      description: 'A short, human-readable summary of the problem type. It does not change from occurrence to occurrence of the error.
+
+        '
+    BaseDistribution:
       type: object
       required:
-      - bucketName
-      - accountId
-      - directory
-      - roleArn
-      - externalId
+      - key
+      - status
+      - agentKey
+      - created
+      - version
+      description: A distribution
       properties:
-        bucketName:
-          $ref: '#/components/schemas/bucketName'
-        accountId:
-          $ref: '#/components/schemas/accountId'
-        directory:
-          $ref: '#/components/schemas/directory'
-        roleArn:
-          $ref: '#/components/schemas/roleArn'
-        externalId:
-          $ref: '#/components/schemas/externalId'
-    EmailRecipients:
-      type: object
-      description: The Email recipients.
-      required:
-      - to
-      properties:
-        to:
-          type: array
-          description: The recipients that receive the email.
-          items:
-            $ref: '#/components/schemas/EmailRecipient'
-        cc:
-          type: array
-          description: The CC recipients that receive the email.
-          items:
-            $ref: '#/components/schemas/EmailRecipient'
-        bcc:
-          type: array
-          description: The BCC recipients that receive the email.
-          items:
-            $ref: '#/components/schemas/EmailRecipient'
-    DistributionType:
+        key:
+          $ref: '#/components/schemas/distributionKey'
+        status:
+          $ref: '#/components/schemas/status'
+        agentKey:
+          $ref: '#/components/schemas/schemas-AgentKey'
+        created:
+          $ref: '#/components/schemas/openapi_components-schemas-created-2'
+        lastModified:
+          $ref: '#/components/schemas/openapi_components-schemas-lastModified'
+        version:
+          $ref: '#/components/schemas/components-schemas-version'
+        reference:
+          $ref: '#/components/schemas/DistributionReference'
+    moreItems:
+      type: boolean
+    DistributionReference:
       type: string
-      description: The distribution type.
-      oneOf:
-      - $ref: '#/components/schemas/EmailDistributionType'
-      - $ref: '#/components/schemas/SftpDistributionType'
-      - $ref: '#/components/schemas/S3DistributionType'
-    ListDistributionResponse:
-      allOf:
-      - $ref: '#/components/schemas/schemas-PageWithMoreItems'
-      - type: object
-        required:
-        - distributions
-        properties:
-          distributions:
-            type: array
-            items:
-              $ref: '#/components/schemas/Distribution'
-    SftpPort:
+      description: A reference to the distribution
+      pattern: ^[a-zA-Z0-9()+,\-.:=@;$_!*\/?|]+$
+      minLength: 1
+      maxLength: 120
+    schemas-errorStatus:
       type: integer
-      description: The SFTP Host port.
-      default: 22
-      minimum: 1
-      maximum: 65535
-    CreateEmailDistributionRequest:
+      description: 'The HTTP status code generated by the origin server for this occurrence
+
+        of the problem.
+
+        '
+    DistributionNotFoundError:
+      type: object
+      required:
+      - type
+      - title
+      - status
+      - detail
+      - instance
+      properties:
+        type:
+          allOf:
+          - $ref: '#/components/schemas/errorType'
+          - enum:
+            - /silverflow/problems/distribution/not-found
+        title:
+          allOf:
+          - $ref: '#/components/schemas/errorTitle'
+          - enum:
+            - Distribution not found
+        status:
+          allOf:
+          - $ref: '#/components/schemas/schemas-errorStatus'
+          - enum:
+            - 404
+        detail:
+          $ref: '#/components/schemas/errorDetail'
+        instance:
+          $ref: '#/components/schemas/errorInstance'
+    directory:
+      type: string
+      description: Optional prefix (subdirectory) inside the bucket where the files will be delivered (e.g., `reports/daily/`).
+      minLength: 1
+    CreateSftpDistributionRequest:
       type: object
       additionalProperties: false
       required:
@@ -814,41 +550,16 @@ components:
       - targets
       properties:
         type:
-          $ref: '#/components/schemas/EmailDistributionType'
+          $ref: '#/components/schemas/SftpDistributionType'
         targets:
-          $ref: '#/components/schemas/EmailDistributionTargets'
+          $ref: '#/components/schemas/SftpDistributionTargets'
         reference:
           $ref: '#/components/schemas/DistributionReference'
-    distributionKey:
-      description: Uniquely identifies a distribution object
+    openapi_components-schemas-lastModified:
       type: string
-      pattern: ^dst-[a-zA-Z0-9]+$
-      minLength: 10
-      maxLength: 120
-      example: dst-1e1dAHhgstYTUhlphPzZ
-    errorDetail:
-      type: string
-      description: 'A human readable explanation specific to this occurrence of the problem.
-
-        '
-    SftpDistribution:
-      type: object
-      allOf:
-      - $ref: '#/components/schemas/BaseDistribution'
-      - type: object
-        required:
-        - type
-        - targets
-        properties:
-          type:
-            $ref: '#/components/schemas/SftpDistributionType'
-          targets:
-            $ref: '#/components/schemas/SftpDistributionTargets'
-    S3DistributionType:
-      type: string
-      description: S3 distribution type.
-      enum:
-      - s3
+      description: The date and time this object was last modified
+      format: date-time
+      readOnly: true
     schemas-TooManyRequestsError:
       type: object
       required:
@@ -877,25 +588,46 @@ components:
           $ref: '#/components/schemas/errorDetail'
         instance:
           $ref: '#/components/schemas/errorInstance'
-    schemas-PageWithMoreItems:
+    S3DistributionTargets:
       type: object
+      required:
+      - bucketName
+      - accountId
+      - directory
+      - roleArn
+      - externalId
       properties:
-        moreItems:
-          $ref: '#/components/schemas/moreItems'
-        offsetToken:
-          $ref: '#/components/schemas/openapi_components-schemas-offsetToken'
-    status:
+        bucketName:
+          $ref: '#/components/schemas/bucketName'
+        accountId:
+          $ref: '#/components/schemas/accountId'
+        directory:
+          $ref: '#/components/schemas/directory'
+        roleArn:
+          $ref: '#/components/schemas/roleArn'
+        externalId:
+          $ref: '#/components/schemas/externalId'
+    openapi_components-schemas-created-2:
       type: string
-      description: The status of the object
-      enum:
-      - active
-      - archived
-    DistributionReference:
-      type: string
-      description: A reference to the distribution
-      pattern: ^[a-zA-Z0-9()+,\-.:=@;$_!*\/?|]+$
-      minLength: 1
-      maxLength: 120
+      description: The date and time this object was created
+      format: date-time
+      readOnly: true
+    components-schemas-version:
+      type: integer
+      description: The version of this object
+      format: int64
+      readOnly: true
+    UpdateDistributionRequest:
+      type: object
+      additionalProperties: false
+      properties:
+        reference:
+          $ref: '#/components/schemas/DistributionReference'
+        targets:
+          oneOf:
+          - $ref: '#/components/schemas/EmailDistributionTargets'
+          - $ref: '#/components/schemas/SftpDistributionTargets'
+          - $ref: '#/components/schemas/S3DistributionTargets'
     CreateS3DistributionRequest:
       type: object
       additionalProperties: false
@@ -909,19 +641,35 @@ components:
           $ref: '#/components/schemas/S3DistributionTargets'
         reference:
           $ref: '#/components/schemas/DistributionReference'
-    moreItems:
-      type: boolean
-    schemas-AgentKey:
-      description: Uniquely identifies an Agent
+    schemas-email:
       type: string
-      pattern: ^cgt-[a-zA-Z0-9]+|current$
-      example: cgt-1UF2NafdfrdPMf2XrS2
-    CreateDistributionRequest:
+      format: email
+      description: A valid email address
+      pattern: \w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*
+    status:
+      type: string
+      description: The status of the object
+      enum:
+      - active
+      - archived
+    EmailDistributionTargets:
+      type: object
+      description: The targets of the email distribution.
+      additionalProperties: false
+      required:
+      - recipients
+      properties:
+        recipients:
+          type: array
+          description: List of recipients
+          items:
+            $ref: '#/components/schemas/EmailRecipients'
+    Distribution:
       oneOf:
-      - $ref: '#/components/schemas/CreateEmailDistributionRequest'
-      - $ref: '#/components/schemas/CreateSftpDistributionRequest'
-      - $ref: '#/components/schemas/CreateS3DistributionRequest'
-    S3Distribution:
+      - $ref: '#/components/schemas/EmailDistribution'
+      - $ref: '#/components/schemas/SftpDistribution'
+      - $ref: '#/components/schemas/S3Distribution'
+    SftpDistribution:
       type: object
       allOf:
       - $ref: '#/components/schemas/BaseDistribution'
@@ -931,22 +679,121 @@ components:
         - targets
         properties:
           type:
-            $ref: '#/components/schemas/S3DistributionType'
+            $ref: '#/components/schemas/SftpDistributionType'
           targets:
-            $ref: '#/components/schemas/S3DistributionTargets'
-    schemas-email:
+            $ref: '#/components/schemas/SftpDistributionTargets'
+    errorInstance:
       type: string
-      format: email
-      description: A valid email address
-      pattern: \w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*
+      description: 'A reference that identifies the specific occurrence of the error. The instance is unique for every error.
+
+        '
+    EmailDistribution:
+      allOf:
+      - $ref: '#/components/schemas/BaseDistribution'
+      - type: object
+        required:
+        - type
+        - targets
+        properties:
+          type:
+            $ref: '#/components/schemas/EmailDistributionType'
+          targets:
+            $ref: '#/components/schemas/EmailDistributionTargets'
+    schemas-PageWithMoreItems:
+      type: object
+      properties:
+        moreItems:
+          $ref: '#/components/schemas/moreItems'
+        offsetToken:
+          $ref: '#/components/schemas/openapi_components-schemas-offsetToken'
+    SftpPort:
+      type: integer
+      description: The SFTP Host port.
+      default: 22
+      minimum: 1
+      maximum: 65535
+    externalId:
+      type: string
+      description: External ID used when assuming the IAM role. Share it only with Silverflow; the role trust policy should require this value.
+      minLength: 1
+    roleArn:
+      type: string
+      description: IAM role ARN that the Silverflow service will assume to access the bucket.
+      pattern: ^arn:(aws|aws-us-gov|aws-cn):iam::[0-9]{12}:role\/.+$
+    CreateEmailDistributionRequest:
+      type: object
+      additionalProperties: false
+      required:
+      - type
+      - targets
+      properties:
+        type:
+          $ref: '#/components/schemas/EmailDistributionType'
+        targets:
+          $ref: '#/components/schemas/EmailDistributionTargets'
+        reference:
+          $ref: '#/components/schemas/DistributionReference'
+    SftpDistributionType:
+      type: string
+      description: SFTP distribution type.
+      enum:
+      - sftp
+    accountId:
+      type: string
+      description: AWS account ID that owns the S3 bucket. For security reasons, the file is delivered only if the bucket is still owned by this account.
+      minLength: 12
+      maxLength: 12
+      pattern: ^[0-9]{12}$
+    EmailRecipients:
+      type: object
+      description: The Email recipients.
+      required:
+      - to
+      properties:
+        to:
+          type: array
+          description: The recipients that receive the email.
+          items:
+            $ref: '#/components/schemas/EmailRecipient'
+        cc:
+          type: array
+          description: The CC recipients that receive the email.
+          items:
+            $ref: '#/components/schemas/EmailRecipient'
+        bcc:
+          type: array
+          description: The BCC recipients that receive the email.
+          items:
+            $ref: '#/components/schemas/EmailRecipient'
+    host:
+      type: string
+      description: A valid hostname or IP
+      pattern: (^([a-zA-Z0-9-]+\.)*[a-zA-Z0-9-]+\.[a-zA-Z]{2,})|(^((25[0-5]|(2[0-4]|1\d|[1-9]|)\d)\.?\b){4})$
+      maxLength: 255
+    SftpDirPath:
+      type: string
+      description: The directory path in the SFTP server where the files will be uploaded.
+    bucketName:
+      type: string
+      description: Name of the AWS S3 bucket where the files will be delivered.
+      minLength: 3
+      maxLength: 63
+      pattern: ^(?!(^(\d+\.){3}\d+$))(?!.*[-.]{2})[a-z0-9]([a-z0-9.-]{1,61})[a-z0-9]$
+    EmailDistributionType:
+      type: string
+      description: Email distribution type.
+      enum:
+      - email
     errorType:
       type: string
       description: 'A relative URI reference, this property can be used to perform automated error handling.
 
         '
-    openapi_components-schemas-offsetToken:
+    EmailRecipient:
       type: string
-      pattern: ^[a-zA-Z0-9%]+$
+      description: An email-address.
+      allOf:
+      - $ref: '#/components/schemas/schemas-email'
     schemas-InputValidationError:
       type: object
       required:
@@ -984,62 +831,72 @@ components:
           items:
             $ref: '#/components/schemas/openapi_components-schemas-ValidationError'
           description: A list of validation errors.
-    EmailRecipient:
+    errorDetail:
       type: string
-      description: An email-address.
-      allOf:
-      - $ref: '#/components/schemas/schemas-email'
-    schemas-errorStatus:
-      type: integer
-      description: 'The HTTP status code generated by the origin server for this occurrence
-
-        of the problem.
+      description: 'A human readable explanation specific to this occurrence of the problem.
 
         '
+    S3DistributionType:
+      type: string
+      description: S3 distribution type.
+      enum:
+      - s3
+    CreateDistributionRequest:
+      oneOf:
+      - $ref: '#/components/schemas/CreateEmailDistributionRequest'
+      - $ref: '#/components/schemas/CreateSftpDistributionRequest'
+      - $ref: '#/components/schemas/CreateS3DistributionRequest'
+    schemas-AgentKey:
+      description: Uniquely identifies an Agent
+      type: string
+      pattern: ^cgt-[a-zA-Z0-9]+|current$
+      example: cgt-1UF2NafdfrdPMf2XrS2
+    DistributionType:
+      type: string
+      description: The distribution type.
+      oneOf:
+      - $ref: '#/components/schemas/EmailDistributionType'
+      - $ref: '#/components/schemas/SftpDistributionType'
+      - $ref: '#/components/schemas/S3DistributionType'
     sftpUsername:
       type: string
       description: The SFTP username.
-    CreateSftpDistributionRequest:
+    schemas-ForbiddenError:
       type: object
-      additionalProperties: false
       required:
       - type
-      - targets
+      - title
+      - status
+      - detail
+      - instance
       properties:
         type:
-          $ref: '#/components/schemas/SftpDistributionType'
-        targets:
-          $ref: '#/components/schemas/SftpDistributionTargets'
-        reference:
-          $ref: '#/components/schemas/DistributionReference'
-    openapi_components-schemas-created-2:
-      type: string
-      description: The date and time this object was created
-      format: date-time
-      readOnly: true
-    openapi_components-schemas-lastModified:
-      type: string
-      description: The date and time this object was last modified
-      format: date-time
-      readOnly: true
-    EmailDistribution:
-      allOf:
-      - $ref: '#/components/schemas/BaseDistribution'
-      - type: object
-        required:
-        - type
-        - targets
-        properties:
-          type:
-            $ref: '#/components/schemas/EmailDistributionType'
-          targets:
-            $ref: '#/components/schemas/EmailDistributionTargets'
-    EmailDistributionType:
-      type: string
-      description: Email distribution type.
-      enum:
-      - email
+          allOf:
+          - $ref: '#/components/schemas/errorType'
+          - enum:
+            - /silverflow/problems/forbidden
+        title:
+          allOf:
+          - $ref: '#/components/schemas/errorTitle'
+          - enum:
+            - Forbidden
+        status:
+          allOf:
+          - $ref: '#/components/schemas/schemas-errorStatus'
+          - enum:
+            - 403
+        detail:
+          $ref: '#/components/schemas/errorDetail'
+        instance:
+          $ref: '#/components/schemas/errorInstance'
   parameters:
+    type:
+      name: type
+      description: The distribution type.
+      in: query
+      required: false
+      schema:
+        $ref: '#/components/schemas/DistributionType'
     openapi_components-parameters-offsetToken:
       name: offsetToken
       description: The offset token. This token is returned in the response of previous request.
@@ -1059,6 +916,13 @@ components:
         - desc
         default: desc
       example: desc
+    parameters-status:
+      name: status
+      description: The distribution status.
+      in: query
+      required: false
+      schema:
+        $ref: '#/components/schemas/status'
     limit:
       name: limit
       description: The number of items to return
@@ -1071,20 +935,132 @@ components:
         maximum: 100
         default: 10
       example: 1
-    parameters-status:
-      name: status
-      description: The distribution status.
-      in: query
-      required: false
-      schema:
-        $ref: '#/components/schemas/status'
-    type:
-      name: type
-      description: The distribution type.
-      in: query
-      required: false
-      schema:
-        $ref: '#/components/schemas/DistributionType'
+  examples:
+    CreateS3DistributionRequest:
+      summary: Create S3 Distribution Request
+      value:
+        type: s3
+        targets:
+          accountId: '123456789012'
+          bucketName: test-bucket
+          directory: test-directory
+          externalId: hiddenid
+          roleArn: arn:aws:iam::123456789012:role/test-role
+        reference: S3
+    UnauthorizedError:
+      summary: Unauthorized Error
+      value:
+        type: /silverflow/problems/authentication-required
+        title: Authentication Required
+        status: 401
+        detail: The credentials supplied in the request are either missing, invalid, or not applicable in the current scope
+        instance: /silverflow/8e445b2e-d745-4b38-a38d-781fc998e442
+    CreateSftpDistributionResponse:
+      summary: Create SFTP Distribution Response
+      value:
+        type: sftp
+        targets:
+          host: file-server.company.com
+          username: ssh-username
+          dirPath: /files/reports/received/
+        key: dst-1e1dAHhgstYTUhlphPzZ
+        status: active
+        agentKey: cgt-1e1dAHhgstYTUhlphPzZ
+        created: '2025-04-24T14:15:22Z'
+        version: 1
+        reference: sftp-distribution-reference
+    DistributionNotFoundError:
+      summary: Distribution Not Found Error
+      value:
+        type: /silverflow/problems/distribution/not-found
+        title: Distribution not found
+        status: 404
+        detail: The distribution dst-1e1dAHhgstYTUhlphPzZ is not found
+        instance: /silverflow/8e445b2e-d745-4b38-a38d-781fc998e442
+    ForbiddenError:
+      summary: Forbidden Error
+      value:
+        type: /silverflow/problems/forbidden
+        title: Forbidden
+        status: 403
+        detail: The server is refusing to execute the request for the current authenticated user
+        instance: /silverflow/8e445b2e-d745-4b38-a38d-781fc998e442
+    InputValidationError:
+      summary: Input Validation Error
+      value:
+        type: /silverflow/problems/invalid-input
+        title: Invalid Input
+        status: 400
+        detail: The request does not adhere to the defined API schema.
+        instance: /silverflow/b4cc37a0-ab24-46b4-aa8c-cc2d6eddf1b6
+        validationErrors:
+        - path: /body/type
+          errorCode: enum.openapi.validation
+          message: 'must be equal to one of the allowed values: email'
+    CreateS3DistributionResponse:
+      summary: Create S3 Distribution Response
+      value:
+        type: s3
+        targets:
+          accountId: '123456789012'
+          bucketName: test-bucket
+          directory: test-directory
+          externalId: hiddenid
+          roleArn: arn:aws:iam::123456789012:role/test-role
+        key: dst-5qJEzBHZ1vsYSBgKs1dK
+        status: active
+        agentKey: cgt-5qJCIJOofB9n0cYKZTUD
+        created: '2025-04-24T14:15:22Z'
+        version: 1
+        reference: S3
+    CreateSftpDistributionRequest:
+      summary: Create SFTP Distribution Request
+      value:
+        type: sftp
+        targets:
+          host: file-server.company.com
+          username: ssh-username
+          dirPath: /files/reports/received/
+        reference: sftp-distribution-reference
+    TooManyRequestsError:
+      summary: Too Many Requests Error
+      value:
+        type: /silverflow/problems/too-many-requests
+        title: Too Many Requests
+        status: 429
+        detail: The number of requests performed by the client has exceeded the configured maximum for a given period
+        instance: /silverflow/8e445b2e-d745-4b38-a38d-781fc998e442
+    CreateEmailDistributionResponse:
+      summary: Create Email Distribution Response
+      value:
+        type: email
+        targets:
+          recipients:
+          - to:
+            - to-example@example.com
+            cc:
+            - cc-example@example.com
+            bcc:
+            - bcc-example@example.com
+        key: dst-1e1dAHhgstYTUhlphPzZ
+        status: active
+        agentKey: cgt-1e1dAHhgstYTUhlphPzZ
+        created: '2025-01-24T14:15:22Z'
+        version: 1
+        reference: DistributionReference
+    CreateEmailDistributionRequest:
+      summary: Create Email Distribution Request
+      value:
+        type: email
+        targets:
+          recipients:
+          - to:
+            - to-example@example.com
+            cc:
+            - cc-example@example.com
+            bcc:
+            - bcc-example@example.com
+        reference: DistributionReference
   securitySchemes:
     ApiKey:
       description: "The primary method of authenticating to the Silverflow API is through API keys.\n\nAPI keys can be created by calling the [createApiKey](#operation/createApiKey) endpoint. You can create up to 40 API keys and also update and delete them, allowing for _credential rotation_.\n\nThe _Agent Activation_ process will generate an initial API Key for you. See [Activate Agent](#section/Getting-Started).\n\nA call to the [createApiKey](#operation/createApiKey) endpoint will return the following structure:\n\n```json\n{\n    \"key\": \"apk-1wtRxni5IsPsSpBLWpwr\",\n    \"status\": \"active\",\n    \"agentKey\": \"cgt-1wtRvFLIjDOyyUR5Q2LB\",\n    \"description\": \"Data lake API key\",\n    \"permissions\": [\n        \"charges:List\",\n        \"reports:All\"\n    ],\n    \"created\": \"2021-06-22T11:21:45.115Z\",\n    \"secret\": \"FWtnOOHAjbD6rNxWWEeVOCj7JXSEPGJQ\",\n    \"version\": 1\n}\n```\n\n> **Important:** The `secret` is only returned once in the response to the `createApiKey` call.\n\nOnce created, the `key` and `secret` fields from the API key must be used in the HTTP `Authorization` header using the `Basic` scheme.\nThe Basic scheme requires a **username** and **password** to be specified, separated by a `:` (colon) and Base64 encoded.\n\nUse the following values from the API key to construct a Basic authentication header:\n\n| Basic field | API key field | Example |\n| ----------- | ------------- | ------- |\n| username | `key` | `apk-1wtRxni5IsPsSpBLWpwr` |\n| password | `secret` | `FWtnOOHAjbD6rNxWWEeVOCj7JXSEPGJQ` |\n\nIn pseudo-code a valid HTTP Basic Authentication header would be constructed as follows:\n\n```ts\nconst apiKeyId = \"apk-1wtRxni5IsPsSpBLWpwr\";\nconst apiKeySecret = \"FWtnOOHAjbD6rNxWWEeVOCj7JXSEPGJQ\";\nconst authnValue = \"Basic \" + base64Encode(apiKeyId + \":\" + apiKeySecret);\nrequest.setHeader(\"Authorization\", authnValue);\n```\n\nUsing the values from the example a valid HTTP request would look like the following:\n\n```http\nGET /v1/agents/current HTTP/1.1\nAccept: application/json\nAuthorization: Basic YXBrLTF3dFJ4bmk1SXNQc1NwQkxXcHdyOkZXdG5PT0hBamJENnJOeFdXRWVWT0NqN0pYU0VQR0pR\n```\n\nMore information on the Basic scheme can be found in [RFC-7617 - The 'Basic' HTTP Authentication Scheme](https://datatracker.ietf.org/doc/html/rfc7617)."
@@ -1128,9 +1104,6 @@ components:
         Certificate validation happens at the transport layer during TLS handshake. Tenant verification is performed by matching the agent key embedded in the client certificate against the agent key embedded in the trusted CA.
 
         '
-x-refined-from:
-- silverflow-openapi.yml
-- silverflow-openapi.yml
 x-tagGroups:
 - name: ''
   tags:

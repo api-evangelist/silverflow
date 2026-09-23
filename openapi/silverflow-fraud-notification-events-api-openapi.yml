@@ -7,7 +7,7 @@ info:
     email: support@silverflow.com
   license:
     name: Commercial
-  description: 'Operations tagged Fraud Notification Events across 2 of this provider''s published API definitions: silverflow-openapi.yml, silverflow-openapi.yml. Each path carries the servers of the definition it was published in.'
+  description: 'Operations tagged Fraud Notification Events across 2 of this provider''s published API definitions: silverflow-openapi.yml, silverflow-fraud-notification-events-api-openapi.yml. Each path carries the servers of the definition it was published in.'
 servers:
 - url: https://eu-west-1.api.silverflow.com/v1
   description: Production URL for Europe - Equivalent to https://api.silverflow.co/v1
@@ -47,22 +47,14 @@ webhooks:
       description: Sandbox URL - Equivalent to https://api-sbx.silverflow.co/v1
 components:
   schemas:
-    source:
+    acquirerReferenceNumber:
+      description: Unique identifier assigned by the acquirer at clearing. Used to identify the transaction with the card networks.
       type: string
-      description: Source system of the event.
-      pattern: ^https://silverflow.com/[a-zA-Z]+$
-    time:
-      type: string
-      format: date-time
-      description: Date and time when the event was sent.
-    schemas-fraudNotificationKey:
-      description: Uniquely identifies a Fraud Notification.
-      type: string
-      pattern: ^frn-[a-zA-Z0-9]+$
-      minLength: 1
-      maxLength: 120
+      pattern: ^\d+$
+      minLength: 23
+      maxLength: 23
       readOnly: false
-      example: frn-1JRadf2ffdfrdPMf2XrS2
+      example: '12345678901234567890123'
     PublicCloudEvent:
       type: object
       required:
@@ -97,88 +89,18 @@ components:
       description: Date when the Fraud Notification was received by the Card Network. This is specific for each network. For Mastercard this is the TLL8 "Fraud Posted Date". For VISA this is the TC90 "Processing Date".
       format: date
       example: '2021-05-28'
-    openapi_components-schemas-cardNetwork-3:
+    eventId:
       type: string
-      description: The card network.
-      enum:
-      - mastercard
-      - visa
-      - american-express
-    common_agentKey:
-      description: Uniquely identifies an Agent.
-      type: string
-      pattern: ^cgt-[a-zA-Z0-9]+$
-      readOnly: true
-      example: cgt-EFG67b4yPre23ZDrLX
-      title: agentKey
-    acquirerReferenceNumber:
-      description: Unique identifier assigned by the acquirer at clearing. Used to identify the transaction with the card networks.
-      type: string
-      pattern: ^\d+$
-      minLength: 23
-      maxLength: 23
-      readOnly: false
-      example: '12345678901234567890123'
-    dataschema:
-      type: string
-      description: The event schema with the data version of the event.
-    openapi_components-schemas-version-3:
-      type: string
-      description: The version of the spec.
-      pattern: ^[1-9]+.[0-9]+$
-      example: '1.0'
-    common_version:
-      type: integer
-      description: The version of this object.
-      format: int64
-      minimum: 1
-      maximum: 1000
-      example: 1
-      readOnly: false
-    FraudNotificationEventNotificationVersion1_0:
-      type: object
-      allOf:
-      - $ref: '#/components/schemas/PublicCloudEvent'
-      required:
-      - data
-      properties:
-        data:
-          $ref: '#/components/schemas/FraudNotificationEventDataVersion1_0'
-        source:
-          allOf:
-          - $ref: '#/components/schemas/source'
-          - enum:
-            - https://silverflow.com/fraudNotifications
-        specversion:
-          allOf:
-          - $ref: '#/components/schemas/openapi_components-schemas-version-3'
-          - enum:
-            - '1.0'
-        subject:
-          allOf:
-          - description: The subject key, which is a `key`.
-          - $ref: '#/components/schemas/schemas-fraudNotificationKey'
-        type:
-          $ref: '#/components/schemas/fraudNotificationEventType'
-        dataschema:
-          allOf:
-          - $ref: '#/components/schemas/dataschema'
-          - example: https://silverflow.com/schemas/events/fraudNotifications/1.0
-          - enum:
-            - https://silverflow.com/schemas/events/fraudNotifications/1.0
-    openapi_components-schemas-created-4:
-      type: string
-      description: The date and time this object was created.
-      format: date-time
-      readOnly: false
-    openapi_components-schemas-chargeKey-2:
-      description: Uniquely identifies a Charge.
-      type: string
-      pattern: ^chg-[a-zA-Z0-9]+$
-      minLength: 1
+      description: Uniquely identifies an event.
+      pattern: ^evt-[a-zA-Z0-9]+$
+      minLength: 5
       maxLength: 120
-      readOnly: false
-      example: chg-1e1dAHhgstYTUhlphPzZ
+      example: evt-1e1dAHhgstYTUhlphPzZ
+    dataContentType:
+      type: string
+      description: The content type of the event.
+      enum:
+      - application/json
     FraudNotificationEventNotificationVersion1_0Received:
       type: object
       allOf:
@@ -189,6 +111,19 @@ components:
           - $ref: '#/components/schemas/fraudNotificationEventType'
           - enum:
             - com.silverflow.fraudNotifications.received
+    openapi_components-schemas-created-4:
+      type: string
+      description: The date and time this object was created.
+      format: date-time
+      readOnly: false
+    schemas-fraudNotificationKey:
+      description: Uniquely identifies a Fraud Notification.
+      type: string
+      pattern: ^frn-[a-zA-Z0-9]+$
+      minLength: 1
+      maxLength: 120
+      readOnly: false
+      example: frn-1JRadf2ffdfrdPMf2XrS2
     FraudNotificationEventDataVersion1_0:
       type: object
       description: The event data.
@@ -222,23 +157,88 @@ components:
           $ref: '#/components/schemas/openapi_components-schemas-created-4'
         version:
           $ref: '#/components/schemas/common_version'
+    openapi_components-schemas-cardNetwork-3:
+      type: string
+      description: The card network.
+      enum:
+      - mastercard
+      - visa
+      - american-express
+    FraudNotificationEventNotificationVersion1_0:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/PublicCloudEvent'
+      required:
+      - data
+      properties:
+        data:
+          $ref: '#/components/schemas/FraudNotificationEventDataVersion1_0'
+        source:
+          allOf:
+          - $ref: '#/components/schemas/source'
+          - enum:
+            - https://silverflow.com/fraudNotifications
+        specversion:
+          allOf:
+          - $ref: '#/components/schemas/openapi_components-schemas-version-3'
+          - enum:
+            - '1.0'
+        subject:
+          allOf:
+          - description: The subject key, which is a `key`.
+          - $ref: '#/components/schemas/schemas-fraudNotificationKey'
+        type:
+          $ref: '#/components/schemas/fraudNotificationEventType'
+        dataschema:
+          allOf:
+          - $ref: '#/components/schemas/dataschema'
+          - example: https://silverflow.com/schemas/events/fraudNotifications/1.0
+          - enum:
+            - https://silverflow.com/schemas/events/fraudNotifications/1.0
+    common_agentKey:
+      description: Uniquely identifies an Agent.
+      type: string
+      pattern: ^cgt-[a-zA-Z0-9]+$
+      readOnly: true
+      example: cgt-EFG67b4yPre23ZDrLX
+      title: agentKey
+    dataschema:
+      type: string
+      description: The event schema with the data version of the event.
+    openapi_components-schemas-version-3:
+      type: string
+      description: The version of the spec.
+      pattern: ^[1-9]+.[0-9]+$
+      example: '1.0'
     fraudNotificationEventType:
       type: string
       description: The event type.
       pattern: ^com.silverflow.fraudNotifications.[a-zA-Z]+$
       example: com.silverflow.fraudNotifications.received
-    eventId:
+    time:
       type: string
-      description: Uniquely identifies an event.
-      pattern: ^evt-[a-zA-Z0-9]+$
-      minLength: 5
+      format: date-time
+      description: Date and time when the event was sent.
+    source:
+      type: string
+      description: Source system of the event.
+      pattern: ^https://silverflow.com/[a-zA-Z]+$
+    openapi_components-schemas-chargeKey-2:
+      description: Uniquely identifies a Charge.
+      type: string
+      pattern: ^chg-[a-zA-Z0-9]+$
+      minLength: 1
       maxLength: 120
-      example: evt-1e1dAHhgstYTUhlphPzZ
-    dataContentType:
-      type: string
-      description: The content type of the event.
-      enum:
-      - application/json
+      readOnly: false
+      example: chg-1e1dAHhgstYTUhlphPzZ
+    common_version:
+      type: integer
+      description: The version of this object.
+      format: int64
+      minimum: 1
+      maximum: 1000
+      example: 1
+      readOnly: false
   securitySchemes:
     ApiKey:
       description: "The primary method of authenticating to the Silverflow API is through API keys.\n\nAPI keys can be created by calling the [createApiKey](#operation/createApiKey) endpoint. You can create up to 40 API keys and also update and delete them, allowing for _credential rotation_.\n\nThe _Agent Activation_ process will generate an initial API Key for you. See [Activate Agent](#section/Getting-Started).\n\nA call to the [createApiKey](#operation/createApiKey) endpoint will return the following structure:\n\n```json\n{\n    \"key\": \"apk-1wtRxni5IsPsSpBLWpwr\",\n    \"status\": \"active\",\n    \"agentKey\": \"cgt-1wtRvFLIjDOyyUR5Q2LB\",\n    \"description\": \"Data lake API key\",\n    \"permissions\": [\n        \"charges:List\",\n        \"reports:All\"\n    ],\n    \"created\": \"2021-06-22T11:21:45.115Z\",\n    \"secret\": \"FWtnOOHAjbD6rNxWWEeVOCj7JXSEPGJQ\",\n    \"version\": 1\n}\n```\n\n> **Important:** The `secret` is only returned once in the response to the `createApiKey` call.\n\nOnce created, the `key` and `secret` fields from the API key must be used in the HTTP `Authorization` header using the `Basic` scheme.\nThe Basic scheme requires a **username** and **password** to be specified, separated by a `:` (colon) and Base64 encoded.\n\nUse the following values from the API key to construct a Basic authentication header:\n\n| Basic field | API key field | Example |\n| ----------- | ------------- | ------- |\n| username | `key` | `apk-1wtRxni5IsPsSpBLWpwr` |\n| password | `secret` | `FWtnOOHAjbD6rNxWWEeVOCj7JXSEPGJQ` |\n\nIn pseudo-code a valid HTTP Basic Authentication header would be constructed as follows:\n\n```ts\nconst apiKeyId = \"apk-1wtRxni5IsPsSpBLWpwr\";\nconst apiKeySecret = \"FWtnOOHAjbD6rNxWWEeVOCj7JXSEPGJQ\";\nconst authnValue = \"Basic \" + base64Encode(apiKeyId + \":\" + apiKeySecret);\nrequest.setHeader(\"Authorization\", authnValue);\n```\n\nUsing the values from the example a valid HTTP request would look like the following:\n\n```http\nGET /v1/agents/current HTTP/1.1\nAccept: application/json\nAuthorization: Basic YXBrLTF3dFJ4bmk1SXNQc1NwQkxXcHdyOkZXdG5PT0hBamJENnJOeFdXRWVWT0NqN0pYU0VQR0pR\n```\n\nMore information on the Basic scheme can be found in [RFC-7617 - The 'Basic' HTTP Authentication Scheme](https://datatracker.ietf.org/doc/html/rfc7617)."
@@ -284,7 +284,7 @@ components:
         '
 x-refined-from:
 - silverflow-openapi.yml
-- silverflow-openapi.yml
+- silverflow-fraud-notification-events-api-openapi.yml
 x-tagGroups:
 - name: ''
   tags:

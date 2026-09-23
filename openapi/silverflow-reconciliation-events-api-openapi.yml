@@ -7,7 +7,7 @@ info:
     email: support@silverflow.com
   license:
     name: Commercial
-  description: 'Operations tagged Reconciliation Events across 2 of this provider''s published API definitions: silverflow-openapi.yml, silverflow-openapi.yml. Each path carries the servers of the definition it was published in.'
+  description: 'Operations tagged Reconciliation Events across 2 of this provider''s published API definitions: silverflow-openapi.yml, silverflow-reconciliation-events-api-openapi.yml. Each path carries the servers of the definition it was published in.'
 servers:
 - url: https://eu-west-1.api.silverflow.com/v1
   description: Production URL for Europe - Equivalent to https://api.silverflow.co/v1
@@ -50,15 +50,82 @@ webhooks:
       description: Sandbox URL - Equivalent to https://api-sbx.silverflow.co/v1
 components:
   schemas:
+    common_agentKey:
+      description: Uniquely identifies an Agent.
+      type: string
+      pattern: ^cgt-[a-zA-Z0-9]+$
+      readOnly: true
+      example: cgt-EFG67b4yPre23ZDrLX
+      title: agentKey
+    dataschema:
+      type: string
+      description: The event schema with the data version of the event.
+    time:
+      type: string
+      format: date-time
+      description: Date and time when the event was sent.
+    schemas-networkFundsTransferKey:
+      description: Uniquely identifies a Network Funds Transfer
+      type: string
+      pattern: ^nft-[a-zA-Z0-9]+$
     openapi_components-schemas-version-3:
       type: string
       description: The version of the spec.
       pattern: ^[1-9]+.[0-9]+$
       example: '1.0'
+    PublicCloudEvent:
+      type: object
+      required:
+      - id
+      - source
+      - specversion
+      - type
+      - datacontenttype
+      - dataschema
+      - subject
+      - time
+      - agent
+      - data
+      properties:
+        id:
+          $ref: '#/components/schemas/eventId'
+        specversion:
+          allOf:
+          - description: The version of the current spec.
+          - enum:
+            - '1.0'
+          - $ref: '#/components/schemas/openapi_components-schemas-version-3'
+        datacontenttype:
+          $ref: '#/components/schemas/dataContentType'
+        dataschema:
+          $ref: '#/components/schemas/dataschema'
+        time:
+          $ref: '#/components/schemas/time'
+        agent:
+          $ref: '#/components/schemas/common_agentKey'
+    eventId:
+      type: string
+      description: Uniquely identifies an event.
+      pattern: ^evt-[a-zA-Z0-9]+$
+      minLength: 5
+      maxLength: 120
+      example: evt-1e1dAHhgstYTUhlphPzZ
     source:
       type: string
       description: Source system of the event.
       pattern: ^https://silverflow.com/[a-zA-Z]+$
+    NftCompletedNotificationDataVersion1_0:
+      type: object
+      required:
+      - networkFundsTransferKey
+      - fundsTransferDate
+      properties:
+        networkFundsTransferKey:
+          $ref: '#/components/schemas/schemas-networkFundsTransferKey'
+        fundsTransferDate:
+          type: string
+          format: date
+          example: '2025-10-20'
     NftCompletedNotificationVersion1_0:
       type: object
       allOf:
@@ -92,78 +159,11 @@ components:
           - $ref: '#/components/schemas/dataschema'
           - enum:
             - https://silverflow.com/schemas/events/reconciliation/1.0
-    common_agentKey:
-      description: Uniquely identifies an Agent.
-      type: string
-      pattern: ^cgt-[a-zA-Z0-9]+$
-      readOnly: true
-      example: cgt-EFG67b4yPre23ZDrLX
-      title: agentKey
-    time:
-      type: string
-      format: date-time
-      description: Date and time when the event was sent.
-    eventId:
-      type: string
-      description: Uniquely identifies an event.
-      pattern: ^evt-[a-zA-Z0-9]+$
-      minLength: 5
-      maxLength: 120
-      example: evt-1e1dAHhgstYTUhlphPzZ
-    NftCompletedNotificationDataVersion1_0:
-      type: object
-      required:
-      - networkFundsTransferKey
-      - fundsTransferDate
-      properties:
-        networkFundsTransferKey:
-          $ref: '#/components/schemas/schemas-networkFundsTransferKey'
-        fundsTransferDate:
-          type: string
-          format: date
-          example: '2025-10-20'
     dataContentType:
       type: string
       description: The content type of the event.
       enum:
       - application/json
-    schemas-networkFundsTransferKey:
-      description: Uniquely identifies a Network Funds Transfer
-      type: string
-      pattern: ^nft-[a-zA-Z0-9]+$
-    dataschema:
-      type: string
-      description: The event schema with the data version of the event.
-    PublicCloudEvent:
-      type: object
-      required:
-      - id
-      - source
-      - specversion
-      - type
-      - datacontenttype
-      - dataschema
-      - subject
-      - time
-      - agent
-      - data
-      properties:
-        id:
-          $ref: '#/components/schemas/eventId'
-        specversion:
-          allOf:
-          - description: The version of the current spec.
-          - enum:
-            - '1.0'
-          - $ref: '#/components/schemas/openapi_components-schemas-version-3'
-        datacontenttype:
-          $ref: '#/components/schemas/dataContentType'
-        dataschema:
-          $ref: '#/components/schemas/dataschema'
-        time:
-          $ref: '#/components/schemas/time'
-        agent:
-          $ref: '#/components/schemas/common_agentKey'
   examples:
     nft-completed:
       summary: Network Funds Transfer Completed
@@ -225,7 +225,7 @@ components:
         '
 x-refined-from:
 - silverflow-openapi.yml
-- silverflow-openapi.yml
+- silverflow-reconciliation-events-api-openapi.yml
 x-tagGroups:
 - name: ''
   tags:

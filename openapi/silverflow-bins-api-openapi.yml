@@ -1,13 +1,13 @@
 openapi: 3.2.0
 info:
-  title: Silverflow Bins API
+  description: '**This OpenAPI specification cannot be used for code generation.** Please reach out to your TAM regarding code generation using the API Spec.'
   version: 1.417.0
+  title: Silverflow Bins API
   contact:
     name: API Support
     email: support@silverflow.com
   license:
     name: Commercial
-  description: 'Operations tagged Bins across 2 of this provider''s published API definitions: silverflow-openapi.yml, silverflow-openapi.yml. Each path carries the servers of the definition it was published in.'
 servers:
 - url: https://eu-west-1.api.silverflow.com/v1
   description: Production URL for Europe - Equivalent to https://api.silverflow.co/v1
@@ -29,9 +29,7 @@ paths:
       description: 'This operation can return all Agent Bins, one page at a time.
 
 
-        Requires `agents:ListBins` permission.
-
-        '
+        Requires `agents:ListBins` permission.'
       tags:
       - Bins
       parameters:
@@ -53,20 +51,11 @@ paths:
           $ref: '#/components/responses/ForbiddenError'
         '429':
           $ref: '#/components/responses/TooManyRequestsError'
-    servers:
-    - url: https://eu-west-1.api.silverflow.com/v1
-      description: Production URL for Europe - Equivalent to https://api.silverflow.co/v1
-    - url: https://us-east-2.api.silverflow.com/v1
-      description: Production URL for North America
-    - url: https://eu-west-1.api-sbx.silverflow.com/v1
-      description: Sandbox URL - Equivalent to https://api-sbx.silverflow.co/v1
   /bins/{binKey}:
     get:
       operationId: getBin
       summary: Get Bin
-      description: 'Requires `agents:GetBin` permission.
-
-        '
+      description: Requires `agents:GetBin` permission.
       tags:
       - Bins
       parameters:
@@ -88,13 +77,6 @@ paths:
           $ref: '#/components/responses/NotFoundError'
         '429':
           $ref: '#/components/responses/TooManyRequestsError'
-    servers:
-    - url: https://eu-west-1.api.silverflow.com/v1
-      description: Production URL for Europe - Equivalent to https://api.silverflow.co/v1
-    - url: https://us-east-2.api.silverflow.com/v1
-      description: Production URL for North America
-    - url: https://eu-west-1.api-sbx.silverflow.com/v1
-      description: Sandbox URL - Equivalent to https://api-sbx.silverflow.co/v1
   /bins/{binKey}/configurations:
     get:
       operationId: getBinConfigurations
@@ -102,9 +84,7 @@ paths:
       description: 'This operation can return all Bin Configurations, one page at a time.
 
 
-        Requires `agents:GetBin` permission.
-
-        '
+        Requires `agents:GetBin` permission.'
       tags:
       - Bins
       parameters:
@@ -130,15 +110,182 @@ paths:
           $ref: '#/components/responses/NotFoundError'
         '429':
           $ref: '#/components/responses/TooManyRequestsError'
-    servers:
-    - url: https://eu-west-1.api.silverflow.com/v1
-      description: Production URL for Europe - Equivalent to https://api.silverflow.co/v1
-    - url: https://us-east-2.api.silverflow.com/v1
-      description: Production URL for North America
-    - url: https://eu-west-1.api-sbx.silverflow.com/v1
-      description: Sandbox URL - Equivalent to https://api-sbx.silverflow.co/v1
 components:
+  responses:
+    UnauthorizedError:
+      description: Authentication information is missing or invalid
+      headers:
+        WWW_Authenticate:
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ProblemDetail'
+          example:
+            type: https://datatracker.ietf.org/doc/html/rfc2616#section-10.4.2
+            title: Unauthorized
+            status: 401
+            detail: The credentials supplied in the request are either missing, invalid, or not applicable in the current scope
+    ForbiddenError:
+      description: The authenticated client is forbidden to make the request for the resource identified.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ProblemDetail'
+          example:
+            type: https://datatracker.ietf.org/doc/html/rfc2616#section-10.4.4
+            title: Forbidden
+            status: 403
+            detail: The server is refusing to execute the request for the current authenticated user
+            instance: https://api.silverflow.co/v1/merchants/mct-1hPdFqhgstYTUhlphPDp
+    TooManyRequestsError:
+      description: The number of requests (per minute) has exceeded the configured maximum
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ProblemDetail'
+          example:
+            type: /silverflow/problems/too-many-requests
+            title: Too Many Requests
+            status: 429
+            detail: You have exceeded the rate limit. Please try again after the specified delay.
+            instance: /silverflow/b0451a9d-f66d-4ef7-9f5d-d48064a2bb3e
+    BadRequestError:
+      description: The request was malformed. See the response body for details
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/BadRequestProblemDetail'
+          example:
+            type: /silverflow/problems/bad-request
+            title: Bad Request
+            status: 400
+            detail: Validation errors occurred
+            instance: https://api.silverflow.co/v1/merchants/mct-1hPdFqhgstYTUhlphPDp
+            validationErrors:
+            - instancePath: /tags/0/businessId
+              message: must not be longer than 255 characters
+    NotFoundError:
+      description: The requested resource was not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ProblemDetail'
+          example:
+            type: https://datatracker.ietf.org/doc/html/rfc2616#section-10.4.5
+            title: Not Found
+            status: 404
+            detail: The entity referenced in the request could not be found
+            instance: https://api.silverflow.co/v1/merchants/mct-1hPdFqhgstYTUhlphPDp
   schemas:
+    BadRequestProblemDetail:
+      description: 'A ''problem detail'' object for Bad Request (400) errors. Extends the base ProblemDetail
+
+        with a validationErrors array that provides detailed information about validation failures.
+
+        '
+      allOf:
+      - $ref: '#/components/schemas/ProblemDetail'
+      - type: object
+        required:
+        - type
+        - title
+        - status
+        - detail
+        - instance
+        properties:
+          type:
+            type: string
+            description: URI reference identifying the problem type.
+            enum:
+            - /silverflow/problems/bad-request
+            example: /silverflow/problems/bad-request
+          title:
+            type: string
+            description: A short summary of the problem type.
+            enum:
+            - Bad Request
+          status:
+            type: integer
+            format: int32
+            description: The HTTP status code (400 for Bad Request).
+            enum:
+            - 400
+          detail:
+            type: string
+            description: A human readable explanation specific to this occurrence of the problem.
+            example: Validation errors occurred
+          instance:
+            type: string
+            description: An absolute URI that identifies the specific occurrence of the problem.
+          validationErrors:
+            type: array
+            description: 'An array of validation errors that occurred during request processing. Each item can be either
+
+              a simple string message or an object with detailed error information including the path and message.
+
+              '
+            items:
+              oneOf:
+              - type: string
+                description: A simple validation error message
+                example: Invalid 'mid' length
+              - type: object
+                description: A detailed validation error with path and message
+                required:
+                - instancePath
+                - message
+                properties:
+                  instancePath:
+                    type: string
+                    description: The JSON path to the field that caused the validation error
+                    example: /merchantAcceptor/mid
+                  message:
+                    type: string
+                    description: The validation error message
+                    example: must be at most 15 characters
+        additionalProperties: false
+    amexModel:
+      type: string
+      description: The AMEX business model. In the PayFac model, authorization is performed using the SE Number on the BIN. In the Direct Merchant or Payment Designation model, authorization is performed using the SE Number on the Acceptor. If `amexModel` is undefined, the AMEX Bin is treated as a PayFac Bin by default.
+      default: payfac
+      enum:
+      - payfac
+      - direct_merchant
+      - payment_designation
+    AmexBin:
+      allOf:
+      - type: object
+        required:
+        - network
+        - messageSystem
+        - acquirerIdCode
+        - acquirerBin
+        properties:
+          network:
+            type: string
+            enum:
+            - american-express
+          messageSystem:
+            type: string
+            enum:
+            - DMS
+            description: Determines the message structure and Data Element definitions for card network.
+          acquirerIdCode:
+            allOf:
+            - description: Acquirer Institution ID code (Submitter ID). For PayFac model, this identifies the Payment Facilitator.
+            - $ref: '#/components/schemas/amexAcquirerIdCode'
+          acquirerBin:
+            allOf:
+            - description: SE Number assigned by AMEX for the Payment Facilitator. For Direct Merchant, this field is automatically copied from acquirerIdCode field.
+            - $ref: '#/components/schemas/amexAcquirerBin'
+          authorizationCurrency:
+            type: string
+            $ref: '#/components/schemas/authorizationCurrency'
+          amexModel:
+            $ref: '#/components/schemas/amexModel'
+      - $ref: '#/components/schemas/BaseBin'
     BinsPage:
       allOf:
       - $ref: '#/components/schemas/Page'
@@ -185,6 +332,1978 @@ components:
           created: '2020-08-24T14:15:22.014Z'
           lastModified: '2020-08-24T21:39:01.957Z'
           version: 2
+    settlementServices:
+      description: A list of Settlement Services as provided by a card network.
+      type: array
+      items:
+        $ref: '#/components/schemas/settlementService'
+        minItems: 1
+    version:
+      type: integer
+      description: The version of this object
+      format: int64
+    MastercardBin:
+      allOf:
+      - type: object
+        required:
+        - network
+        - messageSystem
+        - acquirerIdCode
+        - acquirerBin
+        properties:
+          network:
+            type: string
+            enum:
+            - mastercard
+          messageSystem:
+            $ref: '#/components/schemas/messageSystem'
+          acquirerIdCode:
+            type: string
+            description: Acquirer Institution ID code. For Mastercard, this field corresponds to the Acquirer ICA.
+            pattern: ^\d+$
+            minLength: 6
+            maxLength: 6
+          acquirerBin:
+            type: string
+            description: Acquirer Bin. The Bin number as assigned by the card network. For Mastercard, this is also referred to as the Acquirer Reference ID.
+            pattern: ^\d+$
+            minLength: 6
+            maxLength: 6
+      - $ref: '#/components/schemas/BaseBin'
+    ExtendedFreeTextField:
+      type: string
+      pattern: ^[\x20-\x7E\xA0-\xA3\xA5\xA7\xA9-\xB3\xB5-\xB7\xB9-\xBB\xBF-\xFF\u20AC\u0160\u0161\u017D\u017E\u0152\u0153\u0178]+$
+      minLength: 1
+      maxLength: 160
+      description: Clients not enrolled in the "extended character set beta" are still subject to the `^[\w +=.,:;!?$@()-]+$` pattern for field input.
+    discoverAcquirerIdCode:
+      type: string
+      description: Acquirer Institution ID code.
+      pattern: ^\d+$
+      minLength: 1
+      maxLength: 11
+    lastModified:
+      type: string
+      description: The date and time this object was last modified
+      format: date-time
+    moreItems:
+      type: boolean
+    created:
+      type: string
+      description: The date and time this object was created
+      format: date-time
+    Bin:
+      discriminator:
+        propertyName: network
+        mapping:
+          visa: '#/components/schemas/VisaBin'
+          mastercard: '#/components/schemas/MastercardBin'
+          bancontact: '#/components/schemas/BancontactBin'
+          american-express: '#/components/schemas/AmexBin'
+          discover: '#/components/schemas/DiscoverBin'
+          diners: '#/components/schemas/DinersBin'
+      oneOf:
+      - $ref: '#/components/schemas/VisaBin'
+      - $ref: '#/components/schemas/MastercardBin'
+      - $ref: '#/components/schemas/BancontactBin'
+      - $ref: '#/components/schemas/AmexBin'
+      - $ref: '#/components/schemas/DiscoverBin'
+      - $ref: '#/components/schemas/DinersBin'
+    dxsCode:
+      description: The dxsCode is provided to acquirers by Diners during onboarding. A unique dxsCode is provided for each IIC.
+      type: string
+      pattern: ^[a-zA-Z0-9]+$
+      minLength: 3
+      maxLength: 3
+    binConfigurationKey:
+      description: A key assigned by Silverflow to uniquely identify a Bin configuration.
+      type: string
+      pattern: ^bcf-[a-zA-Z0-9]+$
+      minLength: 5
+      maxLength: 120
+    messageSystem:
+      type: string
+      description: Determines the message structure and Data Element definitions for card network.
+      enum:
+      - DMS
+      - SMS
+      default: DMS
+    acquirerAgentKey:
+      type: string
+      description: Acquirer Agent Key shows the owner agent Key of the Bin.
+      pattern: ^cgt-[a-zA-Z0-9]+|^$
+      default: ''
+    amexDirectMerchantAcquirerBin:
+      allOf:
+      - description: For Direct Merchant, this field is automatically copied from acquirerIdCode field.
+      - $ref: '#/components/schemas/amexAcquirerIdCode'
+    countryCodeNumeric:
+      type: string
+      pattern: ^[0-9]+$
+      minLength: 3
+      maxLength: 3
+      description: 'The ISO code of the country.
+
+
+        **European ISO Country Codes**
+
+
+        <details>
+
+
+        | Country | Alpha-2 code | Numeric |
+
+        | ------- | ------------ | ------- |
+
+        | Åland Islands | AX | 248 |
+
+        | Andorra | AD | 020 |
+
+        | Austria | AT | 040 |
+
+        | Belgium | BE | 056 |
+
+        | Cyprus | CY | 196 |
+
+        | Estonia | EE | 233 |  |
+
+        | Finland | FI | 246 |
+
+        | France | FR | 250 |
+
+        | French Guiana | GF | 254 |
+
+        | French Southern Territories | TF | 260 |
+
+        | Germany | DE | 280 |
+
+        | Greece | GR | 300 |
+
+        | Guadeloupe | GP | 312 |
+
+        | Ireland | IE | 372 |
+
+        | Italy | IT | 380 |
+
+        | Kosovo, United Nations Mission in Kosovo (UNMIK) | QZ | 900 |
+
+        | Latvia | LV | 428 |
+
+        | Lithuania | LT | 440 |
+
+        | Luxembourg | LU | 442 |
+
+        | Malta | MT | 470 |
+
+        | Martinique | MQ | 474 |
+
+        | Mayotte | YT | 175 |
+
+        | Monaco | MC | 492 |
+
+        | Montenegro | ME | 499 |
+
+        | Netherlands | NL | 528 |
+
+        | Portugal | PT | 620 |
+
+        | Reunion | RE | 638 |
+
+        | Saint Barthélemy | BL | 652 |
+
+        | Saint Martin (French Part) | MF | 663 |
+
+        | San Marino | SM | 674 |
+
+        | Slovakia | SK | 703 |
+
+        | Slovenia | SI | 705 |
+
+        | Spain | ES | 724 |
+
+        | St. Pierre and Miquelon | PM | 666 |
+
+        | Vatican City State (Holy See) | VA | 336 |
+
+
+        </details>
+
+
+        **US ISO Country Codes**
+
+
+        <details>
+
+
+        | Country | Alpha-2 code | Numeric |
+
+        | ------- | ------------ | ------- |
+
+        | American Samoa | AS | 016 |
+
+        | Bonaire, St. Eusasius and Saba | BQ | 535 |
+
+        | British Indian Ocean Territory | IO | 086 |
+
+        | Ecuador | EC | 218 |
+
+        | Guam | GU | 316 |
+
+        | Marshall Islands | MH | 584 |
+
+        | Micronesia, Federated States of | FM | 583 |
+
+        | Northern Mariana Islands | MP | 580 |
+
+        | Palau | PW | 585 |
+
+        | Palestine, State of | PS | 275 |
+
+        | Puerto Rico | PR | 630 |
+
+        | Timor-Leste | TP | 626 |
+
+        | Turks and Caicos Islands | TC | 796 |
+
+        | U.S. Minor Outlying Islands | UM | 581 |
+
+        | United States | US | 840 |
+
+        | Virgin Islands, British | VG | 092 |
+
+        | Virgin Islands, U.S. | VI | 850 |
+
+
+        </details>
+
+
+        **Other ISO Country Codes**
+
+
+        <details>
+
+
+        | Country | Alpha-2 code | Numeric |
+
+        | ------- | ------------ | ------- |
+
+        | Afghanistan | AF | 004 |
+
+        | Albania | AL | 008 |
+
+        | Algeria | DZ | 012 |
+
+        | Angola | AO | 024 |
+
+        | Anguilla | AI | 660 |
+
+        | Antarctica | AQ | 010 |
+
+        | Antigua and Barbuda | AG | 028 |
+
+        | Argentina | AR | 032 |
+
+        | Armenia | AM | 051 |
+
+        | Aruba | AW | 533 |
+
+        | Australia | AU | 036 |
+
+        | Azerbaijan | AZ | 031 |
+
+        | Bahamas | BS | 044 |
+
+        | Bahrain | BH | 048 |
+
+        | Bangladesh | BD | 050 |
+
+        | Barbados | BB | 052 |
+
+        | Belarus | BR | 112 |
+
+        | Belize | BZ | 084 |
+
+        | Benin | BJ | 204 |
+
+        | Bermuda | BM | 060 |
+
+        | Bhutan | BT | 064 |
+
+        | Bolivia, Plurinational State of | BO | 068 |
+
+        | Bosnia and Herzegovina | BA | 070 |
+
+        | Botswana | BW | 072 |
+
+        | Bouvet Island | BV | 074 |
+
+        | Brazil | BR | 076 |
+
+        | Brunei Darussalam | BN | 096 |
+
+        | Bulgaria | BG | 100 |
+
+        | Burkina Faso | BF | 854 |
+
+        | Burundi | BI | 108 |
+
+        | Cambodia | KH | 116 |
+
+        | Cameroon | CM | 120 |
+
+        | Canada | CA | 124 |
+
+        | Cape Verde | CV | 132 |
+
+        | Cayman Islands | KY | 136 |
+
+        | Central African Republic | CF | 140 |
+
+        | Chad | TD | 148 |
+
+        | Chile | CL | 152 |
+
+        | China | CN | 156 |
+
+        | Christmas Island | CX | 162 |
+
+        | Cocos (Keeling) Islands | CC | 166 |
+
+        | Colombia | CO | 170 |
+
+        | Comoros | KM | 174 |
+
+        | Congo | CG | 178 |
+
+        | Cook Islands | CK | 184 |
+
+        | Costa Rica | CR | 188 |
+
+        | Côte D''Ivoire | CI | 384 |
+
+        | Croatia | HR | 191 |
+
+        | Cuba | CU | 192 |
+
+        | Curacao | CW | 531 |
+
+        | Czech Republic | CZ | 203 |
+
+        | Democratic Republic of the Congo | CD | 180 |
+
+        | Denmark | DK | 208 |
+
+        | Djibouti | DJ | 262 |
+
+        | Dominica | DM | 212 |
+
+        | Dominican Republic | DO | 214 |
+
+        | Egypt | EG | 818 |
+
+        | El Salvador | SV | 222 |
+
+        | Equatorial Guinea | GQ | 226 |
+
+        | Eritrea | ER | 232 |
+
+        | Ethiopia | ET | 230 |
+
+        | Falkland Islands (Malvinas) | FK | 238 |
+
+        | Faroe Islands | FO | 234 |
+
+        | Fiji | FJ | 242 |
+
+        | French Polynesia | PF | 258 |
+
+        | Gabon | GA | 266 |
+
+        | Gambia | GM | 270 |
+
+        | Georgia | GE | 268 |
+
+        | Ghana | GH | 288 |
+
+        | Gibraltar | GI | 292 |
+
+        | Greenland | GL | 304 |
+
+        | Grenada | GD | 308 |
+
+        | Guatemala | GT | 320 |
+
+        | Guernsey | GG | 831 |
+
+        | Guinea | GN | 324 |
+
+        | Guinea-Bissau | GW | 624 |
+
+        | Guyana | GY | 328 |
+
+        | Haiti | HT | 332 |
+
+        | Heard and McDonald Islands | HM | 334 |
+
+        | Honduras | HN | 340 |
+
+        | Hong Kong | HK | 344 |
+
+        | Hungary | HU | 348 |
+
+        | Iceland | IS | 352 |
+
+        | India | IN | 356 |
+
+        | Indonesia | ID | 360 |
+
+        | Iraq | IQ | 368 |
+
+        | Isle of Man | IM | 833 |
+
+        | Israel | IL | 376 |
+
+        | Jamaica | JM | 388 |
+
+        | Japan | JP | 392 |
+
+        | Jersey | JE | 832 |
+
+        | Jordan | JO | 400 |
+
+        | Kazakhstan | KZ | 398 |
+
+        | Kenya | KE | 404 |
+
+        | Kiribati | KI | 296 |
+
+        | Korea, Republic of | KR | 410 |
+
+        | Kuwait | KW | 414 |
+
+        | Kyrgyzstan | KG | 417 |
+
+        | Lao People''s Democratic Republic | LA | 418 |
+
+        | Lebanon | LB | 422 |
+
+        | Lesotho | LS | 426 |
+
+        | Liberia | LR | 430 |
+
+        | Libyan Arab Jamahiriya | LY | 434 |
+
+        | Liechtenstein | LI | 438 |
+
+        | Macao | MO | 446 |
+
+        | Macedonia | MK | 807 |
+
+        | Madagascar | MG | 450 |
+
+        | Malawi | MW | 454 |
+
+        | Malaysia | MY | 458 |
+
+        | Maldives | MV | 462 |
+
+        | Mali | ML | 466 |
+
+        | Mauritania | MR | 478 |
+
+        | Mauritius | MU | 480 |
+
+        | Mexico | MX | 484 |
+
+        | Moldova, Republic of | MD | 498 |
+
+        | Mongolia | MN | 496 |
+
+        | Montserrat | MS | 500 |
+
+        | Morocco | MA | 504 |
+
+        | Mozambique | MZ | 508 |
+
+        | Myanmar (effective 1 November 2012) | MM | 104 |
+
+        | Namibia | NA | 516 |
+
+        | Nauru | NR | 520 |
+
+        | Nepal | NP | 524 |
+
+        | Netherlands Antilles | AN | 530 |
+
+        | New Caledonia | NC | 540 |
+
+        | New Zealand | NZ | 554 |
+
+        | Nicaragua | NI | 558 |
+
+        | Niger | NE | 562 |
+
+        | Nigeria | NG | 566 |
+
+        | Niue | NU | 570 |
+
+        | Norfolk Island | NF | 574 |
+
+        | Norway | NO | 578 |
+
+        | Oman | OM | 512 |
+
+        | Pakistan | PK | 586 |
+
+        | Panama | PA | 591 |
+
+        | Papua New Guinea | PG | 598 |
+
+        | Paraguay | PY | 600 |
+
+        | Peru | PE | 604 |
+
+        | Philippines | PH | 608 |
+
+        | Pitcairn | PN | 612 |
+
+        | Poland | PL | 616 |
+
+        | Qatar | QA | 634 |
+
+        | Republic of South Sudan | SS | 728 |
+
+        | Romania | RO | 642 |
+
+        | Russian Federation | RU | 643 |
+
+        | Rwanda | RW | 646 |
+
+        | Samoa | WS | 882 |
+
+        | Sao Tome and Principe | ST | 678 |
+
+        | Saudi Arabia | SA | 682 |
+
+        | Senegal | SN | 686 |
+
+        | Serbia | RS | 688 |
+
+        | Seychelles | SC | 690 |
+
+        | Sierra Leone | SL | 694 |
+
+        | Singapore | SG | 702 |
+
+        | Sint Maarten (Dutch Part) | SX | 534 |
+
+        | Solomon Islands | SB | 090 |
+
+        | Somalia | SO | 706 |
+
+        | South Africa | ZA | 710 |
+
+        | South Georgia and the South Sandwich Islands | GS | 239 |
+
+        | Sri Lanka | LK | 144 |
+
+        | Saint Helena, Ascension and Tristan Da Cunha | SH | 654 |
+
+        | St. Kitts and Nevis | KN | 659 |
+
+        | St. Lucia | LC | 662 |
+
+        | St. Vincent and the Grenadines | VC | 670 |
+
+        | Suriname | SR | 740 |
+
+        | Svalbard and Jan Mayen | SJ | 744 |
+
+        | Swaziland | SZ | 748 |
+
+        | Sweden | SE | 752 |
+
+        | Switzerland | CH | 756 |
+
+        | Taiwan | TW | 158 |
+
+        | Tajikistan | TJ | 762 |
+
+        | Tanzania, United Republic of | TZ | 834 |
+
+        | Thailand | TH | 764 |
+
+        | Togo | TG | 768 |
+
+        | Tokelau | TK | 772 |
+
+        | Tonga | TO | 776 |
+
+        | Trinidad and Tobago | TT | 780 |
+
+        | Tunisia | TN | 788 |
+
+        | Turkey | TR | 792 |
+
+        | Turkmenistan | TM | 795 |
+
+        | Tuvalu | TV | 798 |
+
+        | Uganda | UG | 800 |
+
+        | Ukraine | UA | 804 |
+
+        | United Arab Emirates | AE | 784 |
+
+        | United Kingdom | GB | 826 |
+
+        | Uruguay | UY | 858 |
+
+        | Uzbekistan | UZ | 860 |
+
+        | Vanuatu | VU | 548 |
+
+        | Venezuela, Bolivarian Republic of | VE | 862 |
+
+        | Vietnam | VN | 704 |
+
+        | Wallis and Futuna | WF | 876 |
+
+        | Western Sahara | EH | 732 |
+
+        | Yemen | YE | 886 |
+
+        | Zambia | ZM | 894 |
+
+        | Zimbabwe | ZW | 716 |
+
+
+        </details>'
+      externalDocs:
+        description: Find more info here
+        url: https://www.iso.org/iso-3166-country-codes.html
+      example: '528'
+    BancontactBin:
+      allOf:
+      - type: object
+        required:
+        - network
+        - messageSystem
+        - acquirerIdCode
+        - acquirerBin
+        properties:
+          network:
+            type: string
+            enum:
+            - bancontact
+          messageSystem:
+            $ref: '#/components/schemas/messageSystem'
+          acquirerIdCode:
+            type: string
+            description: Acquirer Institution ID code.
+            pattern: ^\d+$
+            minLength: 6
+            maxLength: 6
+          acquirerBin:
+            type: string
+            description: Acquirer Bin. The Bin number as assigned by the card network.
+            pattern: ^\d+$
+            minLength: 6
+            maxLength: 6
+      - $ref: '#/components/schemas/BaseBin'
+    status:
+      type: string
+      description: The status of the object
+      enum:
+      - active
+      - archived
+    CountryCode:
+      type: object
+      required:
+      - alpha3
+      - alpha2
+      - numeric
+      properties:
+        alpha3:
+          $ref: '#/components/schemas/countryCodeAlpha3'
+        alpha2:
+          $ref: '#/components/schemas/countryCodeAlpha2'
+        numeric:
+          $ref: '#/components/schemas/countryCodeNumeric'
+    amexAcquirerIdCode:
+      type: string
+      description: Acquirer Institution ID code (Submitter ID). For PayFac model, this identifies the Payment Facilitator.
+      pattern: ^[A-Z0-9]+$
+      minLength: 6
+      maxLength: 11
+    amexPaymentDesignationAcquirerBin:
+      allOf:
+      - description: For Payment Designator, this field is automatically copied from acquirerIdCode field.
+      - $ref: '#/components/schemas/amexAcquirerIdCode'
+    amexAcquirerBin:
+      anyOf:
+      - $ref: '#/components/schemas/amexPayfacAcquirerBin'
+      - $ref: '#/components/schemas/amexDirectMerchantAcquirerBin'
+      - $ref: '#/components/schemas/amexPaymentDesignationAcquirerBin'
+    settlementCurrencies:
+      description: A list of Settlement Currencies.
+      type: array
+      items:
+        $ref: '#/components/schemas/settlementCurrency'
+        minItems: 1
+    offsetToken:
+      type: string
+      pattern: ^[a-zA-Z0-9%]+$
+      minLength: 1
+      maxLength: 2048
+    discoverAcquirerBin:
+      type: string
+      description: Acquirer Bin. The Bin number as assigned by the card network.
+      pattern: ^\d+$
+      minLength: 1
+      maxLength: 11
+    amexPayfacAcquirerBin:
+      type: string
+      description: SE Number assigned by AMEX for the Payment Facilitator.
+      pattern: ^\d{10}$
+    DinersBin:
+      allOf:
+      - required:
+        - network
+        - messageSystem
+        - acquirerBin
+        - acquirerIdCode
+        - dxsCode
+        properties:
+          network:
+            type: string
+            enum:
+            - diners
+          messageSystem:
+            type: string
+            enum:
+            - DMS
+            description: Determines the message structure and Data Element definitions for card network.
+          acquirerBin:
+            allOf:
+            - description: For Diners, this field is automatically copied from the acquirerIdCode (IIC number).
+            - $ref: '#/components/schemas/dinersAcquirerIdCode'
+          acquirerIdCode:
+            $ref: '#/components/schemas/dinersAcquirerIdCode'
+          dxsCode:
+            $ref: '#/components/schemas/dxsCode'
+      - $ref: '#/components/schemas/BaseBin'
+    BinConfiguration:
+      type: object
+      required:
+      - key
+      - status
+      - binKey
+      - defaultSettlementCurrency
+      - additionalSettlementCurrencies
+      - settlementServices
+      - validFrom
+      - created
+      - version
+      description: 'A Bin is a Bank Identification Number
+
+        '
+      properties:
+        key:
+          $ref: '#/components/schemas/binConfigurationKey'
+        status:
+          $ref: '#/components/schemas/status'
+        binKey:
+          $ref: '#/components/schemas/binKey'
+        defaultSettlementCurrency:
+          $ref: '#/components/schemas/settlementCurrency'
+        additionalSettlementCurrencies:
+          $ref: '#/components/schemas/settlementCurrencies'
+        settlementServices:
+          $ref: '#/components/schemas/settlementServices'
+        validFrom:
+          type: string
+          description: The date and time this configuration is valid from
+          format: date-time
+        created:
+          $ref: '#/components/schemas/created'
+        lastModified:
+          $ref: '#/components/schemas/lastModified'
+        version:
+          $ref: '#/components/schemas/version'
+      example:
+        key: bcf-21yKByQsszQHq7MZ6pf0
+        status: active
+        binKey: bin-1ZgTNYjaNghq6YgC3E4p
+        validFrom: '2022-01-26T13:50:12.640Z'
+        created: '2022-01-26T13:50:12.640Z'
+        lastModified: '2020-08-24T21:39:01.957Z'
+        version: 1
+    dinersAcquirerIdCode:
+      type: string
+      description: Acquirer Institution ID code. For Diners, this field corresponds to the IIC number.
+      pattern: ^\d+$
+      minLength: 6
+      maxLength: 11
+    Page:
+      type: object
+      properties:
+        offsetToken:
+          $ref: '#/components/schemas/offsetToken'
+        moreItems:
+          $ref: '#/components/schemas/moreItems'
+    countryCodeAlpha2:
+      type: string
+      pattern: ^[A-Z]+$
+      minLength: 2
+      maxLength: 2
+      description: 'The ISO code of the country.
+
+
+        **European ISO Country Codes**
+
+
+        <details>
+
+
+        | Country | Alpha-2 code | Numeric |
+
+        | ------- | ------------ | ------- |
+
+        | Åland Islands | AX | 248 |
+
+        | Andorra | AD | 020 |
+
+        | Austria | AT | 040 |
+
+        | Belgium | BE | 056 |
+
+        | Cyprus | CY | 196 |
+
+        | Estonia | EE | 233 |  |
+
+        | Finland | FI | 246 |
+
+        | France | FR | 250 |
+
+        | French Guiana | GF | 254 |
+
+        | French Southern Territories | TF | 260 |
+
+        | Germany | DE | 280 |
+
+        | Greece | GR | 300 |
+
+        | Guadeloupe | GP | 312 |
+
+        | Ireland | IE | 372 |
+
+        | Italy | IT | 380 |
+
+        | Kosovo, United Nations Mission in Kosovo (UNMIK) | QZ | 900 |
+
+        | Latvia | LV | 428 |
+
+        | Lithuania | LT | 440 |
+
+        | Luxembourg | LU | 442 |
+
+        | Malta | MT | 470 |
+
+        | Martinique | MQ | 474 |
+
+        | Mayotte | YT | 175 |
+
+        | Monaco | MC | 492 |
+
+        | Montenegro | ME | 499 |
+
+        | Netherlands | NL | 528 |
+
+        | Portugal | PT | 620 |
+
+        | Reunion | RE | 638 |
+
+        | Saint Barthélemy | BL | 652 |
+
+        | Saint Martin (French Part) | MF | 663 |
+
+        | San Marino | SM | 674 |
+
+        | Slovakia | SK | 703 |
+
+        | Slovenia | SI | 705 |
+
+        | Spain | ES | 724 |
+
+        | St. Pierre and Miquelon | PM | 666 |
+
+        | Vatican City State (Holy See) | VA | 336 |
+
+
+        </details>
+
+
+        **US ISO Country Codes**
+
+
+        <details>
+
+
+        | Country | Alpha-2 code | Numeric |
+
+        | ------- | ------------ | ------- |
+
+        | American Samoa | AS | 016 |
+
+        | Bonaire, St. Eusasius and Saba | BQ | 535 |
+
+        | British Indian Ocean Territory | IO | 086 |
+
+        | Ecuador | EC | 218 |
+
+        | Guam | GU | 316 |
+
+        | Marshall Islands | MH | 584 |
+
+        | Micronesia, Federated States of | FM | 583 |
+
+        | Northern Mariana Islands | MP | 580 |
+
+        | Palau | PW | 585 |
+
+        | Palestine, State of | PS | 275 |
+
+        | Puerto Rico | PR | 630 |
+
+        | Timor-Leste | TP | 626 |
+
+        | Turks and Caicos Islands | TC | 796 |
+
+        | U.S. Minor Outlying Islands | UM | 581 |
+
+        | United States | US | 840 |
+
+        | Virgin Islands, British | VG | 092 |
+
+        | Virgin Islands, U.S. | VI | 850 |
+
+
+        </details>
+
+
+        **Other ISO Country Codes**
+
+
+        <details>
+
+
+        | Country | Alpha-2 code | Numeric |
+
+        | ------- | ------------ | ------- |
+
+        | Afghanistan | AF | 004 |
+
+        | Albania | AL | 008 |
+
+        | Algeria | DZ | 012 |
+
+        | Angola | AO | 024 |
+
+        | Anguilla | AI | 660 |
+
+        | Antarctica | AQ | 010 |
+
+        | Antigua and Barbuda | AG | 028 |
+
+        | Argentina | AR | 032 |
+
+        | Armenia | AM | 051 |
+
+        | Aruba | AW | 533 |
+
+        | Australia | AU | 036 |
+
+        | Azerbaijan | AZ | 031 |
+
+        | Bahamas | BS | 044 |
+
+        | Bahrain | BH | 048 |
+
+        | Bangladesh | BD | 050 |
+
+        | Barbados | BB | 052 |
+
+        | Belarus | BR | 112 |
+
+        | Belize | BZ | 084 |
+
+        | Benin | BJ | 204 |
+
+        | Bermuda | BM | 060 |
+
+        | Bhutan | BT | 064 |
+
+        | Bolivia, Plurinational State of | BO | 068 |
+
+        | Bosnia and Herzegovina | BA | 070 |
+
+        | Botswana | BW | 072 |
+
+        | Bouvet Island | BV | 074 |
+
+        | Brazil | BR | 076 |
+
+        | Brunei Darussalam | BN | 096 |
+
+        | Bulgaria | BG | 100 |
+
+        | Burkina Faso | BF | 854 |
+
+        | Burundi | BI | 108 |
+
+        | Cambodia | KH | 116 |
+
+        | Cameroon | CM | 120 |
+
+        | Canada | CA | 124 |
+
+        | Cape Verde | CV | 132 |
+
+        | Cayman Islands | KY | 136 |
+
+        | Central African Republic | CF | 140 |
+
+        | Chad | TD | 148 |
+
+        | Chile | CL | 152 |
+
+        | China | CN | 156 |
+
+        | Christmas Island | CX | 162 |
+
+        | Cocos (Keeling) Islands | CC | 166 |
+
+        | Colombia | CO | 170 |
+
+        | Comoros | KM | 174 |
+
+        | Congo | CG | 178 |
+
+        | Cook Islands | CK | 184 |
+
+        | Costa Rica | CR | 188 |
+
+        | Côte D''Ivoire | CI | 384 |
+
+        | Croatia | HR | 191 |
+
+        | Cuba | CU | 192 |
+
+        | Curacao | CW | 531 |
+
+        | Czech Republic | CZ | 203 |
+
+        | Democratic Republic of the Congo | CD | 180 |
+
+        | Denmark | DK | 208 |
+
+        | Djibouti | DJ | 262 |
+
+        | Dominica | DM | 212 |
+
+        | Dominican Republic | DO | 214 |
+
+        | Egypt | EG | 818 |
+
+        | El Salvador | SV | 222 |
+
+        | Equatorial Guinea | GQ | 226 |
+
+        | Eritrea | ER | 232 |
+
+        | Ethiopia | ET | 230 |
+
+        | Falkland Islands (Malvinas) | FK | 238 |
+
+        | Faroe Islands | FO | 234 |
+
+        | Fiji | FJ | 242 |
+
+        | French Polynesia | PF | 258 |
+
+        | Gabon | GA | 266 |
+
+        | Gambia | GM | 270 |
+
+        | Georgia | GE | 268 |
+
+        | Ghana | GH | 288 |
+
+        | Gibraltar | GI | 292 |
+
+        | Greenland | GL | 304 |
+
+        | Grenada | GD | 308 |
+
+        | Guatemala | GT | 320 |
+
+        | Guernsey | GG | 831 |
+
+        | Guinea | GN | 324 |
+
+        | Guinea-Bissau | GW | 624 |
+
+        | Guyana | GY | 328 |
+
+        | Haiti | HT | 332 |
+
+        | Heard and McDonald Islands | HM | 334 |
+
+        | Honduras | HN | 340 |
+
+        | Hong Kong | HK | 344 |
+
+        | Hungary | HU | 348 |
+
+        | Iceland | IS | 352 |
+
+        | India | IN | 356 |
+
+        | Indonesia | ID | 360 |
+
+        | Iraq | IQ | 368 |
+
+        | Isle of Man | IM | 833 |
+
+        | Israel | IL | 376 |
+
+        | Jamaica | JM | 388 |
+
+        | Japan | JP | 392 |
+
+        | Jersey | JE | 832 |
+
+        | Jordan | JO | 400 |
+
+        | Kazakhstan | KZ | 398 |
+
+        | Kenya | KE | 404 |
+
+        | Kiribati | KI | 296 |
+
+        | Korea, Republic of | KR | 410 |
+
+        | Kuwait | KW | 414 |
+
+        | Kyrgyzstan | KG | 417 |
+
+        | Lao People''s Democratic Republic | LA | 418 |
+
+        | Lebanon | LB | 422 |
+
+        | Lesotho | LS | 426 |
+
+        | Liberia | LR | 430 |
+
+        | Libyan Arab Jamahiriya | LY | 434 |
+
+        | Liechtenstein | LI | 438 |
+
+        | Macao | MO | 446 |
+
+        | Macedonia | MK | 807 |
+
+        | Madagascar | MG | 450 |
+
+        | Malawi | MW | 454 |
+
+        | Malaysia | MY | 458 |
+
+        | Maldives | MV | 462 |
+
+        | Mali | ML | 466 |
+
+        | Mauritania | MR | 478 |
+
+        | Mauritius | MU | 480 |
+
+        | Mexico | MX | 484 |
+
+        | Moldova, Republic of | MD | 498 |
+
+        | Mongolia | MN | 496 |
+
+        | Montserrat | MS | 500 |
+
+        | Morocco | MA | 504 |
+
+        | Mozambique | MZ | 508 |
+
+        | Myanmar (effective 1 November 2012) | MM | 104 |
+
+        | Namibia | NA | 516 |
+
+        | Nauru | NR | 520 |
+
+        | Nepal | NP | 524 |
+
+        | Netherlands Antilles | AN | 530 |
+
+        | New Caledonia | NC | 540 |
+
+        | New Zealand | NZ | 554 |
+
+        | Nicaragua | NI | 558 |
+
+        | Niger | NE | 562 |
+
+        | Nigeria | NG | 566 |
+
+        | Niue | NU | 570 |
+
+        | Norfolk Island | NF | 574 |
+
+        | Norway | NO | 578 |
+
+        | Oman | OM | 512 |
+
+        | Pakistan | PK | 586 |
+
+        | Panama | PA | 591 |
+
+        | Papua New Guinea | PG | 598 |
+
+        | Paraguay | PY | 600 |
+
+        | Peru | PE | 604 |
+
+        | Philippines | PH | 608 |
+
+        | Pitcairn | PN | 612 |
+
+        | Poland | PL | 616 |
+
+        | Qatar | QA | 634 |
+
+        | Republic of South Sudan | SS | 728 |
+
+        | Romania | RO | 642 |
+
+        | Russian Federation | RU | 643 |
+
+        | Rwanda | RW | 646 |
+
+        | Samoa | WS | 882 |
+
+        | Sao Tome and Principe | ST | 678 |
+
+        | Saudi Arabia | SA | 682 |
+
+        | Senegal | SN | 686 |
+
+        | Serbia | RS | 688 |
+
+        | Seychelles | SC | 690 |
+
+        | Sierra Leone | SL | 694 |
+
+        | Singapore | SG | 702 |
+
+        | Sint Maarten (Dutch Part) | SX | 534 |
+
+        | Solomon Islands | SB | 090 |
+
+        | Somalia | SO | 706 |
+
+        | South Africa | ZA | 710 |
+
+        | South Georgia and the South Sandwich Islands | GS | 239 |
+
+        | Sri Lanka | LK | 144 |
+
+        | Saint Helena, Ascension and Tristan Da Cunha | SH | 654 |
+
+        | St. Kitts and Nevis | KN | 659 |
+
+        | St. Lucia | LC | 662 |
+
+        | St. Vincent and the Grenadines | VC | 670 |
+
+        | Suriname | SR | 740 |
+
+        | Svalbard and Jan Mayen | SJ | 744 |
+
+        | Swaziland | SZ | 748 |
+
+        | Sweden | SE | 752 |
+
+        | Switzerland | CH | 756 |
+
+        | Taiwan | TW | 158 |
+
+        | Tajikistan | TJ | 762 |
+
+        | Tanzania, United Republic of | TZ | 834 |
+
+        | Thailand | TH | 764 |
+
+        | Togo | TG | 768 |
+
+        | Tokelau | TK | 772 |
+
+        | Tonga | TO | 776 |
+
+        | Trinidad and Tobago | TT | 780 |
+
+        | Tunisia | TN | 788 |
+
+        | Turkey | TR | 792 |
+
+        | Turkmenistan | TM | 795 |
+
+        | Tuvalu | TV | 798 |
+
+        | Uganda | UG | 800 |
+
+        | Ukraine | UA | 804 |
+
+        | United Arab Emirates | AE | 784 |
+
+        | United Kingdom | GB | 826 |
+
+        | Uruguay | UY | 858 |
+
+        | Uzbekistan | UZ | 860 |
+
+        | Vanuatu | VU | 548 |
+
+        | Venezuela, Bolivarian Republic of | VE | 862 |
+
+        | Vietnam | VN | 704 |
+
+        | Wallis and Futuna | WF | 876 |
+
+        | Western Sahara | EH | 732 |
+
+        | Yemen | YE | 886 |
+
+        | Zambia | ZM | 894 |
+
+        | Zimbabwe | ZW | 716 |
+
+
+        </details>'
+      externalDocs:
+        description: Find more info here
+        url: https://www.iso.org/iso-3166-country-codes.html
+      example: NL
+    discoverIsoId:
+      type: string
+      description: Unique number assigned by Discover to a certified ISO. This field is mandatory if the direct Merchant relationship is maintained by an ISO
+      minLength: 1
+      maxLength: 11
+    countryCodeAlpha3:
+      type: string
+      pattern: ^[A-Z]+$
+      minLength: 3
+      maxLength: 3
+      description: 'The ISO code of the country.
+
+
+        **European ISO Country Codes**
+
+
+        <details>
+
+
+        | Country | Alpha-2 code | Numeric |
+
+        | ------- | ------------ | ------- |
+
+        | Åland Islands | AX | 248 |
+
+        | Andorra | AD | 020 |
+
+        | Austria | AT | 040 |
+
+        | Belgium | BE | 056 |
+
+        | Cyprus | CY | 196 |
+
+        | Estonia | EE | 233 |  |
+
+        | Finland | FI | 246 |
+
+        | France | FR | 250 |
+
+        | French Guiana | GF | 254 |
+
+        | French Southern Territories | TF | 260 |
+
+        | Germany | DE | 280 |
+
+        | Greece | GR | 300 |
+
+        | Guadeloupe | GP | 312 |
+
+        | Ireland | IE | 372 |
+
+        | Italy | IT | 380 |
+
+        | Kosovo, United Nations Mission in Kosovo (UNMIK) | QZ | 900 |
+
+        | Latvia | LV | 428 |
+
+        | Lithuania | LT | 440 |
+
+        | Luxembourg | LU | 442 |
+
+        | Malta | MT | 470 |
+
+        | Martinique | MQ | 474 |
+
+        | Mayotte | YT | 175 |
+
+        | Monaco | MC | 492 |
+
+        | Montenegro | ME | 499 |
+
+        | Netherlands | NL | 528 |
+
+        | Portugal | PT | 620 |
+
+        | Reunion | RE | 638 |
+
+        | Saint Barthélemy | BL | 652 |
+
+        | Saint Martin (French Part) | MF | 663 |
+
+        | San Marino | SM | 674 |
+
+        | Slovakia | SK | 703 |
+
+        | Slovenia | SI | 705 |
+
+        | Spain | ES | 724 |
+
+        | St. Pierre and Miquelon | PM | 666 |
+
+        | Vatican City State (Holy See) | VA | 336 |
+
+
+        </details>
+
+
+        **US ISO Country Codes**
+
+
+        <details>
+
+
+        | Country | Alpha-2 code | Numeric |
+
+        | ------- | ------------ | ------- |
+
+        | American Samoa | AS | 016 |
+
+        | Bonaire, St. Eusasius and Saba | BQ | 535 |
+
+        | British Indian Ocean Territory | IO | 086 |
+
+        | Ecuador | EC | 218 |
+
+        | Guam | GU | 316 |
+
+        | Marshall Islands | MH | 584 |
+
+        | Micronesia, Federated States of | FM | 583 |
+
+        | Northern Mariana Islands | MP | 580 |
+
+        | Palau | PW | 585 |
+
+        | Palestine, State of | PS | 275 |
+
+        | Puerto Rico | PR | 630 |
+
+        | Timor-Leste | TP | 626 |
+
+        | Turks and Caicos Islands | TC | 796 |
+
+        | U.S. Minor Outlying Islands | UM | 581 |
+
+        | United States | US | 840 |
+
+        | Virgin Islands, British | VG | 092 |
+
+        | Virgin Islands, U.S. | VI | 850 |
+
+
+        </details>
+
+
+        **Other ISO Country Codes**
+
+
+        <details>
+
+
+        | Country | Alpha-2 code | Numeric |
+
+        | ------- | ------------ | ------- |
+
+        | Afghanistan | AF | 004 |
+
+        | Albania | AL | 008 |
+
+        | Algeria | DZ | 012 |
+
+        | Angola | AO | 024 |
+
+        | Anguilla | AI | 660 |
+
+        | Antarctica | AQ | 010 |
+
+        | Antigua and Barbuda | AG | 028 |
+
+        | Argentina | AR | 032 |
+
+        | Armenia | AM | 051 |
+
+        | Aruba | AW | 533 |
+
+        | Australia | AU | 036 |
+
+        | Azerbaijan | AZ | 031 |
+
+        | Bahamas | BS | 044 |
+
+        | Bahrain | BH | 048 |
+
+        | Bangladesh | BD | 050 |
+
+        | Barbados | BB | 052 |
+
+        | Belarus | BR | 112 |
+
+        | Belize | BZ | 084 |
+
+        | Benin | BJ | 204 |
+
+        | Bermuda | BM | 060 |
+
+        | Bhutan | BT | 064 |
+
+        | Bolivia, Plurinational State of | BO | 068 |
+
+        | Bosnia and Herzegovina | BA | 070 |
+
+        | Botswana | BW | 072 |
+
+        | Bouvet Island | BV | 074 |
+
+        | Brazil | BR | 076 |
+
+        | Brunei Darussalam | BN | 096 |
+
+        | Bulgaria | BG | 100 |
+
+        | Burkina Faso | BF | 854 |
+
+        | Burundi | BI | 108 |
+
+        | Cambodia | KH | 116 |
+
+        | Cameroon | CM | 120 |
+
+        | Canada | CA | 124 |
+
+        | Cape Verde | CV | 132 |
+
+        | Cayman Islands | KY | 136 |
+
+        | Central African Republic | CF | 140 |
+
+        | Chad | TD | 148 |
+
+        | Chile | CL | 152 |
+
+        | China | CN | 156 |
+
+        | Christmas Island | CX | 162 |
+
+        | Cocos (Keeling) Islands | CC | 166 |
+
+        | Colombia | CO | 170 |
+
+        | Comoros | KM | 174 |
+
+        | Congo | CG | 178 |
+
+        | Cook Islands | CK | 184 |
+
+        | Costa Rica | CR | 188 |
+
+        | Côte D''Ivoire | CI | 384 |
+
+        | Croatia | HR | 191 |
+
+        | Cuba | CU | 192 |
+
+        | Curacao | CW | 531 |
+
+        | Czech Republic | CZ | 203 |
+
+        | Democratic Republic of the Congo | CD | 180 |
+
+        | Denmark | DK | 208 |
+
+        | Djibouti | DJ | 262 |
+
+        | Dominica | DM | 212 |
+
+        | Dominican Republic | DO | 214 |
+
+        | Egypt | EG | 818 |
+
+        | El Salvador | SV | 222 |
+
+        | Equatorial Guinea | GQ | 226 |
+
+        | Eritrea | ER | 232 |
+
+        | Ethiopia | ET | 230 |
+
+        | Falkland Islands (Malvinas) | FK | 238 |
+
+        | Faroe Islands | FO | 234 |
+
+        | Fiji | FJ | 242 |
+
+        | French Polynesia | PF | 258 |
+
+        | Gabon | GA | 266 |
+
+        | Gambia | GM | 270 |
+
+        | Georgia | GE | 268 |
+
+        | Ghana | GH | 288 |
+
+        | Gibraltar | GI | 292 |
+
+        | Greenland | GL | 304 |
+
+        | Grenada | GD | 308 |
+
+        | Guatemala | GT | 320 |
+
+        | Guernsey | GG | 831 |
+
+        | Guinea | GN | 324 |
+
+        | Guinea-Bissau | GW | 624 |
+
+        | Guyana | GY | 328 |
+
+        | Haiti | HT | 332 |
+
+        | Heard and McDonald Islands | HM | 334 |
+
+        | Honduras | HN | 340 |
+
+        | Hong Kong | HK | 344 |
+
+        | Hungary | HU | 348 |
+
+        | Iceland | IS | 352 |
+
+        | India | IN | 356 |
+
+        | Indonesia | ID | 360 |
+
+        | Iraq | IQ | 368 |
+
+        | Isle of Man | IM | 833 |
+
+        | Israel | IL | 376 |
+
+        | Jamaica | JM | 388 |
+
+        | Japan | JP | 392 |
+
+        | Jersey | JE | 832 |
+
+        | Jordan | JO | 400 |
+
+        | Kazakhstan | KZ | 398 |
+
+        | Kenya | KE | 404 |
+
+        | Kiribati | KI | 296 |
+
+        | Korea, Republic of | KR | 410 |
+
+        | Kuwait | KW | 414 |
+
+        | Kyrgyzstan | KG | 417 |
+
+        | Lao People''s Democratic Republic | LA | 418 |
+
+        | Lebanon | LB | 422 |
+
+        | Lesotho | LS | 426 |
+
+        | Liberia | LR | 430 |
+
+        | Libyan Arab Jamahiriya | LY | 434 |
+
+        | Liechtenstein | LI | 438 |
+
+        | Macao | MO | 446 |
+
+        | Macedonia | MK | 807 |
+
+        | Madagascar | MG | 450 |
+
+        | Malawi | MW | 454 |
+
+        | Malaysia | MY | 458 |
+
+        | Maldives | MV | 462 |
+
+        | Mali | ML | 466 |
+
+        | Mauritania | MR | 478 |
+
+        | Mauritius | MU | 480 |
+
+        | Mexico | MX | 484 |
+
+        | Moldova, Republic of | MD | 498 |
+
+        | Mongolia | MN | 496 |
+
+        | Montserrat | MS | 500 |
+
+        | Morocco | MA | 504 |
+
+        | Mozambique | MZ | 508 |
+
+        | Myanmar (effective 1 November 2012) | MM | 104 |
+
+        | Namibia | NA | 516 |
+
+        | Nauru | NR | 520 |
+
+        | Nepal | NP | 524 |
+
+        | Netherlands Antilles | AN | 530 |
+
+        | New Caledonia | NC | 540 |
+
+        | New Zealand | NZ | 554 |
+
+        | Nicaragua | NI | 558 |
+
+        | Niger | NE | 562 |
+
+        | Nigeria | NG | 566 |
+
+        | Niue | NU | 570 |
+
+        | Norfolk Island | NF | 574 |
+
+        | Norway | NO | 578 |
+
+        | Oman | OM | 512 |
+
+        | Pakistan | PK | 586 |
+
+        | Panama | PA | 591 |
+
+        | Papua New Guinea | PG | 598 |
+
+        | Paraguay | PY | 600 |
+
+        | Peru | PE | 604 |
+
+        | Philippines | PH | 608 |
+
+        | Pitcairn | PN | 612 |
+
+        | Poland | PL | 616 |
+
+        | Qatar | QA | 634 |
+
+        | Republic of South Sudan | SS | 728 |
+
+        | Romania | RO | 642 |
+
+        | Russian Federation | RU | 643 |
+
+        | Rwanda | RW | 646 |
+
+        | Samoa | WS | 882 |
+
+        | Sao Tome and Principe | ST | 678 |
+
+        | Saudi Arabia | SA | 682 |
+
+        | Senegal | SN | 686 |
+
+        | Serbia | RS | 688 |
+
+        | Seychelles | SC | 690 |
+
+        | Sierra Leone | SL | 694 |
+
+        | Singapore | SG | 702 |
+
+        | Sint Maarten (Dutch Part) | SX | 534 |
+
+        | Solomon Islands | SB | 090 |
+
+        | Somalia | SO | 706 |
+
+        | South Africa | ZA | 710 |
+
+        | South Georgia and the South Sandwich Islands | GS | 239 |
+
+        | Sri Lanka | LK | 144 |
+
+        | Saint Helena, Ascension and Tristan Da Cunha | SH | 654 |
+
+        | St. Kitts and Nevis | KN | 659 |
+
+        | St. Lucia | LC | 662 |
+
+        | St. Vincent and the Grenadines | VC | 670 |
+
+        | Suriname | SR | 740 |
+
+        | Svalbard and Jan Mayen | SJ | 744 |
+
+        | Swaziland | SZ | 748 |
+
+        | Sweden | SE | 752 |
+
+        | Switzerland | CH | 756 |
+
+        | Taiwan | TW | 158 |
+
+        | Tajikistan | TJ | 762 |
+
+        | Tanzania, United Republic of | TZ | 834 |
+
+        | Thailand | TH | 764 |
+
+        | Togo | TG | 768 |
+
+        | Tokelau | TK | 772 |
+
+        | Tonga | TO | 776 |
+
+        | Trinidad and Tobago | TT | 780 |
+
+        | Tunisia | TN | 788 |
+
+        | Turkey | TR | 792 |
+
+        | Turkmenistan | TM | 795 |
+
+        | Tuvalu | TV | 798 |
+
+        | Uganda | UG | 800 |
+
+        | Ukraine | UA | 804 |
+
+        | United Arab Emirates | AE | 784 |
+
+        | United Kingdom | GB | 826 |
+
+        | Uruguay | UY | 858 |
+
+        | Uzbekistan | UZ | 860 |
+
+        | Vanuatu | VU | 548 |
+
+        | Venezuela, Bolivarian Republic of | VE | 862 |
+
+        | Vietnam | VN | 704 |
+
+        | Wallis and Futuna | WF | 876 |
+
+        | Western Sahara | EH | 732 |
+
+        | Yemen | YE | 886 |
+
+        | Zambia | ZM | 894 |
+
+        | Zimbabwe | ZW | 716 |
+
+
+        </details>'
+      externalDocs:
+        description: Find more info here
+        url: https://www.iso.org/iso-3166-country-codes.html
+      example: NLD
+    ProblemDetail:
+      type: object
+      description: 'The ''problem detail'' object relays detailed information about the error that occurred. It is defined
+
+        by [RFC 7807 - Problem Details for HTTP APIs](https://tools.ietf.org/html/rfc7807).
+
+
+        Note that additional properties may be used to relay error specific information.
+
+        '
+      properties:
+        type:
+          type: string
+          description: 'An absolute URI that identifies the problem type.
+
+            '
+          default: about:blank
+          example: https://api.silverflow.co/problem/constraint-violation
+        title:
+          type: string
+          description: 'A short, summary of the problem type. Written in english and readable
+
+            for engineers (usually not suited for non technical stakeholders and
+
+            not localized);
+
+            '
+          example: Service Unavailable
+        status:
+          type: integer
+          format: int32
+          description: 'The HTTP status code generated by the origin server for this occurrence
+
+            of the problem.
+
+            '
+          minimum: 100
+          maximum: 599
+          example: 503
+        detail:
+          type: string
+          description: 'A human readable explanation specific to this occurrence of the
+
+            problem.
+
+            '
+          example: Connection to database timed out
+        instance:
+          type: string
+          description: 'An absolute URI that identifies the specific occurrence of the problem.
+
+            It may or may not yield further information if dereferenced.
+
+            '
+      additionalProperties: true
     currencyCode:
       type: string
       enum:
@@ -913,1363 +3032,6 @@ components:
         description: Find more info here
         url: https://www.iso.org/iso-4217-currency-codes.html
       example: EUR
-    Page:
-      type: object
-      properties:
-        offsetToken:
-          $ref: '#/components/schemas/offsetToken'
-        moreItems:
-          $ref: '#/components/schemas/moreItems'
-    settlementCurrencies:
-      description: A list of Settlement Currencies.
-      type: array
-      items:
-        $ref: '#/components/schemas/settlementCurrency'
-        minItems: 1
-    ProblemDetail:
-      type: object
-      description: 'The ''problem detail'' object relays detailed information about the error that occurred. It is defined
-
-        by [RFC 7807 - Problem Details for HTTP APIs](https://tools.ietf.org/html/rfc7807).
-
-
-        Note that additional properties may be used to relay error specific information.
-
-        '
-      properties:
-        type:
-          type: string
-          description: 'An absolute URI that identifies the problem type.
-
-            '
-          default: about:blank
-          example: https://api.silverflow.co/problem/constraint-violation
-        title:
-          type: string
-          description: 'A short, summary of the problem type. Written in english and readable
-
-            for engineers (usually not suited for non technical stakeholders and
-
-            not localized);
-
-            '
-          example: Service Unavailable
-        status:
-          type: integer
-          format: int32
-          description: 'The HTTP status code generated by the origin server for this occurrence
-
-            of the problem.
-
-            '
-          minimum: 100
-          maximum: 599
-          example: 503
-        detail:
-          type: string
-          description: 'A human readable explanation specific to this occurrence of the
-
-            problem.
-
-            '
-          example: Connection to database timed out
-        instance:
-          type: string
-          description: 'An absolute URI that identifies the specific occurrence of the problem.
-
-            It may or may not yield further information if dereferenced.
-
-            '
-      additionalProperties: true
-    binConfigurationKey:
-      description: A key assigned by Silverflow to uniquely identify a Bin configuration.
-      type: string
-      pattern: ^bcf-[a-zA-Z0-9]+$
-      minLength: 5
-      maxLength: 120
-    DinersBin:
-      allOf:
-      - required:
-        - network
-        - messageSystem
-        - acquirerBin
-        - acquirerIdCode
-        - dxsCode
-        properties:
-          network:
-            type: string
-            enum:
-            - diners
-          messageSystem:
-            type: string
-            enum:
-            - DMS
-            description: Determines the message structure and Data Element definitions for card network.
-          acquirerBin:
-            allOf:
-            - description: For Diners, this field is automatically copied from the acquirerIdCode (IIC number).
-            - $ref: '#/components/schemas/dinersAcquirerIdCode'
-          acquirerIdCode:
-            $ref: '#/components/schemas/dinersAcquirerIdCode'
-          dxsCode:
-            $ref: '#/components/schemas/dxsCode'
-      - $ref: '#/components/schemas/BaseBin'
-    countryCodeAlpha2:
-      type: string
-      pattern: ^[A-Z]+$
-      minLength: 2
-      maxLength: 2
-      description: 'The ISO code of the country.
-
-
-        **European ISO Country Codes**
-
-
-        <details>
-
-
-        | Country | Alpha-2 code | Numeric |
-
-        | ------- | ------------ | ------- |
-
-        | Åland Islands | AX | 248 |
-
-        | Andorra | AD | 020 |
-
-        | Austria | AT | 040 |
-
-        | Belgium | BE | 056 |
-
-        | Cyprus | CY | 196 |
-
-        | Estonia | EE | 233 |  |
-
-        | Finland | FI | 246 |
-
-        | France | FR | 250 |
-
-        | French Guiana | GF | 254 |
-
-        | French Southern Territories | TF | 260 |
-
-        | Germany | DE | 280 |
-
-        | Greece | GR | 300 |
-
-        | Guadeloupe | GP | 312 |
-
-        | Ireland | IE | 372 |
-
-        | Italy | IT | 380 |
-
-        | Kosovo, United Nations Mission in Kosovo (UNMIK) | QZ | 900 |
-
-        | Latvia | LV | 428 |
-
-        | Lithuania | LT | 440 |
-
-        | Luxembourg | LU | 442 |
-
-        | Malta | MT | 470 |
-
-        | Martinique | MQ | 474 |
-
-        | Mayotte | YT | 175 |
-
-        | Monaco | MC | 492 |
-
-        | Montenegro | ME | 499 |
-
-        | Netherlands | NL | 528 |
-
-        | Portugal | PT | 620 |
-
-        | Reunion | RE | 638 |
-
-        | Saint Barthélemy | BL | 652 |
-
-        | Saint Martin (French Part) | MF | 663 |
-
-        | San Marino | SM | 674 |
-
-        | Slovakia | SK | 703 |
-
-        | Slovenia | SI | 705 |
-
-        | Spain | ES | 724 |
-
-        | St. Pierre and Miquelon | PM | 666 |
-
-        | Vatican City State (Holy See) | VA | 336 |
-
-
-        </details>
-
-
-        **US ISO Country Codes**
-
-
-        <details>
-
-
-        | Country | Alpha-2 code | Numeric |
-
-        | ------- | ------------ | ------- |
-
-        | American Samoa | AS | 016 |
-
-        | Bonaire, St. Eusasius and Saba | BQ | 535 |
-
-        | British Indian Ocean Territory | IO | 086 |
-
-        | Ecuador | EC | 218 |
-
-        | Guam | GU | 316 |
-
-        | Marshall Islands | MH | 584 |
-
-        | Micronesia, Federated States of | FM | 583 |
-
-        | Northern Mariana Islands | MP | 580 |
-
-        | Palau | PW | 585 |
-
-        | Palestine, State of | PS | 275 |
-
-        | Puerto Rico | PR | 630 |
-
-        | Timor-Leste | TP | 626 |
-
-        | Turks and Caicos Islands | TC | 796 |
-
-        | U.S. Minor Outlying Islands | UM | 581 |
-
-        | United States | US | 840 |
-
-        | Virgin Islands, British | VG | 092 |
-
-        | Virgin Islands, U.S. | VI | 850 |
-
-
-        </details>
-
-
-        **Other ISO Country Codes**
-
-
-        <details>
-
-
-        | Country | Alpha-2 code | Numeric |
-
-        | ------- | ------------ | ------- |
-
-        | Afghanistan | AF | 004 |
-
-        | Albania | AL | 008 |
-
-        | Algeria | DZ | 012 |
-
-        | Angola | AO | 024 |
-
-        | Anguilla | AI | 660 |
-
-        | Antarctica | AQ | 010 |
-
-        | Antigua and Barbuda | AG | 028 |
-
-        | Argentina | AR | 032 |
-
-        | Armenia | AM | 051 |
-
-        | Aruba | AW | 533 |
-
-        | Australia | AU | 036 |
-
-        | Azerbaijan | AZ | 031 |
-
-        | Bahamas | BS | 044 |
-
-        | Bahrain | BH | 048 |
-
-        | Bangladesh | BD | 050 |
-
-        | Barbados | BB | 052 |
-
-        | Belarus | BR | 112 |
-
-        | Belize | BZ | 084 |
-
-        | Benin | BJ | 204 |
-
-        | Bermuda | BM | 060 |
-
-        | Bhutan | BT | 064 |
-
-        | Bolivia, Plurinational State of | BO | 068 |
-
-        | Bosnia and Herzegovina | BA | 070 |
-
-        | Botswana | BW | 072 |
-
-        | Bouvet Island | BV | 074 |
-
-        | Brazil | BR | 076 |
-
-        | Brunei Darussalam | BN | 096 |
-
-        | Bulgaria | BG | 100 |
-
-        | Burkina Faso | BF | 854 |
-
-        | Burundi | BI | 108 |
-
-        | Cambodia | KH | 116 |
-
-        | Cameroon | CM | 120 |
-
-        | Canada | CA | 124 |
-
-        | Cape Verde | CV | 132 |
-
-        | Cayman Islands | KY | 136 |
-
-        | Central African Republic | CF | 140 |
-
-        | Chad | TD | 148 |
-
-        | Chile | CL | 152 |
-
-        | China | CN | 156 |
-
-        | Christmas Island | CX | 162 |
-
-        | Cocos (Keeling) Islands | CC | 166 |
-
-        | Colombia | CO | 170 |
-
-        | Comoros | KM | 174 |
-
-        | Congo | CG | 178 |
-
-        | Cook Islands | CK | 184 |
-
-        | Costa Rica | CR | 188 |
-
-        | Côte D''Ivoire | CI | 384 |
-
-        | Croatia | HR | 191 |
-
-        | Cuba | CU | 192 |
-
-        | Curacao | CW | 531 |
-
-        | Czech Republic | CZ | 203 |
-
-        | Democratic Republic of the Congo | CD | 180 |
-
-        | Denmark | DK | 208 |
-
-        | Djibouti | DJ | 262 |
-
-        | Dominica | DM | 212 |
-
-        | Dominican Republic | DO | 214 |
-
-        | Egypt | EG | 818 |
-
-        | El Salvador | SV | 222 |
-
-        | Equatorial Guinea | GQ | 226 |
-
-        | Eritrea | ER | 232 |
-
-        | Ethiopia | ET | 230 |
-
-        | Falkland Islands (Malvinas) | FK | 238 |
-
-        | Faroe Islands | FO | 234 |
-
-        | Fiji | FJ | 242 |
-
-        | French Polynesia | PF | 258 |
-
-        | Gabon | GA | 266 |
-
-        | Gambia | GM | 270 |
-
-        | Georgia | GE | 268 |
-
-        | Ghana | GH | 288 |
-
-        | Gibraltar | GI | 292 |
-
-        | Greenland | GL | 304 |
-
-        | Grenada | GD | 308 |
-
-        | Guatemala | GT | 320 |
-
-        | Guernsey | GG | 831 |
-
-        | Guinea | GN | 324 |
-
-        | Guinea-Bissau | GW | 624 |
-
-        | Guyana | GY | 328 |
-
-        | Haiti | HT | 332 |
-
-        | Heard and McDonald Islands | HM | 334 |
-
-        | Honduras | HN | 340 |
-
-        | Hong Kong | HK | 344 |
-
-        | Hungary | HU | 348 |
-
-        | Iceland | IS | 352 |
-
-        | India | IN | 356 |
-
-        | Indonesia | ID | 360 |
-
-        | Iraq | IQ | 368 |
-
-        | Isle of Man | IM | 833 |
-
-        | Israel | IL | 376 |
-
-        | Jamaica | JM | 388 |
-
-        | Japan | JP | 392 |
-
-        | Jersey | JE | 832 |
-
-        | Jordan | JO | 400 |
-
-        | Kazakhstan | KZ | 398 |
-
-        | Kenya | KE | 404 |
-
-        | Kiribati | KI | 296 |
-
-        | Korea, Republic of | KR | 410 |
-
-        | Kuwait | KW | 414 |
-
-        | Kyrgyzstan | KG | 417 |
-
-        | Lao People''s Democratic Republic | LA | 418 |
-
-        | Lebanon | LB | 422 |
-
-        | Lesotho | LS | 426 |
-
-        | Liberia | LR | 430 |
-
-        | Libyan Arab Jamahiriya | LY | 434 |
-
-        | Liechtenstein | LI | 438 |
-
-        | Macao | MO | 446 |
-
-        | Macedonia | MK | 807 |
-
-        | Madagascar | MG | 450 |
-
-        | Malawi | MW | 454 |
-
-        | Malaysia | MY | 458 |
-
-        | Maldives | MV | 462 |
-
-        | Mali | ML | 466 |
-
-        | Mauritania | MR | 478 |
-
-        | Mauritius | MU | 480 |
-
-        | Mexico | MX | 484 |
-
-        | Moldova, Republic of | MD | 498 |
-
-        | Mongolia | MN | 496 |
-
-        | Montserrat | MS | 500 |
-
-        | Morocco | MA | 504 |
-
-        | Mozambique | MZ | 508 |
-
-        | Myanmar (effective 1 November 2012) | MM | 104 |
-
-        | Namibia | NA | 516 |
-
-        | Nauru | NR | 520 |
-
-        | Nepal | NP | 524 |
-
-        | Netherlands Antilles | AN | 530 |
-
-        | New Caledonia | NC | 540 |
-
-        | New Zealand | NZ | 554 |
-
-        | Nicaragua | NI | 558 |
-
-        | Niger | NE | 562 |
-
-        | Nigeria | NG | 566 |
-
-        | Niue | NU | 570 |
-
-        | Norfolk Island | NF | 574 |
-
-        | Norway | NO | 578 |
-
-        | Oman | OM | 512 |
-
-        | Pakistan | PK | 586 |
-
-        | Panama | PA | 591 |
-
-        | Papua New Guinea | PG | 598 |
-
-        | Paraguay | PY | 600 |
-
-        | Peru | PE | 604 |
-
-        | Philippines | PH | 608 |
-
-        | Pitcairn | PN | 612 |
-
-        | Poland | PL | 616 |
-
-        | Qatar | QA | 634 |
-
-        | Republic of South Sudan | SS | 728 |
-
-        | Romania | RO | 642 |
-
-        | Russian Federation | RU | 643 |
-
-        | Rwanda | RW | 646 |
-
-        | Samoa | WS | 882 |
-
-        | Sao Tome and Principe | ST | 678 |
-
-        | Saudi Arabia | SA | 682 |
-
-        | Senegal | SN | 686 |
-
-        | Serbia | RS | 688 |
-
-        | Seychelles | SC | 690 |
-
-        | Sierra Leone | SL | 694 |
-
-        | Singapore | SG | 702 |
-
-        | Sint Maarten (Dutch Part) | SX | 534 |
-
-        | Solomon Islands | SB | 090 |
-
-        | Somalia | SO | 706 |
-
-        | South Africa | ZA | 710 |
-
-        | South Georgia and the South Sandwich Islands | GS | 239 |
-
-        | Sri Lanka | LK | 144 |
-
-        | Saint Helena, Ascension and Tristan Da Cunha | SH | 654 |
-
-        | St. Kitts and Nevis | KN | 659 |
-
-        | St. Lucia | LC | 662 |
-
-        | St. Vincent and the Grenadines | VC | 670 |
-
-        | Suriname | SR | 740 |
-
-        | Svalbard and Jan Mayen | SJ | 744 |
-
-        | Swaziland | SZ | 748 |
-
-        | Sweden | SE | 752 |
-
-        | Switzerland | CH | 756 |
-
-        | Taiwan | TW | 158 |
-
-        | Tajikistan | TJ | 762 |
-
-        | Tanzania, United Republic of | TZ | 834 |
-
-        | Thailand | TH | 764 |
-
-        | Togo | TG | 768 |
-
-        | Tokelau | TK | 772 |
-
-        | Tonga | TO | 776 |
-
-        | Trinidad and Tobago | TT | 780 |
-
-        | Tunisia | TN | 788 |
-
-        | Turkey | TR | 792 |
-
-        | Turkmenistan | TM | 795 |
-
-        | Tuvalu | TV | 798 |
-
-        | Uganda | UG | 800 |
-
-        | Ukraine | UA | 804 |
-
-        | United Arab Emirates | AE | 784 |
-
-        | United Kingdom | GB | 826 |
-
-        | Uruguay | UY | 858 |
-
-        | Uzbekistan | UZ | 860 |
-
-        | Vanuatu | VU | 548 |
-
-        | Venezuela, Bolivarian Republic of | VE | 862 |
-
-        | Vietnam | VN | 704 |
-
-        | Wallis and Futuna | WF | 876 |
-
-        | Western Sahara | EH | 732 |
-
-        | Yemen | YE | 886 |
-
-        | Zambia | ZM | 894 |
-
-        | Zimbabwe | ZW | 716 |
-
-
-        </details>'
-      externalDocs:
-        description: Find more info here
-        url: https://www.iso.org/iso-3166-country-codes.html
-      example: NL
-    countryCodeAlpha3:
-      type: string
-      pattern: ^[A-Z]+$
-      minLength: 3
-      maxLength: 3
-      description: 'The ISO code of the country.
-
-
-        **European ISO Country Codes**
-
-
-        <details>
-
-
-        | Country | Alpha-2 code | Numeric |
-
-        | ------- | ------------ | ------- |
-
-        | Åland Islands | AX | 248 |
-
-        | Andorra | AD | 020 |
-
-        | Austria | AT | 040 |
-
-        | Belgium | BE | 056 |
-
-        | Cyprus | CY | 196 |
-
-        | Estonia | EE | 233 |  |
-
-        | Finland | FI | 246 |
-
-        | France | FR | 250 |
-
-        | French Guiana | GF | 254 |
-
-        | French Southern Territories | TF | 260 |
-
-        | Germany | DE | 280 |
-
-        | Greece | GR | 300 |
-
-        | Guadeloupe | GP | 312 |
-
-        | Ireland | IE | 372 |
-
-        | Italy | IT | 380 |
-
-        | Kosovo, United Nations Mission in Kosovo (UNMIK) | QZ | 900 |
-
-        | Latvia | LV | 428 |
-
-        | Lithuania | LT | 440 |
-
-        | Luxembourg | LU | 442 |
-
-        | Malta | MT | 470 |
-
-        | Martinique | MQ | 474 |
-
-        | Mayotte | YT | 175 |
-
-        | Monaco | MC | 492 |
-
-        | Montenegro | ME | 499 |
-
-        | Netherlands | NL | 528 |
-
-        | Portugal | PT | 620 |
-
-        | Reunion | RE | 638 |
-
-        | Saint Barthélemy | BL | 652 |
-
-        | Saint Martin (French Part) | MF | 663 |
-
-        | San Marino | SM | 674 |
-
-        | Slovakia | SK | 703 |
-
-        | Slovenia | SI | 705 |
-
-        | Spain | ES | 724 |
-
-        | St. Pierre and Miquelon | PM | 666 |
-
-        | Vatican City State (Holy See) | VA | 336 |
-
-
-        </details>
-
-
-        **US ISO Country Codes**
-
-
-        <details>
-
-
-        | Country | Alpha-2 code | Numeric |
-
-        | ------- | ------------ | ------- |
-
-        | American Samoa | AS | 016 |
-
-        | Bonaire, St. Eusasius and Saba | BQ | 535 |
-
-        | British Indian Ocean Territory | IO | 086 |
-
-        | Ecuador | EC | 218 |
-
-        | Guam | GU | 316 |
-
-        | Marshall Islands | MH | 584 |
-
-        | Micronesia, Federated States of | FM | 583 |
-
-        | Northern Mariana Islands | MP | 580 |
-
-        | Palau | PW | 585 |
-
-        | Palestine, State of | PS | 275 |
-
-        | Puerto Rico | PR | 630 |
-
-        | Timor-Leste | TP | 626 |
-
-        | Turks and Caicos Islands | TC | 796 |
-
-        | U.S. Minor Outlying Islands | UM | 581 |
-
-        | United States | US | 840 |
-
-        | Virgin Islands, British | VG | 092 |
-
-        | Virgin Islands, U.S. | VI | 850 |
-
-
-        </details>
-
-
-        **Other ISO Country Codes**
-
-
-        <details>
-
-
-        | Country | Alpha-2 code | Numeric |
-
-        | ------- | ------------ | ------- |
-
-        | Afghanistan | AF | 004 |
-
-        | Albania | AL | 008 |
-
-        | Algeria | DZ | 012 |
-
-        | Angola | AO | 024 |
-
-        | Anguilla | AI | 660 |
-
-        | Antarctica | AQ | 010 |
-
-        | Antigua and Barbuda | AG | 028 |
-
-        | Argentina | AR | 032 |
-
-        | Armenia | AM | 051 |
-
-        | Aruba | AW | 533 |
-
-        | Australia | AU | 036 |
-
-        | Azerbaijan | AZ | 031 |
-
-        | Bahamas | BS | 044 |
-
-        | Bahrain | BH | 048 |
-
-        | Bangladesh | BD | 050 |
-
-        | Barbados | BB | 052 |
-
-        | Belarus | BR | 112 |
-
-        | Belize | BZ | 084 |
-
-        | Benin | BJ | 204 |
-
-        | Bermuda | BM | 060 |
-
-        | Bhutan | BT | 064 |
-
-        | Bolivia, Plurinational State of | BO | 068 |
-
-        | Bosnia and Herzegovina | BA | 070 |
-
-        | Botswana | BW | 072 |
-
-        | Bouvet Island | BV | 074 |
-
-        | Brazil | BR | 076 |
-
-        | Brunei Darussalam | BN | 096 |
-
-        | Bulgaria | BG | 100 |
-
-        | Burkina Faso | BF | 854 |
-
-        | Burundi | BI | 108 |
-
-        | Cambodia | KH | 116 |
-
-        | Cameroon | CM | 120 |
-
-        | Canada | CA | 124 |
-
-        | Cape Verde | CV | 132 |
-
-        | Cayman Islands | KY | 136 |
-
-        | Central African Republic | CF | 140 |
-
-        | Chad | TD | 148 |
-
-        | Chile | CL | 152 |
-
-        | China | CN | 156 |
-
-        | Christmas Island | CX | 162 |
-
-        | Cocos (Keeling) Islands | CC | 166 |
-
-        | Colombia | CO | 170 |
-
-        | Comoros | KM | 174 |
-
-        | Congo | CG | 178 |
-
-        | Cook Islands | CK | 184 |
-
-        | Costa Rica | CR | 188 |
-
-        | Côte D''Ivoire | CI | 384 |
-
-        | Croatia | HR | 191 |
-
-        | Cuba | CU | 192 |
-
-        | Curacao | CW | 531 |
-
-        | Czech Republic | CZ | 203 |
-
-        | Democratic Republic of the Congo | CD | 180 |
-
-        | Denmark | DK | 208 |
-
-        | Djibouti | DJ | 262 |
-
-        | Dominica | DM | 212 |
-
-        | Dominican Republic | DO | 214 |
-
-        | Egypt | EG | 818 |
-
-        | El Salvador | SV | 222 |
-
-        | Equatorial Guinea | GQ | 226 |
-
-        | Eritrea | ER | 232 |
-
-        | Ethiopia | ET | 230 |
-
-        | Falkland Islands (Malvinas) | FK | 238 |
-
-        | Faroe Islands | FO | 234 |
-
-        | Fiji | FJ | 242 |
-
-        | French Polynesia | PF | 258 |
-
-        | Gabon | GA | 266 |
-
-        | Gambia | GM | 270 |
-
-        | Georgia | GE | 268 |
-
-        | Ghana | GH | 288 |
-
-        | Gibraltar | GI | 292 |
-
-        | Greenland | GL | 304 |
-
-        | Grenada | GD | 308 |
-
-        | Guatemala | GT | 320 |
-
-        | Guernsey | GG | 831 |
-
-        | Guinea | GN | 324 |
-
-        | Guinea-Bissau | GW | 624 |
-
-        | Guyana | GY | 328 |
-
-        | Haiti | HT | 332 |
-
-        | Heard and McDonald Islands | HM | 334 |
-
-        | Honduras | HN | 340 |
-
-        | Hong Kong | HK | 344 |
-
-        | Hungary | HU | 348 |
-
-        | Iceland | IS | 352 |
-
-        | India | IN | 356 |
-
-        | Indonesia | ID | 360 |
-
-        | Iraq | IQ | 368 |
-
-        | Isle of Man | IM | 833 |
-
-        | Israel | IL | 376 |
-
-        | Jamaica | JM | 388 |
-
-        | Japan | JP | 392 |
-
-        | Jersey | JE | 832 |
-
-        | Jordan | JO | 400 |
-
-        | Kazakhstan | KZ | 398 |
-
-        | Kenya | KE | 404 |
-
-        | Kiribati | KI | 296 |
-
-        | Korea, Republic of | KR | 410 |
-
-        | Kuwait | KW | 414 |
-
-        | Kyrgyzstan | KG | 417 |
-
-        | Lao People''s Democratic Republic | LA | 418 |
-
-        | Lebanon | LB | 422 |
-
-        | Lesotho | LS | 426 |
-
-        | Liberia | LR | 430 |
-
-        | Libyan Arab Jamahiriya | LY | 434 |
-
-        | Liechtenstein | LI | 438 |
-
-        | Macao | MO | 446 |
-
-        | Macedonia | MK | 807 |
-
-        | Madagascar | MG | 450 |
-
-        | Malawi | MW | 454 |
-
-        | Malaysia | MY | 458 |
-
-        | Maldives | MV | 462 |
-
-        | Mali | ML | 466 |
-
-        | Mauritania | MR | 478 |
-
-        | Mauritius | MU | 480 |
-
-        | Mexico | MX | 484 |
-
-        | Moldova, Republic of | MD | 498 |
-
-        | Mongolia | MN | 496 |
-
-        | Montserrat | MS | 500 |
-
-        | Morocco | MA | 504 |
-
-        | Mozambique | MZ | 508 |
-
-        | Myanmar (effective 1 November 2012) | MM | 104 |
-
-        | Namibia | NA | 516 |
-
-        | Nauru | NR | 520 |
-
-        | Nepal | NP | 524 |
-
-        | Netherlands Antilles | AN | 530 |
-
-        | New Caledonia | NC | 540 |
-
-        | New Zealand | NZ | 554 |
-
-        | Nicaragua | NI | 558 |
-
-        | Niger | NE | 562 |
-
-        | Nigeria | NG | 566 |
-
-        | Niue | NU | 570 |
-
-        | Norfolk Island | NF | 574 |
-
-        | Norway | NO | 578 |
-
-        | Oman | OM | 512 |
-
-        | Pakistan | PK | 586 |
-
-        | Panama | PA | 591 |
-
-        | Papua New Guinea | PG | 598 |
-
-        | Paraguay | PY | 600 |
-
-        | Peru | PE | 604 |
-
-        | Philippines | PH | 608 |
-
-        | Pitcairn | PN | 612 |
-
-        | Poland | PL | 616 |
-
-        | Qatar | QA | 634 |
-
-        | Republic of South Sudan | SS | 728 |
-
-        | Romania | RO | 642 |
-
-        | Russian Federation | RU | 643 |
-
-        | Rwanda | RW | 646 |
-
-        | Samoa | WS | 882 |
-
-        | Sao Tome and Principe | ST | 678 |
-
-        | Saudi Arabia | SA | 682 |
-
-        | Senegal | SN | 686 |
-
-        | Serbia | RS | 688 |
-
-        | Seychelles | SC | 690 |
-
-        | Sierra Leone | SL | 694 |
-
-        | Singapore | SG | 702 |
-
-        | Sint Maarten (Dutch Part) | SX | 534 |
-
-        | Solomon Islands | SB | 090 |
-
-        | Somalia | SO | 706 |
-
-        | South Africa | ZA | 710 |
-
-        | South Georgia and the South Sandwich Islands | GS | 239 |
-
-        | Sri Lanka | LK | 144 |
-
-        | Saint Helena, Ascension and Tristan Da Cunha | SH | 654 |
-
-        | St. Kitts and Nevis | KN | 659 |
-
-        | St. Lucia | LC | 662 |
-
-        | St. Vincent and the Grenadines | VC | 670 |
-
-        | Suriname | SR | 740 |
-
-        | Svalbard and Jan Mayen | SJ | 744 |
-
-        | Swaziland | SZ | 748 |
-
-        | Sweden | SE | 752 |
-
-        | Switzerland | CH | 756 |
-
-        | Taiwan | TW | 158 |
-
-        | Tajikistan | TJ | 762 |
-
-        | Tanzania, United Republic of | TZ | 834 |
-
-        | Thailand | TH | 764 |
-
-        | Togo | TG | 768 |
-
-        | Tokelau | TK | 772 |
-
-        | Tonga | TO | 776 |
-
-        | Trinidad and Tobago | TT | 780 |
-
-        | Tunisia | TN | 788 |
-
-        | Turkey | TR | 792 |
-
-        | Turkmenistan | TM | 795 |
-
-        | Tuvalu | TV | 798 |
-
-        | Uganda | UG | 800 |
-
-        | Ukraine | UA | 804 |
-
-        | United Arab Emirates | AE | 784 |
-
-        | United Kingdom | GB | 826 |
-
-        | Uruguay | UY | 858 |
-
-        | Uzbekistan | UZ | 860 |
-
-        | Vanuatu | VU | 548 |
-
-        | Venezuela, Bolivarian Republic of | VE | 862 |
-
-        | Vietnam | VN | 704 |
-
-        | Wallis and Futuna | WF | 876 |
-
-        | Western Sahara | EH | 732 |
-
-        | Yemen | YE | 886 |
-
-        | Zambia | ZM | 894 |
-
-        | Zimbabwe | ZW | 716 |
-
-
-        </details>'
-      externalDocs:
-        description: Find more info here
-        url: https://www.iso.org/iso-3166-country-codes.html
-      example: NLD
-    offsetToken:
-      type: string
-      pattern: ^[a-zA-Z0-9%]+$
-      minLength: 1
-      maxLength: 2048
-    created:
-      type: string
-      description: The date and time this object was created
-      format: date-time
-    amexModel:
-      type: string
-      description: The AMEX business model. In the PayFac model, authorization is performed using the SE Number on the BIN. In the Direct Merchant or Payment Designation model, authorization is performed using the SE Number on the Acceptor. If `amexModel` is undefined, the AMEX Bin is treated as a PayFac Bin by default.
-      default: payfac
-      enum:
-      - payfac
-      - direct_merchant
-      - payment_designation
-    messageSystem:
-      type: string
-      description: Determines the message structure and Data Element definitions for card network.
-      enum:
-      - DMS
-      - SMS
-      default: DMS
-    dxsCode:
-      description: The dxsCode is provided to acquirers by Diners during onboarding. A unique dxsCode is provided for each IIC.
-      type: string
-      pattern: ^[a-zA-Z0-9]+$
-      minLength: 3
-      maxLength: 3
-    amexAcquirerBin:
-      anyOf:
-      - $ref: '#/components/schemas/amexPayfacAcquirerBin'
-      - $ref: '#/components/schemas/amexDirectMerchantAcquirerBin'
-      - $ref: '#/components/schemas/amexPaymentDesignationAcquirerBin'
-    dinersAcquirerIdCode:
-      type: string
-      description: Acquirer Institution ID code. For Diners, this field corresponds to the IIC number.
-      pattern: ^\d+$
-      minLength: 6
-      maxLength: 11
-    settlementServices:
-      description: A list of Settlement Services as provided by a card network.
-      type: array
-      items:
-        $ref: '#/components/schemas/settlementService'
-        minItems: 1
-    amexDirectMerchantAcquirerBin:
-      allOf:
-      - description: For Direct Merchant, this field is automatically copied from acquirerIdCode field.
-      - $ref: '#/components/schemas/amexAcquirerIdCode'
-    ExtendedFreeTextField:
-      type: string
-      pattern: ^[\x20-\x7E\xA0-\xA3\xA5\xA7\xA9-\xB3\xB5-\xB7\xB9-\xBB\xBF-\xFF\u20AC\u0160\u0161\u017D\u017E\u0152\u0153\u0178]+$
-      minLength: 1
-      maxLength: 160
-      description: Clients not enrolled in the "extended character set beta" are still subject to the `^[\w +=.,:;!?$@()-]+$` pattern for field input.
-    discoverAcquirerIdCode:
-      type: string
-      description: Acquirer Institution ID code.
-      pattern: ^\d+$
-      minLength: 1
-      maxLength: 11
-    discoverAcquirerBin:
-      type: string
-      description: Acquirer Bin. The Bin number as assigned by the card network.
-      pattern: ^\d+$
-      minLength: 1
-      maxLength: 11
-    settlementService:
-      required:
-      - currency
-      - code
-      description: A Settlement Service as provided by a card network.
-      properties:
-        currency:
-          $ref: '#/components/schemas/currencyCode'
-        code:
-          type: string
-          description: Identifier of the Settlement Service as defined by the card network.
-          pattern: ^[a-zA-Z0-9]+$
-        levelOneSRE:
-          type: string
-          description: Identifier Visa uses for settlement reporting
-    binKey:
-      description: A key assigned by Silverflow to uniquely identify a Bin.
-      type: string
-      pattern: ^bin-[a-zA-Z0-9]+$
-      minLength: 5
-      maxLength: 120
-    version:
-      type: integer
-      description: The version of this object
-      format: int64
-    amexAcquirerIdCode:
-      type: string
-      description: Acquirer Institution ID code (Submitter ID). For PayFac model, this identifies the Payment Facilitator.
-      pattern: ^[A-Z0-9]+$
-      minLength: 6
-      maxLength: 11
-    acquirerAgentKey:
-      type: string
-      description: Acquirer Agent Key shows the owner agent Key of the Bin.
-      pattern: ^cgt-[a-zA-Z0-9]+|^$
-      default: ''
-    discoverIsoId:
-      type: string
-      description: Unique number assigned by Discover to a certified ISO. This field is mandatory if the direct Merchant relationship is maintained by an ISO
-      minLength: 1
-      maxLength: 11
-    BancontactBin:
-      allOf:
-      - type: object
-        required:
-        - network
-        - messageSystem
-        - acquirerIdCode
-        - acquirerBin
-        properties:
-          network:
-            type: string
-            enum:
-            - bancontact
-          messageSystem:
-            $ref: '#/components/schemas/messageSystem'
-          acquirerIdCode:
-            type: string
-            description: Acquirer Institution ID code.
-            pattern: ^\d+$
-            minLength: 6
-            maxLength: 6
-          acquirerBin:
-            type: string
-            description: Acquirer Bin. The Bin number as assigned by the card network.
-            pattern: ^\d+$
-            minLength: 6
-            maxLength: 6
-      - $ref: '#/components/schemas/BaseBin'
-    settlementCurrency:
-      required:
-      - code
-      properties:
-        code:
-          $ref: '#/components/schemas/currencyCode'
-        levelOneSRE:
-          type: string
-          description: Identifier Visa uses for settlement reporting
-    Bin:
-      discriminator:
-        propertyName: network
-        mapping:
-          visa: '#/components/schemas/VisaBin'
-          mastercard: '#/components/schemas/MastercardBin'
-          bancontact: '#/components/schemas/BancontactBin'
-          american-express: '#/components/schemas/AmexBin'
-          discover: '#/components/schemas/DiscoverBin'
-          diners: '#/components/schemas/DinersBin'
-      oneOf:
-      - $ref: '#/components/schemas/VisaBin'
-      - $ref: '#/components/schemas/MastercardBin'
-      - $ref: '#/components/schemas/BancontactBin'
-      - $ref: '#/components/schemas/AmexBin'
-      - $ref: '#/components/schemas/DiscoverBin'
-      - $ref: '#/components/schemas/DinersBin'
     DiscoverBin:
       allOf:
       - type: object
@@ -2295,184 +3057,17 @@ components:
           isoId:
             $ref: '#/components/schemas/discoverIsoId'
       - $ref: '#/components/schemas/BaseBin'
-    amexPayfacAcquirerBin:
+    authorizationCurrency:
       type: string
-      description: SE Number assigned by AMEX for the Payment Facilitator.
-      pattern: ^\d{10}$
-    AmexBin:
       allOf:
-      - type: object
-        required:
-        - network
-        - messageSystem
-        - acquirerIdCode
-        - acquirerBin
-        properties:
-          network:
-            type: string
-            enum:
-            - american-express
-          messageSystem:
-            type: string
-            enum:
-            - DMS
-            description: Determines the message structure and Data Element definitions for card network.
-          acquirerIdCode:
-            allOf:
-            - description: Acquirer Institution ID code (Submitter ID). For PayFac model, this identifies the Payment Facilitator.
-            - $ref: '#/components/schemas/amexAcquirerIdCode'
-          acquirerBin:
-            allOf:
-            - description: SE Number assigned by AMEX for the Payment Facilitator. For Direct Merchant, this field is automatically copied from acquirerIdCode field.
-            - $ref: '#/components/schemas/amexAcquirerBin'
-          authorizationCurrency:
-            type: string
-            $ref: '#/components/schemas/authorizationCurrency'
-          amexModel:
-            $ref: '#/components/schemas/amexModel'
-      - $ref: '#/components/schemas/BaseBin'
-    VisaBin:
-      allOf:
-      - type: object
-        required:
-        - network
-        - messageSystem
-        - acquirerIdCode
-        - acquirerBin
-        - bid
-        properties:
-          network:
-            type: string
-            enum:
-            - visa
-          messageSystem:
-            $ref: '#/components/schemas/messageSystem'
-          acquirerIdCode:
-            type: string
-            description: Acquirer Institution ID code. This field corresponds to the CIB, which usually has the same value as the Bin.
-            pattern: ^\d+$
-            minLength: 6
-            maxLength: 6
-          acquirerBin:
-            type: string
-            description: Acquirer Bin. The Bin number as assigned by the card network.
-            pattern: ^\d+$
-            minLength: 6
-            maxLength: 6
-          bid:
-            type: string
-            description: Business Identification Number. The BID number as assigned by the card network.
-            pattern: ^\d+$
-            minLength: 8
-            maxLength: 8
-      - $ref: '#/components/schemas/BaseBin'
-    status:
+      - description: Used by American Express to verify an authorization for the provided SE Number. <br> **Note:** The following currencies are not permitted; **Belarusian Ruble(BYN), Cuban Peso(CUP), Iranian Rial(IRR), North Korean Won(KPW), Russian Federation Ruble(RUB), and Syrian Pound(SYP)**.
+      - $ref: '#/components/schemas/currencyCode'
+    binKey:
+      description: A key assigned by Silverflow to uniquely identify a Bin.
       type: string
-      description: The status of the object
-      enum:
-      - active
-      - archived
-    lastModified:
-      type: string
-      description: The date and time this object was last modified
-      format: date-time
-    moreItems:
-      type: boolean
-    MastercardBin:
-      allOf:
-      - type: object
-        required:
-        - network
-        - messageSystem
-        - acquirerIdCode
-        - acquirerBin
-        properties:
-          network:
-            type: string
-            enum:
-            - mastercard
-          messageSystem:
-            $ref: '#/components/schemas/messageSystem'
-          acquirerIdCode:
-            type: string
-            description: Acquirer Institution ID code. For Mastercard, this field corresponds to the Acquirer ICA.
-            pattern: ^\d+$
-            minLength: 6
-            maxLength: 6
-          acquirerBin:
-            type: string
-            description: Acquirer Bin. The Bin number as assigned by the card network. For Mastercard, this is also referred to as the Acquirer Reference ID.
-            pattern: ^\d+$
-            minLength: 6
-            maxLength: 6
-      - $ref: '#/components/schemas/BaseBin'
-    BadRequestProblemDetail:
-      description: 'A ''problem detail'' object for Bad Request (400) errors. Extends the base ProblemDetail
-
-        with a validationErrors array that provides detailed information about validation failures.
-
-        '
-      allOf:
-      - $ref: '#/components/schemas/ProblemDetail'
-      - type: object
-        required:
-        - type
-        - title
-        - status
-        - detail
-        - instance
-        properties:
-          type:
-            type: string
-            description: URI reference identifying the problem type.
-            enum:
-            - /silverflow/problems/bad-request
-            example: /silverflow/problems/bad-request
-          title:
-            type: string
-            description: A short summary of the problem type.
-            enum:
-            - Bad Request
-          status:
-            type: integer
-            format: int32
-            description: The HTTP status code (400 for Bad Request).
-            enum:
-            - 400
-          detail:
-            type: string
-            description: A human readable explanation specific to this occurrence of the problem.
-            example: Validation errors occurred
-          instance:
-            type: string
-            description: An absolute URI that identifies the specific occurrence of the problem.
-          validationErrors:
-            type: array
-            description: 'An array of validation errors that occurred during request processing. Each item can be either
-
-              a simple string message or an object with detailed error information including the path and message.
-
-              '
-            items:
-              oneOf:
-              - type: string
-                description: A simple validation error message
-                example: Invalid 'mid' length
-              - type: object
-                description: A detailed validation error with path and message
-                required:
-                - instancePath
-                - message
-                properties:
-                  instancePath:
-                    type: string
-                    description: The JSON path to the field that caused the validation error
-                    example: /merchantAcceptor/mid
-                  message:
-                    type: string
-                    description: The validation error message
-                    example: must be at most 15 characters
-        additionalProperties: false
+      pattern: ^bin-[a-zA-Z0-9]+$
+      minLength: 5
+      maxLength: 120
     BinConfigurationsPage:
       allOf:
       - $ref: '#/components/schemas/Page'
@@ -2512,561 +3107,56 @@ components:
           lastModified: '2022-03-04T11:19:51.164Z'
           version: 2
         moreItems: false
-    countryCodeNumeric:
-      type: string
-      pattern: ^[0-9]+$
-      minLength: 3
-      maxLength: 3
-      description: 'The ISO code of the country.
-
-
-        **European ISO Country Codes**
-
-
-        <details>
-
-
-        | Country | Alpha-2 code | Numeric |
-
-        | ------- | ------------ | ------- |
-
-        | Åland Islands | AX | 248 |
-
-        | Andorra | AD | 020 |
-
-        | Austria | AT | 040 |
-
-        | Belgium | BE | 056 |
-
-        | Cyprus | CY | 196 |
-
-        | Estonia | EE | 233 |  |
-
-        | Finland | FI | 246 |
-
-        | France | FR | 250 |
-
-        | French Guiana | GF | 254 |
-
-        | French Southern Territories | TF | 260 |
-
-        | Germany | DE | 280 |
-
-        | Greece | GR | 300 |
-
-        | Guadeloupe | GP | 312 |
-
-        | Ireland | IE | 372 |
-
-        | Italy | IT | 380 |
-
-        | Kosovo, United Nations Mission in Kosovo (UNMIK) | QZ | 900 |
-
-        | Latvia | LV | 428 |
-
-        | Lithuania | LT | 440 |
-
-        | Luxembourg | LU | 442 |
-
-        | Malta | MT | 470 |
-
-        | Martinique | MQ | 474 |
-
-        | Mayotte | YT | 175 |
-
-        | Monaco | MC | 492 |
-
-        | Montenegro | ME | 499 |
-
-        | Netherlands | NL | 528 |
-
-        | Portugal | PT | 620 |
-
-        | Reunion | RE | 638 |
-
-        | Saint Barthélemy | BL | 652 |
-
-        | Saint Martin (French Part) | MF | 663 |
-
-        | San Marino | SM | 674 |
-
-        | Slovakia | SK | 703 |
-
-        | Slovenia | SI | 705 |
-
-        | Spain | ES | 724 |
-
-        | St. Pierre and Miquelon | PM | 666 |
-
-        | Vatican City State (Holy See) | VA | 336 |
-
-
-        </details>
-
-
-        **US ISO Country Codes**
-
-
-        <details>
-
-
-        | Country | Alpha-2 code | Numeric |
-
-        | ------- | ------------ | ------- |
-
-        | American Samoa | AS | 016 |
-
-        | Bonaire, St. Eusasius and Saba | BQ | 535 |
-
-        | British Indian Ocean Territory | IO | 086 |
-
-        | Ecuador | EC | 218 |
-
-        | Guam | GU | 316 |
-
-        | Marshall Islands | MH | 584 |
-
-        | Micronesia, Federated States of | FM | 583 |
-
-        | Northern Mariana Islands | MP | 580 |
-
-        | Palau | PW | 585 |
-
-        | Palestine, State of | PS | 275 |
-
-        | Puerto Rico | PR | 630 |
-
-        | Timor-Leste | TP | 626 |
-
-        | Turks and Caicos Islands | TC | 796 |
-
-        | U.S. Minor Outlying Islands | UM | 581 |
-
-        | United States | US | 840 |
-
-        | Virgin Islands, British | VG | 092 |
-
-        | Virgin Islands, U.S. | VI | 850 |
-
-
-        </details>
-
-
-        **Other ISO Country Codes**
-
-
-        <details>
-
-
-        | Country | Alpha-2 code | Numeric |
-
-        | ------- | ------------ | ------- |
-
-        | Afghanistan | AF | 004 |
-
-        | Albania | AL | 008 |
-
-        | Algeria | DZ | 012 |
-
-        | Angola | AO | 024 |
-
-        | Anguilla | AI | 660 |
-
-        | Antarctica | AQ | 010 |
-
-        | Antigua and Barbuda | AG | 028 |
-
-        | Argentina | AR | 032 |
-
-        | Armenia | AM | 051 |
-
-        | Aruba | AW | 533 |
-
-        | Australia | AU | 036 |
-
-        | Azerbaijan | AZ | 031 |
-
-        | Bahamas | BS | 044 |
-
-        | Bahrain | BH | 048 |
-
-        | Bangladesh | BD | 050 |
-
-        | Barbados | BB | 052 |
-
-        | Belarus | BR | 112 |
-
-        | Belize | BZ | 084 |
-
-        | Benin | BJ | 204 |
-
-        | Bermuda | BM | 060 |
-
-        | Bhutan | BT | 064 |
-
-        | Bolivia, Plurinational State of | BO | 068 |
-
-        | Bosnia and Herzegovina | BA | 070 |
-
-        | Botswana | BW | 072 |
-
-        | Bouvet Island | BV | 074 |
-
-        | Brazil | BR | 076 |
-
-        | Brunei Darussalam | BN | 096 |
-
-        | Bulgaria | BG | 100 |
-
-        | Burkina Faso | BF | 854 |
-
-        | Burundi | BI | 108 |
-
-        | Cambodia | KH | 116 |
-
-        | Cameroon | CM | 120 |
-
-        | Canada | CA | 124 |
-
-        | Cape Verde | CV | 132 |
-
-        | Cayman Islands | KY | 136 |
-
-        | Central African Republic | CF | 140 |
-
-        | Chad | TD | 148 |
-
-        | Chile | CL | 152 |
-
-        | China | CN | 156 |
-
-        | Christmas Island | CX | 162 |
-
-        | Cocos (Keeling) Islands | CC | 166 |
-
-        | Colombia | CO | 170 |
-
-        | Comoros | KM | 174 |
-
-        | Congo | CG | 178 |
-
-        | Cook Islands | CK | 184 |
-
-        | Costa Rica | CR | 188 |
-
-        | Côte D''Ivoire | CI | 384 |
-
-        | Croatia | HR | 191 |
-
-        | Cuba | CU | 192 |
-
-        | Curacao | CW | 531 |
-
-        | Czech Republic | CZ | 203 |
-
-        | Democratic Republic of the Congo | CD | 180 |
-
-        | Denmark | DK | 208 |
-
-        | Djibouti | DJ | 262 |
-
-        | Dominica | DM | 212 |
-
-        | Dominican Republic | DO | 214 |
-
-        | Egypt | EG | 818 |
-
-        | El Salvador | SV | 222 |
-
-        | Equatorial Guinea | GQ | 226 |
-
-        | Eritrea | ER | 232 |
-
-        | Ethiopia | ET | 230 |
-
-        | Falkland Islands (Malvinas) | FK | 238 |
-
-        | Faroe Islands | FO | 234 |
-
-        | Fiji | FJ | 242 |
-
-        | French Polynesia | PF | 258 |
-
-        | Gabon | GA | 266 |
-
-        | Gambia | GM | 270 |
-
-        | Georgia | GE | 268 |
-
-        | Ghana | GH | 288 |
-
-        | Gibraltar | GI | 292 |
-
-        | Greenland | GL | 304 |
-
-        | Grenada | GD | 308 |
-
-        | Guatemala | GT | 320 |
-
-        | Guernsey | GG | 831 |
-
-        | Guinea | GN | 324 |
-
-        | Guinea-Bissau | GW | 624 |
-
-        | Guyana | GY | 328 |
-
-        | Haiti | HT | 332 |
-
-        | Heard and McDonald Islands | HM | 334 |
-
-        | Honduras | HN | 340 |
-
-        | Hong Kong | HK | 344 |
-
-        | Hungary | HU | 348 |
-
-        | Iceland | IS | 352 |
-
-        | India | IN | 356 |
-
-        | Indonesia | ID | 360 |
-
-        | Iraq | IQ | 368 |
-
-        | Isle of Man | IM | 833 |
-
-        | Israel | IL | 376 |
-
-        | Jamaica | JM | 388 |
-
-        | Japan | JP | 392 |
-
-        | Jersey | JE | 832 |
-
-        | Jordan | JO | 400 |
-
-        | Kazakhstan | KZ | 398 |
-
-        | Kenya | KE | 404 |
-
-        | Kiribati | KI | 296 |
-
-        | Korea, Republic of | KR | 410 |
-
-        | Kuwait | KW | 414 |
-
-        | Kyrgyzstan | KG | 417 |
-
-        | Lao People''s Democratic Republic | LA | 418 |
-
-        | Lebanon | LB | 422 |
-
-        | Lesotho | LS | 426 |
-
-        | Liberia | LR | 430 |
-
-        | Libyan Arab Jamahiriya | LY | 434 |
-
-        | Liechtenstein | LI | 438 |
-
-        | Macao | MO | 446 |
-
-        | Macedonia | MK | 807 |
-
-        | Madagascar | MG | 450 |
-
-        | Malawi | MW | 454 |
-
-        | Malaysia | MY | 458 |
-
-        | Maldives | MV | 462 |
-
-        | Mali | ML | 466 |
-
-        | Mauritania | MR | 478 |
-
-        | Mauritius | MU | 480 |
-
-        | Mexico | MX | 484 |
-
-        | Moldova, Republic of | MD | 498 |
-
-        | Mongolia | MN | 496 |
-
-        | Montserrat | MS | 500 |
-
-        | Morocco | MA | 504 |
-
-        | Mozambique | MZ | 508 |
-
-        | Myanmar (effective 1 November 2012) | MM | 104 |
-
-        | Namibia | NA | 516 |
-
-        | Nauru | NR | 520 |
-
-        | Nepal | NP | 524 |
-
-        | Netherlands Antilles | AN | 530 |
-
-        | New Caledonia | NC | 540 |
-
-        | New Zealand | NZ | 554 |
-
-        | Nicaragua | NI | 558 |
-
-        | Niger | NE | 562 |
-
-        | Nigeria | NG | 566 |
-
-        | Niue | NU | 570 |
-
-        | Norfolk Island | NF | 574 |
-
-        | Norway | NO | 578 |
-
-        | Oman | OM | 512 |
-
-        | Pakistan | PK | 586 |
-
-        | Panama | PA | 591 |
-
-        | Papua New Guinea | PG | 598 |
-
-        | Paraguay | PY | 600 |
-
-        | Peru | PE | 604 |
-
-        | Philippines | PH | 608 |
-
-        | Pitcairn | PN | 612 |
-
-        | Poland | PL | 616 |
-
-        | Qatar | QA | 634 |
-
-        | Republic of South Sudan | SS | 728 |
-
-        | Romania | RO | 642 |
-
-        | Russian Federation | RU | 643 |
-
-        | Rwanda | RW | 646 |
-
-        | Samoa | WS | 882 |
-
-        | Sao Tome and Principe | ST | 678 |
-
-        | Saudi Arabia | SA | 682 |
-
-        | Senegal | SN | 686 |
-
-        | Serbia | RS | 688 |
-
-        | Seychelles | SC | 690 |
-
-        | Sierra Leone | SL | 694 |
-
-        | Singapore | SG | 702 |
-
-        | Sint Maarten (Dutch Part) | SX | 534 |
-
-        | Solomon Islands | SB | 090 |
-
-        | Somalia | SO | 706 |
-
-        | South Africa | ZA | 710 |
-
-        | South Georgia and the South Sandwich Islands | GS | 239 |
-
-        | Sri Lanka | LK | 144 |
-
-        | Saint Helena, Ascension and Tristan Da Cunha | SH | 654 |
-
-        | St. Kitts and Nevis | KN | 659 |
-
-        | St. Lucia | LC | 662 |
-
-        | St. Vincent and the Grenadines | VC | 670 |
-
-        | Suriname | SR | 740 |
-
-        | Svalbard and Jan Mayen | SJ | 744 |
-
-        | Swaziland | SZ | 748 |
-
-        | Sweden | SE | 752 |
-
-        | Switzerland | CH | 756 |
-
-        | Taiwan | TW | 158 |
-
-        | Tajikistan | TJ | 762 |
-
-        | Tanzania, United Republic of | TZ | 834 |
-
-        | Thailand | TH | 764 |
-
-        | Togo | TG | 768 |
-
-        | Tokelau | TK | 772 |
-
-        | Tonga | TO | 776 |
-
-        | Trinidad and Tobago | TT | 780 |
-
-        | Tunisia | TN | 788 |
-
-        | Turkey | TR | 792 |
-
-        | Turkmenistan | TM | 795 |
-
-        | Tuvalu | TV | 798 |
-
-        | Uganda | UG | 800 |
-
-        | Ukraine | UA | 804 |
-
-        | United Arab Emirates | AE | 784 |
-
-        | United Kingdom | GB | 826 |
-
-        | Uruguay | UY | 858 |
-
-        | Uzbekistan | UZ | 860 |
-
-        | Vanuatu | VU | 548 |
-
-        | Venezuela, Bolivarian Republic of | VE | 862 |
-
-        | Vietnam | VN | 704 |
-
-        | Wallis and Futuna | WF | 876 |
-
-        | Western Sahara | EH | 732 |
-
-        | Yemen | YE | 886 |
-
-        | Zambia | ZM | 894 |
-
-        | Zimbabwe | ZW | 716 |
-
-
-        </details>'
-      externalDocs:
-        description: Find more info here
-        url: https://www.iso.org/iso-3166-country-codes.html
-      example: '528'
-    authorizationCurrency:
-      type: string
+    settlementService:
+      required:
+      - currency
+      - code
+      description: A Settlement Service as provided by a card network.
+      properties:
+        currency:
+          $ref: '#/components/schemas/currencyCode'
+        code:
+          type: string
+          description: Identifier of the Settlement Service as defined by the card network.
+          pattern: ^[a-zA-Z0-9]+$
+        levelOneSRE:
+          type: string
+          description: Identifier Visa uses for settlement reporting
+    VisaBin:
       allOf:
-      - description: Used by American Express to verify an authorization for the provided SE Number. <br> **Note:** The following currencies are not permitted; **Belarusian Ruble(BYN), Cuban Peso(CUP), Iranian Rial(IRR), North Korean Won(KPW), Russian Federation Ruble(RUB), and Syrian Pound(SYP)**.
-      - $ref: '#/components/schemas/currencyCode'
-    amexPaymentDesignationAcquirerBin:
-      allOf:
-      - description: For Payment Designator, this field is automatically copied from acquirerIdCode field.
-      - $ref: '#/components/schemas/amexAcquirerIdCode'
+      - type: object
+        required:
+        - network
+        - messageSystem
+        - acquirerIdCode
+        - acquirerBin
+        - bid
+        properties:
+          network:
+            type: string
+            enum:
+            - visa
+          messageSystem:
+            $ref: '#/components/schemas/messageSystem'
+          acquirerIdCode:
+            type: string
+            description: Acquirer Institution ID code. This field corresponds to the CIB, which usually has the same value as the Bin.
+            pattern: ^\d+$
+            minLength: 6
+            maxLength: 6
+          acquirerBin:
+            type: string
+            description: Acquirer Bin. The Bin number as assigned by the card network.
+            pattern: ^\d+$
+            minLength: 6
+            maxLength: 6
+          bid:
+            type: string
+            description: Business Identification Number. The BID number as assigned by the card network.
+            pattern: ^\d+$
+            minLength: 8
+            maxLength: 8
+      - $ref: '#/components/schemas/BaseBin'
     BaseBin:
       type: object
       required:
@@ -3122,133 +3212,43 @@ components:
         created: '2020-08-24T14:15:22.014Z'
         lastModified: '2020-08-24T21:39:01.957Z'
         version: 2
-    BinConfiguration:
-      type: object
+    settlementCurrency:
       required:
-      - key
-      - status
-      - binKey
-      - defaultSettlementCurrency
-      - additionalSettlementCurrencies
-      - settlementServices
-      - validFrom
-      - created
-      - version
-      description: 'A Bin is a Bank Identification Number
+      - code
+      properties:
+        code:
+          $ref: '#/components/schemas/currencyCode'
+        levelOneSRE:
+          type: string
+          description: Identifier Visa uses for settlement reporting
+  parameters:
+    sortOrder:
+      name: sortOrder
+      description: The sort order, __asc__ending or __desc__ending
+      in: query
+      required: false
+      schema:
+        type: string
+        enum:
+        - asc
+        - desc
+      example: desc
+    offsetToken:
+      name: offsetToken
+      description: The offset token. This token is returned in the response of previous request.
+      in: query
+      required: false
+      schema:
+        $ref: '#/components/schemas/offsetToken'
+    binKey:
+      name: binKey
+      in: path
+      required: true
+      description: 'Uniquely identifies a Bin.
 
         '
-      properties:
-        key:
-          $ref: '#/components/schemas/binConfigurationKey'
-        status:
-          $ref: '#/components/schemas/status'
-        binKey:
-          $ref: '#/components/schemas/binKey'
-        defaultSettlementCurrency:
-          $ref: '#/components/schemas/settlementCurrency'
-        additionalSettlementCurrencies:
-          $ref: '#/components/schemas/settlementCurrencies'
-        settlementServices:
-          $ref: '#/components/schemas/settlementServices'
-        validFrom:
-          type: string
-          description: The date and time this configuration is valid from
-          format: date-time
-        created:
-          $ref: '#/components/schemas/created'
-        lastModified:
-          $ref: '#/components/schemas/lastModified'
-        version:
-          $ref: '#/components/schemas/version'
-      example:
-        key: bcf-21yKByQsszQHq7MZ6pf0
-        status: active
-        binKey: bin-1ZgTNYjaNghq6YgC3E4p
-        validFrom: '2022-01-26T13:50:12.640Z'
-        created: '2022-01-26T13:50:12.640Z'
-        lastModified: '2020-08-24T21:39:01.957Z'
-        version: 1
-    CountryCode:
-      type: object
-      required:
-      - alpha3
-      - alpha2
-      - numeric
-      properties:
-        alpha3:
-          $ref: '#/components/schemas/countryCodeAlpha3'
-        alpha2:
-          $ref: '#/components/schemas/countryCodeAlpha2'
-        numeric:
-          $ref: '#/components/schemas/countryCodeNumeric'
-  responses:
-    NotFoundError:
-      description: The requested resource was not found
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ProblemDetail'
-          example:
-            type: https://datatracker.ietf.org/doc/html/rfc2616#section-10.4.5
-            title: Not Found
-            status: 404
-            detail: The entity referenced in the request could not be found
-            instance: https://api.silverflow.co/v1/merchants/mct-1hPdFqhgstYTUhlphPDp
-    ForbiddenError:
-      description: The authenticated client is forbidden to make the request for the resource identified.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ProblemDetail'
-          example:
-            type: https://datatracker.ietf.org/doc/html/rfc2616#section-10.4.4
-            title: Forbidden
-            status: 403
-            detail: The server is refusing to execute the request for the current authenticated user
-            instance: https://api.silverflow.co/v1/merchants/mct-1hPdFqhgstYTUhlphPDp
-    TooManyRequestsError:
-      description: The number of requests (per minute) has exceeded the configured maximum
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ProblemDetail'
-          example:
-            type: /silverflow/problems/too-many-requests
-            title: Too Many Requests
-            status: 429
-            detail: You have exceeded the rate limit. Please try again after the specified delay.
-            instance: /silverflow/b0451a9d-f66d-4ef7-9f5d-d48064a2bb3e
-    BadRequestError:
-      description: The request was malformed. See the response body for details
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/BadRequestProblemDetail'
-          example:
-            type: /silverflow/problems/bad-request
-            title: Bad Request
-            status: 400
-            detail: Validation errors occurred
-            instance: https://api.silverflow.co/v1/merchants/mct-1hPdFqhgstYTUhlphPDp
-            validationErrors:
-            - instancePath: /tags/0/businessId
-              message: must not be longer than 255 characters
-    UnauthorizedError:
-      description: Authentication information is missing or invalid
-      headers:
-        WWW_Authenticate:
-          schema:
-            type: string
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ProblemDetail'
-          example:
-            type: https://datatracker.ietf.org/doc/html/rfc2616#section-10.4.2
-            title: Unauthorized
-            status: 401
-            detail: The credentials supplied in the request are either missing, invalid, or not applicable in the current scope
-  parameters:
+      schema:
+        $ref: '#/components/schemas/binKey'
     validFrom:
       name: validFrom
       description: 'Filter configurations by their validity start date. Only configurations with a validFrom date greater than or equal to this value will be returned. Must be in ISO 8601 date-time format.
@@ -3260,13 +3260,6 @@ components:
         type: string
         format: date-time
       example: '2022-01-26T13:50:12.640Z'
-    offsetToken:
-      name: offsetToken
-      description: The offset token. This token is returned in the response of previous request.
-      in: query
-      required: false
-      schema:
-        $ref: '#/components/schemas/offsetToken'
     limit:
       name: limit
       description: The number of items to return
@@ -3279,26 +3272,6 @@ components:
         maximum: 100
         default: 10
       example: 1
-    binKey:
-      name: binKey
-      in: path
-      required: true
-      description: 'Uniquely identifies a Bin.
-
-        '
-      schema:
-        $ref: '#/components/schemas/binKey'
-    sortOrder:
-      name: sortOrder
-      description: The sort order, __asc__ending or __desc__ending
-      in: query
-      required: false
-      schema:
-        type: string
-        enum:
-        - asc
-        - desc
-      example: desc
   securitySchemes:
     ApiKey:
       description: "The primary method of authenticating to the Silverflow API is through API keys.\n\nAPI keys can be created by calling the [createApiKey](#operation/createApiKey) endpoint. You can create up to 40 API keys and also update and delete them, allowing for _credential rotation_.\n\nThe _Agent Activation_ process will generate an initial API Key for you. See [Activate Agent](#section/Getting-Started).\n\nA call to the [createApiKey](#operation/createApiKey) endpoint will return the following structure:\n\n```json\n{\n    \"key\": \"apk-1wtRxni5IsPsSpBLWpwr\",\n    \"status\": \"active\",\n    \"agentKey\": \"cgt-1wtRvFLIjDOyyUR5Q2LB\",\n    \"description\": \"Data lake API key\",\n    \"permissions\": [\n        \"charges:List\",\n        \"reports:All\"\n    ],\n    \"created\": \"2021-06-22T11:21:45.115Z\",\n    \"secret\": \"FWtnOOHAjbD6rNxWWEeVOCj7JXSEPGJQ\",\n    \"version\": 1\n}\n```\n\n> **Important:** The `secret` is only returned once in the response to the `createApiKey` call.\n\nOnce created, the `key` and `secret` fields from the API key must be used in the HTTP `Authorization` header using the `Basic` scheme.\nThe Basic scheme requires a **username** and **password** to be specified, separated by a `:` (colon) and Base64 encoded.\n\nUse the following values from the API key to construct a Basic authentication header:\n\n| Basic field | API key field | Example |\n| ----------- | ------------- | ------- |\n| username | `key` | `apk-1wtRxni5IsPsSpBLWpwr` |\n| password | `secret` | `FWtnOOHAjbD6rNxWWEeVOCj7JXSEPGJQ` |\n\nIn pseudo-code a valid HTTP Basic Authentication header would be constructed as follows:\n\n```ts\nconst apiKeyId = \"apk-1wtRxni5IsPsSpBLWpwr\";\nconst apiKeySecret = \"FWtnOOHAjbD6rNxWWEeVOCj7JXSEPGJQ\";\nconst authnValue = \"Basic \" + base64Encode(apiKeyId + \":\" + apiKeySecret);\nrequest.setHeader(\"Authorization\", authnValue);\n```\n\nUsing the values from the example a valid HTTP request would look like the following:\n\n```http\nGET /v1/agents/current HTTP/1.1\nAccept: application/json\nAuthorization: Basic YXBrLTF3dFJ4bmk1SXNQc1NwQkxXcHdyOkZXdG5PT0hBamJENnJOeFdXRWVWT0NqN0pYU0VQR0pR\n```\n\nMore information on the Basic scheme can be found in [RFC-7617 - The 'Basic' HTTP Authentication Scheme](https://datatracker.ietf.org/doc/html/rfc7617)."
@@ -3342,9 +3315,6 @@ components:
         Certificate validation happens at the transport layer during TLS handshake. Tenant verification is performed by matching the agent key embedded in the client certificate against the agent key embedded in the trusted CA.
 
         '
-x-refined-from:
-- silverflow-openapi.yml
-- silverflow-openapi.yml
 x-tagGroups:
 - name: ''
   tags:

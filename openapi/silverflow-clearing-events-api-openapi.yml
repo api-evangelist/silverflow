@@ -7,7 +7,7 @@ info:
     email: support@silverflow.com
   license:
     name: Commercial
-  description: 'Operations tagged Clearing Events across 2 of this provider''s published API definitions: silverflow-openapi.yml, silverflow-openapi.yml. Each path carries the servers of the definition it was published in.'
+  description: 'Operations tagged Clearing Events across 2 of this provider''s published API definitions: silverflow-openapi.yml, silverflow-clearing-events-api-openapi.yml. Each path carries the servers of the definition it was published in.'
 servers:
 - url: https://eu-west-1.api.silverflow.com/v1
   description: Production URL for Europe - Equivalent to https://api.silverflow.co/v1
@@ -67,6 +67,50 @@ webhooks:
       description: Sandbox URL - Equivalent to https://api-sbx.silverflow.co/v1
 components:
   schemas:
+    common_agentKey:
+      description: Uniquely identifies an Agent.
+      type: string
+      pattern: ^cgt-[a-zA-Z0-9]+$
+      readOnly: true
+      example: cgt-EFG67b4yPre23ZDrLX
+      title: agentKey
+    OfflineRefundOutcomeEventData1_0:
+      type: object
+      required:
+      - arn
+      - chargeKey
+      - actionKey
+      - outcome
+      properties:
+        arn:
+          $ref: '#/components/schemas/crn'
+        actionReference:
+          $ref: '#/components/schemas/openapi_components-schemas-actionReference-2'
+        transactionReference:
+          type: string
+        chargeKey:
+          $ref: '#/components/schemas/openapi_components-schemas-chargeKey-2'
+        actionKey:
+          $ref: '#/components/schemas/schema_actionKey'
+        outcome:
+          type: string
+          description: The final state of the offline refund action.
+          enum:
+          - cleared
+          - abandoned
+    dataschema:
+      type: string
+      description: The event schema with the data version of the event.
+    time:
+      type: string
+      format: date-time
+      description: Date and time when the event was sent.
+    crn:
+      description: Unique identifier of the clearing
+      type: string
+      minLength: 23
+      maxLength: 100
+      example: visa-01234566082009717735284
     openapi_components-schemas-version-3:
       type: string
       description: The version of the spec.
@@ -105,10 +149,67 @@ components:
           - $ref: '#/components/schemas/dataschema'
           - enum:
             - https://silverflow.com/schemas/events/clearing/1.0
+    PublicCloudEvent:
+      type: object
+      required:
+      - id
+      - source
+      - specversion
+      - type
+      - datacontenttype
+      - dataschema
+      - subject
+      - time
+      - agent
+      - data
+      properties:
+        id:
+          $ref: '#/components/schemas/eventId'
+        specversion:
+          allOf:
+          - description: The version of the current spec.
+          - enum:
+            - '1.0'
+          - $ref: '#/components/schemas/openapi_components-schemas-version-3'
+        datacontenttype:
+          $ref: '#/components/schemas/dataContentType'
+        dataschema:
+          $ref: '#/components/schemas/dataschema'
+        time:
+          $ref: '#/components/schemas/time'
+        agent:
+          $ref: '#/components/schemas/common_agentKey'
+    eventId:
+      type: string
+      description: Uniquely identifies an event.
+      pattern: ^evt-[a-zA-Z0-9]+$
+      minLength: 5
+      maxLength: 120
+      example: evt-1e1dAHhgstYTUhlphPzZ
     source:
       type: string
       description: Source system of the event.
       pattern: ^https://silverflow.com/[a-zA-Z]+$
+    openapi_components-schemas-actionReference-2:
+      description: Reference assigned by the agent to the clearing action.
+      type: string
+      minLength: 1
+      maxLength: 120
+    openapi_components-schemas-chargeKey-2:
+      description: Uniquely identifies a Charge.
+      type: string
+      pattern: ^chg-[a-zA-Z0-9]+$
+      minLength: 1
+      maxLength: 120
+      readOnly: false
+      example: chg-1e1dAHhgstYTUhlphPzZ
+    schema_actionKey:
+      description: Uniquely identifies an Action.
+      type: string
+      pattern: ^act-[a-zA-Z0-9]+$
+      minLength: 1
+      maxLength: 120
+      example: act-5vJNRKF4NDViSzkr8TQ5
     ClearingEventNotificationVersion1_0OfflineRefundOutcomeEvent:
       type: object
       allOf:
@@ -142,54 +243,11 @@ components:
           - $ref: '#/components/schemas/dataschema'
           - enum:
             - https://silverflow.com/schemas/events/clearing/1.0
-    OfflineRefundOutcomeEventData1_0:
-      type: object
-      required:
-      - arn
-      - chargeKey
-      - actionKey
-      - outcome
-      properties:
-        arn:
-          $ref: '#/components/schemas/crn'
-        actionReference:
-          $ref: '#/components/schemas/openapi_components-schemas-actionReference-2'
-        transactionReference:
-          type: string
-        chargeKey:
-          $ref: '#/components/schemas/openapi_components-schemas-chargeKey-2'
-        actionKey:
-          $ref: '#/components/schemas/schema_actionKey'
-        outcome:
-          type: string
-          description: The final state of the offline refund action.
-          enum:
-          - cleared
-          - abandoned
-    common_agentKey:
-      description: Uniquely identifies an Agent.
+    dataContentType:
       type: string
-      pattern: ^cgt-[a-zA-Z0-9]+$
-      readOnly: true
-      example: cgt-EFG67b4yPre23ZDrLX
-      title: agentKey
-    crn:
-      description: Unique identifier of the clearing
-      type: string
-      minLength: 23
-      maxLength: 100
-      example: visa-01234566082009717735284
-    time:
-      type: string
-      format: date-time
-      description: Date and time when the event was sent.
-    eventId:
-      type: string
-      description: Uniquely identifies an event.
-      pattern: ^evt-[a-zA-Z0-9]+$
-      minLength: 5
-      maxLength: 120
-      example: evt-1e1dAHhgstYTUhlphPzZ
+      description: The content type of the event.
+      enum:
+      - application/json
     AbandonedClearingEventData1_0:
       type: object
       required:
@@ -208,64 +266,6 @@ components:
         reason:
           type: string
           description: Human-readable reason why the clearing record was abandoned.
-    openapi_components-schemas-actionReference-2:
-      description: Reference assigned by the agent to the clearing action.
-      type: string
-      minLength: 1
-      maxLength: 120
-    schema_actionKey:
-      description: Uniquely identifies an Action.
-      type: string
-      pattern: ^act-[a-zA-Z0-9]+$
-      minLength: 1
-      maxLength: 120
-      example: act-5vJNRKF4NDViSzkr8TQ5
-    openapi_components-schemas-chargeKey-2:
-      description: Uniquely identifies a Charge.
-      type: string
-      pattern: ^chg-[a-zA-Z0-9]+$
-      minLength: 1
-      maxLength: 120
-      readOnly: false
-      example: chg-1e1dAHhgstYTUhlphPzZ
-    dataContentType:
-      type: string
-      description: The content type of the event.
-      enum:
-      - application/json
-    dataschema:
-      type: string
-      description: The event schema with the data version of the event.
-    PublicCloudEvent:
-      type: object
-      required:
-      - id
-      - source
-      - specversion
-      - type
-      - datacontenttype
-      - dataschema
-      - subject
-      - time
-      - agent
-      - data
-      properties:
-        id:
-          $ref: '#/components/schemas/eventId'
-        specversion:
-          allOf:
-          - description: The version of the current spec.
-          - enum:
-            - '1.0'
-          - $ref: '#/components/schemas/openapi_components-schemas-version-3'
-        datacontenttype:
-          $ref: '#/components/schemas/dataContentType'
-        dataschema:
-          $ref: '#/components/schemas/dataschema'
-        time:
-          $ref: '#/components/schemas/time'
-        agent:
-          $ref: '#/components/schemas/common_agentKey'
   securitySchemes:
     ApiKey:
       description: "The primary method of authenticating to the Silverflow API is through API keys.\n\nAPI keys can be created by calling the [createApiKey](#operation/createApiKey) endpoint. You can create up to 40 API keys and also update and delete them, allowing for _credential rotation_.\n\nThe _Agent Activation_ process will generate an initial API Key for you. See [Activate Agent](#section/Getting-Started).\n\nA call to the [createApiKey](#operation/createApiKey) endpoint will return the following structure:\n\n```json\n{\n    \"key\": \"apk-1wtRxni5IsPsSpBLWpwr\",\n    \"status\": \"active\",\n    \"agentKey\": \"cgt-1wtRvFLIjDOyyUR5Q2LB\",\n    \"description\": \"Data lake API key\",\n    \"permissions\": [\n        \"charges:List\",\n        \"reports:All\"\n    ],\n    \"created\": \"2021-06-22T11:21:45.115Z\",\n    \"secret\": \"FWtnOOHAjbD6rNxWWEeVOCj7JXSEPGJQ\",\n    \"version\": 1\n}\n```\n\n> **Important:** The `secret` is only returned once in the response to the `createApiKey` call.\n\nOnce created, the `key` and `secret` fields from the API key must be used in the HTTP `Authorization` header using the `Basic` scheme.\nThe Basic scheme requires a **username** and **password** to be specified, separated by a `:` (colon) and Base64 encoded.\n\nUse the following values from the API key to construct a Basic authentication header:\n\n| Basic field | API key field | Example |\n| ----------- | ------------- | ------- |\n| username | `key` | `apk-1wtRxni5IsPsSpBLWpwr` |\n| password | `secret` | `FWtnOOHAjbD6rNxWWEeVOCj7JXSEPGJQ` |\n\nIn pseudo-code a valid HTTP Basic Authentication header would be constructed as follows:\n\n```ts\nconst apiKeyId = \"apk-1wtRxni5IsPsSpBLWpwr\";\nconst apiKeySecret = \"FWtnOOHAjbD6rNxWWEeVOCj7JXSEPGJQ\";\nconst authnValue = \"Basic \" + base64Encode(apiKeyId + \":\" + apiKeySecret);\nrequest.setHeader(\"Authorization\", authnValue);\n```\n\nUsing the values from the example a valid HTTP request would look like the following:\n\n```http\nGET /v1/agents/current HTTP/1.1\nAccept: application/json\nAuthorization: Basic YXBrLTF3dFJ4bmk1SXNQc1NwQkxXcHdyOkZXdG5PT0hBamJENnJOeFdXRWVWT0NqN0pYU0VQR0pR\n```\n\nMore information on the Basic scheme can be found in [RFC-7617 - The 'Basic' HTTP Authentication Scheme](https://datatracker.ietf.org/doc/html/rfc7617)."
@@ -311,7 +311,7 @@ components:
         '
 x-refined-from:
 - silverflow-openapi.yml
-- silverflow-openapi.yml
+- silverflow-clearing-events-api-openapi.yml
 x-tagGroups:
 - name: ''
   tags:

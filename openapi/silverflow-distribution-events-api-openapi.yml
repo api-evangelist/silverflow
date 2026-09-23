@@ -7,7 +7,7 @@ info:
     email: support@silverflow.com
   license:
     name: Commercial
-  description: 'Operations tagged Distribution Events across 2 of this provider''s published API definitions: silverflow-openapi.yml, silverflow-openapi.yml. Each path carries the servers of the definition it was published in.'
+  description: 'Operations tagged Distribution Events across 2 of this provider''s published API definitions: silverflow-openapi.yml, silverflow-distribution-events-api-openapi.yml. Each path carries the servers of the definition it was published in.'
 servers:
 - url: https://eu-west-1.api.silverflow.com/v1
   description: Production URL for Europe - Equivalent to https://api.silverflow.co/v1
@@ -52,41 +52,12 @@ webhooks:
       description: Sandbox URL - Equivalent to https://api-sbx.silverflow.co/v1
 components:
   schemas:
-    failureReason:
-      type: object
-      description: The distribution failure reason.
-      required:
-      - message
-      properties:
-        message:
-          type: string
-          description: The failure error message.
-        detail:
-          type: string
-          description: Additional detail of the failure.
-    openapi_components-schemas-version-3:
+    openapi_components-schemas-status-2:
       type: string
-      description: The version of the spec.
-      pattern: ^[1-9]+.[0-9]+$
-      example: '1.0'
-    schema_time:
-      type: string
-      description: The date and time the distribution was sent.
-      format: date-time
-    fileName:
-      type: string
-      description: The name of the distributed file.
-    source:
-      type: string
-      description: Source system of the event.
-      pattern: ^https://silverflow.com/[a-zA-Z]+$
-    distributionType:
-      type: string
-      description: The distribution method.
+      description: Result of the distribution sent.
       enum:
-      - sftp
-      - email
-      - s3
+      - delivered
+      - failed
     common_agentKey:
       description: Uniquely identifies an Agent.
       type: string
@@ -94,6 +65,18 @@ components:
       readOnly: true
       example: cgt-EFG67b4yPre23ZDrLX
       title: agentKey
+    dataschema:
+      type: string
+      description: The event schema with the data version of the event.
+    time:
+      type: string
+      format: date-time
+      description: Date and time when the event was sent.
+    openapi_components-schemas-version-3:
+      type: string
+      description: The version of the spec.
+      pattern: ^[1-9]+.[0-9]+$
+      example: '1.0'
     schemas-distributionKey:
       description: A unique identifier for a distribution.
       type: string
@@ -101,10 +84,72 @@ components:
       minLength: 10
       maxLength: 120
       example: dst-1e1dAHhgstYTUhlphPzZ
-    time:
+    PublicCloudEvent:
+      type: object
+      required:
+      - id
+      - source
+      - specversion
+      - type
+      - datacontenttype
+      - dataschema
+      - subject
+      - time
+      - agent
+      - data
+      properties:
+        id:
+          $ref: '#/components/schemas/eventId'
+        specversion:
+          allOf:
+          - description: The version of the current spec.
+          - enum:
+            - '1.0'
+          - $ref: '#/components/schemas/openapi_components-schemas-version-3'
+        datacontenttype:
+          $ref: '#/components/schemas/dataContentType'
+        dataschema:
+          $ref: '#/components/schemas/dataschema'
+        time:
+          $ref: '#/components/schemas/time'
+        agent:
+          $ref: '#/components/schemas/common_agentKey'
+    distributionType:
       type: string
-      format: date-time
-      description: Date and time when the event was sent.
+      description: The distribution method.
+      enum:
+      - sftp
+      - email
+      - s3
+    DistributionsSentEventNotificationDataVersion1_1:
+      type: object
+      description: The event data.
+      required:
+      - distributionKey
+      - fileName
+      - type
+      - status
+      - time
+      properties:
+        distributionKey:
+          $ref: '#/components/schemas/schemas-distributionKey'
+        fileName:
+          $ref: '#/components/schemas/fileName'
+        type:
+          $ref: '#/components/schemas/distributionType'
+        status:
+          $ref: '#/components/schemas/openapi_components-schemas-status-2'
+        time:
+          $ref: '#/components/schemas/schema_time'
+        failureReason:
+          $ref: '#/components/schemas/failureReason'
+    source:
+      type: string
+      description: Source system of the event.
+      pattern: ^https://silverflow.com/[a-zA-Z]+$
+    fileName:
+      type: string
+      description: The name of the distributed file.
     eventId:
       type: string
       description: Uniquely identifies an event.
@@ -112,12 +157,15 @@ components:
       minLength: 5
       maxLength: 120
       example: evt-1e1dAHhgstYTUhlphPzZ
-    openapi_components-schemas-status-2:
+    schema_time:
       type: string
-      description: Result of the distribution sent.
+      description: The date and time the distribution was sent.
+      format: date-time
+    dataContentType:
+      type: string
+      description: The content type of the event.
       enum:
-      - delivered
-      - failed
+      - application/json
     DistributionsSentEventNotificationVersion1_1:
       type: object
       allOf:
@@ -150,85 +198,19 @@ components:
           - example: https://silverflow.com/schemas/events/distributions/1.1
           - enum:
             - https://silverflow.com/schemas/events/distributions/1.1
-    DistributionsSentEventNotificationDataVersion1_1:
+    failureReason:
       type: object
-      description: The event data.
+      description: The distribution failure reason.
       required:
-      - distributionKey
-      - fileName
-      - type
-      - status
-      - time
+      - message
       properties:
-        distributionKey:
-          $ref: '#/components/schemas/schemas-distributionKey'
-        fileName:
-          $ref: '#/components/schemas/fileName'
-        type:
-          $ref: '#/components/schemas/distributionType'
-        status:
-          $ref: '#/components/schemas/openapi_components-schemas-status-2'
-        time:
-          $ref: '#/components/schemas/schema_time'
-        failureReason:
-          $ref: '#/components/schemas/failureReason'
-    dataContentType:
-      type: string
-      description: The content type of the event.
-      enum:
-      - application/json
-    dataschema:
-      type: string
-      description: The event schema with the data version of the event.
-    PublicCloudEvent:
-      type: object
-      required:
-      - id
-      - source
-      - specversion
-      - type
-      - datacontenttype
-      - dataschema
-      - subject
-      - time
-      - agent
-      - data
-      properties:
-        id:
-          $ref: '#/components/schemas/eventId'
-        specversion:
-          allOf:
-          - description: The version of the current spec.
-          - enum:
-            - '1.0'
-          - $ref: '#/components/schemas/openapi_components-schemas-version-3'
-        datacontenttype:
-          $ref: '#/components/schemas/dataContentType'
-        dataschema:
-          $ref: '#/components/schemas/dataschema'
-        time:
-          $ref: '#/components/schemas/time'
-        agent:
-          $ref: '#/components/schemas/common_agentKey'
+        message:
+          type: string
+          description: The failure error message.
+        detail:
+          type: string
+          description: Additional detail of the failure.
   examples:
-    distributions-sent-success:
-      summary: Distribution succeeded
-      value:
-        type: com.silverflow.distributions.sent
-        agent: cgt-EFG67b4yPre23ZDrLX
-        data:
-          distributionKey: dst-5gaZJMuz8fPzJGmwsNnD
-          fileName: file.csv
-          status: delivered
-          time: '2025-12-11T08:50:42.264Z'
-          type: sftp
-        id: evt-1e1dAHhgstYTUhlphPzZ
-        datacontenttype: application/json
-        dataschema: https://silverflow.com/schemas/events/distributions/1.1
-        source: https://silverflow.com/distributions
-        specversion: '1.0'
-        subject: dst-5gaZJMuz8fPzJGmwsNnD
-        time: '2025-12-11T08:50:42.264Z'
     distributions-sent-failure:
       summary: Distribution failed
       value:
@@ -243,6 +225,24 @@ components:
           failureReason:
             message: The connection to the SFTP host failed (ECONNRESET)
             detail: Connection reset by host
+        id: evt-1e1dAHhgstYTUhlphPzZ
+        datacontenttype: application/json
+        dataschema: https://silverflow.com/schemas/events/distributions/1.1
+        source: https://silverflow.com/distributions
+        specversion: '1.0'
+        subject: dst-5gaZJMuz8fPzJGmwsNnD
+        time: '2025-12-11T08:50:42.264Z'
+    distributions-sent-success:
+      summary: Distribution succeeded
+      value:
+        type: com.silverflow.distributions.sent
+        agent: cgt-EFG67b4yPre23ZDrLX
+        data:
+          distributionKey: dst-5gaZJMuz8fPzJGmwsNnD
+          fileName: file.csv
+          status: delivered
+          time: '2025-12-11T08:50:42.264Z'
+          type: sftp
         id: evt-1e1dAHhgstYTUhlphPzZ
         datacontenttype: application/json
         dataschema: https://silverflow.com/schemas/events/distributions/1.1
@@ -295,7 +295,7 @@ components:
         '
 x-refined-from:
 - silverflow-openapi.yml
-- silverflow-openapi.yml
+- silverflow-distribution-events-api-openapi.yml
 x-tagGroups:
 - name: ''
   tags:
