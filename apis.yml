@@ -50,7 +50,7 @@ tags:
 - Payments
 - Card Processing
 - Acquiring
-- Financial-Services
+- Financial Services
 - Tokenization
 - 3D Secure
 - Disputes
@@ -72,6 +72,7 @@ tags_raw:
 - Reconciliation
 - Point of Sale
 - Netherlands
+- Financial-Services
 apis:
 - aid: silverflow:silverflow-3ds-authentication-api
   name: Silverflow 3DS Authentication API

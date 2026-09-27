@@ -650,6 +650,142 @@ components:
         description: Find more info here
         url: https://www.iso.org/iso-3166-country-codes.html
       example: NL
+    VisaDomain:
+      properties:
+        code:
+          type: string
+          enum:
+          - D
+          - N
+          - R
+          - W
+          - C
+        description:
+          type: string
+    DuplicatedMastercardCardInfo:
+      description: Mastercard-specific Card Information.
+      allOf:
+      - $ref: '#/components/schemas/MastercardSpecificCardInfo'
+      - $ref: '#/components/schemas/CardInfoResponseBase'
+    VisaProduct:
+      properties:
+        visaProductID:
+          type: string
+        productDescription:
+          type: string
+        productType:
+          type: string
+        productSubTypeCode:
+          type: string
+        productSubTypeDescription:
+          type: string
+    VisaSpecificCardInfo:
+      description: Visa-specific Card Information.
+      allOf:
+      - $ref: '#/components/schemas/VisaSpecificCardInfoBase'
+      - type: object
+        properties:
+          member:
+            $ref: '#/components/schemas/VisaSpecificMemberSingleResponse'
+    isTokenRange:
+      type: boolean
+    CardInfoCardNetworkResponse:
+      type: object
+      required:
+      - items
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/SingleSourceResponse'
+    BancontactSpecificCardInfo:
+      type: object
+      description: Bancontact specific Card Info.
+      properties:
+        cardType:
+          type: string
+          enum:
+          - Physical
+          - Digital
+    DinersSpecificCardInfo:
+      type: object
+      description: Diners specific Card info.
+      properties:
+        accountNumberLength:
+          type: string
+        issuerDxs:
+          type: string
+        product:
+          type: object
+          properties:
+            productType:
+              type: string
+    CardInfoRequestByCard:
+      type: object
+      title: Card Input
+      required:
+      - cardNumber
+      properties:
+        cardNumber:
+          description: Full digits of a card. It is possible to replace a number of the trailing digits with zeroes ("0").
+          $ref: '#/components/schemas/components-schemas-pan'
+        infoSource:
+          $ref: '#/components/schemas/InfoSource'
+    CardInfoRequestByProcessorToken:
+      type: object
+      title: Processor Token Key Input
+      required:
+      - processorTokenKey
+      properties:
+        processorTokenKey:
+          type: string
+          description: A [processor token key](#tag/Processor-Tokenization).
+          pattern: ^ptk-[a-zA-Z0-9]+$
+          minLength: 5
+          maxLength: 120
+          example: ptk-1e1dA2fgs1YTUhlhyPOp
+        infoSource:
+          $ref: '#/components/schemas/InfoSource'
+    CardCountry:
+      type: object
+      required:
+      - code
+      - isInEEA
+      properties:
+        code:
+          $ref: '#/components/schemas/components-schemas-CountryCode'
+        isInEEA:
+          description: Indicates whether the Card Country is part of the European Economic Area
+          type: boolean
+    AmericanExpressSpecificCardInfo:
+      type: object
+      description: American Express specific Card Info.
+    VisaSpecificCardInfoBase:
+      description: Visa-specific Card Information.
+      type: object
+      properties:
+        accountNumberLength:
+          description: Length of Account Numbers in this Card Range.
+          type: number
+        checkDigit:
+          description: Indicates whether the Card Range Uses a Check Digit.
+          type: boolean
+        accountRangeRegion:
+          $ref: '#/components/schemas/VisaRegion'
+        domain:
+          $ref: '#/components/schemas/VisaDomain'
+        product:
+          $ref: '#/components/schemas/VisaProduct'
+        accountFundingSource:
+          $ref: '#/components/schemas/VisaAccountFundingSource'
+        visaDirectParticipation:
+          $ref: '#/components/schemas/VisaDirectParticipation'
+    MastercardBrandProduct:
+      properties:
+        productClass:
+          $ref: '#/components/schemas/MastercardProductClass'
+        productCategory:
+          $ref: '#/components/schemas/MastercardProductCategory'
     components-schemas-countryCodeAlpha3:
       type: string
       pattern: ^[A-Z]{3}$
@@ -1196,241 +1332,66 @@ components:
         description: Find more info here
         url: https://www.iso.org/iso-3166-country-codes.html
       example: NLD
-    CardInfoRequestByProcessorToken:
-      type: object
-      title: Processor Token Key Input
+    MastercardCardBrandProduct:
+      properties:
+        cardProgramIdentifier:
+          $ref: '#/components/schemas/MastercardCardProgramIdentifier'
+        brandProduct:
+          $ref: '#/components/schemas/MastercardBrandProduct'
+        priority:
+          type: string
+    cardProduct:
+      description: A Card Product.
       required:
-      - processorTokenKey
-      properties:
-        processorTokenKey:
-          type: string
-          description: A [processor token key](#tag/Processor-Tokenization).
-          pattern: ^ptk-[a-zA-Z0-9]+$
-          minLength: 5
-          maxLength: 120
-          example: ptk-1e1dA2fgs1YTUhlhyPOp
-        infoSource:
-          $ref: '#/components/schemas/InfoSource'
-    MastercardProductClass:
-      properties:
-        gcmsProductID:
-          type: string
-        licensedProductID:
-          type: string
-        licensedProductDescription:
-          type: string
-        productClassID:
-          type: string
-        productClassDescription:
-          type: string
-    VisaRegion:
+      - code
+      - name
+      - accountFundingSource
       properties:
         code:
           type: string
-          enum:
-          - '1'
-          - '2'
-          - '3'
-          - '4'
-          - '5'
-          - '6'
-        description:
+          description: A code assigned by the card network identifying the Card Product
+        name:
           type: string
-    MastercardSpecificCardInfo:
-      description: Mastercard-specific Card Information.
-      type: object
-      properties:
-        productType:
-          $ref: '#/components/schemas/MastercardProductType'
-        brandProducts:
-          type: array
-          minItems: 1
-          items:
-            $ref: '#/components/schemas/MastercardCardBrandProduct'
-        interchangeRegion:
-          $ref: '#/components/schemas/MastercardInterchangeRegion'
-        coBrandParticipation:
-          type: boolean
-        moneySendIndicator:
-          type: string
-        anonymousPrepaidIndicator:
-          $ref: '#/components/schemas/MastercardAnonymousPrepaidIndicator'
-        dccIndicator:
-          type: string
-          description: Cardholder Currency Indicator (IP0040T1 position 178). Indicates the card range's eligibility for Dynamic Currency Conversion (DCC) services.
-    VisaAccountFundingSource:
-      properties:
-        code:
-          type: string
-          enum:
-          - C
-          - D
-          - P
-          - H
-          - R
-        description:
-          type: string
-    DinersSpecificCardInfo:
-      type: object
-      description: Diners specific Card info.
-      properties:
-        accountNumberLength:
-          type: string
-        issuerDxs:
-          type: string
-        product:
-          type: object
-          properties:
-            productType:
-              type: string
-    schemas-ProblemDetail:
-      type: object
-      description: 'The ''problem detail'' object relays detailed information about the error that occurred. It is defined
-
-        by [RFC 7807 - Problem Details for HTTP APIs](https://tools.ietf.org/html/rfc7807).
-
-
-        Note that additional properties may be used to relay error specific information. For instance,
-
-        A Bad Request error may hold information about the individual validation errors found in the request.
-
-        '
-      properties:
-        type:
-          type: string
-          description: 'An absolute URI that identifies the problem type.
-
-            '
-          default: about:blank
-          example: https://api.silverflow.co/problem/constraint-violation
-        title:
-          type: string
-          description: 'A short, summary of the problem type. Written in english and readable
-
-            for engineers (usually not suited for non technical stakeholders and
-
-            not localized);
-
-            '
-          example: Service Unavailable
-        status:
-          type: integer
-          format: int32
-          description: 'The HTTP status code generated by the origin server for this occurrence
-
-            of the problem.
-
-            '
-          minimum: 100
-          maximum: 599
-          example: 503
-        detail:
-          type: string
-          description: 'A human readable explanation specific to this occurrence of the
-
-            problem.
-
-            '
-          example: Connection to database timed out
-        instance:
-          type: string
-          description: 'An absolute URI that identifies the specific occurrence of the problem.
-
-            It may or may not yield further information if dereferenced.
-
-            '
-      additionalProperties: true
-      example:
-        type: https://api.silverflow.co/problem/bad-request
-        title: Bad Request
-        status: 400
-        detail: The request could not be processed as it contained an invalid request entity
-        instance: https://api.silverflow.co/v1/merchants/mct-1hPdFqhgstYTUhlphPDp
-        validationErrors:
-        - The value of property 'status' should be one of 'idle', 'active' or 'archived'
-        - The value of property 'tags.0.businessId' must not be longer than 255 characters
-    AmericanExpressSpecificCardInfo:
-      type: object
-      description: American Express specific Card Info.
-    CardInfoCardNetworkResponse:
-      type: object
-      required:
-      - items
-      properties:
-        items:
-          type: array
-          items:
-            $ref: '#/components/schemas/SingleSourceResponse'
-    InfoSource:
-      type: string
-      enum:
-      - american-express
-      - bancontact
-      - discover
-      - diners
-      - mastercard
-      - visa
-      description: 'The card network that should be the source of the information. If not provided, all sources will be checked!
-
-        '
-    VisaSpecificCardInfoBase:
-      description: Visa-specific Card Information.
-      type: object
-      properties:
-        accountNumberLength:
-          description: Length of Account Numbers in this Card Range.
-          type: number
-        checkDigit:
-          description: Indicates whether the Card Range Uses a Check Digit.
-          type: boolean
-        accountRangeRegion:
-          $ref: '#/components/schemas/VisaRegion'
-        domain:
-          $ref: '#/components/schemas/VisaDomain'
-        product:
-          $ref: '#/components/schemas/VisaProduct'
+          description: Human-readable name of the Card Product.
         accountFundingSource:
-          $ref: '#/components/schemas/VisaAccountFundingSource'
-        visaDirectParticipation:
-          $ref: '#/components/schemas/VisaDirectParticipation'
-    DuplicatedBancontactCardInfo:
-      allOf:
-      - $ref: '#/components/schemas/BancontactSpecificCardInfo'
-      - $ref: '#/components/schemas/CardInfoResponseBase'
-    BancontactSpecificCardInfo:
-      type: object
-      description: Bancontact specific Card Info.
-      properties:
-        cardType:
           type: string
+          description: Manner in which the account belonging to the Card Product is funded.
           enum:
-          - Physical
-          - Digital
-    MastercardProductCategory:
+          - Credit
+          - Debit
+          - Prepaid
+          - Charge
+          - Deferred Debit
+          - Unknown
+        isDurbinRegulated:
+          description: Whether the Card Product is Durbin regulated.
+          type: boolean
+    VisaDirectParticipation:
       properties:
-        code:
-          type: string
-          enum:
-          - D
-          - P
-          - C
-          - N
-        description:
-          type: string
-    MastercardCardProgramIdentifier:
-      properties:
-        code:
-          type: string
-          enum:
-          - CIR
-          - DMC
-          - MCC
-          - MSI
-          - PRO
-          - PVL
-          - VIS
-        description:
-          type: string
+        nonMoneyTransferOCTsDomestic:
+          type: boolean
+        nonMoneyTransferOCTsCrossBorder:
+          type: boolean
+        onlineGamblingOCTsDomestic:
+          type: boolean
+        onlineGamblingOCTsCrossBorder:
+          type: boolean
+        moneyTransferOCTsDomestic:
+          type: boolean
+        moneyTransferOCTsCrossBorder:
+          type: boolean
+        fastFundsDomesticMoneyTransfer:
+          type: boolean
+        fastFundsDomesticNonMoneyTransfer:
+          type: boolean
+        fastFundsDomesticGambling:
+          type: boolean
+        fastFundsCrossBorderMoneyTransfer:
+          type: boolean
+        fastFundsCrossBorderNonMoneyTransfer:
+          type: boolean
+        fastFundsCrossBorderGambling:
+          type: boolean
     components-schemas-countryCodeNumeric:
       type: string
       pattern: ^[0-9]{3}$
@@ -1977,170 +1938,14 @@ components:
         description: Find more info here
         url: https://www.iso.org/iso-3166-country-codes.html
       example: '528'
-    CardInfoRequestByCard:
-      type: object
-      title: Card Input
-      required:
-      - cardNumber
-      properties:
-        cardNumber:
-          description: Full digits of a card. It is possible to replace a number of the trailing digits with zeroes ("0").
-          $ref: '#/components/schemas/components-schemas-pan'
-        infoSource:
-          $ref: '#/components/schemas/InfoSource'
-    MultiSourceResponse:
-      allOf:
-      - $ref: '#/components/schemas/CardInfoResponseBase'
-      - type: object
-        required:
-        - primaryCardNetwork
-        - infoSource
-        properties:
-          primaryCardNetwork:
-            description: The primary card network issuing this card range.
-            type: string
-            enum:
-            - mastercard
-            - visa
-            - bancontact
-            - unknown
-          infoSource:
-            type: string
-            enum:
-            - mastercard
-            - visa
-            - bancontact
-            description: The source of the provided information.
-          mastercardCardInfo:
-            description: Mastercard-specific Card Info.
-            $ref: '#/components/schemas/DuplicatedMastercardCardInfo'
-          visaCardInfo:
-            description: Visa-specific Card Info.
-            $ref: '#/components/schemas/DuplicatedVisaCardInfo'
-          bancontactCardInfo:
-            description: Bancontact-specific Card Info.
-            $ref: '#/components/schemas/DuplicatedBancontactCardInfo'
-    MastercardBrandProduct:
-      properties:
-        productClass:
-          $ref: '#/components/schemas/MastercardProductClass'
-        productCategory:
-          $ref: '#/components/schemas/MastercardProductCategory'
-    components-schemas-CountryCode:
-      type: object
-      required:
-      - alpha2
-      - alpha3
-      - numeric
-      description: 'Card country value in different standards.
-
-        '
-      properties:
-        alpha3:
-          $ref: '#/components/schemas/components-schemas-countryCodeAlpha3'
-        alpha2:
-          $ref: '#/components/schemas/components-schemas-countryCodeAlpha2'
-        numeric:
-          $ref: '#/components/schemas/components-schemas-countryCodeNumeric'
-    DuplicatedMastercardCardInfo:
-      description: Mastercard-specific Card Information.
-      allOf:
-      - $ref: '#/components/schemas/MastercardSpecificCardInfo'
-      - $ref: '#/components/schemas/CardInfoResponseBase'
-    cardNetworkMember:
-      type: object
-      description: A principal member of a card network.
-      required:
-      - id
-      - name
-      - countryCode
-      properties:
-        id:
-          type: string
-          description: Identifying code of the member assigned by the card network
-        name:
-          type: string
-          description: Human-readable name of the member.
-        countryCode:
-          $ref: '#/components/schemas/components-schemas-CountryCode'
-    SingleSourceResponse:
-      allOf:
-      - $ref: '#/components/schemas/CardInfoResponseBase'
-      - type: object
-        required:
-        - primaryCardNetwork
-        - infoSource
-        properties:
-          primaryCardNetwork:
-            description: The primary card network issuing this card range.
-            type: string
-            enum:
-            - mastercard
-            - visa
-            - bancontact
-            - american-express
-            - discover
-            - diners
-            - jcb
-            - union-pay
-            - paypal
-            - unknown
-          infoSource:
-            $ref: '#/components/schemas/InfoSource'
-            description: The source of the provided information.
-          mastercardCardInfo:
-            $ref: '#/components/schemas/MastercardSpecificCardInfo'
-          visaCardInfo:
-            $ref: '#/components/schemas/VisaSpecificCardInfo'
-          bancontactCardInfo:
-            $ref: '#/components/schemas/BancontactSpecificCardInfo'
-          americanExpressCardInfo:
-            $ref: '#/components/schemas/AmericanExpressSpecificCardInfo'
-          discoverCardInfo:
-            $ref: '#/components/schemas/DiscoverSpecificCardInfo'
-          dinersCardInfo:
-            $ref: '#/components/schemas/DinersSpecificCardInfo'
-    VisaSpecificMemberDuplicatedResponse:
+    VisaSpecificMemberSingleResponse:
       description: Visa-specific member properties.
-      allOf:
-      - $ref: '#/components/schemas/VisaSpecificMemberSingleResponse'
-      - $ref: '#/components/schemas/cardNetworkMember'
-    CardCountry:
-      type: object
-      required:
-      - code
-      - isInEEA
       properties:
-        code:
-          $ref: '#/components/schemas/components-schemas-CountryCode'
-        isInEEA:
-          description: Indicates whether the Card Country is part of the European Economic Area
-          type: boolean
-    isTokenRange:
-      type: boolean
-    MastercardInterchangeRegion:
-      properties:
-        code:
+        cib:
+          description: Member processing base-2 CIB
           type: string
-          enum:
-          - '1'
-          - A
-          - B
-          - C
-          - D
-          - E
-        description:
-          type: string
-    MastercardProductType:
-      properties:
-        code:
-          type: string
-          enum:
-          - '1'
-          - '2'
-          - '3'
-          - '4'
-        description:
+        iin:
+          description: Issuer identifier
           type: string
     cardInfoCurrencyCode:
       type: string
@@ -2870,40 +2675,30 @@ components:
         description: Find more info here
         url: https://www.iso.org/iso-4217-currency-codes.html
       example: EUR
-    VisaDirectParticipation:
+    VisaAccountFundingSource:
       properties:
-        nonMoneyTransferOCTsDomestic:
-          type: boolean
-        nonMoneyTransferOCTsCrossBorder:
-          type: boolean
-        onlineGamblingOCTsDomestic:
-          type: boolean
-        onlineGamblingOCTsCrossBorder:
-          type: boolean
-        moneyTransferOCTsDomestic:
-          type: boolean
-        moneyTransferOCTsCrossBorder:
-          type: boolean
-        fastFundsDomesticMoneyTransfer:
-          type: boolean
-        fastFundsDomesticNonMoneyTransfer:
-          type: boolean
-        fastFundsDomesticGambling:
-          type: boolean
-        fastFundsCrossBorderMoneyTransfer:
-          type: boolean
-        fastFundsCrossBorderNonMoneyTransfer:
-          type: boolean
-        fastFundsCrossBorderGambling:
-          type: boolean
-    MastercardCardBrandProduct:
-      properties:
-        cardProgramIdentifier:
-          $ref: '#/components/schemas/MastercardCardProgramIdentifier'
-        brandProduct:
-          $ref: '#/components/schemas/MastercardBrandProduct'
-        priority:
+        code:
           type: string
+          enum:
+          - C
+          - D
+          - P
+          - H
+          - R
+        description:
+          type: string
+    InfoSource:
+      type: string
+      enum:
+      - american-express
+      - bancontact
+      - discover
+      - diners
+      - mastercard
+      - visa
+      description: 'The card network that should be the source of the information. If not provided, all sources will be checked!
+
+        '
     MastercardAnonymousPrepaidIndicator:
       properties:
         code:
@@ -2915,25 +2710,79 @@ components:
           - U
         description:
           type: string
-    VisaSpecificCardInfo:
-      description: Visa-specific Card Information.
-      allOf:
-      - $ref: '#/components/schemas/VisaSpecificCardInfoBase'
-      - type: object
-        properties:
-          member:
-            $ref: '#/components/schemas/VisaSpecificMemberSingleResponse'
-    VisaDomain:
+    MastercardCardProgramIdentifier:
+      properties:
+        code:
+          type: string
+          enum:
+          - CIR
+          - DMC
+          - MCC
+          - MSI
+          - PRO
+          - PVL
+          - VIS
+        description:
+          type: string
+    MastercardProductCategory:
       properties:
         code:
           type: string
           enum:
           - D
-          - N
-          - R
-          - W
+          - P
           - C
+          - N
         description:
+          type: string
+    DuplicatedVisaCardInfo:
+      description: Visa-specific Card Information.
+      allOf:
+      - $ref: '#/components/schemas/VisaSpecificCardInfoBase'
+      - $ref: '#/components/schemas/CardInfoResponseBase'
+      - type: object
+        required:
+        - member
+        properties:
+          member:
+            $ref: '#/components/schemas/VisaSpecificMemberDuplicatedResponse'
+    VisaSpecificMemberDuplicatedResponse:
+      description: Visa-specific member properties.
+      allOf:
+      - $ref: '#/components/schemas/VisaSpecificMemberSingleResponse'
+      - $ref: '#/components/schemas/cardNetworkMember'
+    MastercardInterchangeRegion:
+      properties:
+        code:
+          type: string
+          enum:
+          - '1'
+          - A
+          - B
+          - C
+          - D
+          - E
+        description:
+          type: string
+    components-schemas-pan:
+      type: string
+      description: Full digits of a card
+      pattern: ^\d+$
+      minLength: 12
+      maxLength: 19
+      format: password
+      example: '4761070000000905'
+    MastercardProductClass:
+      properties:
+        gcmsProductID:
+          type: string
+        licensedProductID:
+          type: string
+        licensedProductDescription:
+          type: string
+        productClassID:
+          type: string
+        productClassDescription:
           type: string
     DiscoverSpecificCardInfo:
       type: object
@@ -2953,26 +2802,75 @@ components:
           type: boolean
         realTimeTransactionPricingIndicator:
           type: boolean
-    DuplicatedVisaCardInfo:
-      description: Visa-specific Card Information.
+    MastercardProductType:
+      properties:
+        code:
+          type: string
+          enum:
+          - '1'
+          - '2'
+          - '3'
+          - '4'
+        description:
+          type: string
+    MastercardSpecificCardInfo:
+      description: Mastercard-specific Card Information.
+      type: object
+      properties:
+        productType:
+          $ref: '#/components/schemas/MastercardProductType'
+        brandProducts:
+          type: array
+          minItems: 1
+          items:
+            $ref: '#/components/schemas/MastercardCardBrandProduct'
+        interchangeRegion:
+          $ref: '#/components/schemas/MastercardInterchangeRegion'
+        coBrandParticipation:
+          type: boolean
+        moneySendIndicator:
+          type: string
+        anonymousPrepaidIndicator:
+          $ref: '#/components/schemas/MastercardAnonymousPrepaidIndicator'
+        dccIndicator:
+          type: string
+          description: Cardholder Currency Indicator (IP0040T1 position 178). Indicates the card range's eligibility for Dynamic Currency Conversion (DCC) services.
+    MultiSourceResponse:
       allOf:
-      - $ref: '#/components/schemas/VisaSpecificCardInfoBase'
       - $ref: '#/components/schemas/CardInfoResponseBase'
       - type: object
         required:
-        - member
+        - primaryCardNetwork
+        - infoSource
         properties:
-          member:
-            $ref: '#/components/schemas/VisaSpecificMemberDuplicatedResponse'
-    VisaSpecificMemberSingleResponse:
-      description: Visa-specific member properties.
-      properties:
-        cib:
-          description: Member processing base-2 CIB
-          type: string
-        iin:
-          description: Issuer identifier
-          type: string
+          primaryCardNetwork:
+            description: The primary card network issuing this card range.
+            type: string
+            enum:
+            - mastercard
+            - visa
+            - bancontact
+            - unknown
+          infoSource:
+            type: string
+            enum:
+            - mastercard
+            - visa
+            - bancontact
+            description: The source of the provided information.
+          mastercardCardInfo:
+            description: Mastercard-specific Card Info.
+            $ref: '#/components/schemas/DuplicatedMastercardCardInfo'
+          visaCardInfo:
+            description: Visa-specific Card Info.
+            $ref: '#/components/schemas/DuplicatedVisaCardInfo'
+          bancontactCardInfo:
+            description: Bancontact-specific Card Info.
+            $ref: '#/components/schemas/DuplicatedBancontactCardInfo'
+    DuplicatedBancontactCardInfo:
+      allOf:
+      - $ref: '#/components/schemas/BancontactSpecificCardInfo'
+      - $ref: '#/components/schemas/CardInfoResponseBase'
     CardInfoResponseBase:
       type: object
       required:
@@ -3005,157 +2903,221 @@ components:
           $ref: '#/components/schemas/cardInfoCurrencyCode'
         isTokenRange:
           $ref: '#/components/schemas/isTokenRange'
-    cardProduct:
-      description: A Card Product.
-      required:
-      - code
-      - name
-      - accountFundingSource
+    SingleSourceResponse:
+      allOf:
+      - $ref: '#/components/schemas/CardInfoResponseBase'
+      - type: object
+        required:
+        - primaryCardNetwork
+        - infoSource
+        properties:
+          primaryCardNetwork:
+            description: The primary card network issuing this card range.
+            type: string
+            enum:
+            - mastercard
+            - visa
+            - bancontact
+            - american-express
+            - discover
+            - diners
+            - jcb
+            - union-pay
+            - paypal
+            - unknown
+          infoSource:
+            $ref: '#/components/schemas/InfoSource'
+            description: The source of the provided information.
+          mastercardCardInfo:
+            $ref: '#/components/schemas/MastercardSpecificCardInfo'
+          visaCardInfo:
+            $ref: '#/components/schemas/VisaSpecificCardInfo'
+          bancontactCardInfo:
+            $ref: '#/components/schemas/BancontactSpecificCardInfo'
+          americanExpressCardInfo:
+            $ref: '#/components/schemas/AmericanExpressSpecificCardInfo'
+          discoverCardInfo:
+            $ref: '#/components/schemas/DiscoverSpecificCardInfo'
+          dinersCardInfo:
+            $ref: '#/components/schemas/DinersSpecificCardInfo'
+    VisaRegion:
       properties:
         code:
           type: string
-          description: A code assigned by the card network identifying the Card Product
+          enum:
+          - '1'
+          - '2'
+          - '3'
+          - '4'
+          - '5'
+          - '6'
+        description:
+          type: string
+    cardNetworkMember:
+      type: object
+      description: A principal member of a card network.
+      required:
+      - id
+      - name
+      - countryCode
+      properties:
+        id:
+          type: string
+          description: Identifying code of the member assigned by the card network
         name:
           type: string
-          description: Human-readable name of the Card Product.
-        accountFundingSource:
-          type: string
-          description: Manner in which the account belonging to the Card Product is funded.
-          enum:
-          - Credit
-          - Debit
-          - Prepaid
-          - Charge
-          - Deferred Debit
-          - Unknown
-        isDurbinRegulated:
-          description: Whether the Card Product is Durbin regulated.
-          type: boolean
-    VisaProduct:
+          description: Human-readable name of the member.
+        countryCode:
+          $ref: '#/components/schemas/components-schemas-CountryCode'
+    components-schemas-CountryCode:
+      type: object
+      required:
+      - alpha2
+      - alpha3
+      - numeric
+      description: 'Card country value in different standards.
+
+        '
       properties:
-        visaProductID:
+        alpha3:
+          $ref: '#/components/schemas/components-schemas-countryCodeAlpha3'
+        alpha2:
+          $ref: '#/components/schemas/components-schemas-countryCodeAlpha2'
+        numeric:
+          $ref: '#/components/schemas/components-schemas-countryCodeNumeric'
+    schemas-ProblemDetail:
+      type: object
+      description: 'The ''problem detail'' object relays detailed information about the error that occurred. It is defined
+
+        by [RFC 7807 - Problem Details for HTTP APIs](https://tools.ietf.org/html/rfc7807).
+
+
+        Note that additional properties may be used to relay error specific information. For instance,
+
+        A Bad Request error may hold information about the individual validation errors found in the request.
+
+        '
+      properties:
+        type:
           type: string
-        productDescription:
+          description: 'An absolute URI that identifies the problem type.
+
+            '
+          default: about:blank
+          example: https://api.silverflow.co/problem/constraint-violation
+        title:
           type: string
-        productType:
+          description: 'A short, summary of the problem type. Written in english and readable
+
+            for engineers (usually not suited for non technical stakeholders and
+
+            not localized);
+
+            '
+          example: Service Unavailable
+        status:
+          type: integer
+          format: int32
+          description: 'The HTTP status code generated by the origin server for this occurrence
+
+            of the problem.
+
+            '
+          minimum: 100
+          maximum: 599
+          example: 503
+        detail:
           type: string
-        productSubTypeCode:
+          description: 'A human readable explanation specific to this occurrence of the
+
+            problem.
+
+            '
+          example: Connection to database timed out
+        instance:
           type: string
-        productSubTypeDescription:
-          type: string
-    components-schemas-pan:
-      type: string
-      description: Full digits of a card
-      pattern: ^\d+$
-      minLength: 12
-      maxLength: 19
-      format: password
-      example: '4761070000000905'
+          description: 'An absolute URI that identifies the specific occurrence of the problem.
+
+            It may or may not yield further information if dereferenced.
+
+            '
+      additionalProperties: true
+      example:
+        type: https://api.silverflow.co/problem/bad-request
+        title: Bad Request
+        status: 400
+        detail: The request could not be processed as it contained an invalid request entity
+        instance: https://api.silverflow.co/v1/merchants/mct-1hPdFqhgstYTUhlphPDp
+        validationErrors:
+        - The value of property 'status' should be one of 'idle', 'active' or 'archived'
+        - The value of property 'tags.0.businessId' must not be longer than 255 characters
+  responses:
+    responses-UnauthorizedError:
+      description: Authentication information is missing or invalid
+      headers:
+        WWW_Authenticate:
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/schemas-ProblemDetail'
+          example:
+            type: https://datatracker.ietf.org/doc/html/rfc2616#section-10.4.2
+            title: Unauthorized
+            status: 401
+            detail: The credentials supplied in the request are either missing, invalid, or not applicable in the current scope
+    responses-NotFoundError:
+      description: The requested resource was not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/schemas-ProblemDetail'
+          example:
+            type: https://datatracker.ietf.org/doc/html/rfc2616#section-10.4.5
+            title: Not Found
+            status: 404
+            detail: The entity referenced in the request could not be found
+            instance: https://api.silverflow.co/v1/merchants/mct-1hPdFqhgstYTUhlphPDp
+    responses-TooManyRequestsError:
+      description: The number of requests (per minute) has exceeded the configured maximum
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/schemas-ProblemDetail'
+          example:
+            type: https://api.silverflow.co/problem/too-many-requests
+            title: Too Many Requests
+            status: 429
+            detail: The number of requests performed by the client has exceeded the configured maximum for a given period
+    responses-ForbiddenError:
+      description: The authenticated client is forbidden to make the request for the resource identified.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/schemas-ProblemDetail'
+          example:
+            type: https://datatracker.ietf.org/doc/html/rfc2616#section-10.4.4
+            title: Forbidden
+            status: 403
+            detail: The server is refusing to execute the request for the current authenticated user
+            instance: https://api.silverflow.co/v1/merchants/mct-1hPdFqhgstYTUhlphPDp
+    responses-BadRequestError:
+      description: The request was malformed. See the response body for details
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/schemas-ProblemDetail'
+          example:
+            type: https://datatracker.ietf.org/doc/html/rfc2616#section-10.4.1
+            title: Bad Request
+            status: 400
+            detail: The request could not be processed as it contained an invalid request entity
+            instance: https://api.silverflow.co/v1/merchants/mct-1hPdFqhgstYTUhlphPDp
+            validationErrors:
+            - The value of property 'status' should be one of 'idle', 'active' or 'archived'
+            - The value of property 'tags.0.businessId' must not be longer than 255 characters
   examples:
-    card-info-card-network-response-mastercard:
-      summary: Example of a Card Info Response for a Mastercard network
-      value:
-        items:
-        - infoSource: mastercard
-          primaryCardNetwork: mastercard
-          cardCountry:
-            code:
-              alpha2: NL
-              alpha3: NLD
-              numeric: '528'
-            isInEEA: true
-          issuerAccountRangeLow: '5555555555500000000'
-          issuerAccountRangeHigh: '5555555555599999999'
-          member:
-            id: '00000123456'
-            name: The Iron Bank
-            countryCode:
-              alpha3: CYP
-              alpha2: CY
-              numeric: '196'
-          cardProducts:
-          - code: MDS
-            name: Debit Unembossed Mastercard® Card
-            accountFundingSource: Debit
-          cardholderBillingCurrency: USD
-          mastercardCardInfo:
-            productType:
-              code: '1'
-              description: Consumer
-            brandProducts:
-            - cardProgramIdentifier:
-                code: DMC
-                description: Debit Mastercard
-              brandProduct:
-                productClass:
-                  gcmsProductID: MDS
-                  licensedProductID: MDU
-                  licensedProductDescription: Debit Unembossed Mastercard® Card
-                  productClassID: DMC
-                  productClassDescription: Debit Mastercard
-                productCategory:
-                  code: D
-                  description: Debit
-              priority: '01'
-            interchangeRegion:
-              code: D
-              description: Europe
-            coBrandParticipation: false
-            moneySendIndicator: U
-            anonymousPrepaidIndicator:
-              code: N
-              description: Not prepaid or non-anonymous prepaid program/default
-            dccIndicator: D
-        - infoSource: mastercard
-          primaryCardNetwork: mastercard
-          cardCountry:
-            code:
-              alpha2: NL
-              alpha3: NLD
-              numeric: '528'
-            isInEEA: true
-          issuerAccountRangeLow: '5555555555600000000'
-          issuerAccountRangeHigh: '5555555555699999999'
-          member:
-            id: '00000123456'
-            name: The Iron Bank
-            countryCode:
-              alpha3: CYP
-              alpha2: CY
-              numeric: '196'
-          cardProducts:
-          - code: MDS
-            name: Debit Unembossed Mastercard® Card
-            accountFundingSource: Debit
-          cardholderBillingCurrency: USD
-          mastercardCardInfo:
-            productType:
-              code: '1'
-              description: Consumer
-            brandProducts:
-            - cardProgramIdentifier:
-                code: DMC
-                description: Debit Mastercard
-              brandProduct:
-                productClass:
-                  gcmsProductID: MDS
-                  licensedProductID: MDU
-                  licensedProductDescription: Debit Unembossed Mastercard® Card
-                  productClassID: DMC
-                  productClassDescription: Debit Mastercard
-                productCategory:
-                  code: D
-                  description: Debit
-              priority: '01'
-            interchangeRegion:
-              code: D
-              description: Europe
-            coBrandParticipation: false
-            moneySendIndicator: U
-            anonymousPrepaidIndicator:
-              code: N
-              description: Not prepaid or non-anonymous prepaid program/default
-            dccIndicator: D
     card-info-card-network-response-visa:
       summary: Example of a Card Info Response for a Visa network
       value:
@@ -3263,60 +3225,11 @@ components:
               fastFundsCrossBorderMoneyTransfer: false
               fastFundsCrossBorderNonMoneyTransfer: false
               fastFundsCrossBorderGambling: false
-    card-info-response-mastercard:
-      summary: Example of a Card Info Response for a Mastercard card
+    card-info-card-network-response-mastercard:
+      summary: Example of a Card Info Response for a Mastercard network
       value:
-        infoSource: mastercard
-        primaryCardNetwork: mastercard
-        cardCountry:
-          code:
-            alpha2: NL
-            alpha3: NLD
-            numeric: '528'
-          isInEEA: true
-        issuerAccountRangeLow: '5555555555500000000'
-        issuerAccountRangeHigh: '5555555555599999999'
-        member:
-          id: '00000123456'
-          name: The Iron Bank
-          countryCode:
-            alpha3: CYP
-            alpha2: CY
-            numeric: '196'
-        cardProducts:
-        - code: MDS
-          name: Debit Unembossed Mastercard® Card
-          accountFundingSource: Debit
-        cardholderBillingCurrency: USD
-        mastercardCardInfo:
-          productType:
-            code: '1'
-            description: Consumer
-          brandProducts:
-          - cardProgramIdentifier:
-              code: DMC
-              description: Debit Mastercard
-            brandProduct:
-              productClass:
-                gcmsProductID: MDS
-                licensedProductID: MDU
-                licensedProductDescription: Debit Unembossed Mastercard® Card
-                productClassID: DMC
-                productClassDescription: Debit Mastercard
-              productCategory:
-                code: D
-                description: Debit
-            priority: '01'
-          interchangeRegion:
-            code: D
-            description: Europe
-          coBrandParticipation: false
-          moneySendIndicator: U
-          anonymousPrepaidIndicator:
-            code: N
-            description: Not prepaid or non-anonymous prepaid program/default
-          dccIndicator: D
-          infoSource: mastercard
+        items:
+        - infoSource: mastercard
           primaryCardNetwork: mastercard
           cardCountry:
             code:
@@ -3338,6 +3251,84 @@ components:
             name: Debit Unembossed Mastercard® Card
             accountFundingSource: Debit
           cardholderBillingCurrency: USD
+          mastercardCardInfo:
+            productType:
+              code: '1'
+              description: Consumer
+            brandProducts:
+            - cardProgramIdentifier:
+                code: DMC
+                description: Debit Mastercard
+              brandProduct:
+                productClass:
+                  gcmsProductID: MDS
+                  licensedProductID: MDU
+                  licensedProductDescription: Debit Unembossed Mastercard® Card
+                  productClassID: DMC
+                  productClassDescription: Debit Mastercard
+                productCategory:
+                  code: D
+                  description: Debit
+              priority: '01'
+            interchangeRegion:
+              code: D
+              description: Europe
+            coBrandParticipation: false
+            moneySendIndicator: U
+            anonymousPrepaidIndicator:
+              code: N
+              description: Not prepaid or non-anonymous prepaid program/default
+            dccIndicator: D
+        - infoSource: mastercard
+          primaryCardNetwork: mastercard
+          cardCountry:
+            code:
+              alpha2: NL
+              alpha3: NLD
+              numeric: '528'
+            isInEEA: true
+          issuerAccountRangeLow: '5555555555600000000'
+          issuerAccountRangeHigh: '5555555555699999999'
+          member:
+            id: '00000123456'
+            name: The Iron Bank
+            countryCode:
+              alpha3: CYP
+              alpha2: CY
+              numeric: '196'
+          cardProducts:
+          - code: MDS
+            name: Debit Unembossed Mastercard® Card
+            accountFundingSource: Debit
+          cardholderBillingCurrency: USD
+          mastercardCardInfo:
+            productType:
+              code: '1'
+              description: Consumer
+            brandProducts:
+            - cardProgramIdentifier:
+                code: DMC
+                description: Debit Mastercard
+              brandProduct:
+                productClass:
+                  gcmsProductID: MDS
+                  licensedProductID: MDU
+                  licensedProductDescription: Debit Unembossed Mastercard® Card
+                  productClassID: DMC
+                  productClassDescription: Debit Mastercard
+                productCategory:
+                  code: D
+                  description: Debit
+              priority: '01'
+            interchangeRegion:
+              code: D
+              description: Europe
+            coBrandParticipation: false
+            moneySendIndicator: U
+            anonymousPrepaidIndicator:
+              code: N
+              description: Not prepaid or non-anonymous prepaid program/default
+            dccIndicator: D
     card-info-response-visa:
       summary: Example of a Card Info Response for a Visa card
       value:
@@ -3420,6 +3411,81 @@ components:
       value:
         cardNumber: '5761070000000905'
         infoSource: mastercard
+    card-info-response-mastercard:
+      summary: Example of a Card Info Response for a Mastercard card
+      value:
+        infoSource: mastercard
+        primaryCardNetwork: mastercard
+        cardCountry:
+          code:
+            alpha2: NL
+            alpha3: NLD
+            numeric: '528'
+          isInEEA: true
+        issuerAccountRangeLow: '5555555555500000000'
+        issuerAccountRangeHigh: '5555555555599999999'
+        member:
+          id: '00000123456'
+          name: The Iron Bank
+          countryCode:
+            alpha3: CYP
+            alpha2: CY
+            numeric: '196'
+        cardProducts:
+        - code: MDS
+          name: Debit Unembossed Mastercard® Card
+          accountFundingSource: Debit
+        cardholderBillingCurrency: USD
+        mastercardCardInfo:
+          productType:
+            code: '1'
+            description: Consumer
+          brandProducts:
+          - cardProgramIdentifier:
+              code: DMC
+              description: Debit Mastercard
+            brandProduct:
+              productClass:
+                gcmsProductID: MDS
+                licensedProductID: MDU
+                licensedProductDescription: Debit Unembossed Mastercard® Card
+                productClassID: DMC
+                productClassDescription: Debit Mastercard
+              productCategory:
+                code: D
+                description: Debit
+            priority: '01'
+          interchangeRegion:
+            code: D
+            description: Europe
+          coBrandParticipation: false
+          moneySendIndicator: U
+          anonymousPrepaidIndicator:
+            code: N
+            description: Not prepaid or non-anonymous prepaid program/default
+          dccIndicator: D
+          infoSource: mastercard
+          primaryCardNetwork: mastercard
+          cardCountry:
+            code:
+              alpha2: NL
+              alpha3: NLD
+              numeric: '528'
+            isInEEA: true
+          issuerAccountRangeLow: '5555555555500000000'
+          issuerAccountRangeHigh: '5555555555599999999'
+          member:
+            id: '00000123456'
+            name: The Iron Bank
+            countryCode:
+              alpha3: CYP
+              alpha2: CY
+              numeric: '196'
+          cardProducts:
+          - code: MDS
+            name: Debit Unembossed Mastercard® Card
+            accountFundingSource: Debit
+          cardholderBillingCurrency: USD
   parameters:
     bulkCardInfoNetwork:
       name: network
@@ -3437,72 +3503,6 @@ components:
         - discover
         - mastercard
         - visa
-  responses:
-    responses-BadRequestError:
-      description: The request was malformed. See the response body for details
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/schemas-ProblemDetail'
-          example:
-            type: https://datatracker.ietf.org/doc/html/rfc2616#section-10.4.1
-            title: Bad Request
-            status: 400
-            detail: The request could not be processed as it contained an invalid request entity
-            instance: https://api.silverflow.co/v1/merchants/mct-1hPdFqhgstYTUhlphPDp
-            validationErrors:
-            - The value of property 'status' should be one of 'idle', 'active' or 'archived'
-            - The value of property 'tags.0.businessId' must not be longer than 255 characters
-    responses-TooManyRequestsError:
-      description: The number of requests (per minute) has exceeded the configured maximum
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/schemas-ProblemDetail'
-          example:
-            type: https://api.silverflow.co/problem/too-many-requests
-            title: Too Many Requests
-            status: 429
-            detail: The number of requests performed by the client has exceeded the configured maximum for a given period
-    responses-UnauthorizedError:
-      description: Authentication information is missing or invalid
-      headers:
-        WWW_Authenticate:
-          schema:
-            type: string
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/schemas-ProblemDetail'
-          example:
-            type: https://datatracker.ietf.org/doc/html/rfc2616#section-10.4.2
-            title: Unauthorized
-            status: 401
-            detail: The credentials supplied in the request are either missing, invalid, or not applicable in the current scope
-    responses-NotFoundError:
-      description: The requested resource was not found
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/schemas-ProblemDetail'
-          example:
-            type: https://datatracker.ietf.org/doc/html/rfc2616#section-10.4.5
-            title: Not Found
-            status: 404
-            detail: The entity referenced in the request could not be found
-            instance: https://api.silverflow.co/v1/merchants/mct-1hPdFqhgstYTUhlphPDp
-    responses-ForbiddenError:
-      description: The authenticated client is forbidden to make the request for the resource identified.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/schemas-ProblemDetail'
-          example:
-            type: https://datatracker.ietf.org/doc/html/rfc2616#section-10.4.4
-            title: Forbidden
-            status: 403
-            detail: The server is refusing to execute the request for the current authenticated user
-            instance: https://api.silverflow.co/v1/merchants/mct-1hPdFqhgstYTUhlphPDp
   securitySchemes:
     ApiKey:
       description: "The primary method of authenticating to the Silverflow API is through API keys.\n\nAPI keys can be created by calling the [createApiKey](#operation/createApiKey) endpoint. You can create up to 40 API keys and also update and delete them, allowing for _credential rotation_.\n\nThe _Agent Activation_ process will generate an initial API Key for you. See [Activate Agent](#section/Getting-Started).\n\nA call to the [createApiKey](#operation/createApiKey) endpoint will return the following structure:\n\n```json\n{\n    \"key\": \"apk-1wtRxni5IsPsSpBLWpwr\",\n    \"status\": \"active\",\n    \"agentKey\": \"cgt-1wtRvFLIjDOyyUR5Q2LB\",\n    \"description\": \"Data lake API key\",\n    \"permissions\": [\n        \"charges:List\",\n        \"reports:All\"\n    ],\n    \"created\": \"2021-06-22T11:21:45.115Z\",\n    \"secret\": \"FWtnOOHAjbD6rNxWWEeVOCj7JXSEPGJQ\",\n    \"version\": 1\n}\n```\n\n> **Important:** The `secret` is only returned once in the response to the `createApiKey` call.\n\nOnce created, the `key` and `secret` fields from the API key must be used in the HTTP `Authorization` header using the `Basic` scheme.\nThe Basic scheme requires a **username** and **password** to be specified, separated by a `:` (colon) and Base64 encoded.\n\nUse the following values from the API key to construct a Basic authentication header:\n\n| Basic field | API key field | Example |\n| ----------- | ------------- | ------- |\n| username | `key` | `apk-1wtRxni5IsPsSpBLWpwr` |\n| password | `secret` | `FWtnOOHAjbD6rNxWWEeVOCj7JXSEPGJQ` |\n\nIn pseudo-code a valid HTTP Basic Authentication header would be constructed as follows:\n\n```ts\nconst apiKeyId = \"apk-1wtRxni5IsPsSpBLWpwr\";\nconst apiKeySecret = \"FWtnOOHAjbD6rNxWWEeVOCj7JXSEPGJQ\";\nconst authnValue = \"Basic \" + base64Encode(apiKeyId + \":\" + apiKeySecret);\nrequest.setHeader(\"Authorization\", authnValue);\n```\n\nUsing the values from the example a valid HTTP request would look like the following:\n\n```http\nGET /v1/agents/current HTTP/1.1\nAccept: application/json\nAuthorization: Basic YXBrLTF3dFJ4bmk1SXNQc1NwQkxXcHdyOkZXdG5PT0hBamJENnJOeFdXRWVWT0NqN0pYU0VQR0pR\n```\n\nMore information on the Basic scheme can be found in [RFC-7617 - The 'Basic' HTTP Authentication Scheme](https://datatracker.ietf.org/doc/html/rfc7617)."

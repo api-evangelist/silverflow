@@ -158,6 +158,43 @@ paths:
           $ref: '#/components/responses/openapi_components-responses-TooManyRequestsError-3'
 components:
   schemas:
+    InputValidationError:
+      type: object
+      required:
+      - type
+      - title
+      - status
+      - detail
+      - instance
+      - validationErrors
+      properties:
+        type:
+          allOf:
+          - $ref: '#/components/schemas/errorType'
+          - enum:
+            - /silverflow/problems/invalid-input
+        title:
+          allOf:
+          - $ref: '#/components/schemas/errorTitle'
+          - enum:
+            - Invalid Input
+        status:
+          allOf:
+          - $ref: '#/components/schemas/errorStatus'
+          - enum:
+            - 400
+        detail:
+          allOf:
+          - $ref: '#/components/schemas/errorDetail'
+          - enum:
+            - The request does not adhere to the defined API schema.
+        instance:
+          $ref: '#/components/schemas/errorInstance'
+        validationErrors:
+          type: array
+          items:
+            $ref: '#/components/schemas/openapi_components-schemas-ValidationError'
+          description: A list of validation errors.
     VisaQuarterlySchemeReportParameters:
       type: object
       description: The parameters used for the VisaQuarterlySchemeReport.
@@ -186,18 +223,304 @@ components:
           $ref: '#/components/schemas/year'
         currency:
           $ref: '#/components/schemas/currency'
-    distributionKey:
-      description: Uniquely identifies a distribution object
+    MastercardQuarterlySchemeReportRequest:
+      type: object
+      required:
+      - parameters
+      - mimeType
+      additionalProperties: false
+      properties:
+        parameters:
+          $ref: '#/components/schemas/MastercardQuarterlySchemeReportParameters'
+        reference:
+          $ref: '#/components/schemas/quarterly-scheme-report_reference'
+        mimeType:
+          $ref: '#/components/schemas/quarterlySchemeReportMimeType'
+        distributions:
+          $ref: '#/components/schemas/distributions'
+    InvalidReportNameErrorDetails:
+      type: object
+      required:
+      - type
+      - title
+      - status
+      - detail
+      - instance
+      properties:
+        type:
+          allOf:
+          - $ref: '#/components/schemas/errorType'
+          - enum:
+            - /silverflow/problems/report/invalid-report-name
+        title:
+          allOf:
+          - $ref: '#/components/schemas/errorTitle'
+          - enum:
+            - Invalid report name
+        status:
+          allOf:
+          - $ref: '#/components/schemas/errorStatus'
+          - enum:
+            - 400
+        detail:
+          $ref: '#/components/schemas/errorDetail'
+        instance:
+          $ref: '#/components/schemas/errorInstance'
+    year:
+      type: integer
+      description: The year for which the report is being generated. It should be a four-digit number (e.g., 2023).
+    currency:
       type: string
-      pattern: ^dst-[a-zA-Z0-9]+$
-      minLength: 10
+      description: Specifies the currency in which the report will be generated.
+      enum:
+      - USD
+      - EUR
+      - SGD
+      - GBP
+      - PLN
+      - THB
+      - MYR
+      - SEK
+    components-schemas-reference:
+      type: string
+      description: Unique ID used to identify a report.
       maxLength: 120
-      example: dst-1e1dAHhgstYTUhlphPzZ
+    errorDetail:
+      type: string
+      description: 'A human readable explanation specific to this occurrence of the problem.
+
+        '
+    VisaQuarterlySchemeReportResponse:
+      type: object
+      required:
+      - reportName
+      - parameters
+      - mimeType
+      - key
+      - agentKey
+      - status
+      - created
+      properties:
+        reportName:
+          type: string
+          enum:
+          - VisaQuarterlySchemeReport
+        parameters:
+          $ref: '#/components/schemas/VisaQuarterlySchemeReportParameters'
+        mimeType:
+          $ref: '#/components/schemas/quarterlySchemeReportMimeType'
+        key:
+          $ref: '#/components/schemas/reportKey'
+        agentKey:
+          $ref: '#/components/schemas/AgentKey'
+        reference:
+          $ref: '#/components/schemas/quarterly-scheme-report_reference'
+        status:
+          $ref: '#/components/schemas/createReportStatus'
+        created:
+          $ref: '#/components/schemas/openapi_components-schemas-created-2'
+        distributions:
+          $ref: '#/components/schemas/distributions'
+    CreateAmmfReportRequest:
+      type: object
+      required:
+      - parameters
+      - mimeType
+      additionalProperties: false
+      properties:
+        parameters:
+          $ref: '#/components/schemas/AMMFReportParameters'
+        reference:
+          $ref: '#/components/schemas/components-schemas-reference'
+        mimeType:
+          $ref: '#/components/schemas/ammfReportMimeType'
+        distributions:
+          $ref: '#/components/schemas/distributions'
+    ammfDirectSubmission:
+      type: boolean
+      description: set to `true` to indicate that the AMMF report should be directly submitted to Visa's AMMF service
+    errorStatus:
+      type: integer
+      format: int32
+      description: 'The HTTP status code generated by the origin server for this occurrence
+
+        of the problem.
+
+        '
+    MastercardQuarterlySchemeReportResponse:
+      type: object
+      required:
+      - reportName
+      - parameters
+      - mimeType
+      - key
+      - agentKey
+      - status
+      - created
+      properties:
+        reportName:
+          type: string
+          enum:
+          - MastercardQuarterlySchemeReport
+        parameters:
+          $ref: '#/components/schemas/MastercardQuarterlySchemeReportParameters'
+        mimeType:
+          $ref: '#/components/schemas/quarterlySchemeReportMimeType'
+        key:
+          $ref: '#/components/schemas/reportKey'
+        agentKey:
+          $ref: '#/components/schemas/AgentKey'
+        reference:
+          $ref: '#/components/schemas/quarterly-scheme-report_reference'
+        status:
+          $ref: '#/components/schemas/createReportStatus'
+        created:
+          $ref: '#/components/schemas/openapi_components-schemas-created-2'
+        distributions:
+          $ref: '#/components/schemas/distributions'
+    ammfReportMimeType:
+      type: string
+      description: The mime-type in which the AMMF Report is available.
+      enum:
+      - application/vnd.ms-excel
+    MastercardQuarterlySchemeReportParameters:
+      type: object
+      description: The parameters used for the MastercardQuarterlySchemeReport.
+      required:
+      - network
+      - acquirerIdCode
+      - year
+      - quarter
+      - currency
+      additionalProperties: false
+      properties:
+        network:
+          type: string
+          description: The card network.
+          enum:
+          - mastercard
+        acquirerIdCode:
+          type: string
+          description: The Acquirer Institution ID code. For Mastercard, this is the Acquirer ICA (Interbank Card Association) code, which is a unique identifier for the acquirer. It should be a 6-digit numeric value.
+          pattern: ^\d{6}$
+        quarter:
+          $ref: '#/components/schemas/quarter'
+        year:
+          $ref: '#/components/schemas/year'
+        currency:
+          $ref: '#/components/schemas/currency'
+    InvalidDateRangeErrorDetails:
+      type: object
+      required:
+      - type
+      - title
+      - status
+      - detail
+      - instance
+      properties:
+        type:
+          allOf:
+          - $ref: '#/components/schemas/errorType'
+          - enum:
+            - /silverflow/problems/report/invalid-date-range
+        title:
+          allOf:
+          - $ref: '#/components/schemas/errorTitle'
+          - enum:
+            - Invalid date range
+        status:
+          allOf:
+          - $ref: '#/components/schemas/errorStatus'
+          - enum:
+            - 400
+        detail:
+          $ref: '#/components/schemas/errorDetail'
+        instance:
+          $ref: '#/components/schemas/errorInstance'
     createReportStatus:
       description: The status of the report.
       type: string
       enum:
       - scheduled
+    CreateAmmfReportResponse:
+      type: object
+      required:
+      - reportName
+      - parameters
+      - mimeType
+      - key
+      - agentKey
+      - status
+      - created
+      properties:
+        reportName:
+          type: string
+          enum:
+          - AmmfReport
+        parameters:
+          $ref: '#/components/schemas/AMMFReportParameters'
+        mimeType:
+          $ref: '#/components/schemas/ammfReportMimeType'
+        key:
+          $ref: '#/components/schemas/reportKey'
+        agentKey:
+          $ref: '#/components/schemas/AgentKey'
+        reference:
+          $ref: '#/components/schemas/components-schemas-reference'
+        status:
+          $ref: '#/components/schemas/createReportStatus'
+        created:
+          $ref: '#/components/schemas/openapi_components-schemas-created-2'
+        distributions:
+          $ref: '#/components/schemas/distributions'
+    openapi_components-schemas-created-2:
+      type: string
+      description: The date and time this object was created
+      format: date-time
+      readOnly: true
+    errorInstance:
+      type: string
+      description: 'A reference that identifies the specific occurrence of the error. The instance is unique for every error.
+
+        '
+    VisaQuarterlySchemeReportRequest:
+      type: object
+      required:
+      - parameters
+      - mimeType
+      additionalProperties: false
+      properties:
+        parameters:
+          $ref: '#/components/schemas/VisaQuarterlySchemeReportParameters'
+        reference:
+          $ref: '#/components/schemas/quarterly-scheme-report_reference'
+        mimeType:
+          $ref: '#/components/schemas/quarterlySchemeReportMimeType'
+        distributions:
+          $ref: '#/components/schemas/distributions'
+    errorType:
+      type: string
+      description: 'A relative URI reference, this property can be used to perform automated error handling.
+
+        '
+    distributions:
+      description: 'The distribution objects'' keys.
+
+
+        If passed, the report will be distributed when generation is completed.
+
+        '
+      type: array
+      items:
+        $ref: '#/components/schemas/distributionKey'
+    quarter:
+      type: integer
+      description: Specifies the quarter of the year for the report. Valid values are 1 (Q1), 2 (Q2), 3 (Q3), and 4 (Q4).
+      enum:
+      - 1
+      - 2
+      - 3
+      - 4
     openapi_components-schemas-ValidationError:
       type: object
       required:
@@ -214,6 +537,88 @@ components:
         message:
           type: string
           description: The error message.
+    distributionKey:
+      description: Uniquely identifies a distribution object
+      type: string
+      pattern: ^dst-[a-zA-Z0-9]+$
+      minLength: 10
+      maxLength: 120
+      example: dst-1e1dAHhgstYTUhlphPzZ
+    quarterlySchemeReportMimeType:
+      type: string
+      description: The mime-type in which the Quarterly Scheme Report is available.
+      enum:
+      - application/vnd.ms-excel
+    reportKey:
+      description: Uniquely identifies a report object
+      type: string
+      pattern: ^rep-[a-zA-Z0-9]+$
+      minLength: 10
+      maxLength: 120
+      example: rep-1e1dAHhgstYTUhlphPzZ
+    errorTitle:
+      type: string
+      description: 'A short, human-readable summary of the problem type. It does not change from occurrence to occurrence of the error.
+
+        '
+    AgentKey:
+      description: Uniquely identifies an Agent
+      type: string
+      pattern: ^cgt-[a-zA-Z0-9]+|current$
+      readOnly: true
+      example: cgt-1UF2NafdfrdPMf2XrS2
+    AMMFReportParameters:
+      type: object
+      description: The parameters used for the AMMF Report.
+      required:
+      - date
+      - acquirerIdCode
+      additionalProperties: false
+      properties:
+        acquirerIdCode:
+          $ref: '#/components/schemas/ammfAcquirerIdCode'
+        date:
+          type: string
+          format: date
+          description: 'The end date of the AMMF reporting period. The report covers the one-month period ending on this date.
+
+            We recommend using a date in the past to ensure all data for the period has been written.
+
+            '
+        directSubmission:
+          $ref: '#/components/schemas/ammfDirectSubmission'
+    NotAuthorizedErrorDetails:
+      type: object
+      required:
+      - type
+      - title
+      - status
+      - detail
+      - instance
+      properties:
+        type:
+          allOf:
+          - $ref: '#/components/schemas/errorType'
+          - enum:
+            - /silverflow/problems/report/not-authorized
+        title:
+          allOf:
+          - $ref: '#/components/schemas/errorTitle'
+          - enum:
+            - Not authorized
+        status:
+          allOf:
+          - $ref: '#/components/schemas/errorStatus'
+          - enum:
+            - 401
+        detail:
+          $ref: '#/components/schemas/errorDetail'
+        instance:
+          $ref: '#/components/schemas/errorInstance'
+    quarterly-scheme-report_reference:
+      type: string
+      description: Unique ID used to identify a quarterly scheme report.
+      maxLength: 120
     openapi_components-schemas-ProblemDetail-2:
       type: object
       description: 'The ''problem detail'' object relays detailed information about the error that occurred. It is defined
@@ -280,442 +685,17 @@ components:
         validationErrors:
         - The value of property 'status' should be one of 'idle', 'active' or 'archived'
         - The value of property 'tags.0.businessId' must not be longer than 255 characters
-    components-schemas-reference:
-      type: string
-      description: Unique ID used to identify a report.
-      maxLength: 120
-    quarterlySchemeReportMimeType:
-      type: string
-      description: The mime-type in which the Quarterly Scheme Report is available.
-      enum:
-      - application/vnd.ms-excel
-    MastercardQuarterlySchemeReportResponse:
-      type: object
-      required:
-      - reportName
-      - parameters
-      - mimeType
-      - key
-      - agentKey
-      - status
-      - created
-      properties:
-        reportName:
-          type: string
-          enum:
-          - MastercardQuarterlySchemeReport
-        parameters:
-          $ref: '#/components/schemas/MastercardQuarterlySchemeReportParameters'
-        mimeType:
-          $ref: '#/components/schemas/quarterlySchemeReportMimeType'
-        key:
-          $ref: '#/components/schemas/reportKey'
-        agentKey:
-          $ref: '#/components/schemas/AgentKey'
-        reference:
-          $ref: '#/components/schemas/quarterly-scheme-report_reference'
-        status:
-          $ref: '#/components/schemas/createReportStatus'
-        created:
-          $ref: '#/components/schemas/openapi_components-schemas-created-2'
-        distributions:
-          $ref: '#/components/schemas/distributions'
-    errorTitle:
-      type: string
-      description: 'A short, human-readable summary of the problem type. It does not change from occurrence to occurrence of the error.
-
-        '
-    quarterly-scheme-report_reference:
-      type: string
-      description: Unique ID used to identify a quarterly scheme report.
-      maxLength: 120
     ammfAcquirerIdCode:
       type: string
       description: the Acquirer Institution ID. For Visa, this is the BIC. It should be a 6-digit numeric value.
       pattern: ^\d{6}$
-    MastercardQuarterlySchemeReportRequest:
-      type: object
-      required:
-      - parameters
-      - mimeType
-      additionalProperties: false
-      properties:
-        parameters:
-          $ref: '#/components/schemas/MastercardQuarterlySchemeReportParameters'
-        reference:
-          $ref: '#/components/schemas/quarterly-scheme-report_reference'
-        mimeType:
-          $ref: '#/components/schemas/quarterlySchemeReportMimeType'
-        distributions:
-          $ref: '#/components/schemas/distributions'
-    AgentKey:
-      description: Uniquely identifies an Agent
-      type: string
-      pattern: ^cgt-[a-zA-Z0-9]+|current$
-      readOnly: true
-      example: cgt-1UF2NafdfrdPMf2XrS2
-    InvalidDateRangeErrorDetails:
-      type: object
-      required:
-      - type
-      - title
-      - status
-      - detail
-      - instance
-      properties:
-        type:
-          allOf:
-          - $ref: '#/components/schemas/errorType'
-          - enum:
-            - /silverflow/problems/report/invalid-date-range
-        title:
-          allOf:
-          - $ref: '#/components/schemas/errorTitle'
-          - enum:
-            - Invalid date range
-        status:
-          allOf:
-          - $ref: '#/components/schemas/errorStatus'
-          - enum:
-            - 400
-        detail:
-          $ref: '#/components/schemas/errorDetail'
-        instance:
-          $ref: '#/components/schemas/errorInstance'
-    MastercardQuarterlySchemeReportParameters:
-      type: object
-      description: The parameters used for the MastercardQuarterlySchemeReport.
-      required:
-      - network
-      - acquirerIdCode
-      - year
-      - quarter
-      - currency
-      additionalProperties: false
-      properties:
-        network:
-          type: string
-          description: The card network.
-          enum:
-          - mastercard
-        acquirerIdCode:
-          type: string
-          description: The Acquirer Institution ID code. For Mastercard, this is the Acquirer ICA (Interbank Card Association) code, which is a unique identifier for the acquirer. It should be a 6-digit numeric value.
-          pattern: ^\d{6}$
-        quarter:
-          $ref: '#/components/schemas/quarter'
-        year:
-          $ref: '#/components/schemas/year'
-        currency:
-          $ref: '#/components/schemas/currency'
-    openapi_components-schemas-created-2:
-      type: string
-      description: The date and time this object was created
-      format: date-time
-      readOnly: true
-    errorStatus:
-      type: integer
-      format: int32
-      description: 'The HTTP status code generated by the origin server for this occurrence
-
-        of the problem.
-
-        '
-    AMMFReportParameters:
-      type: object
-      description: The parameters used for the AMMF Report.
-      required:
-      - date
-      - acquirerIdCode
-      additionalProperties: false
-      properties:
-        acquirerIdCode:
-          $ref: '#/components/schemas/ammfAcquirerIdCode'
-        date:
-          type: string
-          format: date
-          description: 'The end date of the AMMF reporting period. The report covers the one-month period ending on this date.
-
-            We recommend using a date in the past to ensure all data for the period has been written.
-
-            '
-        directSubmission:
-          $ref: '#/components/schemas/ammfDirectSubmission'
-    errorInstance:
-      type: string
-      description: 'A reference that identifies the specific occurrence of the error. The instance is unique for every error.
-
-        '
-    year:
-      type: integer
-      description: The year for which the report is being generated. It should be a four-digit number (e.g., 2023).
-    reportKey:
-      description: Uniquely identifies a report object
-      type: string
-      pattern: ^rep-[a-zA-Z0-9]+$
-      minLength: 10
-      maxLength: 120
-      example: rep-1e1dAHhgstYTUhlphPzZ
-    NotAuthorizedErrorDetails:
-      type: object
-      required:
-      - type
-      - title
-      - status
-      - detail
-      - instance
-      properties:
-        type:
-          allOf:
-          - $ref: '#/components/schemas/errorType'
-          - enum:
-            - /silverflow/problems/report/not-authorized
-        title:
-          allOf:
-          - $ref: '#/components/schemas/errorTitle'
-          - enum:
-            - Not authorized
-        status:
-          allOf:
-          - $ref: '#/components/schemas/errorStatus'
-          - enum:
-            - 401
-        detail:
-          $ref: '#/components/schemas/errorDetail'
-        instance:
-          $ref: '#/components/schemas/errorInstance'
-    distributions:
-      description: 'The distribution objects'' keys.
-
-
-        If passed, the report will be distributed when generation is completed.
-
-        '
-      type: array
-      items:
-        $ref: '#/components/schemas/distributionKey'
-    ammfDirectSubmission:
-      type: boolean
-      description: set to `true` to indicate that the AMMF report should be directly submitted to Visa's AMMF service
-    CreateAmmfReportResponse:
-      type: object
-      required:
-      - reportName
-      - parameters
-      - mimeType
-      - key
-      - agentKey
-      - status
-      - created
-      properties:
-        reportName:
-          type: string
-          enum:
-          - AmmfReport
-        parameters:
-          $ref: '#/components/schemas/AMMFReportParameters'
-        mimeType:
-          $ref: '#/components/schemas/ammfReportMimeType'
-        key:
-          $ref: '#/components/schemas/reportKey'
-        agentKey:
-          $ref: '#/components/schemas/AgentKey'
-        reference:
-          $ref: '#/components/schemas/components-schemas-reference'
-        status:
-          $ref: '#/components/schemas/createReportStatus'
-        created:
-          $ref: '#/components/schemas/openapi_components-schemas-created-2'
-        distributions:
-          $ref: '#/components/schemas/distributions'
-    VisaQuarterlySchemeReportResponse:
-      type: object
-      required:
-      - reportName
-      - parameters
-      - mimeType
-      - key
-      - agentKey
-      - status
-      - created
-      properties:
-        reportName:
-          type: string
-          enum:
-          - VisaQuarterlySchemeReport
-        parameters:
-          $ref: '#/components/schemas/VisaQuarterlySchemeReportParameters'
-        mimeType:
-          $ref: '#/components/schemas/quarterlySchemeReportMimeType'
-        key:
-          $ref: '#/components/schemas/reportKey'
-        agentKey:
-          $ref: '#/components/schemas/AgentKey'
-        reference:
-          $ref: '#/components/schemas/quarterly-scheme-report_reference'
-        status:
-          $ref: '#/components/schemas/createReportStatus'
-        created:
-          $ref: '#/components/schemas/openapi_components-schemas-created-2'
-        distributions:
-          $ref: '#/components/schemas/distributions'
-    VisaQuarterlySchemeReportRequest:
-      type: object
-      required:
-      - parameters
-      - mimeType
-      additionalProperties: false
-      properties:
-        parameters:
-          $ref: '#/components/schemas/VisaQuarterlySchemeReportParameters'
-        reference:
-          $ref: '#/components/schemas/quarterly-scheme-report_reference'
-        mimeType:
-          $ref: '#/components/schemas/quarterlySchemeReportMimeType'
-        distributions:
-          $ref: '#/components/schemas/distributions'
-    errorType:
-      type: string
-      description: 'A relative URI reference, this property can be used to perform automated error handling.
-
-        '
-    CreateAmmfReportRequest:
-      type: object
-      required:
-      - parameters
-      - mimeType
-      additionalProperties: false
-      properties:
-        parameters:
-          $ref: '#/components/schemas/AMMFReportParameters'
-        reference:
-          $ref: '#/components/schemas/components-schemas-reference'
-        mimeType:
-          $ref: '#/components/schemas/ammfReportMimeType'
-        distributions:
-          $ref: '#/components/schemas/distributions'
-    InputValidationError:
-      type: object
-      required:
-      - type
-      - title
-      - status
-      - detail
-      - instance
-      - validationErrors
-      properties:
-        type:
-          allOf:
-          - $ref: '#/components/schemas/errorType'
-          - enum:
-            - /silverflow/problems/invalid-input
-        title:
-          allOf:
-          - $ref: '#/components/schemas/errorTitle'
-          - enum:
-            - Invalid Input
-        status:
-          allOf:
-          - $ref: '#/components/schemas/errorStatus'
-          - enum:
-            - 400
-        detail:
-          allOf:
-          - $ref: '#/components/schemas/errorDetail'
-          - enum:
-            - The request does not adhere to the defined API schema.
-        instance:
-          $ref: '#/components/schemas/errorInstance'
-        validationErrors:
-          type: array
-          items:
-            $ref: '#/components/schemas/openapi_components-schemas-ValidationError'
-          description: A list of validation errors.
-    errorDetail:
-      type: string
-      description: 'A human readable explanation specific to this occurrence of the problem.
-
-        '
-    InvalidReportNameErrorDetails:
-      type: object
-      required:
-      - type
-      - title
-      - status
-      - detail
-      - instance
-      properties:
-        type:
-          allOf:
-          - $ref: '#/components/schemas/errorType'
-          - enum:
-            - /silverflow/problems/report/invalid-report-name
-        title:
-          allOf:
-          - $ref: '#/components/schemas/errorTitle'
-          - enum:
-            - Invalid report name
-        status:
-          allOf:
-          - $ref: '#/components/schemas/errorStatus'
-          - enum:
-            - 400
-        detail:
-          $ref: '#/components/schemas/errorDetail'
-        instance:
-          $ref: '#/components/schemas/errorInstance'
-    quarter:
-      type: integer
-      description: Specifies the quarter of the year for the report. Valid values are 1 (Q1), 2 (Q2), 3 (Q3), and 4 (Q4).
-      enum:
-      - 1
-      - 2
-      - 3
-      - 4
-    ammfReportMimeType:
-      type: string
-      description: The mime-type in which the AMMF Report is available.
-      enum:
-      - application/vnd.ms-excel
-    currency:
-      type: string
-      description: Specifies the currency in which the report will be generated.
-      enum:
-      - USD
-      - EUR
-      - SGD
-      - GBP
-      - PLN
-      - THB
-      - MYR
-      - SEK
   examples:
-    MastercardQuarterlySchemeReportRequest:
+    VisaQuarterlySchemeReportResponse:
       value:
+        reportName: VisaQuarterlySchemeReport
         parameters:
-          network: mastercard
-          acquirerIdCode: '123456'
-          year: 2024
-          quarter: 1
-          currency: USD
-        reference: report reference
-        mimeType: application/vnd.ms-excel
-    CreateAmmfReportRequest:
-      value:
-        parameters:
-          date: '2024-07-29'
-          acquirerIdCode: '123456'
-          directSubmission: false
-        mimeType: application/vnd.ms-excel
-        reference: AMMF-REPORT-20240729-001
-        distributions:
-        - dst-3e1dAHhgstYTUhlphPzZ
-    MastercardQuarterlySchemeReportResponse:
-      value:
-        reportName: MastercardQuarterlySchemeReport
-        parameters:
-          network: mastercard
-          acquirerIdCode: '123456'
+          network: visa
+          bid: '123456'
           year: 2024
           quarter: 1
           currency: USD
@@ -727,14 +707,6 @@ components:
         created: '2024-01-01T12:00:00Z'
         distributions:
         - dst-1e1dAHhgstYTUhlphPzZ
-    InvalidDateRangeError:
-      summary: Invalid Date Range Error
-      value:
-        type: /silverflow/problems/report/invalid-date-range
-        title: Invalid date range
-        status: 400
-        detail: 'Invalid date range: 2019-08-25T14:15:22Z - 2019-08-24T14:15:22Z'
-        instance: /silverflow/b4cc37a0-ab24-46b4-aa8c-cc2d6eddf1b6
     VisaQuarterlySchemeReportRequest:
       value:
         parameters:
@@ -760,12 +732,12 @@ components:
         created: '2019-08-24T14:15:22Z'
         distributions:
         - dst-1e1dAHhgstYTUhlphPzZ
-    VisaQuarterlySchemeReportResponse:
+    MastercardQuarterlySchemeReportResponse:
       value:
-        reportName: VisaQuarterlySchemeReport
+        reportName: MastercardQuarterlySchemeReport
         parameters:
-          network: visa
-          bid: '123456'
+          network: mastercard
+          acquirerIdCode: '123456'
           year: 2024
           quarter: 1
           currency: USD
@@ -777,19 +749,35 @@ components:
         created: '2024-01-01T12:00:00Z'
         distributions:
         - dst-1e1dAHhgstYTUhlphPzZ
+    CreateAmmfReportRequest:
+      value:
+        parameters:
+          date: '2024-07-29'
+          acquirerIdCode: '123456'
+          directSubmission: false
+        mimeType: application/vnd.ms-excel
+        reference: AMMF-REPORT-20240729-001
+        distributions:
+        - dst-3e1dAHhgstYTUhlphPzZ
+    MastercardQuarterlySchemeReportRequest:
+      value:
+        parameters:
+          network: mastercard
+          acquirerIdCode: '123456'
+          year: 2024
+          quarter: 1
+          currency: USD
+        reference: report reference
+        mimeType: application/vnd.ms-excel
+    InvalidDateRangeError:
+      summary: Invalid Date Range Error
+      value:
+        type: /silverflow/problems/report/invalid-date-range
+        title: Invalid date range
+        status: 400
+        detail: 'Invalid date range: 2019-08-25T14:15:22Z - 2019-08-24T14:15:22Z'
+        instance: /silverflow/b4cc37a0-ab24-46b4-aa8c-cc2d6eddf1b6
   responses:
-    openapi_components-responses-TooManyRequestsError-3:
-      description: The number of requests (per minute) has exceeded the configured maximum
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/openapi_components-schemas-ProblemDetail-2'
-          example:
-            type: /silverflow/problems/too-many-requests
-            title: Too Many Requests
-            status: 429
-            detail: You have exceeded the rate limit. Please try again after the specified delay.
-            instance: /silverflow/b0451a9d-f66d-4ef7-9f5d-d48064a2bb3e
     openapi_components-responses-ForbiddenError-3:
       description: The authenticated client is forbidden to make the request for the resource identified.
       content:
@@ -801,6 +789,18 @@ components:
             title: Forbidden
             status: 403
             detail: 'Authenticated user ''apk-33GjasQdWl4781OsErvi'' is missing the following permission(s): reports:List'
+            instance: /silverflow/b0451a9d-f66d-4ef7-9f5d-d48064a2bb3e
+    openapi_components-responses-TooManyRequestsError-3:
+      description: The number of requests (per minute) has exceeded the configured maximum
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/openapi_components-schemas-ProblemDetail-2'
+          example:
+            type: /silverflow/problems/too-many-requests
+            title: Too Many Requests
+            status: 429
+            detail: You have exceeded the rate limit. Please try again after the specified delay.
             instance: /silverflow/b0451a9d-f66d-4ef7-9f5d-d48064a2bb3e
   securitySchemes:
     ApiKey:

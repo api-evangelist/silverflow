@@ -116,16 +116,46 @@ paths:
                 $ref: '#/components/schemas/NotFoundErrorDetails'
 components:
   schemas:
-    feeDescription:
-      type: string
-      pattern: ^[a-zA-Z0-9-\/ \.—&()]+$
-      minLength: 1
-      maxLength: 120
-      description: 'The Mastercard _"Event description"_ or the Visa _"Description"_, as they appear on the corresponding
-
-        invoices.
+    sourceAmount:
+      title: Amount
+      description: The _source_ amount of the transaction event, in either the original (transaction) currency or the settlement currency. This amount is the amount to which the fee applies.
+      type: object
+      required:
+      - impact
+      - currency
+      - value
+      properties:
+        impact:
+          $ref: '#/components/schemas/sourceAmountImpact'
+        currency:
+          $ref: '#/components/schemas/openapi_components-schemas-currencyCode-5'
+        value:
+          $ref: '#/components/schemas/sourceAmountValue'
+    BaseFeeRateTier:
+      title: Base Fee Rate Tier
+      type: object
+      required:
+      - impact
+      - value
+      properties:
+        impact:
+          $ref: '#/components/schemas/impact'
+        value:
+          $ref: '#/components/schemas/value'
+    intent:
+      description: 'The intention of the cardholder.
 
         '
+      type: string
+      enum:
+      - purchase
+      - reservation
+      - account-status
+      - payout
+      - payout-status
+      - funding
+      - advice
+      - refund
     NonTieredFeeRate:
       title: Non Tiered Fee Rate
       description: 'A _(non-tiered)_ fee rate.
@@ -141,13 +171,24 @@ components:
             $ref: '#/components/schemas/NonTieredFeeRateTier'
           minItems: 1
           maxItems: 1
-    openapi_components-schemas-pan-2:
-      type: string
-      description: Full digits of a card
-      pattern: ^\d{12,19}$
-      format: password
-      example: 1234123412341234
-    NotFoundErrorDetails:
+    BusinessServiceArrangement:
+      type: object
+      required:
+      - cardProgramIdentifier
+      - type
+      - idCode
+      properties:
+        cardProgramIdentifier:
+          type: string
+        type:
+          type: string
+        idCode:
+          type: string
+        priority:
+          type: string
+        selectionEnforcementIndicator:
+          type: string
+    CardNetworkMismatchErrorDetails:
       type: object
       required:
       - type
@@ -160,33 +201,89 @@ components:
           allOf:
           - $ref: '#/components/schemas/schemas-errorType'
           - enum:
-            - /silverflow/problems/schemeFees/not-found
+            - /silverflow/problems/schemeFees/card-network-mismatch
         title:
           allOf:
           - $ref: '#/components/schemas/errorTitle'
           - enum:
-            - Not found
+            - Card network mismatch
         status:
           allOf:
           - $ref: '#/components/schemas/errorStatus'
           - enum:
-            - 404
+            - 400
         detail:
           $ref: '#/components/schemas/errorDetail'
         instance:
           $ref: '#/components/schemas/errorInstance'
-    billingFrequency:
+    errorDetail:
       type: string
-      enum:
-      - daily
-      - weekly
-      - monthly
-      - quarterly
-      description: 'The _frequency_ or _interval_ at which this fee is witheld from settlement (or
-
-        invoiced separately). This frequency also defines the _aggregation period_ for _tiered fees_.
+      description: 'A human readable explanation specific to this occurrence of the problem.
 
         '
+    payoutType:
+      description: '- `online-gambling` - payouts of online casino winnings
+
+        - `general-funds-disbursement` - generic funds disbursement transaction used to push funds from a business to an individual cardholder for various purposes. **Currently not supported for Mastercard.**
+
+        '
+      type: string
+      enum:
+      - general-funds-disbursement
+      - online-gambling
+    MastercardFeeDesignator:
+      type: object
+      required:
+      - ird
+      - businessServiceArrangement
+      properties:
+        ird:
+          type: string
+        businessServiceArrangement:
+          $ref: '#/components/schemas/BusinessServiceArrangement'
+    openapi_components-schemas-cardEntry-2:
+      description: 'The method used to capture the card details.
+
+        '
+      type: string
+      enum:
+      - e-commerce
+      - manual
+      - card-on-file
+      - token
+      - token-on-file
+      - terminal
+      example: e-commerce
+    PublicSchemeFeeEstimateFees:
+      type: object
+      required:
+      - fees
+      properties:
+        fees:
+          type: array
+          description: List of scheme fees hit.
+          items:
+            $ref: '#/components/schemas/PublicFee'
+    operation:
+      type: string
+      enum:
+      - divide
+      - multiply
+    NonTieredFeeProperties:
+      type: object
+      required:
+      - tiering
+      - feeRate
+      - billingAmount
+      properties:
+        tiering:
+          $ref: '#/components/schemas/NonTieredEnum'
+        feeRate:
+          allOf:
+          - $ref: '#/components/schemas/BaseFeeRate'
+          - $ref: '#/components/schemas/NonTieredFeeRate'
+        billingAmount:
+          $ref: '#/components/schemas/NonTieredFeeBillingAmount'
     sourceAmountValue:
       type: string
       pattern: ^\d+(\.\d+)?$
@@ -204,20 +301,65 @@ components:
       description: Uniquely identifies a Merchant Acceptor.
       type: string
       pattern: ^mac-[a-zA-Z0-9]+$
-    TieredEnum:
-      type: string
-      description: 'The type of tiering. The value `volume` indicates that the applicable fee _tier_ is determined
-
-        using the total `sourceAmount` for a given period. The value `count` indicates that the
-
-        applicable _tier_ is determined using the total number of fees (transactions). The value `none`
-
-        indicates that this fee is not tiered.
+    IntegerAmount:
+      type: object
+      required:
+      - value
+      - currency
+      additionalProperties: false
+      description: 'An amount encoded as an object with a `value` in minor units and a `currency` code.
 
         '
-      enum:
-      - count
-      - volume
+      properties:
+        value:
+          $ref: '#/components/schemas/schemas-amountValue'
+        currency:
+          $ref: '#/components/schemas/currencyCodeEnum'
+    FloatAmount:
+      type: object
+      required:
+      - value
+      - currency
+      additionalProperties: false
+      description: 'An amount encoded as an object with a `value` in minor units and a `currency` code.
+
+        '
+      properties:
+        value:
+          $ref: '#/components/schemas/floatAmountValue'
+        currency:
+          $ref: '#/components/schemas/openapi_components-schemas-currencyCode-4'
+    errorTitle:
+      type: string
+      description: 'A short, human-readable summary of the problem type. It does not change from occurrence to occurrence of the error.
+
+        '
+    PublicSchemeFeeEstimate:
+      description: The scheme fee estimation.
+      allOf:
+      - $ref: '#/components/schemas/BaseSchemeFeeEstimate'
+      - $ref: '#/components/schemas/PublicSchemeFeeEstimateFees'
+    ConversionRate:
+      title: Conversion Rate
+      type: object
+      required:
+      - date
+      - source
+      - target
+      - rate
+      - operation
+      additionalProperties: false
+      properties:
+        date:
+          $ref: '#/components/schemas/conversionRateDate'
+        source:
+          $ref: '#/components/schemas/openapi_components-schemas-currencyCode-5'
+        target:
+          $ref: '#/components/schemas/openapi_components-schemas-currencyCode-5'
+        rate:
+          $ref: '#/components/schemas/currencyRateValue'
+        operation:
+          $ref: '#/components/schemas/operation'
     FeeSegments:
       type: object
       description: Segments of which the total interchange fee is made up
@@ -241,106 +383,109 @@ components:
           description: Minimum fee in minor units
           type: number
           format: float
-    NonTieredBillingAmount:
-      type: object
-      required:
-      - amounts
-      properties:
-        amounts:
-          type: array
-          items:
-            $ref: '#/components/schemas/NonTieredBillingAmountTier'
-          minItems: 1
-          maxItems: 1
-    conversionRateDate:
+    openapi_components-schemas-cardEntry:
+      description: 'The method used to capture the card details.
+
+        '
       type: string
-      format: date
-      description: "The date of the conversion rate. Conversion rates are published (daily) by the _card schemes_. \nThe method of publication introduces certain delays. Hence, this date may lie before the `feeDate`.\n"
-    schemas-ProblemDetail:
-      type: object
-      description: 'The ''problem detail'' object relays detailed information about the error that occurred. It is defined
+      enum:
+      - e-commerce
+      - manual
+      - card-on-file
+      - token
+      - token-on-file
+      - terminal
+    schemas-amountValue:
+      type: integer
+      format: int64
+      minimum: 0
+      maximum: 900000000
+      description: 'The amount in minor units. For example `$12.34` should be encoded as `1234`. Note that not all
 
-        by [RFC 7807 - Problem Details for HTTP APIs](https://tools.ietf.org/html/rfc7807).
-
-
-        Note that additional properties may be used to relay error specific information. For instance,
-
-        A Bad Request error may hold information about the individual validation errors found in the request.
+        currencies have 2 minor units. Some have three or zero.
 
         '
-      properties:
-        type:
-          type: string
-          description: 'An absolute URI that identifies the problem type.
+    pos:
+      allOf:
+      - type: object
+        required:
+        - type
+        properties:
+          type:
+            type: string
+            enum:
+            - pos
+      - $ref: '#/components/schemas/baseTerminal'
+      - type: object
+        required:
+        - capabilities
+        properties:
+          capabilities:
+            type: array
+            description: 'The capabilities of the terminal. This can be one or multiple, and if more than one is specified it means that it is capable of all of those things.
 
-            '
-          default: about:blank
-          example: https://api.silverflow.co/problem/constraint-violation
-        title:
-          type: string
-          description: 'A short, summary of the problem type. Written in english and readable
+              '
+            items:
+              $ref: '#/components/schemas/terminalCapability'
+            example:
+            - contactChip
+            - contactlessChip
+            - contactMagStripe
+            - oneTap
+    TieredEnum:
+      type: string
+      description: 'The type of tiering. The value `volume` indicates that the applicable fee _tier_ is determined
 
-            for engineers (usually not suited for non technical stakeholders and
+        using the total `sourceAmount` for a given period. The value `count` indicates that the
 
-            not localized);
+        applicable _tier_ is determined using the total number of fees (transactions). The value `none`
 
-            '
-          example: Service Unavailable
-        status:
-          type: integer
-          format: int32
-          description: 'The HTTP status code generated by the origin server for this occurrence
+        indicates that this fee is not tiered.
 
-            of the problem.
+        '
+      enum:
+      - count
+      - volume
+    mPos:
+      allOf:
+      - type: object
+        required:
+        - type
+        properties:
+          type:
+            type: string
+            enum:
+            - mpos
+      - $ref: '#/components/schemas/baseTerminal'
+      - type: object
+        required:
+        - attended
+        - capabilities
+        properties:
+          attended:
+            type: boolean
+            enum:
+            - true
+          capabilities:
+            type: array
+            description: 'The capabilities of the terminal. This can be one or multiple, and if more than one is specified it means that it is capable of all of those things.
 
-            '
-          minimum: 100
-          maximum: 599
-          example: 503
-        detail:
-          type: string
-          description: 'A human readable explanation specific to this occurrence of the
-
-            problem.
-
-            '
-          example: Connection to database timed out
-        instance:
-          type: string
-          description: 'An absolute URI that identifies the specific occurrence of the problem.
-
-            It may or may not yield further information if dereferenced.
-
-            '
-      additionalProperties: true
-      example:
-        type: https://api.silverflow.co/problem/bad-request
-        title: Bad Request
-        status: 400
-        detail: The request could not be processed as it contained an invalid request entity
-        instance: https://api.silverflow.co/v1/merchants/mct-1hPdFqhgstYTUhlphPDp
-        validationErrors:
-        - The value of property 'status' should be one of 'idle', 'active' or 'archived'
-        - The value of property 'tags.0.businessId' must not be longer than 255 characters
-    PublicSchemeFeeEstimateFees:
+              '
+            items:
+              $ref: '#/components/schemas/terminalCapability'
+            example:
+            - contactChip
+            - contactlessChip
+            - contactMagStripe
+            - oneTap
+    PublicFee:
       type: object
       required:
-      - fees
-      properties:
-        fees:
-          type: array
-          description: List of scheme fees hit.
-          items:
-            $ref: '#/components/schemas/PublicFee'
-    errorStatus:
-      type: integer
-      format: int32
-      description: 'The HTTP status code generated by the origin server for this occurrence
-
-        of the problem.
-
-        '
-    TieredFeeRateTierProperties:
+      - tiering
+      oneOf:
+      - $ref: '#/components/schemas/TieredFee'
+      - $ref: '#/components/schemas/NonTieredFee'
+    TieredBillingAmountTierProperties:
       type: object
       required:
       - tierNumber
@@ -351,323 +496,9 @@ components:
           $ref: '#/components/schemas/upToIncluding'
         above:
           $ref: '#/components/schemas/above'
-    upToIncluding:
-      type: integer
-      minimum: 0
-      description: 'This field indicates the value up to (including) which this _tier_ applies.
-
-        If `tiering` is set to `volume`, this value indicates the total `sourceAmount`
-
-        (in `feeRate` currency). If `tiering` is set to `count`, this value indicates the
-
-        total number of fees.
-
-        '
-    BaseSchemeFeeEstimate:
-      type: object
-      description: The scheme fee estimation.
-      required:
-      - cardNetwork
-      properties:
-        cardNetwork:
-          $ref: '#/components/schemas/components-schemas-cardNetwork'
-        conversionRates:
-          type: array
-          description: 'A list of conversion rates, used to convert the `sourceAmount` into the `convertedSourceAmount`.
-
-            This list is only present if currency conversion was applied. Currency conversion is only applied
-
-            if the `feeRate` currency is different from the `sourceAmount` currency. Note that for certain
-
-            currency conversions there is no single rate available. In such a case, multiple conversions are
-
-            applied to convert the source amount into the fee rate currency.
-
-            '
-          items:
-            $ref: '#/components/schemas/ConversionRate'
-          minItems: 1
-    feeRateType:
+    openapi_components-schemas-currencyCode-4:
       type: string
-      enum:
-      - fixed
-      - basisPoints
-      description: 'The type of fee. The value `fixed` indicates that the `value` field holds a _fixed_ fee amount,
-
-        denominated in the specified `currency`. The value `basisPoints` indicates that the `value`
-
-        fields holds the (decimal) number of basis points of the fee, applied to the `sourceAmount`
-
-        or `convertedSourceAmount` in case the `currency` does not match the `sourceAmount` currency.
-
-        '
-    TieredFeeProperties:
-      type: object
-      required:
-      - tiering
-      - numberOfTiers
-      - feeRate
-      - billingAmount
-      properties:
-        tiering:
-          $ref: '#/components/schemas/TieredEnum'
-        numberOfTiers:
-          $ref: '#/components/schemas/numberOfTiers'
-        feeRate:
-          allOf:
-          - $ref: '#/components/schemas/BaseFeeRate'
-          - $ref: '#/components/schemas/TieredFeeRate'
-        billingAmount:
-          $ref: '#/components/schemas/TieredFeeBillingAmount'
-    BaseBillingAmountTier:
-      title: Base Billing Amount Tier
-      type: object
-      required:
-      - impact
-      - value
-      properties:
-        impact:
-          $ref: '#/components/schemas/impact'
-        value:
-          $ref: '#/components/schemas/value'
-    TieredFeeRateTier:
-      title: Tiered Fee Rate Tier
-      allOf:
-      - $ref: '#/components/schemas/BaseFeeRateTier'
-      - $ref: '#/components/schemas/TieredFeeRateTierProperties'
-    components-schemas-terminalEntryMode:
-      description: 'Required when `cardEntry` is `terminal`. This field indicates the method used for PAN entry on the terminal to initiate the transaction.
-
-        '
-      type: string
-      enum:
-      - contactless
-      - manual-entry
-      - chip
-      - magstripe
-      - magstripe-fallback
-    errorInstance:
-      type: string
-      description: 'A reference that identifies the specific occurrence of the error. The instance is unique for every error.
-
-        '
-    payoutType:
-      description: '- `online-gambling` - payouts of online casino winnings
-
-        - `general-funds-disbursement` - generic funds disbursement transaction used to push funds from a business to an individual cardholder for various purposes. **Currently not supported for Mastercard.**
-
-        '
-      type: string
-      enum:
-      - general-funds-disbursement
-      - online-gambling
-    BancontactFeeDesignator:
-      type: object
-      properties:
-        description:
-          type: string
-        feeCode:
-          type: string
-    intent:
-      description: 'The intention of the cardholder.
-
-        '
-      type: string
-      enum:
-      - purchase
-      - reservation
-      - account-status
-      - payout
-      - payout-status
-      - funding
-      - advice
-      - refund
-    components-schemas-order:
-      description: 'The method used to place the order.
-
-        '
-      type: string
-      enum:
-      - checkout
-      - unspecified
-      - mail
-      - phone
-      - one-click
-      - recurring
-      - ucof
-      - installment
-      - counter
-    BaseFeeRate:
-      title: Base Fee Rate
-      type: object
-      required:
-      - type
-      properties:
-        type:
-          $ref: '#/components/schemas/feeRateType'
-        currency:
-          $ref: '#/components/schemas/openapi_components-schemas-currencyCode-5'
-    openapi_components-schemas-currencyCode-5:
-      type: string
-      enum:
-      - EUR
-      - USD
-      - AFN
-      - ALL
-      - DZD
-      - AOA
-      - XCD
-      - ARS
-      - AMD
-      - AWG
-      - AUD
-      - AZN
-      - BSD
-      - BHD
-      - BDT
-      - BBD
-      - BYN
-      - BZD
-      - XOF
-      - BMD
-      - INR
-      - BTN
-      - BOB
-      - BAM
-      - BWP
-      - NOK
-      - BRL
-      - BND
-      - BGN
-      - BIF
-      - CVE
-      - KHR
-      - XAF
-      - CAD
-      - KYD
-      - CLP
-      - CNY
-      - COP
-      - KMF
-      - CDF
-      - NZD
-      - CRC
-      - HRK
-      - CUP
-      - CUC
-      - ANG
-      - CZK
-      - DKK
-      - DJF
-      - DOP
-      - EGP
-      - SVC
-      - ERN
-      - ETB
-      - FKP
-      - FJD
-      - XPF
-      - GMD
-      - GEL
-      - GHS
-      - GIP
-      - GTQ
-      - GBP
-      - GNF
-      - GYD
-      - HTG
-      - HNL
-      - HKD
-      - HUF
-      - ISK
-      - IDR
-      - IRR
-      - IQD
-      - ILS
-      - JMD
-      - JPY
-      - JOD
-      - KZT
-      - KES
-      - KPW
-      - KRW
-      - KWD
-      - KGS
-      - LAK
-      - LBP
-      - LSL
-      - ZAR
-      - LRD
-      - LYD
-      - CHF
-      - MOP
-      - MKD
-      - MGA
-      - MWK
-      - MYR
-      - MVR
-      - MRU
-      - MUR
-      - MXN
-      - MDL
-      - MNT
-      - MAD
-      - MZN
-      - MMK
-      - NAD
-      - NPR
-      - NIO
-      - NGN
-      - OMR
-      - PKR
-      - PAB
-      - PGK
-      - PYG
-      - PEN
-      - PHP
-      - PLN
-      - QAR
-      - RON
-      - RUB
-      - RWF
-      - SHP
-      - WST
-      - STN
-      - SAR
-      - RSD
-      - SCR
-      - SLL
-      - SGD
-      - SBD
-      - SOS
-      - SSP
-      - LKR
-      - SDG
-      - SRD
-      - SZL
-      - SEK
-      - SYP
-      - TWD
-      - TJS
-      - TZS
-      - THB
-      - TOP
-      - TTD
-      - TND
-      - TRY
-      - TMT
-      - UGX
-      - UAH
-      - AED
-      - UYU
-      - UYW
-      - UZS
-      - VUV
-      - VES
-      - VND
-      - YER
-      - ZMW
-      - ZWL
+      pattern: ^[A-Z]{3}$
       description: 'The three-letter ISO code of the currency.
 
 
@@ -1226,410 +1057,10 @@ components:
         description: Find more info here
         url: https://www.iso.org/iso-4217-currency-codes.html
       example: EUR
-    terminal:
-      type: object
-      description: Details about the terminal.
-      oneOf:
-      - $ref: '#/components/schemas/pos'
-      - $ref: '#/components/schemas/mPos'
-      - $ref: '#/components/schemas/softPos'
-    CardNetworkMismatchErrorDetails:
-      type: object
-      required:
-      - type
-      - title
-      - status
-      - detail
-      - instance
-      properties:
-        type:
-          allOf:
-          - $ref: '#/components/schemas/schemas-errorType'
-          - enum:
-            - /silverflow/problems/schemeFees/card-network-mismatch
-        title:
-          allOf:
-          - $ref: '#/components/schemas/errorTitle'
-          - enum:
-            - Card network mismatch
-        status:
-          allOf:
-          - $ref: '#/components/schemas/errorStatus'
-          - enum:
-            - 400
-        detail:
-          $ref: '#/components/schemas/errorDetail'
-        instance:
-          $ref: '#/components/schemas/errorInstance'
-    TieredFeeRate:
-      title: Tiered Fee Rate
-      description: 'A _tiered_ fee rate defines multiple fee rates or _tiers_. Tier applicability is determined by the `upToIncluding`
-
-        and `above` values. For a fee with `tiering` set to `count`, these properties hold the thresholds for the
-
-        total number of fees in the defined period. Conversely, for a fee with `tiering` set to `volume` these
-
-        properties define the threshold for the total source amount (denominated in the `feeRate` currency). The
-
-        aggregation period is defined by the `billingFrequency` field.
-
-        '
-      type: object
-      required:
-      - tiers
-      properties:
-        tiers:
-          type: array
-          items:
-            $ref: '#/components/schemas/TieredFeeRateTier'
-          minItems: 2
-          maxItems: 6
-    errorDetail:
-      type: string
-      description: 'A human readable explanation specific to this occurrence of the problem.
-
-        '
-    VisaFeeDesignator:
-      type: object
-      required:
-      - feeDescriptor
-      properties:
-        feeDescriptor:
-          type: string
-        feeProgramIndicator:
-          type: string
-    softPos:
+    NonTieredFeeRateTier:
+      title: Non-Tiered Fee Rate Tier
       allOf:
-      - type: object
-        required:
-        - type
-        properties:
-          type:
-            type: string
-            enum:
-            - softpos
-      - $ref: '#/components/schemas/baseTerminal'
-      - type: object
-        required:
-        - attended
-        - capabilities
-        properties:
-          attended:
-            type: boolean
-            enum:
-            - true
-          capabilities:
-            type: array
-            description: 'The capabilities of the terminal. This can be one or multiple, and if more than one is specified it means that it is capable of all of those things.
-
-              '
-            items:
-              $ref: '#/components/schemas/softPosTerminalCapability'
-            example:
-            - onlinePin
-            - contactlessChip
-            - noCvm
-            - oneTap
-    TieredBillingAmountTierProperties:
-      type: object
-      required:
-      - tierNumber
-      properties:
-        tierNumber:
-          $ref: '#/components/schemas/tierNumber'
-        upToIncluding:
-          $ref: '#/components/schemas/upToIncluding'
-        above:
-          $ref: '#/components/schemas/above'
-    operation:
-      type: string
-      enum:
-      - divide
-      - multiply
-    errorTitle:
-      type: string
-      description: 'A short, human-readable summary of the problem type. It does not change from occurrence to occurrence of the error.
-
-        '
-    openapi_components-schemas-cardEntry-2:
-      description: 'The method used to capture the card details.
-
-        '
-      type: string
-      enum:
-      - e-commerce
-      - manual
-      - card-on-file
-      - token
-      - token-on-file
-      - terminal
-      example: e-commerce
-    SchemeFeeRequest:
-      type: object
-      additionalProperties: false
-      required:
-      - cardNumber
-      - amount
-      - merchantAcceptorKey
-      - chargeType
-      - threeDsAuthentication
-      description: The request body format for a scheme fee estimation
-      properties:
-        cardNumber:
-          $ref: '#/components/schemas/openapi_components-schemas-pan-2'
-        amount:
-          $ref: '#/components/schemas/AmountRequest'
-        merchantAcceptorKey:
-          $ref: '#/components/schemas/AcceptorKey'
-        chargeType:
-          $ref: '#/components/schemas/openapi_components-schemas-ChargeType'
-        threeDsAuthentication:
-          $ref: '#/components/schemas/schemas-ThreeDsAuthentication'
-    softPosTerminalCapability:
-      type: string
-      enum:
-      - contactlessChip
-      - onlinePin
-      - signature
-      - noCvm
-      - oneTap
-    openapi_components-schemas-cardEntry:
-      description: 'The method used to capture the card details.
-
-        '
-      type: string
-      enum:
-      - e-commerce
-      - manual
-      - card-on-file
-      - token
-      - token-on-file
-      - terminal
-    rate:
-      type: object
-      properties:
-        date:
-          description: The date of currency rate
-          type: string
-          format: date
-        source:
-          $ref: '#/components/schemas/openapi_components-schemas-currencyCode-4'
-        target:
-          $ref: '#/components/schemas/openapi_components-schemas-currencyCode-4'
-        rate:
-          description: Rate used to convert from source to target
-          type: integer
-          format: int32
-        exponent:
-          description: Indicates precision of the rate
-          type: integer
-          format: int32
-        operation:
-          type: string
-          enum:
-          - multiply
-          - divide
-        type:
-          type: string
-          enum:
-          - buy
-          - mid
-          - sell
-    components-schemas-sequence:
-      description: 'Required for recurring charges. This field indicates whether a charge is part of a recurring sequence. The initial charge of a recurring sequence should be flagged as `initial`,
-
-        all subsequent transactions should be flagged as `subsequent` and must be sent to the `/charges/{initialChargeKey}/mit` endpoint.
-
-        '
-      type: string
-      enum:
-      - initial
-      - subsequent
-    PublicFee:
-      type: object
-      required:
-      - tiering
-      oneOf:
-      - $ref: '#/components/schemas/TieredFee'
-      - $ref: '#/components/schemas/NonTieredFee'
-    convertedSourceAmount:
-      title: Amount
-      description: 'The _source_ amount denominated in the `feeRate` currency. This field is only present when currency
-
-        conversion has been applied. Currency conversion is only applied if the `feeRate` currency is
-
-        different from the `sourceAmount` currency.
-
-        '
-      type: object
-      required:
-      - impact
-      - currency
-      - value
-      properties:
-        impact:
-          $ref: '#/components/schemas/sourceAmountImpact'
-        currency:
-          $ref: '#/components/schemas/openapi_components-schemas-currencyCode-5'
-        value:
-          $ref: '#/components/schemas/sourceAmountValue'
-    numberOfTiers:
-      type: integer
-      description: 'The number of tiers defined for this fee.
-
-        '
-      minimum: 2
-      maximum: 6
-    pos:
-      allOf:
-      - type: object
-        required:
-        - type
-        properties:
-          type:
-            type: string
-            enum:
-            - pos
-      - $ref: '#/components/schemas/baseTerminal'
-      - type: object
-        required:
-        - capabilities
-        properties:
-          capabilities:
-            type: array
-            description: 'The capabilities of the terminal. This can be one or multiple, and if more than one is specified it means that it is capable of all of those things.
-
-              '
-            items:
-              $ref: '#/components/schemas/terminalCapability'
-            example:
-            - contactChip
-            - contactlessChip
-            - contactMagStripe
-            - oneTap
-    impact:
-      type: string
-      enum:
-      - debit
-      - credit
-    TieredFee:
-      title: Tiered Fee
-      description: A tiered scheme fee estimate. A _tiered_ fee defines multiple fee rates. When `tiering` is set to `count` the applicable tier is selected based on the total number of fees in a given period. When `tiering` is set to `volume` the applicable tier is selected based on the total source amount (denominated in the `feeRate` currency) of the fees in a given period. Tier applicability is determined by the `upToIncluding` and `above` values. For a fee with `tiering` set to `count`, these properties hold the thresholds for the total number of fees in the defined period. Conversely, for a fee with `tiering` set to `volume` these properties define the threshold for the total source amount (denominated in the `feeRate` currency). The aggregation period is defined by the `billingFrequency` field.
-      allOf:
-      - $ref: '#/components/schemas/BaseFee'
-      - $ref: '#/components/schemas/TieredFeeProperties'
-    sourceAmount:
-      title: Amount
-      description: The _source_ amount of the transaction event, in either the original (transaction) currency or the settlement currency. This amount is the amount to which the fee applies.
-      type: object
-      required:
-      - impact
-      - currency
-      - value
-      properties:
-        impact:
-          $ref: '#/components/schemas/sourceAmountImpact'
-        currency:
-          $ref: '#/components/schemas/openapi_components-schemas-currencyCode-5'
-        value:
-          $ref: '#/components/schemas/sourceAmountValue'
-    tierNumber:
-      type: integer
-      description: The _logical_ (1-based) tier number.
-      minimum: 1
-      maximum: 6
-    sourceAmountImpact:
-      type: string
-      enum:
-      - debit
-      - credit
-      description: "The impact of the source amount. This value has no relation to the the _direction_ of the funds\nof the transaction. By default every amount will have the impact set to `debit`. Only _corrections_ \nwill have a value set to `credit`. Note that corrections are not yet supported.\n"
-    InterchangeFeeEstimateResponse:
-      type: object
-      description: Estimated value under conditions of dates
-      required:
-      - segments
-      - feeDate
-      - amount
-      - rates
-      - designator
-      properties:
-        segments:
-          $ref: '#/components/schemas/FeeSegments'
-        feeDate:
-          type: string
-          format: date
-          description: The date of network references files used to calculate the fee
-        amount:
-          description: The converted total interchange fee amount
-          $ref: '#/components/schemas/FloatAmount'
-        rates:
-          type: array
-          items:
-            $ref: '#/components/schemas/rate'
-            minItems: 0
-        designator:
-          oneOf:
-          - $ref: '#/components/schemas/VisaFeeDesignator'
-          - $ref: '#/components/schemas/MastercardFeeDesignator'
-          - $ref: '#/components/schemas/BancontactFeeDesignator'
-    IntegerAmount:
-      type: object
-      required:
-      - value
-      - currency
-      additionalProperties: false
-      description: 'An amount encoded as an object with a `value` in minor units and a `currency` code.
-
-        '
-      properties:
-        value:
-          $ref: '#/components/schemas/schemas-amountValue'
-        currency:
-          $ref: '#/components/schemas/currencyCodeEnum'
-    components-schemas-cardNetwork:
-      type: string
-      description: The card network
-      enum:
-      - mastercard
-      - visa
-      - discover
-      - bancontact
-      example: mastercard
-    amountValueInteger:
-      type: number
-      format: int64
-      minimum: 0
-      description: 'The amount in minor units. For example `$12.34` should be encoded as `1234`. Note that not all
-
-        currencies have 2 minor units. Some have three or zero.
-
-        '
-    NonTieredBillingAmountTier:
-      title: Non-Tiered Billing Amount Tier
-      allOf:
-      - $ref: '#/components/schemas/BaseBillingAmountTier'
-    tierId:
-      type: string
-      description: 'The (optional) Mastercard _"Tier ID"_ for this fee, as it appears on the Mastercard invoice.
-
-        Note that the presence of this field does not indicate if this fee has multiple _tiers_.
-
-        See the `tiering` field.
-
-        '
-      pattern: ^[A-Z0-9-]+$
-      default: '-'
-      minLength: 1
-      maxLength: 120
-    floatAmountValue:
-      type: number
-      format: float
-      description: 'The amount in minor units with decimal precision. For example `$0.345` should be encoded as `34.5`. Note that not all
-
-        currencies have 2 minor units. Some have three or zero.
-
-        '
+      - $ref: '#/components/schemas/BaseFeeRateTier'
     currencyCodeEnum:
       type: string
       enum:
@@ -2352,225 +1783,69 @@ components:
         description: Find more info here
         url: https://www.iso.org/iso-4217-currency-codes.html
       example: EUR
-    AcceptorKey:
-      description: Uniquely identifies a Merchant Acceptor.
+    fundingType:
       type: string
-      pattern: ^mac-[a-zA-Z0-9]+$
-      example: mac-1JRadf2ffdfrdPMf2XrS2
-    AmountRequest:
-      type: object
-      required:
-      - value
-      - currency
-      additionalProperties: false
-      description: 'An amount encoded as an object with a `value` in minor units and a `currency` code.
-
-        '
-      properties:
-        value:
-          $ref: '#/components/schemas/amountValueInteger'
-        currency:
-          $ref: '#/components/schemas/openapi_components-schemas-currencyCode-5'
-    NonTieredFeeBillingAmount:
-      allOf:
-      - $ref: '#/components/schemas/BaseBillingAmount'
-      - $ref: '#/components/schemas/NonTieredBillingAmount'
-    mPos:
-      allOf:
-      - type: object
-        required:
-        - type
-        properties:
-          type:
-            type: string
-            enum:
-            - mpos
-      - $ref: '#/components/schemas/baseTerminal'
-      - type: object
-        required:
-        - attended
-        - capabilities
-        properties:
-          attended:
-            type: boolean
-            enum:
-            - true
-          capabilities:
-            type: array
-            description: 'The capabilities of the terminal. This can be one or multiple, and if more than one is specified it means that it is capable of all of those things.
-
-              '
-            items:
-              $ref: '#/components/schemas/terminalCapability'
-            example:
-            - contactChip
-            - contactlessChip
-            - contactMagStripe
-            - oneTap
-    BaseBillingAmount:
-      type: object
-      description: 'The actual billing amount for this fee, denominated in the `feeRate` currency (if defined) or
-
-        the `sourceAmount` currency.
-
-        '
-      required:
-      - currency
-      properties:
-        currency:
-          $ref: '#/components/schemas/openapi_components-schemas-currencyCode-5'
-    MastercardFeeDesignator:
-      type: object
-      required:
-      - ird
-      - businessServiceArrangement
-      properties:
-        ird:
-          type: string
-        businessServiceArrangement:
-          $ref: '#/components/schemas/BusinessServiceArrangement'
-    currencyRateValue:
-      type: string
-      pattern: ^\d+(\.\d+)?$
-      minLength: 1
-      description: 'The currency rate (decimal) value, encoded as string. If this value holds a fraction,
-
-        it will use a `.` "dot" as _decimal separator_. Note that it may hold up to 11 decimals.
-
-        Use a _platform specific number parser_ to convert this string into a numeric value
-
-        without loosing precision.
-
-        '
-    above:
-      type: integer
-      minimum: 0
-      description: 'This field indicates the value above which this _tier_ applies.
-
-        If `tiering` is set to `volume`, this value indicates the total `sourceAmount`
-
-        (in `feeRate` currency). If `tiering` is set to `count`, this value indicates the
-
-        total number of fees.
-
-        '
-    InterchangeFeeEstimateRequest:
-      type: object
-      description: Elements required to construct an authorization request
-      additionalProperties: false
-      required:
-      - cardNumber
-      - amount
-      - merchantAcceptorKey
-      - chargeType
-      - threeDsAuthentication
-      - isRefund
-      properties:
-        cardNumber:
-          $ref: '#/components/schemas/openapi_components-schemas-pan-2'
-        amount:
-          description: The transaction amount
-          $ref: '#/components/schemas/IntegerAmount'
-        merchantAcceptorKey:
-          $ref: '#/components/schemas/openapi_components-schemas-acceptorKeyRef'
-        chargeType:
-          $ref: '#/components/schemas/components-schemas-ChargeType'
-        threeDsAuthentication:
-          description: 3DS settings
-          type: string
-          enum:
-          - none
-          - attempt
-          - success
-        isRefund:
-          description: Whether the transaction is a refund.
-          type: boolean
-        additionalNetworkProperties:
-          type: object
-          oneOf:
-          - $ref: '#/components/schemas/BancontactAdditionalNetworkProperties'
-    openapi_components-schemas-ChargeType:
-      description: 'Describes the kind of charge the merchant wants to submit.
-
-        '
-      type: object
-      required:
-      - intent
-      - cardEntry
-      additionalProperties: true
-      properties:
-        intent:
-          $ref: '#/components/schemas/intent'
-        cardEntry:
-          $ref: '#/components/schemas/openapi_components-schemas-cardEntry-2'
-        payoutType:
-          $ref: '#/components/schemas/payoutType'
-        fundingType:
-          $ref: '#/components/schemas/fundingType'
-    value:
-      type: string
-      description: 'The value of the fee rate, encoded as string. If this value holds a fraction,
-
-        it will use a `.` "dot" as _decimal separator_. Note that it may hold up to 11 decimals.
-
-        Use a _platform specific number parser_ to convert this string into a numeric value
-
-        without loosing precision. If the fee rate `type` is set to `fixed` then this value
-
-        indicates the _fixed amount_ of the fee, denominated in the specified `currency`.
-
-        When the fee rate `type` is set to `basisPoints`, then this value holds the (decimal)
-
-        number of basis points of the fee, applied to the `sourceAmount` (or `convertedSourceAmount`
-
-        in case the `feeRate` currency does not match the `sourceAmount` currency).
-
-        '
-      pattern: ^\d+(\.\d+)?$
-      minLength: 1
-    NonTieredEnum:
-      type: string
-      description: 'The type of tiering. The value `none` indicates that this fee is not tiered.
-
-        '
       enum:
-      - none
-    components-schemas-ChargeType:
-      description: 'Describes the kind of charge the merchant wants to submit.
+      - account-to-account
+      - wallet-transfer
+    floatAmountValue:
+      type: number
+      format: float
+      description: 'The amount in minor units with decimal precision. For example `$0.345` should be encoded as `34.5`. Note that not all
+
+        currencies have 2 minor units. Some have three or zero.
+
+        '
+    NonTieredBillingAmountTier:
+      title: Non-Tiered Billing Amount Tier
+      allOf:
+      - $ref: '#/components/schemas/BaseBillingAmountTier'
+    baseTerminal:
+      type: object
+      required:
+      - attended
+      properties:
+        attended:
+          type: boolean
+          description: Whether the terminal is attended or not.
+    TieredFeeRate:
+      title: Tiered Fee Rate
+      description: 'A _tiered_ fee rate defines multiple fee rates or _tiers_. Tier applicability is determined by the `upToIncluding`
+
+        and `above` values. For a fee with `tiering` set to `count`, these properties hold the thresholds for the
+
+        total number of fees in the defined period. Conversely, for a fee with `tiering` set to `volume` these
+
+        properties define the threshold for the total source amount (denominated in the `feeRate` currency). The
+
+        aggregation period is defined by the `billingFrequency` field.
 
         '
       type: object
-      additionalProperties: false
       required:
-      - intent
-      - cardEntry
-      - order
+      - tiers
       properties:
-        intent:
-          $ref: '#/components/schemas/intent'
-        cardEntry:
-          $ref: '#/components/schemas/openapi_components-schemas-cardEntry'
-        order:
-          $ref: '#/components/schemas/components-schemas-order'
-        sequence:
-          $ref: '#/components/schemas/components-schemas-sequence'
-        terminalEntryMode:
-          $ref: '#/components/schemas/components-schemas-terminalEntryMode'
-        terminal:
-          $ref: '#/components/schemas/terminal'
-        pinUsed:
-          type: boolean
-    BaseFeeRateTier:
-      title: Base Fee Rate Tier
+        tiers:
+          type: array
+          items:
+            $ref: '#/components/schemas/TieredFeeRateTier'
+          minItems: 2
+          maxItems: 6
+    BaseFeeRate:
+      title: Base Fee Rate
       type: object
       required:
-      - impact
-      - value
+      - type
       properties:
-        impact:
-          $ref: '#/components/schemas/impact'
-        value:
-          $ref: '#/components/schemas/value'
+        type:
+          $ref: '#/components/schemas/feeRateType'
+        currency:
+          $ref: '#/components/schemas/openapi_components-schemas-currencyCode-5'
+    TieredFeeRateTier:
+      title: Tiered Fee Rate Tier
+      allOf:
+      - $ref: '#/components/schemas/BaseFeeRateTier'
+      - $ref: '#/components/schemas/TieredFeeRateTierProperties'
     BaseFee:
       type: object
       required:
@@ -2591,33 +1866,167 @@ components:
           $ref: '#/components/schemas/convertedSourceAmount'
         tierId:
           $ref: '#/components/schemas/tierId'
-    TieredFeeBillingAmount:
-      allOf:
-      - $ref: '#/components/schemas/BaseBillingAmount'
-      - $ref: '#/components/schemas/TieredBillingAmount'
-    schemas-amountValue:
-      type: integer
-      format: int64
-      minimum: 0
-      maximum: 900000000
-      description: 'The amount in minor units. For example `$12.34` should be encoded as `1234`. Note that not all
-
-        currencies have 2 minor units. Some have three or zero.
-
-        '
-    NonTieredFeeRateTier:
-      title: Non-Tiered Fee Rate Tier
-      allOf:
-      - $ref: '#/components/schemas/BaseFeeRateTier'
-    NonTieredFee:
-      title: Non-Tiered Fee
-      description: A non-tiered scheme fee estimate.
-      allOf:
-      - $ref: '#/components/schemas/BaseFee'
-      - $ref: '#/components/schemas/NonTieredFeeProperties'
-    openapi_components-schemas-currencyCode-4:
+    openapi_components-schemas-currencyCode-5:
       type: string
-      pattern: ^[A-Z]{3}$
+      enum:
+      - EUR
+      - USD
+      - AFN
+      - ALL
+      - DZD
+      - AOA
+      - XCD
+      - ARS
+      - AMD
+      - AWG
+      - AUD
+      - AZN
+      - BSD
+      - BHD
+      - BDT
+      - BBD
+      - BYN
+      - BZD
+      - XOF
+      - BMD
+      - INR
+      - BTN
+      - BOB
+      - BAM
+      - BWP
+      - NOK
+      - BRL
+      - BND
+      - BGN
+      - BIF
+      - CVE
+      - KHR
+      - XAF
+      - CAD
+      - KYD
+      - CLP
+      - CNY
+      - COP
+      - KMF
+      - CDF
+      - NZD
+      - CRC
+      - HRK
+      - CUP
+      - CUC
+      - ANG
+      - CZK
+      - DKK
+      - DJF
+      - DOP
+      - EGP
+      - SVC
+      - ERN
+      - ETB
+      - FKP
+      - FJD
+      - XPF
+      - GMD
+      - GEL
+      - GHS
+      - GIP
+      - GTQ
+      - GBP
+      - GNF
+      - GYD
+      - HTG
+      - HNL
+      - HKD
+      - HUF
+      - ISK
+      - IDR
+      - IRR
+      - IQD
+      - ILS
+      - JMD
+      - JPY
+      - JOD
+      - KZT
+      - KES
+      - KPW
+      - KRW
+      - KWD
+      - KGS
+      - LAK
+      - LBP
+      - LSL
+      - ZAR
+      - LRD
+      - LYD
+      - CHF
+      - MOP
+      - MKD
+      - MGA
+      - MWK
+      - MYR
+      - MVR
+      - MRU
+      - MUR
+      - MXN
+      - MDL
+      - MNT
+      - MAD
+      - MZN
+      - MMK
+      - NAD
+      - NPR
+      - NIO
+      - NGN
+      - OMR
+      - PKR
+      - PAB
+      - PGK
+      - PYG
+      - PEN
+      - PHP
+      - PLN
+      - QAR
+      - RON
+      - RUB
+      - RWF
+      - SHP
+      - WST
+      - STN
+      - SAR
+      - RSD
+      - SCR
+      - SLL
+      - SGD
+      - SBD
+      - SOS
+      - SSP
+      - LKR
+      - SDG
+      - SRD
+      - SZL
+      - SEK
+      - SYP
+      - TWD
+      - TJS
+      - TZS
+      - THB
+      - TOP
+      - TTD
+      - TND
+      - TRY
+      - TMT
+      - UGX
+      - UAH
+      - AED
+      - UYU
+      - UYW
+      - UZS
+      - VUV
+      - VES
+      - VND
+      - YER
+      - ZMW
+      - ZWL
       description: 'The three-letter ISO code of the currency.
 
 
@@ -3176,16 +2585,511 @@ components:
         description: Find more info here
         url: https://www.iso.org/iso-4217-currency-codes.html
       example: EUR
-    feeId:
+    amountValueInteger:
+      type: number
+      format: int64
+      minimum: 0
+      description: 'The amount in minor units. For example `$12.34` should be encoded as `1234`. Note that not all
+
+        currencies have 2 minor units. Some have three or zero.
+
+        '
+    feeDescription:
       type: string
-      pattern: ^[A-Z0-9]+$
+      pattern: ^[a-zA-Z0-9-\/ \.—&()]+$
       minLength: 1
       maxLength: 120
-      description: 'The Mastercard _"Event ID"_ or the Visa _"Billing line"_, as they appear on the corresponding
+      description: 'The Mastercard _"Event description"_ or the Visa _"Description"_, as they appear on the corresponding
 
         invoices.
 
         '
+    value:
+      type: string
+      description: 'The value of the fee rate, encoded as string. If this value holds a fraction,
+
+        it will use a `.` "dot" as _decimal separator_. Note that it may hold up to 11 decimals.
+
+        Use a _platform specific number parser_ to convert this string into a numeric value
+
+        without loosing precision. If the fee rate `type` is set to `fixed` then this value
+
+        indicates the _fixed amount_ of the fee, denominated in the specified `currency`.
+
+        When the fee rate `type` is set to `basisPoints`, then this value holds the (decimal)
+
+        number of basis points of the fee, applied to the `sourceAmount` (or `convertedSourceAmount`
+
+        in case the `feeRate` currency does not match the `sourceAmount` currency).
+
+        '
+      pattern: ^\d+(\.\d+)?$
+      minLength: 1
+    VisaFeeDesignator:
+      type: object
+      required:
+      - feeDescriptor
+      properties:
+        feeDescriptor:
+          type: string
+        feeProgramIndicator:
+          type: string
+    TieredFeeBillingAmount:
+      allOf:
+      - $ref: '#/components/schemas/BaseBillingAmount'
+      - $ref: '#/components/schemas/TieredBillingAmount'
+    BancontactAdditionalNetworkProperties:
+      type: object
+      additionalProperties: false
+      properties:
+        transactionRoutingMeans:
+          description: 'Required for Bancontact fee estimate. Fee is based on the flow used.
+
+            '
+          type: string
+          enum:
+          - qr
+          - url
+          - wip
+          - man
+    tierId:
+      type: string
+      description: 'The (optional) Mastercard _"Tier ID"_ for this fee, as it appears on the Mastercard invoice.
+
+        Note that the presence of this field does not indicate if this fee has multiple _tiers_.
+
+        See the `tiering` field.
+
+        '
+      pattern: ^[A-Z0-9-]+$
+      default: '-'
+      minLength: 1
+      maxLength: 120
+    currencyRateValue:
+      type: string
+      pattern: ^\d+(\.\d+)?$
+      minLength: 1
+      description: 'The currency rate (decimal) value, encoded as string. If this value holds a fraction,
+
+        it will use a `.` "dot" as _decimal separator_. Note that it may hold up to 11 decimals.
+
+        Use a _platform specific number parser_ to convert this string into a numeric value
+
+        without loosing precision.
+
+        '
+    components-schemas-order:
+      description: 'The method used to place the order.
+
+        '
+      type: string
+      enum:
+      - checkout
+      - unspecified
+      - mail
+      - phone
+      - one-click
+      - recurring
+      - ucof
+      - installment
+      - counter
+    conversionRateDate:
+      type: string
+      format: date
+      description: "The date of the conversion rate. Conversion rates are published (daily) by the _card schemes_. \nThe method of publication introduces certain delays. Hence, this date may lie before the `feeDate`.\n"
+    above:
+      type: integer
+      minimum: 0
+      description: 'This field indicates the value above which this _tier_ applies.
+
+        If `tiering` is set to `volume`, this value indicates the total `sourceAmount`
+
+        (in `feeRate` currency). If `tiering` is set to `count`, this value indicates the
+
+        total number of fees.
+
+        '
+    schemas-ThreeDsAuthentication:
+      description: 3DS settings
+      type: string
+      enum:
+      - none
+      - attempt
+      - success
+    components-schemas-cardNetwork:
+      type: string
+      description: The card network
+      enum:
+      - mastercard
+      - visa
+      - discover
+      - bancontact
+      example: mastercard
+    openapi_components-schemas-ChargeType:
+      description: 'Describes the kind of charge the merchant wants to submit.
+
+        '
+      type: object
+      required:
+      - intent
+      - cardEntry
+      additionalProperties: true
+      properties:
+        intent:
+          $ref: '#/components/schemas/intent'
+        cardEntry:
+          $ref: '#/components/schemas/openapi_components-schemas-cardEntry-2'
+        payoutType:
+          $ref: '#/components/schemas/payoutType'
+        fundingType:
+          $ref: '#/components/schemas/fundingType'
+    errorStatus:
+      type: integer
+      format: int32
+      description: 'The HTTP status code generated by the origin server for this occurrence
+
+        of the problem.
+
+        '
+    AmountRequest:
+      type: object
+      required:
+      - value
+      - currency
+      additionalProperties: false
+      description: 'An amount encoded as an object with a `value` in minor units and a `currency` code.
+
+        '
+      properties:
+        value:
+          $ref: '#/components/schemas/amountValueInteger'
+        currency:
+          $ref: '#/components/schemas/openapi_components-schemas-currencyCode-5'
+    softPos:
+      allOf:
+      - type: object
+        required:
+        - type
+        properties:
+          type:
+            type: string
+            enum:
+            - softpos
+      - $ref: '#/components/schemas/baseTerminal'
+      - type: object
+        required:
+        - attended
+        - capabilities
+        properties:
+          attended:
+            type: boolean
+            enum:
+            - true
+          capabilities:
+            type: array
+            description: 'The capabilities of the terminal. This can be one or multiple, and if more than one is specified it means that it is capable of all of those things.
+
+              '
+            items:
+              $ref: '#/components/schemas/softPosTerminalCapability'
+            example:
+            - onlinePin
+            - contactlessChip
+            - noCvm
+            - oneTap
+    BaseBillingAmount:
+      type: object
+      description: 'The actual billing amount for this fee, denominated in the `feeRate` currency (if defined) or
+
+        the `sourceAmount` currency.
+
+        '
+      required:
+      - currency
+      properties:
+        currency:
+          $ref: '#/components/schemas/openapi_components-schemas-currencyCode-5'
+    numberOfTiers:
+      type: integer
+      description: 'The number of tiers defined for this fee.
+
+        '
+      minimum: 2
+      maximum: 6
+    NonTieredEnum:
+      type: string
+      description: 'The type of tiering. The value `none` indicates that this fee is not tiered.
+
+        '
+      enum:
+      - none
+    billingFrequency:
+      type: string
+      enum:
+      - daily
+      - weekly
+      - monthly
+      - quarterly
+      description: 'The _frequency_ or _interval_ at which this fee is witheld from settlement (or
+
+        invoiced separately). This frequency also defines the _aggregation period_ for _tiered fees_.
+
+        '
+    InterchangeFeeEstimateResponse:
+      type: object
+      description: Estimated value under conditions of dates
+      required:
+      - segments
+      - feeDate
+      - amount
+      - rates
+      - designator
+      properties:
+        segments:
+          $ref: '#/components/schemas/FeeSegments'
+        feeDate:
+          type: string
+          format: date
+          description: The date of network references files used to calculate the fee
+        amount:
+          description: The converted total interchange fee amount
+          $ref: '#/components/schemas/FloatAmount'
+        rates:
+          type: array
+          items:
+            $ref: '#/components/schemas/rate'
+            minItems: 0
+        designator:
+          oneOf:
+          - $ref: '#/components/schemas/VisaFeeDesignator'
+          - $ref: '#/components/schemas/MastercardFeeDesignator'
+          - $ref: '#/components/schemas/BancontactFeeDesignator'
+    components-schemas-ChargeType:
+      description: 'Describes the kind of charge the merchant wants to submit.
+
+        '
+      type: object
+      additionalProperties: false
+      required:
+      - intent
+      - cardEntry
+      - order
+      properties:
+        intent:
+          $ref: '#/components/schemas/intent'
+        cardEntry:
+          $ref: '#/components/schemas/openapi_components-schemas-cardEntry'
+        order:
+          $ref: '#/components/schemas/components-schemas-order'
+        sequence:
+          $ref: '#/components/schemas/components-schemas-sequence'
+        terminalEntryMode:
+          $ref: '#/components/schemas/components-schemas-terminalEntryMode'
+        terminal:
+          $ref: '#/components/schemas/terminal'
+        pinUsed:
+          type: boolean
+    rate:
+      type: object
+      properties:
+        date:
+          description: The date of currency rate
+          type: string
+          format: date
+        source:
+          $ref: '#/components/schemas/openapi_components-schemas-currencyCode-4'
+        target:
+          $ref: '#/components/schemas/openapi_components-schemas-currencyCode-4'
+        rate:
+          description: Rate used to convert from source to target
+          type: integer
+          format: int32
+        exponent:
+          description: Indicates precision of the rate
+          type: integer
+          format: int32
+        operation:
+          type: string
+          enum:
+          - multiply
+          - divide
+        type:
+          type: string
+          enum:
+          - buy
+          - mid
+          - sell
+    BancontactFeeDesignator:
+      type: object
+      properties:
+        description:
+          type: string
+        feeCode:
+          type: string
+    BaseSchemeFeeEstimate:
+      type: object
+      description: The scheme fee estimation.
+      required:
+      - cardNetwork
+      properties:
+        cardNetwork:
+          $ref: '#/components/schemas/components-schemas-cardNetwork'
+        conversionRates:
+          type: array
+          description: 'A list of conversion rates, used to convert the `sourceAmount` into the `convertedSourceAmount`.
+
+            This list is only present if currency conversion was applied. Currency conversion is only applied
+
+            if the `feeRate` currency is different from the `sourceAmount` currency. Note that for certain
+
+            currency conversions there is no single rate available. In such a case, multiple conversions are
+
+            applied to convert the source amount into the fee rate currency.
+
+            '
+          items:
+            $ref: '#/components/schemas/ConversionRate'
+          minItems: 1
+    sourceAmountImpact:
+      type: string
+      enum:
+      - debit
+      - credit
+      description: "The impact of the source amount. This value has no relation to the the _direction_ of the funds\nof the transaction. By default every amount will have the impact set to `debit`. Only _corrections_ \nwill have a value set to `credit`. Note that corrections are not yet supported.\n"
+    TieredFeeRateTierProperties:
+      type: object
+      required:
+      - tierNumber
+      properties:
+        tierNumber:
+          $ref: '#/components/schemas/tierNumber'
+        upToIncluding:
+          $ref: '#/components/schemas/upToIncluding'
+        above:
+          $ref: '#/components/schemas/above'
+    NonTieredBillingAmount:
+      type: object
+      required:
+      - amounts
+      properties:
+        amounts:
+          type: array
+          items:
+            $ref: '#/components/schemas/NonTieredBillingAmountTier'
+          minItems: 1
+          maxItems: 1
+    TieredFeeProperties:
+      type: object
+      required:
+      - tiering
+      - numberOfTiers
+      - feeRate
+      - billingAmount
+      properties:
+        tiering:
+          $ref: '#/components/schemas/TieredEnum'
+        numberOfTiers:
+          $ref: '#/components/schemas/numberOfTiers'
+        feeRate:
+          allOf:
+          - $ref: '#/components/schemas/BaseFeeRate'
+          - $ref: '#/components/schemas/TieredFeeRate'
+        billingAmount:
+          $ref: '#/components/schemas/TieredFeeBillingAmount'
+    NotFoundErrorDetails:
+      type: object
+      required:
+      - type
+      - title
+      - status
+      - detail
+      - instance
+      properties:
+        type:
+          allOf:
+          - $ref: '#/components/schemas/schemas-errorType'
+          - enum:
+            - /silverflow/problems/schemeFees/not-found
+        title:
+          allOf:
+          - $ref: '#/components/schemas/errorTitle'
+          - enum:
+            - Not found
+        status:
+          allOf:
+          - $ref: '#/components/schemas/errorStatus'
+          - enum:
+            - 404
+        detail:
+          $ref: '#/components/schemas/errorDetail'
+        instance:
+          $ref: '#/components/schemas/errorInstance'
+    AcceptorKey:
+      description: Uniquely identifies a Merchant Acceptor.
+      type: string
+      pattern: ^mac-[a-zA-Z0-9]+$
+      example: mac-1JRadf2ffdfrdPMf2XrS2
+    convertedSourceAmount:
+      title: Amount
+      description: 'The _source_ amount denominated in the `feeRate` currency. This field is only present when currency
+
+        conversion has been applied. Currency conversion is only applied if the `feeRate` currency is
+
+        different from the `sourceAmount` currency.
+
+        '
+      type: object
+      required:
+      - impact
+      - currency
+      - value
+      properties:
+        impact:
+          $ref: '#/components/schemas/sourceAmountImpact'
+        currency:
+          $ref: '#/components/schemas/openapi_components-schemas-currencyCode-5'
+        value:
+          $ref: '#/components/schemas/sourceAmountValue'
+    feeRateType:
+      type: string
+      enum:
+      - fixed
+      - basisPoints
+      description: 'The type of fee. The value `fixed` indicates that the `value` field holds a _fixed_ fee amount,
+
+        denominated in the specified `currency`. The value `basisPoints` indicates that the `value`
+
+        fields holds the (decimal) number of basis points of the fee, applied to the `sourceAmount`
+
+        or `convertedSourceAmount` in case the `currency` does not match the `sourceAmount` currency.
+
+        '
+    tierNumber:
+      type: integer
+      description: The _logical_ (1-based) tier number.
+      minimum: 1
+      maximum: 6
+    SchemeFeeRequest:
+      type: object
+      additionalProperties: false
+      required:
+      - cardNumber
+      - amount
+      - merchantAcceptorKey
+      - chargeType
+      - threeDsAuthentication
+      description: The request body format for a scheme fee estimation
+      properties:
+        cardNumber:
+          $ref: '#/components/schemas/openapi_components-schemas-pan-2'
+        amount:
+          $ref: '#/components/schemas/AmountRequest'
+        merchantAcceptorKey:
+          $ref: '#/components/schemas/AcceptorKey'
+        chargeType:
+          $ref: '#/components/schemas/openapi_components-schemas-ChargeType'
+        threeDsAuthentication:
+          $ref: '#/components/schemas/schemas-ThreeDsAuthentication'
     terminalCapability:
       type: string
       enum:
@@ -3200,61 +3104,90 @@ components:
       - keyEntry
       - noCvm
       - oneTap
-    PublicSchemeFeeEstimate:
-      description: The scheme fee estimation.
-      allOf:
-      - $ref: '#/components/schemas/BaseSchemeFeeEstimate'
-      - $ref: '#/components/schemas/PublicSchemeFeeEstimateFees'
-    ConversionRate:
-      title: Conversion Rate
-      type: object
-      required:
-      - date
-      - source
-      - target
-      - rate
-      - operation
-      additionalProperties: false
-      properties:
-        date:
-          $ref: '#/components/schemas/conversionRateDate'
-        source:
-          $ref: '#/components/schemas/openapi_components-schemas-currencyCode-5'
-        target:
-          $ref: '#/components/schemas/openapi_components-schemas-currencyCode-5'
-        rate:
-          $ref: '#/components/schemas/currencyRateValue'
-        operation:
-          $ref: '#/components/schemas/operation'
-    baseTerminal:
-      type: object
-      required:
-      - attended
-      properties:
-        attended:
-          type: boolean
-          description: Whether the terminal is attended or not.
-    TieredBillingAmountTier:
-      title: Tiered Billing Amount Tier
-      allOf:
-      - $ref: '#/components/schemas/BaseBillingAmountTier'
-      - $ref: '#/components/schemas/TieredBillingAmountTierProperties'
-    fundingType:
+    softPosTerminalCapability:
       type: string
       enum:
-      - account-to-account
-      - wallet-transfer
-    schemas-errorType:
+      - contactlessChip
+      - onlinePin
+      - signature
+      - noCvm
+      - oneTap
+    feeId:
       type: string
-      description: 'A relative URI reference, this property can be used to perform automated error handling.
+      pattern: ^[A-Z0-9]+$
+      minLength: 1
+      maxLength: 120
+      description: 'The Mastercard _"Event ID"_ or the Visa _"Billing line"_, as they appear on the corresponding
+
+        invoices.
 
         '
-      enum:
-      - /silverflow/problems/schemeFees/not-found
-      - /silverflow/problems/schemeFees/card-network-mismatch
-      - /silverflow/problems/schemeFees/card-network-not-supported
-      - /silverflow/problems/bad-request
-      - /silverflow/problems/internal-server-error
+    schemas-ProblemDetail:
+      type: object
+      description: 'The ''problem detail'' object relays detailed information about the error that occurred. It is defined
+
+        by [RFC 7807 - Problem Details for HTTP APIs](https://tools.ietf.org/html/rfc7807).
+
+
+        Note that additional properties may be used to relay error specific information. For instance,
+
+        A Bad Request error may hold information about the individual validation errors found in the request.
+
+        '
+      properties:
+        type:
+          type: string
+          description: 'An absolute URI that identifies the problem type.
+
+            '
+          default: about:blank
+          example: https://api.silverflow.co/problem/constraint-violation
+        title:
+          type: string
+          description: 'A short, summary of the problem type. Written in english and readable
+
+            for engineers (usually not suited for non technical stakeholders and
+
+            not localized);
+
+            '
+          example: Service Unavailable
+        status:
+          type: integer
+          format: int32
+          description: 'The HTTP status code generated by the origin server for this occurrence
+
+            of the problem.
+
+            '
+          minimum: 100
+          maximum: 599
+          example: 503
+        detail:
+          type: string
+          description: 'A human readable explanation specific to this occurrence of the
+
+            problem.
+
+            '
+          example: Connection to database timed out
+        instance:
+          type: string
+          description: 'An absolute URI that identifies the specific occurrence of the problem.
+
+            It may or may not yield further information if dereferenced.
+
+            '
+      additionalProperties: true
+      example:
+        type: https://api.silverflow.co/problem/bad-request
+        title: Bad Request
+        status: 400
+        detail: The request could not be processed as it contained an invalid request entity
+        instance: https://api.silverflow.co/v1/merchants/mct-1hPdFqhgstYTUhlphPDp
+        validationErrors:
+        - The value of property 'status' should be one of 'idle', 'active' or 'archived'
+        - The value of property 'tags.0.businessId' must not be longer than 255 characters
     TieredBillingAmount:
       title: Tiered Billing Amount
       type: object
@@ -3272,140 +3205,155 @@ components:
             $ref: '#/components/schemas/TieredBillingAmountTier'
           minItems: 2
           maxItems: 6
-    schemas-ThreeDsAuthentication:
-      description: 3DS settings
+    TieredBillingAmountTier:
+      title: Tiered Billing Amount Tier
+      allOf:
+      - $ref: '#/components/schemas/BaseBillingAmountTier'
+      - $ref: '#/components/schemas/TieredBillingAmountTierProperties'
+    openapi_components-schemas-pan-2:
       type: string
-      enum:
-      - none
-      - attempt
-      - success
-    BusinessServiceArrangement:
-      type: object
-      required:
-      - cardProgramIdentifier
-      - type
-      - idCode
-      properties:
-        cardProgramIdentifier:
-          type: string
-        type:
-          type: string
-        idCode:
-          type: string
-        priority:
-          type: string
-        selectionEnforcementIndicator:
-          type: string
-    FloatAmount:
-      type: object
-      required:
-      - value
-      - currency
-      additionalProperties: false
-      description: 'An amount encoded as an object with a `value` in minor units and a `currency` code.
+      description: Full digits of a card
+      pattern: ^\d{12,19}$
+      format: password
+      example: 1234123412341234
+    schemas-errorType:
+      type: string
+      description: 'A relative URI reference, this property can be used to perform automated error handling.
 
         '
-      properties:
-        value:
-          $ref: '#/components/schemas/floatAmountValue'
-        currency:
-          $ref: '#/components/schemas/openapi_components-schemas-currencyCode-4'
-    NonTieredFeeProperties:
+      enum:
+      - /silverflow/problems/schemeFees/not-found
+      - /silverflow/problems/schemeFees/card-network-mismatch
+      - /silverflow/problems/schemeFees/card-network-not-supported
+      - /silverflow/problems/bad-request
+      - /silverflow/problems/internal-server-error
+    NonTieredFeeBillingAmount:
+      allOf:
+      - $ref: '#/components/schemas/BaseBillingAmount'
+      - $ref: '#/components/schemas/NonTieredBillingAmount'
+    errorInstance:
+      type: string
+      description: 'A reference that identifies the specific occurrence of the error. The instance is unique for every error.
+
+        '
+    components-schemas-terminalEntryMode:
+      description: 'Required when `cardEntry` is `terminal`. This field indicates the method used for PAN entry on the terminal to initiate the transaction.
+
+        '
+      type: string
+      enum:
+      - contactless
+      - manual-entry
+      - chip
+      - magstripe
+      - magstripe-fallback
+    TieredFee:
+      title: Tiered Fee
+      description: A tiered scheme fee estimate. A _tiered_ fee defines multiple fee rates. When `tiering` is set to `count` the applicable tier is selected based on the total number of fees in a given period. When `tiering` is set to `volume` the applicable tier is selected based on the total source amount (denominated in the `feeRate` currency) of the fees in a given period. Tier applicability is determined by the `upToIncluding` and `above` values. For a fee with `tiering` set to `count`, these properties hold the thresholds for the total number of fees in the defined period. Conversely, for a fee with `tiering` set to `volume` these properties define the threshold for the total source amount (denominated in the `feeRate` currency). The aggregation period is defined by the `billingFrequency` field.
+      allOf:
+      - $ref: '#/components/schemas/BaseFee'
+      - $ref: '#/components/schemas/TieredFeeProperties'
+    upToIncluding:
+      type: integer
+      minimum: 0
+      description: 'This field indicates the value up to (including) which this _tier_ applies.
+
+        If `tiering` is set to `volume`, this value indicates the total `sourceAmount`
+
+        (in `feeRate` currency). If `tiering` is set to `count`, this value indicates the
+
+        total number of fees.
+
+        '
+    impact:
+      type: string
+      enum:
+      - debit
+      - credit
+    BaseBillingAmountTier:
+      title: Base Billing Amount Tier
       type: object
       required:
-      - tiering
-      - feeRate
-      - billingAmount
+      - impact
+      - value
       properties:
-        tiering:
-          $ref: '#/components/schemas/NonTieredEnum'
-        feeRate:
-          allOf:
-          - $ref: '#/components/schemas/BaseFeeRate'
-          - $ref: '#/components/schemas/NonTieredFeeRate'
-        billingAmount:
-          $ref: '#/components/schemas/NonTieredFeeBillingAmount'
-    BancontactAdditionalNetworkProperties:
-      type: object
-      additionalProperties: false
-      properties:
-        transactionRoutingMeans:
-          description: 'Required for Bancontact fee estimate. Fee is based on the flow used.
+        impact:
+          $ref: '#/components/schemas/impact'
+        value:
+          $ref: '#/components/schemas/value'
+    components-schemas-sequence:
+      description: 'Required for recurring charges. This field indicates whether a charge is part of a recurring sequence. The initial charge of a recurring sequence should be flagged as `initial`,
 
-            '
+        all subsequent transactions should be flagged as `subsequent` and must be sent to the `/charges/{initialChargeKey}/mit` endpoint.
+
+        '
+      type: string
+      enum:
+      - initial
+      - subsequent
+    terminal:
+      type: object
+      description: Details about the terminal.
+      oneOf:
+      - $ref: '#/components/schemas/pos'
+      - $ref: '#/components/schemas/mPos'
+      - $ref: '#/components/schemas/softPos'
+    InterchangeFeeEstimateRequest:
+      type: object
+      description: Elements required to construct an authorization request
+      additionalProperties: false
+      required:
+      - cardNumber
+      - amount
+      - merchantAcceptorKey
+      - chargeType
+      - threeDsAuthentication
+      - isRefund
+      properties:
+        cardNumber:
+          $ref: '#/components/schemas/openapi_components-schemas-pan-2'
+        amount:
+          description: The transaction amount
+          $ref: '#/components/schemas/IntegerAmount'
+        merchantAcceptorKey:
+          $ref: '#/components/schemas/openapi_components-schemas-acceptorKeyRef'
+        chargeType:
+          $ref: '#/components/schemas/components-schemas-ChargeType'
+        threeDsAuthentication:
+          description: 3DS settings
           type: string
           enum:
-          - qr
-          - url
-          - wip
-          - man
-  responses:
-    responses-BadRequestError:
-      description: The request was malformed. See the response body for details
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/schemas-ProblemDetail'
-          example:
-            type: https://datatracker.ietf.org/doc/html/rfc2616#section-10.4.1
-            title: Bad Request
-            status: 400
-            detail: The request could not be processed as it contained an invalid request entity
-            instance: https://api.silverflow.co/v1/merchants/mct-1hPdFqhgstYTUhlphPDp
-            validationErrors:
-            - The value of property 'status' should be one of 'idle', 'active' or 'archived'
-            - The value of property 'tags.0.businessId' must not be longer than 255 characters
-    responses-NotFoundError:
-      description: The requested resource was not found
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/schemas-ProblemDetail'
-          example:
-            type: https://datatracker.ietf.org/doc/html/rfc2616#section-10.4.5
-            title: Not Found
-            status: 404
-            detail: The entity referenced in the request could not be found
-            instance: https://api.silverflow.co/v1/merchants/mct-1hPdFqhgstYTUhlphPDp
-    responses-TooManyRequestsError:
-      description: The number of requests (per minute) has exceeded the configured maximum
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/schemas-ProblemDetail'
-          example:
-            type: https://api.silverflow.co/problem/too-many-requests
-            title: Too Many Requests
-            status: 429
-            detail: The number of requests performed by the client has exceeded the configured maximum for a given period
-    responses-ForbiddenError:
-      description: The authenticated client is forbidden to make the request for the resource identified.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/schemas-ProblemDetail'
-          example:
-            type: https://datatracker.ietf.org/doc/html/rfc2616#section-10.4.4
-            title: Forbidden
-            status: 403
-            detail: The server is refusing to execute the request for the current authenticated user
-            instance: https://api.silverflow.co/v1/merchants/mct-1hPdFqhgstYTUhlphPDp
-    responses-UnauthorizedError:
-      description: Authentication information is missing or invalid
-      headers:
-        WWW_Authenticate:
-          schema:
-            type: string
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/schemas-ProblemDetail'
-          example:
-            type: https://datatracker.ietf.org/doc/html/rfc2616#section-10.4.2
-            title: Unauthorized
-            status: 401
-            detail: The credentials supplied in the request are either missing, invalid, or not applicable in the current scope
+          - none
+          - attempt
+          - success
+        isRefund:
+          description: Whether the transaction is a refund.
+          type: boolean
+        additionalNetworkProperties:
+          type: object
+          oneOf:
+          - $ref: '#/components/schemas/BancontactAdditionalNetworkProperties'
+    NonTieredFee:
+      title: Non-Tiered Fee
+      description: A non-tiered scheme fee estimate.
+      allOf:
+      - $ref: '#/components/schemas/BaseFee'
+      - $ref: '#/components/schemas/NonTieredFeeProperties'
   examples:
+    fee-request-visa:
+      summary: Fee Request Visa
+      value:
+        cardNumber: '4200350000000801'
+        amount:
+          value: 3000
+          currency: EUR
+        merchantAcceptorKey: mac-1JRadf2ffdfrdPMf2XrS2
+        chargeType:
+          intent: purchase
+          cardEntry: e-commerce
+          order: checkout
+        threeDsAuthentication: none
+        isRefund: false
     non-tiered-fee:
       summary: Non-Tiered Fee
       value:
@@ -3554,20 +3502,72 @@ components:
             type: '2'
             idCode: '050002'
             priority: '04'
-    fee-request-visa:
-      summary: Fee Request Visa
-      value:
-        cardNumber: '4200350000000801'
-        amount:
-          value: 3000
-          currency: EUR
-        merchantAcceptorKey: mac-1JRadf2ffdfrdPMf2XrS2
-        chargeType:
-          intent: purchase
-          cardEntry: e-commerce
-          order: checkout
-        threeDsAuthentication: none
-        isRefund: false
+  responses:
+    responses-BadRequestError:
+      description: The request was malformed. See the response body for details
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/schemas-ProblemDetail'
+          example:
+            type: https://datatracker.ietf.org/doc/html/rfc2616#section-10.4.1
+            title: Bad Request
+            status: 400
+            detail: The request could not be processed as it contained an invalid request entity
+            instance: https://api.silverflow.co/v1/merchants/mct-1hPdFqhgstYTUhlphPDp
+            validationErrors:
+            - The value of property 'status' should be one of 'idle', 'active' or 'archived'
+            - The value of property 'tags.0.businessId' must not be longer than 255 characters
+    responses-NotFoundError:
+      description: The requested resource was not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/schemas-ProblemDetail'
+          example:
+            type: https://datatracker.ietf.org/doc/html/rfc2616#section-10.4.5
+            title: Not Found
+            status: 404
+            detail: The entity referenced in the request could not be found
+            instance: https://api.silverflow.co/v1/merchants/mct-1hPdFqhgstYTUhlphPDp
+    responses-UnauthorizedError:
+      description: Authentication information is missing or invalid
+      headers:
+        WWW_Authenticate:
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/schemas-ProblemDetail'
+          example:
+            type: https://datatracker.ietf.org/doc/html/rfc2616#section-10.4.2
+            title: Unauthorized
+            status: 401
+            detail: The credentials supplied in the request are either missing, invalid, or not applicable in the current scope
+    responses-TooManyRequestsError:
+      description: The number of requests (per minute) has exceeded the configured maximum
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/schemas-ProblemDetail'
+          example:
+            type: https://api.silverflow.co/problem/too-many-requests
+            title: Too Many Requests
+            status: 429
+            detail: The number of requests performed by the client has exceeded the configured maximum for a given period
+    responses-ForbiddenError:
+      description: The authenticated client is forbidden to make the request for the resource identified.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/schemas-ProblemDetail'
+          example:
+            type: https://datatracker.ietf.org/doc/html/rfc2616#section-10.4.4
+            title: Forbidden
+            status: 403
+            detail: The server is refusing to execute the request for the current authenticated user
+            instance: https://api.silverflow.co/v1/merchants/mct-1hPdFqhgstYTUhlphPDp
   securitySchemes:
     ApiKey:
       description: "The primary method of authenticating to the Silverflow API is through API keys.\n\nAPI keys can be created by calling the [createApiKey](#operation/createApiKey) endpoint. You can create up to 40 API keys and also update and delete them, allowing for _credential rotation_.\n\nThe _Agent Activation_ process will generate an initial API Key for you. See [Activate Agent](#section/Getting-Started).\n\nA call to the [createApiKey](#operation/createApiKey) endpoint will return the following structure:\n\n```json\n{\n    \"key\": \"apk-1wtRxni5IsPsSpBLWpwr\",\n    \"status\": \"active\",\n    \"agentKey\": \"cgt-1wtRvFLIjDOyyUR5Q2LB\",\n    \"description\": \"Data lake API key\",\n    \"permissions\": [\n        \"charges:List\",\n        \"reports:All\"\n    ],\n    \"created\": \"2021-06-22T11:21:45.115Z\",\n    \"secret\": \"FWtnOOHAjbD6rNxWWEeVOCj7JXSEPGJQ\",\n    \"version\": 1\n}\n```\n\n> **Important:** The `secret` is only returned once in the response to the `createApiKey` call.\n\nOnce created, the `key` and `secret` fields from the API key must be used in the HTTP `Authorization` header using the `Basic` scheme.\nThe Basic scheme requires a **username** and **password** to be specified, separated by a `:` (colon) and Base64 encoded.\n\nUse the following values from the API key to construct a Basic authentication header:\n\n| Basic field | API key field | Example |\n| ----------- | ------------- | ------- |\n| username | `key` | `apk-1wtRxni5IsPsSpBLWpwr` |\n| password | `secret` | `FWtnOOHAjbD6rNxWWEeVOCj7JXSEPGJQ` |\n\nIn pseudo-code a valid HTTP Basic Authentication header would be constructed as follows:\n\n```ts\nconst apiKeyId = \"apk-1wtRxni5IsPsSpBLWpwr\";\nconst apiKeySecret = \"FWtnOOHAjbD6rNxWWEeVOCj7JXSEPGJQ\";\nconst authnValue = \"Basic \" + base64Encode(apiKeyId + \":\" + apiKeySecret);\nrequest.setHeader(\"Authorization\", authnValue);\n```\n\nUsing the values from the example a valid HTTP request would look like the following:\n\n```http\nGET /v1/agents/current HTTP/1.1\nAccept: application/json\nAuthorization: Basic YXBrLTF3dFJ4bmk1SXNQc1NwQkxXcHdyOkZXdG5PT0hBamJENnJOeFdXRWVWT0NqN0pYU0VQR0pR\n```\n\nMore information on the Basic scheme can be found in [RFC-7617 - The 'Basic' HTTP Authentication Scheme](https://datatracker.ietf.org/doc/html/rfc7617)."
