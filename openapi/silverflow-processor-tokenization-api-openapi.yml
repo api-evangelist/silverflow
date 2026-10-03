@@ -275,59 +275,21 @@ paths:
           $ref: '#/components/responses/ServiceUnavailableError'
 components:
   schemas:
-    cardInfoSimplified:
-      type: array
-      items:
-        type: object
-        required:
-        - infoSource
-        - network
-        - primaryNetwork
-        properties:
-          infoSource:
-            type: string
-            description: The source of the card information.
-          network:
-            type: string
-            description: The network of the card.
-          primaryNetwork:
-            type: boolean
-            description: The primary card network issuing this card range.
-    schemas-agentKey:
-      description: Uniquely identifies an Agent
+    lastActionDate:
       type: string
-      pattern: ^cgt-[a-zA-Z0-9]+$
-      minLength: 5
-      maxLength: 120
-      example: cgt-1UF2NafdfrdPMf2XrS2
-    InvalidProcessorTokenErrorDetails:
-      type: object
-      required:
-      - type
-      - title
-      - status
-      - detail
-      - instance
-      properties:
-        type:
-          allOf:
-          - $ref: '#/components/schemas/errorType'
-          - enum:
-            - /silverflow/problems/processorTokens/invalid-processor-token
-        title:
-          allOf:
-          - $ref: '#/components/schemas/errorTitle'
-          - enum:
-            - Invalid Processor Token
-        status:
-          allOf:
-          - $ref: '#/components/schemas/errorStatus'
-          - enum:
-            - 409
-        detail:
-          $ref: '#/components/schemas/errorDetail'
-        instance:
-          $ref: '#/components/schemas/errorInstance'
+      description: The date and time this card was last used.
+      format: date-time
+    errorTitle:
+      type: string
+      description: 'A short, human-readable summary of the problem type. It does not change from occurrence to occurrence of the error.
+
+        '
+    openapi_components-schemas-pan:
+      type: string
+      description: Full digits of a card
+      pattern: ^\d{12,19}$
+      format: password
+      example: '4761070000000905'
     errorDetail:
       type: string
       description: 'A human readable explanation specific to this occurrence of the problem.
@@ -361,8 +323,97 @@ components:
         '
       minimum: 1
       maximum: 12
-    moreItems:
-      type: boolean
+    components-schemas-holderName:
+      type: string
+      description: 'The name of the cardholder.
+
+        '
+      pattern: ^[\x20-\x7E\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u00FF]+$
+      minLength: 1
+      maxLength: 120
+      example: Joe Cardholder
+    InvalidProcessorTokenErrorDetails:
+      type: object
+      required:
+      - type
+      - title
+      - status
+      - detail
+      - instance
+      properties:
+        type:
+          allOf:
+          - $ref: '#/components/schemas/errorType'
+          - enum:
+            - /silverflow/problems/processorTokens/invalid-processor-token
+        title:
+          allOf:
+          - $ref: '#/components/schemas/errorTitle'
+          - enum:
+            - Invalid Processor Token
+        status:
+          allOf:
+          - $ref: '#/components/schemas/errorStatus'
+          - enum:
+            - 409
+        detail:
+          $ref: '#/components/schemas/errorDetail'
+        instance:
+          $ref: '#/components/schemas/errorInstance'
+    openapi_components-schemas-created-2:
+      type: string
+      description: The date and time this object was created
+      format: date-time
+      readOnly: true
+    components-schemas-cvc:
+      type: string
+      description: 'The CVC of the card.
+
+        '
+      pattern: ^\d+$
+      minLength: 3
+      maxLength: 4
+      example: '123'
+    errorInstance:
+      type: string
+      description: 'A reference that identifies the specific occurrence of the error. The instance is unique for every error.
+
+        '
+    PublicProcessorTokenObject:
+      type: object
+      required:
+      - key
+      - agentKey
+      - last4
+      - status
+      - cardInfo
+      - created
+      - cvcPresent
+      - version
+      description: A Processor Token object.
+      properties:
+        key:
+          $ref: '#/components/schemas/components-schemas-processorTokenKey'
+        agentKey:
+          $ref: '#/components/schemas/schemas-agentKey'
+        last4:
+          $ref: '#/components/schemas/last4'
+        status:
+          $ref: '#/components/schemas/cardStatus'
+        reference:
+          $ref: '#/components/schemas/schemas-reference'
+        cardInfo:
+          $ref: '#/components/schemas/cardInfoSimplified'
+        created:
+          $ref: '#/components/schemas/openapi_components-schemas-created-2'
+        cvcPresent:
+          $ref: '#/components/schemas/cvcPresent'
+        lastActionDate:
+          $ref: '#/components/schemas/lastActionDate'
+        lastModified:
+          $ref: '#/components/schemas/openapi_components-schemas-lastModified'
+        version:
+          $ref: '#/components/schemas/components-schemas-version'
     errorStatus:
       type: integer
       format: int32
@@ -371,32 +422,61 @@ components:
         of the problem.
 
         '
-    openapi_components-schemas-offsetToken:
-      type: string
-      pattern: ^[a-zA-Z0-9%]+$
-    components-schemas-processorTokenKey:
-      description: Uniquely identifies a processor token entity.
-      type: string
-      pattern: ^ptk-[a-zA-Z0-9]+$
-      minLength: 5
-      maxLength: 120
-      example: ptk-1e1dAHhgstYTUhlphPzZ
     components-schemas-version:
       type: integer
       description: The version of this object
       format: int64
       readOnly: true
-    ProcessorTokensPage:
-      allOf:
-      - $ref: '#/components/schemas/schemas-PageWithMoreItems'
-      - type: object
-        required:
-        - processorTokens
-        properties:
-          processorTokens:
-            type: array
-            items:
-              $ref: '#/components/schemas/PublicProcessorTokenObject'
+    moreItems:
+      type: boolean
+    errorType:
+      type: string
+      description: 'A relative URI reference, this property can be used to perform automated error handling.
+
+        '
+    GetCardDataResponse:
+      type: object
+      required:
+      - processorTokenPublicKey
+      - encryptedCardData
+      - encryptedDataKey
+      - iv
+      properties:
+        processorTokenPublicKey:
+          $ref: '#/components/schemas/processorTokenPublicKey'
+        encryptedCardData:
+          type: string
+          description: The card data encrypted with AES-256 algorithm. Base64 encoded.
+        encryptedDataKey:
+          type: string
+          description: The data key used to encrypt the card data. Encrypted with the agent's public key. Base64 encoded.
+        iv:
+          type: string
+          description: The initialization vector used to encrypt the card data. Base64 encoded.
+    cardStatus:
+      type: string
+      enum:
+      - active
+      - archived
+      description: The status of the card.
+    openapi_components-schemas-expiryYear:
+      type: integer
+      description: 'The year the card expires including the century.
+
+        '
+      minimum: 1950
+      maximum: 2200
+    CreateProcessorTokenRequest:
+      type: object
+      additionalProperties: false
+      required:
+      - cardData
+      description: The request body to create a processor token entity.
+      properties:
+        reference:
+          $ref: '#/components/schemas/schemas-reference'
+        cardData:
+          $ref: '#/components/schemas/cardData'
     components-schemas-ProblemDetail:
       type: object
       description: 'The ''problem detail'' object relays detailed information about the error that occurred. It is defined
@@ -462,52 +542,13 @@ components:
         validationErrors:
         - The value of property 'status' should be one of 'idle', 'active' or 'archived'
         - The value of property 'tags.0.businessId' must not be longer than 255 characters
-    openapi_components-schemas-expiryYear:
-      type: integer
-      description: 'The year the card expires including the century.
-
-        '
-      minimum: 1950
-      maximum: 2200
-    openapi_components-schemas-lastModified:
+    processorTokenPublicKey:
+      description: Uniquely identifies a processor token public key entity.
       type: string
-      description: The date and time this object was last modified
-      format: date-time
-      readOnly: true
-    GetCardDataResponse:
-      type: object
-      required:
-      - processorTokenPublicKey
-      - encryptedCardData
-      - encryptedDataKey
-      - iv
-      properties:
-        processorTokenPublicKey:
-          $ref: '#/components/schemas/processorTokenPublicKey'
-        encryptedCardData:
-          type: string
-          description: The card data encrypted with AES-256 algorithm. Base64 encoded.
-        encryptedDataKey:
-          type: string
-          description: The data key used to encrypt the card data. Encrypted with the agent's public key. Base64 encoded.
-        iv:
-          type: string
-          description: The initialization vector used to encrypt the card data. Base64 encoded.
-    openapi_components-schemas-created-2:
-      type: string
-      description: The date and time this object was created
-      format: date-time
-      readOnly: true
-    errorInstance:
-      type: string
-      description: 'A reference that identifies the specific occurrence of the error. The instance is unique for every error.
-
-        '
-    errorType:
-      type: string
-      description: 'A relative URI reference, this property can be used to perform automated error handling.
-
-        '
+      pattern: ^ppk-[a-zA-Z0-9]+$
+      minLength: 5
+      maxLength: 120
+      example: ppk-1e1dAHhgstYTUhlphPzZ
     last4:
       type: string
       description: last 4 digits of the card
@@ -516,92 +557,6 @@ components:
       minLength: 4
       maxLength: 4
       example: 0905
-    lastActionDate:
-      type: string
-      description: The date and time this card was last used.
-      format: date-time
-    processorTokenPublicKey:
-      description: Uniquely identifies a processor token public key entity.
-      type: string
-      pattern: ^ppk-[a-zA-Z0-9]+$
-      minLength: 5
-      maxLength: 120
-      example: ppk-1e1dAHhgstYTUhlphPzZ
-    schemas-reference:
-      type: string
-      description: User-specific reference for the card.
-      minLength: 5
-      maxLength: 120
-    PublicProcessorTokenObject:
-      type: object
-      required:
-      - key
-      - agentKey
-      - last4
-      - status
-      - cardInfo
-      - created
-      - cvcPresent
-      - version
-      description: A Processor Token object.
-      properties:
-        key:
-          $ref: '#/components/schemas/components-schemas-processorTokenKey'
-        agentKey:
-          $ref: '#/components/schemas/schemas-agentKey'
-        last4:
-          $ref: '#/components/schemas/last4'
-        status:
-          $ref: '#/components/schemas/cardStatus'
-        reference:
-          $ref: '#/components/schemas/schemas-reference'
-        cardInfo:
-          $ref: '#/components/schemas/cardInfoSimplified'
-        created:
-          $ref: '#/components/schemas/openapi_components-schemas-created-2'
-        cvcPresent:
-          $ref: '#/components/schemas/cvcPresent'
-        lastActionDate:
-          $ref: '#/components/schemas/lastActionDate'
-        lastModified:
-          $ref: '#/components/schemas/openapi_components-schemas-lastModified'
-        version:
-          $ref: '#/components/schemas/components-schemas-version'
-    CreateProcessorTokenRequest:
-      type: object
-      additionalProperties: false
-      required:
-      - cardData
-      description: The request body to create a processor token entity.
-      properties:
-        reference:
-          $ref: '#/components/schemas/schemas-reference'
-        cardData:
-          $ref: '#/components/schemas/cardData'
-    cvcPresent:
-      description: Specifies whether the Card Verification Code (CVC) is stored within our system
-      type: boolean
-      readOnly: true
-    openapi_components-schemas-pan:
-      type: string
-      description: Full digits of a card
-      pattern: ^\d{12,19}$
-      format: password
-      example: '4761070000000905'
-    errorTitle:
-      type: string
-      description: 'A short, human-readable summary of the problem type. It does not change from occurrence to occurrence of the error.
-
-        '
-    components-schemas-holderName:
-      type: string
-      description: 'The name of the cardholder.
-
-        '
-      pattern: ^[\x20-\x7E\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u00FF]+$
-      minLength: 1
-      maxLength: 120
-      example: Joe Cardholder
     schemas-PageWithMoreItems:
       type: object
       properties:
@@ -609,6 +564,31 @@ components:
           $ref: '#/components/schemas/moreItems'
         offsetToken:
           $ref: '#/components/schemas/openapi_components-schemas-offsetToken'
+    cardInfoSimplified:
+      type: array
+      items:
+        type: object
+        required:
+        - infoSource
+        - network
+        - primaryNetwork
+        properties:
+          infoSource:
+            type: string
+            description: The source of the card information.
+          network:
+            type: string
+            description: The network of the card.
+          primaryNetwork:
+            type: boolean
+            description: The primary card network issuing this card range.
+    components-schemas-processorTokenKey:
+      description: Uniquely identifies a processor token entity.
+      type: string
+      pattern: ^ptk-[a-zA-Z0-9]+$
+      minLength: 5
+      maxLength: 120
+      example: ptk-1e1dAHhgstYTUhlphPzZ
     BadRequestErrorDetails:
       type: object
       required:
@@ -637,96 +617,42 @@ components:
           $ref: '#/components/schemas/errorDetail'
         instance:
           $ref: '#/components/schemas/errorInstance'
-    cardStatus:
+    openapi_components-schemas-lastModified:
       type: string
-      enum:
-      - active
-      - archived
-      description: The status of the card.
-    components-schemas-cvc:
+      description: The date and time this object was last modified
+      format: date-time
+      readOnly: true
+    schemas-reference:
       type: string
-      description: 'The CVC of the card.
-
-        '
-      pattern: ^\d+$
-      minLength: 3
-      maxLength: 4
-      example: '123'
-  parameters:
-    openapi_components-parameters-offsetToken:
-      name: offsetToken
-      description: The offset token. This token is returned in the response of previous request.
-      in: query
-      required: false
-      schema:
-        $ref: '#/components/schemas/openapi_components-schemas-offsetToken'
-    limit:
-      name: limit
-      description: The number of items to return
-      in: query
-      required: false
-      schema:
-        type: integer
-        format: int32
-        minimum: 1
-        maximum: 100
-        default: 10
-      example: 1
-    parameters-reference:
-      name: reference
-      description: 'Reference of the entity provided in the create processor token request
-
-        '
-      in: query
-      required: false
-      schema:
-        type: string
-        minLength: 5
-        maxLength: 120
-    processorTokenPublicKey:
-      name: processorTokenPublicKey
-      description: 'Uniquely identifies a public key entity used for processor tokenization
-
-        '
-      in: query
-      required: true
-      schema:
-        $ref: '#/components/schemas/processorTokenPublicKey'
-    processorTokenKey:
-      name: processorTokenKey
-      description: 'Uniquely identifies a processor token entity
-
-        '
-      in: path
-      required: true
-      schema:
-        $ref: '#/components/schemas/components-schemas-processorTokenKey'
+      description: User-specific reference for the card.
+      minLength: 5
+      maxLength: 120
+    ProcessorTokensPage:
+      allOf:
+      - $ref: '#/components/schemas/schemas-PageWithMoreItems'
+      - type: object
+        required:
+        - processorTokens
+        properties:
+          processorTokens:
+            type: array
+            items:
+              $ref: '#/components/schemas/PublicProcessorTokenObject'
+    openapi_components-schemas-offsetToken:
+      type: string
+      pattern: ^[a-zA-Z0-9%]+$
+    cvcPresent:
+      description: Specifies whether the Card Verification Code (CVC) is stored within our system
+      type: boolean
+      readOnly: true
+    schemas-agentKey:
+      description: Uniquely identifies an Agent
+      type: string
+      pattern: ^cgt-[a-zA-Z0-9]+$
+      minLength: 5
+      maxLength: 120
+      example: cgt-1UF2NafdfrdPMf2XrS2
   responses:
-    UnprocessableContentError:
-      description: 'The server was unable to process the request.
-
-        '
-      content:
-        application/json:
-          schema:
-            allOf:
-            - $ref: '#/components/schemas/components-schemas-ProblemDetail'
-            - type: object
-              properties:
-                type:
-                  type: string
-                  enum:
-                  - /silverflow/problems/unprocessable-content
-                status:
-                  type: integer
-                  enum:
-                  - 422
-          example:
-            type: /silverflow/problems/unprocessable-content
-            title: Unprocessable Content
-            status: 422
-            instance: ba1243a3-72e2-442f-85b2-fd07504aa3bd
-            detail: The request body is not processable
     components-responses-InternalServerError:
       description: 'The server encountered an unexpected condition.
 
@@ -758,91 +684,6 @@ components:
             status: 500
             instance: /silverflow/b15ac28d-f854-464c-be37-6a4f6d5fe22c
             detail: The server encountered an unexpected condition.
-    ServiceUnavailableError:
-      description: 'The server was unable to process the request.
-
-        This is a temporary condition. Please retry the request.
-
-        '
-      content:
-        application/json:
-          schema:
-            allOf:
-            - $ref: '#/components/schemas/components-schemas-ProblemDetail'
-            - type: object
-              properties:
-                type:
-                  type: string
-                  enum:
-                  - /silverflow/problems/service-unavailable
-                title:
-                  type: string
-                  enum:
-                  - Service Unavailable
-                status:
-                  type: integer
-                  enum:
-                  - 503
-          example:
-            type: /silverflow/problems/service-unavailable
-            title: Service Unavailable
-            status: 503
-            instance: /silverflow/962a5782-39a0-42fd-9ef2-77c856e44748
-            detail: The server was unable to process the request.
-    components-responses-NotFoundError:
-      description: The requested resource was not found
-      content:
-        application/json:
-          schema:
-            allOf:
-            - $ref: '#/components/schemas/components-schemas-ProblemDetail'
-            - type: object
-              properties:
-                type:
-                  type: string
-                  enum:
-                  - /silverflow/problems/not-found
-                title:
-                  type: string
-                  enum:
-                  - Not Found
-                status:
-                  type: integer
-                  enum:
-                  - 404
-          example:
-            type: /silverflow/problems/not-found
-            title: Not Found
-            status: 404
-            instance: /silverflow/1a9031a9-72d4-4534-88a5-e7777617000b
-            detail: The resource identified in the request URL was not found.
-    openapi_components-responses-TooManyRequestsError:
-      description: The number of requests (per minute) has exceeded the configured maximum
-      content:
-        application/json:
-          schema:
-            allOf:
-            - $ref: '#/components/schemas/components-schemas-ProblemDetail'
-            - type: object
-              properties:
-                type:
-                  type: string
-                  enum:
-                  - /silverflow/problems/too-many-requests
-                title:
-                  type: string
-                  enum:
-                  - Too Many Requests
-                status:
-                  type: integer
-                  enum:
-                  - 429
-          example:
-            type: /silverflow/problems/too-many-requests
-            title: Too Many Requests
-            status: 429
-            instance: /silverflow/ba1243a3-72e2-442f-85b2-fd07504aa2ab
-            detail: The number of requests per unit of time has exceeded the configured maximum.
     openapi_components-responses-UnauthorizedError-2:
       description: Authentication information is missing or invalid
       headers:
@@ -874,6 +715,89 @@ components:
             status: 401
             instance: /silverflow/8450a79f-3457-4f63-86b7-b00b25037bed
             detail: The supplied security credentials were missing or invalid.
+    components-responses-NotFoundError:
+      description: The requested resource was not found
+      content:
+        application/json:
+          schema:
+            allOf:
+            - $ref: '#/components/schemas/components-schemas-ProblemDetail'
+            - type: object
+              properties:
+                type:
+                  type: string
+                  enum:
+                  - /silverflow/problems/not-found
+                title:
+                  type: string
+                  enum:
+                  - Not Found
+                status:
+                  type: integer
+                  enum:
+                  - 404
+          example:
+            type: /silverflow/problems/not-found
+            title: Not Found
+            status: 404
+            instance: /silverflow/1a9031a9-72d4-4534-88a5-e7777617000b
+            detail: The resource identified in the request URL was not found.
+    ServiceUnavailableError:
+      description: 'The server was unable to process the request.
+
+        This is a temporary condition. Please retry the request.
+
+        '
+      content:
+        application/json:
+          schema:
+            allOf:
+            - $ref: '#/components/schemas/components-schemas-ProblemDetail'
+            - type: object
+              properties:
+                type:
+                  type: string
+                  enum:
+                  - /silverflow/problems/service-unavailable
+                title:
+                  type: string
+                  enum:
+                  - Service Unavailable
+                status:
+                  type: integer
+                  enum:
+                  - 503
+          example:
+            type: /silverflow/problems/service-unavailable
+            title: Service Unavailable
+            status: 503
+            instance: /silverflow/962a5782-39a0-42fd-9ef2-77c856e44748
+            detail: The server was unable to process the request.
+    UnprocessableContentError:
+      description: 'The server was unable to process the request.
+
+        '
+      content:
+        application/json:
+          schema:
+            allOf:
+            - $ref: '#/components/schemas/components-schemas-ProblemDetail'
+            - type: object
+              properties:
+                type:
+                  type: string
+                  enum:
+                  - /silverflow/problems/unprocessable-content
+                status:
+                  type: integer
+                  enum:
+                  - 422
+          example:
+            type: /silverflow/problems/unprocessable-content
+            title: Unprocessable Content
+            status: 422
+            instance: ba1243a3-72e2-442f-85b2-fd07504aa3bd
+            detail: The request body is not processable
     openapi_components-responses-ForbiddenError:
       description: The authenticated client is forbidden to make the request for the resource identified.
       content:
@@ -901,6 +825,33 @@ components:
             status: 403
             instance: /silverflow/48a7c13b-5301-4dab-92af-c3a1d3d4ce12
             detail: The authenticated client is does not have the required permissions.
+    openapi_components-responses-TooManyRequestsError:
+      description: The number of requests (per minute) has exceeded the configured maximum
+      content:
+        application/json:
+          schema:
+            allOf:
+            - $ref: '#/components/schemas/components-schemas-ProblemDetail'
+            - type: object
+              properties:
+                type:
+                  type: string
+                  enum:
+                  - /silverflow/problems/too-many-requests
+                title:
+                  type: string
+                  enum:
+                  - Too Many Requests
+                status:
+                  type: integer
+                  enum:
+                  - 429
+          example:
+            type: /silverflow/problems/too-many-requests
+            title: Too Many Requests
+            status: 429
+            instance: /silverflow/ba1243a3-72e2-442f-85b2-fd07504aa2ab
+            detail: The number of requests per unit of time has exceeded the configured maximum.
   examples:
     InvalidProcessorTokenErrorExample:
       value:
@@ -916,6 +867,55 @@ components:
         status: 400
         instance: /silverflow/92f69925-a694-4fbb-83e8-f43726d657ad
         detail: The request was malformed. See the response body for details.
+  parameters:
+    processorTokenKey:
+      name: processorTokenKey
+      description: 'Uniquely identifies a processor token entity
+
+        '
+      in: path
+      required: true
+      schema:
+        $ref: '#/components/schemas/components-schemas-processorTokenKey'
+    limit:
+      name: limit
+      description: The number of items to return
+      in: query
+      required: false
+      schema:
+        type: integer
+        format: int32
+        minimum: 1
+        maximum: 100
+        default: 10
+      example: 1
+    processorTokenPublicKey:
+      name: processorTokenPublicKey
+      description: 'Uniquely identifies a public key entity used for processor tokenization
+
+        '
+      in: query
+      required: true
+      schema:
+        $ref: '#/components/schemas/processorTokenPublicKey'
+    openapi_components-parameters-offsetToken:
+      name: offsetToken
+      description: The offset token. This token is returned in the response of previous request.
+      in: query
+      required: false
+      schema:
+        $ref: '#/components/schemas/openapi_components-schemas-offsetToken'
+    parameters-reference:
+      name: reference
+      description: 'Reference of the entity provided in the create processor token request
+
+        '
+      in: query
+      required: false
+      schema:
+        type: string
+        minLength: 5
+        maxLength: 120
   securitySchemes:
     ApiKey:
       description: "The primary method of authenticating to the Silverflow API is through API keys.\n\nAPI keys can be created by calling the [createApiKey](#operation/createApiKey) endpoint. You can create up to 40 API keys and also update and delete them, allowing for _credential rotation_.\n\nThe _Agent Activation_ process will generate an initial API Key for you. See [Activate Agent](#section/Getting-Started).\n\nA call to the [createApiKey](#operation/createApiKey) endpoint will return the following structure:\n\n```json\n{\n    \"key\": \"apk-1wtRxni5IsPsSpBLWpwr\",\n    \"status\": \"active\",\n    \"agentKey\": \"cgt-1wtRvFLIjDOyyUR5Q2LB\",\n    \"description\": \"Data lake API key\",\n    \"permissions\": [\n        \"charges:List\",\n        \"reports:All\"\n    ],\n    \"created\": \"2021-06-22T11:21:45.115Z\",\n    \"secret\": \"FWtnOOHAjbD6rNxWWEeVOCj7JXSEPGJQ\",\n    \"version\": 1\n}\n```\n\n> **Important:** The `secret` is only returned once in the response to the `createApiKey` call.\n\nOnce created, the `key` and `secret` fields from the API key must be used in the HTTP `Authorization` header using the `Basic` scheme.\nThe Basic scheme requires a **username** and **password** to be specified, separated by a `:` (colon) and Base64 encoded.\n\nUse the following values from the API key to construct a Basic authentication header:\n\n| Basic field | API key field | Example |\n| ----------- | ------------- | ------- |\n| username | `key` | `apk-1wtRxni5IsPsSpBLWpwr` |\n| password | `secret` | `FWtnOOHAjbD6rNxWWEeVOCj7JXSEPGJQ` |\n\nIn pseudo-code a valid HTTP Basic Authentication header would be constructed as follows:\n\n```ts\nconst apiKeyId = \"apk-1wtRxni5IsPsSpBLWpwr\";\nconst apiKeySecret = \"FWtnOOHAjbD6rNxWWEeVOCj7JXSEPGJQ\";\nconst authnValue = \"Basic \" + base64Encode(apiKeyId + \":\" + apiKeySecret);\nrequest.setHeader(\"Authorization\", authnValue);\n```\n\nUsing the values from the example a valid HTTP request would look like the following:\n\n```http\nGET /v1/agents/current HTTP/1.1\nAccept: application/json\nAuthorization: Basic YXBrLTF3dFJ4bmk1SXNQc1NwQkxXcHdyOkZXdG5PT0hBamJENnJOeFdXRWVWT0NqN0pYU0VQR0pR\n```\n\nMore information on the Basic scheme can be found in [RFC-7617 - The 'Basic' HTTP Authentication Scheme](https://datatracker.ietf.org/doc/html/rfc7617)."

@@ -50,34 +50,10 @@ webhooks:
       description: Sandbox URL - Equivalent to https://api-sbx.silverflow.co/v1
 components:
   schemas:
-    eventId:
+    source:
       type: string
-      description: Uniquely identifies an event.
-      pattern: ^evt-[a-zA-Z0-9]+$
-      minLength: 5
-      maxLength: 120
-      example: evt-1e1dAHhgstYTUhlphPzZ
-    NftCompletedNotificationDataVersion1_0:
-      type: object
-      required:
-      - networkFundsTransferKey
-      - fundsTransferDate
-      properties:
-        networkFundsTransferKey:
-          $ref: '#/components/schemas/schemas-networkFundsTransferKey'
-        fundsTransferDate:
-          type: string
-          format: date
-          example: '2025-10-20'
-    time:
-      type: string
-      format: date-time
-      description: Date and time when the event was sent.
-    dataContentType:
-      type: string
-      description: The content type of the event.
-      enum:
-      - application/json
+      description: Source system of the event.
+      pattern: ^https://silverflow.com/[a-zA-Z]+$
     openapi_components-schemas-version-3:
       type: string
       description: The version of the spec.
@@ -116,17 +92,6 @@ components:
           - $ref: '#/components/schemas/dataschema'
           - enum:
             - https://silverflow.com/schemas/events/reconciliation/1.0
-    common_agentKey:
-      description: Uniquely identifies an Agent.
-      type: string
-      pattern: ^cgt-[a-zA-Z0-9]+$
-      readOnly: true
-      example: cgt-EFG67b4yPre23ZDrLX
-      title: agentKey
-    schemas-networkFundsTransferKey:
-      description: Uniquely identifies a Network Funds Transfer
-      type: string
-      pattern: ^nft-[a-zA-Z0-9]+$
     PublicCloudEvent:
       type: object
       required:
@@ -157,13 +122,48 @@ components:
           $ref: '#/components/schemas/time'
         agent:
           $ref: '#/components/schemas/common_agentKey'
+    common_agentKey:
+      description: Uniquely identifies an Agent.
+      type: string
+      pattern: ^cgt-[a-zA-Z0-9]+$
+      readOnly: true
+      example: cgt-EFG67b4yPre23ZDrLX
+      title: agentKey
+    eventId:
+      type: string
+      description: Uniquely identifies an event.
+      pattern: ^evt-[a-zA-Z0-9]+$
+      minLength: 5
+      maxLength: 120
+      example: evt-1e1dAHhgstYTUhlphPzZ
+    time:
+      type: string
+      format: date-time
+      description: Date and time when the event was sent.
+    dataContentType:
+      type: string
+      description: The content type of the event.
+      enum:
+      - application/json
+    NftCompletedNotificationDataVersion1_0:
+      type: object
+      required:
+      - networkFundsTransferKey
+      - fundsTransferDate
+      properties:
+        networkFundsTransferKey:
+          $ref: '#/components/schemas/schemas-networkFundsTransferKey'
+        fundsTransferDate:
+          type: string
+          format: date
+          example: '2025-10-20'
+    schemas-networkFundsTransferKey:
+      description: Uniquely identifies a Network Funds Transfer
+      type: string
+      pattern: ^nft-[a-zA-Z0-9]+$
     dataschema:
       type: string
       description: The event schema with the data version of the event.
-    source:
-      type: string
-      description: Source system of the event.
-      pattern: ^https://silverflow.com/[a-zA-Z]+$
   examples:
     nft-completed:
       summary: Network Funds Transfer Completed

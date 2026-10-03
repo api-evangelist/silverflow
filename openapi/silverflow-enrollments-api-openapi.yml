@@ -233,1127 +233,68 @@ paths:
         '429':
           $ref: '#/components/responses/TooManyRequestsError'
 components:
-  schemas:
-    ArchiveEnrollment:
-      oneOf:
-      - $ref: '#/components/schemas/AmexSponsoredMerchantEnrollmentArchive'
-      - $ref: '#/components/schemas/IssmEnrollmentArchive'
-      discriminator:
-        propertyName: type
-        mapping:
-          amex_sm: '#/components/schemas/AmexSponsoredMerchantEnrollmentArchive'
-          issm: '#/components/schemas/IssmEnrollmentArchive'
-    countryCodeAlpha2:
-      type: string
-      pattern: ^[A-Z]+$
-      minLength: 2
-      maxLength: 2
-      description: 'The ISO code of the country.
-
-
-        **European ISO Country Codes**
-
-
-        <details>
-
-
-        | Country | Alpha-2 code | Numeric |
-
-        | ------- | ------------ | ------- |
-
-        | Åland Islands | AX | 248 |
-
-        | Andorra | AD | 020 |
-
-        | Austria | AT | 040 |
-
-        | Belgium | BE | 056 |
-
-        | Cyprus | CY | 196 |
-
-        | Estonia | EE | 233 |  |
-
-        | Finland | FI | 246 |
-
-        | France | FR | 250 |
-
-        | French Guiana | GF | 254 |
-
-        | French Southern Territories | TF | 260 |
-
-        | Germany | DE | 280 |
-
-        | Greece | GR | 300 |
-
-        | Guadeloupe | GP | 312 |
-
-        | Ireland | IE | 372 |
-
-        | Italy | IT | 380 |
-
-        | Kosovo, United Nations Mission in Kosovo (UNMIK) | QZ | 900 |
-
-        | Latvia | LV | 428 |
-
-        | Lithuania | LT | 440 |
-
-        | Luxembourg | LU | 442 |
-
-        | Malta | MT | 470 |
-
-        | Martinique | MQ | 474 |
-
-        | Mayotte | YT | 175 |
-
-        | Monaco | MC | 492 |
-
-        | Montenegro | ME | 499 |
-
-        | Netherlands | NL | 528 |
-
-        | Portugal | PT | 620 |
-
-        | Reunion | RE | 638 |
-
-        | Saint Barthélemy | BL | 652 |
-
-        | Saint Martin (French Part) | MF | 663 |
-
-        | San Marino | SM | 674 |
-
-        | Slovakia | SK | 703 |
-
-        | Slovenia | SI | 705 |
-
-        | Spain | ES | 724 |
-
-        | St. Pierre and Miquelon | PM | 666 |
-
-        | Vatican City State (Holy See) | VA | 336 |
-
-
-        </details>
-
-
-        **US ISO Country Codes**
-
-
-        <details>
-
-
-        | Country | Alpha-2 code | Numeric |
-
-        | ------- | ------------ | ------- |
-
-        | American Samoa | AS | 016 |
-
-        | Bonaire, St. Eusasius and Saba | BQ | 535 |
-
-        | British Indian Ocean Territory | IO | 086 |
-
-        | Ecuador | EC | 218 |
-
-        | Guam | GU | 316 |
-
-        | Marshall Islands | MH | 584 |
-
-        | Micronesia, Federated States of | FM | 583 |
-
-        | Northern Mariana Islands | MP | 580 |
-
-        | Palau | PW | 585 |
-
-        | Palestine, State of | PS | 275 |
-
-        | Puerto Rico | PR | 630 |
-
-        | Timor-Leste | TP | 626 |
-
-        | Turks and Caicos Islands | TC | 796 |
-
-        | U.S. Minor Outlying Islands | UM | 581 |
-
-        | United States | US | 840 |
-
-        | Virgin Islands, British | VG | 092 |
-
-        | Virgin Islands, U.S. | VI | 850 |
-
-
-        </details>
-
-
-        **Other ISO Country Codes**
-
-
-        <details>
-
-
-        | Country | Alpha-2 code | Numeric |
-
-        | ------- | ------------ | ------- |
-
-        | Afghanistan | AF | 004 |
-
-        | Albania | AL | 008 |
-
-        | Algeria | DZ | 012 |
-
-        | Angola | AO | 024 |
-
-        | Anguilla | AI | 660 |
-
-        | Antarctica | AQ | 010 |
-
-        | Antigua and Barbuda | AG | 028 |
-
-        | Argentina | AR | 032 |
-
-        | Armenia | AM | 051 |
-
-        | Aruba | AW | 533 |
-
-        | Australia | AU | 036 |
-
-        | Azerbaijan | AZ | 031 |
-
-        | Bahamas | BS | 044 |
-
-        | Bahrain | BH | 048 |
-
-        | Bangladesh | BD | 050 |
-
-        | Barbados | BB | 052 |
-
-        | Belarus | BR | 112 |
-
-        | Belize | BZ | 084 |
-
-        | Benin | BJ | 204 |
-
-        | Bermuda | BM | 060 |
-
-        | Bhutan | BT | 064 |
-
-        | Bolivia, Plurinational State of | BO | 068 |
-
-        | Bosnia and Herzegovina | BA | 070 |
-
-        | Botswana | BW | 072 |
-
-        | Bouvet Island | BV | 074 |
-
-        | Brazil | BR | 076 |
-
-        | Brunei Darussalam | BN | 096 |
-
-        | Bulgaria | BG | 100 |
-
-        | Burkina Faso | BF | 854 |
-
-        | Burundi | BI | 108 |
-
-        | Cambodia | KH | 116 |
-
-        | Cameroon | CM | 120 |
-
-        | Canada | CA | 124 |
-
-        | Cape Verde | CV | 132 |
-
-        | Cayman Islands | KY | 136 |
-
-        | Central African Republic | CF | 140 |
-
-        | Chad | TD | 148 |
-
-        | Chile | CL | 152 |
-
-        | China | CN | 156 |
-
-        | Christmas Island | CX | 162 |
-
-        | Cocos (Keeling) Islands | CC | 166 |
-
-        | Colombia | CO | 170 |
-
-        | Comoros | KM | 174 |
-
-        | Congo | CG | 178 |
-
-        | Cook Islands | CK | 184 |
-
-        | Costa Rica | CR | 188 |
-
-        | Côte D''Ivoire | CI | 384 |
-
-        | Croatia | HR | 191 |
-
-        | Cuba | CU | 192 |
-
-        | Curacao | CW | 531 |
-
-        | Czech Republic | CZ | 203 |
-
-        | Democratic Republic of the Congo | CD | 180 |
-
-        | Denmark | DK | 208 |
-
-        | Djibouti | DJ | 262 |
-
-        | Dominica | DM | 212 |
-
-        | Dominican Republic | DO | 214 |
-
-        | Egypt | EG | 818 |
-
-        | El Salvador | SV | 222 |
-
-        | Equatorial Guinea | GQ | 226 |
-
-        | Eritrea | ER | 232 |
-
-        | Ethiopia | ET | 230 |
-
-        | Falkland Islands (Malvinas) | FK | 238 |
-
-        | Faroe Islands | FO | 234 |
-
-        | Fiji | FJ | 242 |
-
-        | French Polynesia | PF | 258 |
-
-        | Gabon | GA | 266 |
-
-        | Gambia | GM | 270 |
-
-        | Georgia | GE | 268 |
-
-        | Ghana | GH | 288 |
-
-        | Gibraltar | GI | 292 |
-
-        | Greenland | GL | 304 |
-
-        | Grenada | GD | 308 |
-
-        | Guatemala | GT | 320 |
-
-        | Guernsey | GG | 831 |
-
-        | Guinea | GN | 324 |
-
-        | Guinea-Bissau | GW | 624 |
-
-        | Guyana | GY | 328 |
-
-        | Haiti | HT | 332 |
-
-        | Heard and McDonald Islands | HM | 334 |
-
-        | Honduras | HN | 340 |
-
-        | Hong Kong | HK | 344 |
-
-        | Hungary | HU | 348 |
-
-        | Iceland | IS | 352 |
-
-        | India | IN | 356 |
-
-        | Indonesia | ID | 360 |
-
-        | Iraq | IQ | 368 |
-
-        | Isle of Man | IM | 833 |
-
-        | Israel | IL | 376 |
-
-        | Jamaica | JM | 388 |
-
-        | Japan | JP | 392 |
-
-        | Jersey | JE | 832 |
-
-        | Jordan | JO | 400 |
-
-        | Kazakhstan | KZ | 398 |
-
-        | Kenya | KE | 404 |
-
-        | Kiribati | KI | 296 |
-
-        | Korea, Republic of | KR | 410 |
-
-        | Kuwait | KW | 414 |
-
-        | Kyrgyzstan | KG | 417 |
-
-        | Lao People''s Democratic Republic | LA | 418 |
-
-        | Lebanon | LB | 422 |
-
-        | Lesotho | LS | 426 |
-
-        | Liberia | LR | 430 |
-
-        | Libyan Arab Jamahiriya | LY | 434 |
-
-        | Liechtenstein | LI | 438 |
-
-        | Macao | MO | 446 |
-
-        | Macedonia | MK | 807 |
-
-        | Madagascar | MG | 450 |
-
-        | Malawi | MW | 454 |
-
-        | Malaysia | MY | 458 |
-
-        | Maldives | MV | 462 |
-
-        | Mali | ML | 466 |
-
-        | Mauritania | MR | 478 |
-
-        | Mauritius | MU | 480 |
-
-        | Mexico | MX | 484 |
-
-        | Moldova, Republic of | MD | 498 |
-
-        | Mongolia | MN | 496 |
-
-        | Montserrat | MS | 500 |
-
-        | Morocco | MA | 504 |
-
-        | Mozambique | MZ | 508 |
-
-        | Myanmar (effective 1 November 2012) | MM | 104 |
-
-        | Namibia | NA | 516 |
-
-        | Nauru | NR | 520 |
-
-        | Nepal | NP | 524 |
-
-        | Netherlands Antilles | AN | 530 |
-
-        | New Caledonia | NC | 540 |
-
-        | New Zealand | NZ | 554 |
-
-        | Nicaragua | NI | 558 |
-
-        | Niger | NE | 562 |
-
-        | Nigeria | NG | 566 |
-
-        | Niue | NU | 570 |
-
-        | Norfolk Island | NF | 574 |
-
-        | Norway | NO | 578 |
-
-        | Oman | OM | 512 |
-
-        | Pakistan | PK | 586 |
-
-        | Panama | PA | 591 |
-
-        | Papua New Guinea | PG | 598 |
-
-        | Paraguay | PY | 600 |
-
-        | Peru | PE | 604 |
-
-        | Philippines | PH | 608 |
-
-        | Pitcairn | PN | 612 |
-
-        | Poland | PL | 616 |
-
-        | Qatar | QA | 634 |
-
-        | Republic of South Sudan | SS | 728 |
-
-        | Romania | RO | 642 |
-
-        | Russian Federation | RU | 643 |
-
-        | Rwanda | RW | 646 |
-
-        | Samoa | WS | 882 |
-
-        | Sao Tome and Principe | ST | 678 |
-
-        | Saudi Arabia | SA | 682 |
-
-        | Senegal | SN | 686 |
-
-        | Serbia | RS | 688 |
-
-        | Seychelles | SC | 690 |
-
-        | Sierra Leone | SL | 694 |
-
-        | Singapore | SG | 702 |
-
-        | Sint Maarten (Dutch Part) | SX | 534 |
-
-        | Solomon Islands | SB | 090 |
-
-        | Somalia | SO | 706 |
-
-        | South Africa | ZA | 710 |
-
-        | South Georgia and the South Sandwich Islands | GS | 239 |
-
-        | Sri Lanka | LK | 144 |
-
-        | Saint Helena, Ascension and Tristan Da Cunha | SH | 654 |
-
-        | St. Kitts and Nevis | KN | 659 |
-
-        | St. Lucia | LC | 662 |
-
-        | St. Vincent and the Grenadines | VC | 670 |
-
-        | Suriname | SR | 740 |
-
-        | Svalbard and Jan Mayen | SJ | 744 |
-
-        | Swaziland | SZ | 748 |
-
-        | Sweden | SE | 752 |
-
-        | Switzerland | CH | 756 |
-
-        | Taiwan | TW | 158 |
-
-        | Tajikistan | TJ | 762 |
-
-        | Tanzania, United Republic of | TZ | 834 |
-
-        | Thailand | TH | 764 |
-
-        | Togo | TG | 768 |
-
-        | Tokelau | TK | 772 |
-
-        | Tonga | TO | 776 |
-
-        | Trinidad and Tobago | TT | 780 |
-
-        | Tunisia | TN | 788 |
-
-        | Turkey | TR | 792 |
-
-        | Turkmenistan | TM | 795 |
-
-        | Tuvalu | TV | 798 |
-
-        | Uganda | UG | 800 |
-
-        | Ukraine | UA | 804 |
-
-        | United Arab Emirates | AE | 784 |
-
-        | United Kingdom | GB | 826 |
-
-        | Uruguay | UY | 858 |
-
-        | Uzbekistan | UZ | 860 |
-
-        | Vanuatu | VU | 548 |
-
-        | Venezuela, Bolivarian Republic of | VE | 862 |
-
-        | Vietnam | VN | 704 |
-
-        | Wallis and Futuna | WF | 876 |
-
-        | Western Sahara | EH | 732 |
-
-        | Yemen | YE | 886 |
-
-        | Zambia | ZM | 894 |
-
-        | Zimbabwe | ZW | 716 |
-
-
-        </details>'
-      externalDocs:
-        description: Find more info here
-        url: https://www.iso.org/iso-3166-country-codes.html
-      example: NL
-    IssmEnrollmentArchive:
-      type: object
-      description: Unenroll from ISSM and archive the enrollment
-      additionalProperties: false
-      properties:
-        type:
-          type: string
-          enum:
-          - issm
-          description: 'Type of the enrollment.
-
-            * `amex_sm` - American Express, Sponsored Merchant (**Please reach out to your technical account manager to enable your production access**)
-
-            * `issm` - Mastercom Identity Solutions Service Manager [DEPRECATED]
-
-            '
-        deleteReason:
-          $ref: '#/components/schemas/deleteReason'
-    DiscoverMerchantEnrollmentCreate:
-      allOf:
-      - $ref: '#/components/schemas/BaseEnrollmentCreate'
-      - type: object
-        description: Create merchant registration request for Discover.
-        required:
-        - type
-        - binKey
-        - mid
-        - merchantType
-        - doingBusinessAsName
-        - mcc
-        - businessPrincipal
-        - debtRepaymentIndicator
-        - merchantStatus
-        properties:
-          merchantType:
-            $ref: '#/components/schemas/discoverMerchantType'
-          type:
-            type: string
-            enum:
-            - discover-mpr
-            description: 'Type of the enrollment.
-
-              * `amex_sm` - American Express, Sponsored Merchant (**Please reach out to your technical account manager to enable your production access**)
-
-              * `discover-mpr` - Discover, Merchant Profile Registration
-
-              * `scof` - Mastercom Secure Card on File
-
-              * `vau` - Visa Account Updater
-
-              * `vts` - Visa Token Service (see [guide](https://docs.silverflow.com/guides/merchant-enrollment#tag/Visa-VTS-Enrollment))
-
-              '
-          binKey:
-            $ref: '#/components/schemas/binKey'
-          mid:
-            $ref: '#/components/schemas/discoverMid'
-          doingBusinessAsName:
-            $ref: '#/components/schemas/discoverDoingBusinessAsName'
-          mcc:
-            $ref: '#/components/schemas/mcc'
-          posDeviceDownloadIndicator:
-            $ref: '#/components/schemas/posDeviceDownloadIndicator'
-          debtRepaymentIndicator:
-            description: True if merchant is authorized for debt repayment.
-            type: boolean
-          businessPrincipal:
-            $ref: '#/components/schemas/businessPrincipal'
-          merchantStatus:
-            $ref: '#/components/schemas/discoverMerchantStatus'
-          headquarterAccountNumber:
-            $ref: '#/components/schemas/headquarterAccountNumber'
-    addressCreateForAmexSMApi:
-      type: object
-      required:
-      - line1
-      - city
-      - postalCode
-      - countryCode
-      properties:
-        line1:
-          $ref: '#/components/schemas/addressLine'
-        line2:
-          $ref: '#/components/schemas/addressLine'
-        city:
-          $ref: '#/components/schemas/addressCity'
-        postalCode:
-          $ref: '#/components/schemas/postalCode'
-        countryCode:
-          $ref: '#/components/schemas/CountryCodeCreate'
-        stateOrProvince:
-          $ref: '#/components/schemas/stateOrProvince'
-    addressForAmexSMApi:
-      type: object
-      required:
-      - line1
-      - city
-      - postalCode
-      - countryCode
-      properties:
-        line1:
-          $ref: '#/components/schemas/addressLine'
-        line2:
-          $ref: '#/components/schemas/addressLine'
-        city:
-          $ref: '#/components/schemas/addressCity'
-        postalCode:
-          $ref: '#/components/schemas/postalCode'
-        countryCode:
-          $ref: '#/components/schemas/CountryCode'
-        stateOrProvince:
-          $ref: '#/components/schemas/stateOrProvince'
-    mcc:
-      type: string
-      pattern: ^\d+$
-      minLength: 4
-      maxLength: 4
-      description: The Merchant category.
-      example: 742
-    sellerDoingBusinessAsName:
-      allOf:
-      - $ref: '#/components/schemas/ExtendedNameOfPeopleAndPlaces'
-      - description: The Seller's business name that appears on the store front and/or Customer receipts, commonly referred to as the Doing Business As (DBA) name. If the name is more than 60 characters, use a proper and meaningful abbreviation, when possible. Do not truncate.
-      - minLength: 1
-      - maxLength: 60
-    VauEnrollmentDetail:
-      type: object
-      description: VAU specific detail
-      required:
-      - key
-      - acquirerSegmentId
-      - binKey
-      - acquirerIdCode
-      - merchantLegalName
-      - merchantCountryCode
-      - mid
-      - mcc
-      properties:
-        key:
-          type: string
-          description: VAU enrollment detail key
-        acquirerSegmentId:
-          $ref: '#/components/schemas/acquirerSegmentId'
-        binKey:
-          $ref: '#/components/schemas/binKey'
-        acquirerIdCode:
-          $ref: '#/components/schemas/acquirerIdCode'
-        merchantLegalName:
-          allOf:
-          - $ref: '#/components/schemas/NameOfPeopleAndPlaces'
-          - description: The legal name of the Merchant
-        merchantCountryCode:
-          $ref: '#/components/schemas/CountryCode'
-        mid:
-          $ref: '#/components/schemas/mid'
-        mcc:
-          $ref: '#/components/schemas/mcc'
-    Enrollment:
-      type: object
-      required:
-      - key
-      - status
-      - agentKey
-      - merchantKey
-      - type
-      - enrollmentStatus
-      - created
-      - version
-      properties:
-        key:
-          $ref: '#/components/schemas/enrollmentKey'
-        status:
-          $ref: '#/components/schemas/status'
-        agentKey:
-          $ref: '#/components/schemas/agentKey'
-        merchantKey:
-          $ref: '#/components/schemas/merchantKey'
-        type:
-          $ref: '#/components/schemas/enrollmentType'
-        enrollmentStatus:
-          $ref: '#/components/schemas/enrollmentStatus'
-        created:
-          type: string
-          format: date-time
-          description: Enrollment creation date.
-        version:
-          type: integer
-          description: Enrollment version.
-        lastModified:
-          type: string
-          format: date-time
-          description: Enrollment last modification date.
-        errorMessage:
-          type: string
-          description: Error message in case 'enrollmentStatus' is error.
-    status:
-      type: string
-      description: The status of the object
-      enum:
-      - active
-      - archived
-    CountryCodeOnlyAlpha2:
-      type: object
-      required:
-      - alpha2
-      additionalProperties: false
-      properties:
-        alpha2:
-          $ref: '#/components/schemas/countryCodeAlpha2'
-    EnrollmentsPage:
-      allOf:
-      - $ref: '#/components/schemas/Page'
-      - type: object
-        required:
-        - enrollments
-        properties:
-          enrollments:
-            type: array
-            items:
-              $ref: '#/components/schemas/StandaloneEnrollment'
-    sellerLegalName:
-      allOf:
-      - $ref: '#/components/schemas/ExtendedNameOfPeopleAndPlaces'
-      - description: The Seller's legal name. If the name is more than 60 characters, use proper and meaningful abbreviation, when possible. Do not truncate.
-      - minLength: 1
-      - maxLength: 60
-    ScofProgramType:
-      type: string
-      enum:
-      - merchant_obo
-      - commerce_platform_obo
-      description: ProgramType in SCOF. Please reach out to your TAM before using `commerce_platform_obo` program type.
-    mid:
-      type: string
-      description: 'As per card network requirements, the Merchant ID assigned by the acquirer must uniquely identify a legal merchant per acquirer BIN.
-
-
-        **Note:** For AMEX merchant acceptors, either provide Seller ID of a seller onboarded by a Payfac, or SE number of an AMEX Direct Merchant.
-
-
-        | Network | Length | Characters | Pattern |
-
-        | ------- | ------ | ---------- | --------|
-
-        | AMEX  | 1-20 | alphanumeric |  /^[a-zA-Z0-9-_\.]+$/ |
-
-        | Bancontact  | 1-15 | alphanumeric | /^[a-zA-Z0-9-_\.]+$/ |
-
-        | Diners | 1-15 | alphanumeric |  /^[a-zA-Z0-9# -]+$/ |
-
-        | Discover | 1-15 | alphanumeric | /^[a-zA-Z0-9-_\.]+$/  |
-
-        | Mastercard | 1-15 | alphanumeric | /^[a-zA-Z0-9-_\.]+$/ |
-
-        | Visa  | 1-15 | alphanumeric | /^[a-zA-Z0-9-_\.]+$/ |
-
-        '
-      minLength: 1
-      maxLength: 20
-      example: UO2344SDDAUOGS
-    enrollmentType:
-      description: 'Type of the enrollment.
-
-        * `amex_sm` - American Express, Sponsored Merchant (**Please reach out to your technical account manager to enable your production access**)
-
-        * `discover-mpr` - Discover, Merchant Profile Registration
-
-        * `issm` - Mastercom Identity Solutions Service Manager [DEPRECATED]
-
-        * `scof` - Mastercom Secure Card on File
-
-        * `vau` - Visa Account Updater
-
-        * `vts` - Visa Token Service (see [guide](https://docs.silverflow.com/guides/merchant-enrollment#tag/Visa-VTS-Enrollment))
-
-        '
-      type: string
-      enum:
-      - amex_sm
-      - discover-mpr
-      - issm
-      - scof
-      - vau
-      - vts
+  parameters:
+    offsetToken:
+      name: offsetToken
+      description: The offset token. This token is returned in the response of previous request.
+      in: query
+      required: false
+      schema:
+        $ref: '#/components/schemas/offsetToken'
     enrollmentKey:
-      description: Uniquely identifies an Enrollment.
-      type: string
-      pattern: ^enr-[a-zA-Z0-9]
-      example: enr-1UF2NafdfrdPMf2XrS2
-    VauEnrollmentCreate:
-      allOf:
-      - $ref: '#/components/schemas/BaseEnrollmentCreate'
-      - type: object
-        description: Create VAU enrollment.
-        required:
-        - type
-        - binKey
-        - mid
-        - mcc
-        properties:
-          type:
-            type: string
-            enum:
-            - vau
-            description: 'Type of the enrollment.
-
-              * `amex_sm` - American Express, Sponsored Merchant (**Please reach out to your technical account manager to enable your production access**)
-
-              * `discover-mpr` - Discover, Merchant Profile Registration
-
-              * `scof` - Mastercom Secure Card on File
-
-              * `vau` - Visa Account Updater
-
-              * `vts` - Visa Token Service (see [guide](https://docs.silverflow.com/guides/merchant-enrollment#tag/Visa-VTS-Enrollment))
-
-              '
-          binKey:
-            $ref: '#/components/schemas/binKey'
-          mid:
-            $ref: '#/components/schemas/mid'
-          mcc:
-            $ref: '#/components/schemas/mcc'
-    stateOrProvince:
-      allOf:
-      - $ref: '#/components/schemas/ExtendedNameOfPeopleAndPlaces'
-      - description: 'The state (US) or province (non-US) of the address. Required for US Point of Sale (POS) acceptors. Clients not enrolled in the "extended character set beta" are still subject to the `^[\w ,\.\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u00FF-]+$` pattern for field input.
-
-          '
-        example: Noord-Holland
-    ScofEnrollmentDetail:
-      type: object
-      description: SCOF specific detail
-      required:
-      - key
-      - mid
-      - binKey
-      - programType
-      - programName
-      properties:
-        key:
-          type: string
-          description: SCOF DPA
-        mid:
-          $ref: '#/components/schemas/mid'
-        binKey:
-          $ref: '#/components/schemas/binKey'
-        programType:
-          $ref: '#/components/schemas/ScofProgramType'
-        programName:
-          $ref: '#/components/schemas/ScofProgramName'
-        mccs:
-          type: array
-          minItems: 1
-          maxItems: 20
-          items:
-            $ref: '#/components/schemas/mcc'
-        serviceId:
-          type: string
-          description: ServiceId assigned by Mastercard SCOF Service
-    AmexSponsoredMerchantEnrollment:
-      allOf:
-      - $ref: '#/components/schemas/Enrollment'
-      - type: object
-        description: AMEX Sponsored Merchant enrollment <a class="experimental-tag-link" href="https://docs.silverflow.com/guides/api-lifecycle#tag/EXPERIMENTAL-Tag"><span class="tag experimental-tag">EXPERIMENTAL</span></a>
-        required:
-        - enrollmentDetail
-        - type
-        properties:
-          type:
-            type: string
-            enum:
-            - amex_sm
-          warningMessage:
-            type: string
-            description: Warning message, could occur in case of error or success.
-          enrollmentDetail:
-            $ref: '#/components/schemas/AmexSponsoredMerchantEnrollmentDetail'
-    VtsEnrollmentCreate:
-      type: object
-      description: Create VTS enrollment.
-      required:
-      - merchantKey
-      - type
-      properties:
-        merchantKey:
-          $ref: '#/components/schemas/merchantKey'
-        type:
-          type: string
-          enum:
-          - vts
-          description: 'Type of the enrollment.
-
-            * `amex_sm` - American Express, Sponsored Merchant (**Please reach out to your technical account manager to enable your production access**)
-
-            * `discover-mpr` - Discover, Merchant Profile Registration
-
-            * `scof` - Mastercom Secure Card on File
-
-            * `vau` - Visa Account Updater
-
-            * `vts` - Visa Token Service (see [guide](https://docs.silverflow.com/guides/merchant-enrollment#tag/Visa-VTS-Enrollment))
-
-            '
-        businessIdentification:
-          $ref: '#/components/schemas/businessIdentification'
-        binKey:
-          allOf:
-          - description: A key assigned by Silverflow to uniquely identify a Bin. **Do not provide if business identification is supplied.**
-          - $ref: '#/components/schemas/binKey'
-        mid:
-          allOf:
-          - description: "As per card network requirements, the Merchant ID assigned by the acquirer must uniquely identify a legal merchant per acquirer BIN. \n**Do not provide if business identification is supplied.**\n\n**Note:** For AMEX merchant acceptors, provide the Seller ID for this property.\n\n| Network | Length | Characters |\n| ------- | ------ | ---------- |\n| AMEX  | 1-20 | alphanumeric |\n| Bancontact  | 1-15 | alphanumeric |\n| Discover | 1-15 | alphanumeric |\n| Mastercard | 1-15 | alphanumeric |\n| Visa  | 1-15 | alphanumeric |\n"
-          - $ref: '#/components/schemas/mid'
-    ProblemDetail:
-      type: object
-      description: 'The ''problem detail'' object relays detailed information about the error that occurred. It is defined
-
-        by [RFC 7807 - Problem Details for HTTP APIs](https://tools.ietf.org/html/rfc7807).
-
-
-        Note that additional properties may be used to relay error specific information.
+      name: enrollmentKey
+      description: 'Uniquely identifies an Enrollment.
 
         '
-      properties:
-        type:
-          type: string
-          description: 'An absolute URI that identifies the problem type.
+      in: path
+      required: true
+      schema:
+        type: string
+        pattern: ^enr-[a-zA-Z0-9]+$
+        minLength: 5
+        maxLength: 120
+    merchantKeyQs:
+      name: merchantKey
+      description: 'Immutable, unique identifier of the merchant
 
-            '
-          default: about:blank
-          example: https://api.silverflow.co/problem/constraint-violation
-        title:
-          type: string
-          description: 'A short, summary of the problem type. Written in english and readable
+        '
+      in: query
+      required: false
+      schema:
+        $ref: '#/components/schemas/merchantKey'
+    limit:
+      name: limit
+      description: The number of items to return
+      in: query
+      required: false
+      schema:
+        type: integer
+        format: int32
+        minimum: 1
+        maximum: 100
+        default: 10
+      example: 1
+    archived:
+      name: archived
+      description: 'If set to true it will return only archived merchants.
 
-            for engineers (usually not suited for non technical stakeholders and
-
-            not localized);
-
-            '
-          example: Service Unavailable
-        status:
-          type: integer
-          format: int32
-          description: 'The HTTP status code generated by the origin server for this occurrence
-
-            of the problem.
-
-            '
-          minimum: 100
-          maximum: 599
-          example: 503
-        detail:
-          type: string
-          description: 'A human readable explanation specific to this occurrence of the
-
-            problem.
-
-            '
-          example: Connection to database timed out
-        instance:
-          type: string
-          description: 'An absolute URI that identifies the specific occurrence of the problem.
-
-            It may or may not yield further information if dereferenced.
-
-            '
-      additionalProperties: true
-    signerLastName:
-      type: string
-      description: The Seller's Authorized Signer complete last name. For individuals whose name includes two or more family names (i.e. father's surname and mother's surname), all family names must be included in this field without exception.
-      pattern: ^[a-zA-Z0-9 -]+$
-      minLength: 1
-      maxLength: 20
-    signerCreate:
-      allOf:
-      - $ref: '#/components/schemas/signerBase'
-      - type: object
-        description: This field is mean for signer of Seller during creation.
-        required:
-        - address
-        properties:
-          address:
-            $ref: '#/components/schemas/addressCreateForAmexSMApi'
-    signerIdentificationNumber:
-      type: string
-      description: The identification number of the Seller's Authorized Signer.
-      pattern: ^[a-zA-Z0-9]+$
-      minLength: 1
-      maxLength: 30
-    moreItems:
-      type: boolean
-    merchantKey:
-      description: Uniquely identifies a Merchant
-      type: string
-      pattern: ^mct-[a-zA-Z0-9]+$
-      minLength: 5
-      maxLength: 120
-      example: mct-123dinkqFqfq3q2f2adfa
-    UpdateEnrollment:
-      oneOf:
-      - $ref: '#/components/schemas/AmexSponsoredMerchantEnrollmentUpdate'
-      discriminator:
-        propertyName: type
-        mapping:
-          amex_sm: '#/components/schemas/AmexSponsoredMerchantEnrollmentUpdate'
-    nullableBusinessRegistrationNumber:
-      description: The Seller's Tax Identification Number or their functional equivalents.
-      type:
-      - string
-      - 'null'
-      pattern: ^[a-zA-Z0-9]+$
-      minLength: 1
-      maxLength: 15
-    NameOfPeopleAndPlaces:
-      type: string
-      pattern: ^[\w ,\.\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u00FF-]+$
-      minLength: 1
-      maxLength: 120
-    signerDateOfBirth:
-      type: string
-      description: The date of birth of the Seller's Authorized Signer, in the format <YYYY/MM/DD>.
-      pattern: ^(19|20)\d{2}\/(0[1-9]|1[0-2])\/(0[1-9]|[12]\d|3[01])$
-    CountryCodeOnlyNumeric:
-      type: object
-      required:
-      - numeric
-      additionalProperties: false
-      properties:
-        numeric:
-          $ref: '#/components/schemas/countryCodeNumeric'
-    enrollmentStatus:
-      description: Status of an Enrollment.
-      type: string
-      enum:
-      - pending
-      - enrolled
-      - unenrolled
-      - pendingUnenroll
-      - error
-      - failed
-    StandaloneEnrollment:
-      oneOf:
-      - $ref: '#/components/schemas/AmexSponsoredMerchantEnrollment'
-      - $ref: '#/components/schemas/DiscoverMerchantEnrollment'
-      - $ref: '#/components/schemas/IssmEnrollment'
-      - $ref: '#/components/schemas/ScofEnrollment'
-      - $ref: '#/components/schemas/VauEnrollment'
-      - $ref: '#/components/schemas/VtsEnrollment'
-      discriminator:
-        propertyName: type
-        mapping:
-          amex_sm: '#/components/schemas/AmexSponsoredMerchantEnrollment'
-          discover-mpr: '#/components/schemas/DiscoverMerchantEnrollment'
-          issm: '#/components/schemas/IssmEnrollment'
-          scof: '#/components/schemas/ScofEnrollment'
-          vau: '#/components/schemas/VauEnrollment'
-          vts: '#/components/schemas/VtsEnrollment'
-    ScofProgramName:
-      description: SCOF program name.
-      type: string
-      pattern: ^[\w]+$
-      minLength: 1
-      maxLength: 100
+        '
+      in: query
+      required: false
+      schema:
+        type: boolean
+    sortOrder:
+      name: sortOrder
+      description: The sort order, __asc__ending or __desc__ending
+      in: query
+      required: false
+      schema:
+        type: string
+        enum:
+        - asc
+        - desc
+      example: desc
+  schemas:
     currencyCode:
       type: string
       enum:
@@ -2082,84 +1023,148 @@ components:
         description: Find more info here
         url: https://www.iso.org/iso-4217-currency-codes.html
       example: EUR
-    signer:
-      allOf:
-      - $ref: '#/components/schemas/signerBase'
-      - type: object
-        description: This field is meant for signer of the Seller.
-        required:
-        - address
-        properties:
-          address:
-            $ref: '#/components/schemas/addressForAmexSMApi'
-    signerFirstName:
-      type: string
-      description: The Seller's Authorized Signer complete first name.
-      pattern: ^[a-zA-Z0-9]+$
-      minLength: 1
-      maxLength: 20
-    CountryCode:
+    IssmEnrollmentArchive:
       type: object
-      required:
-      - alpha3
-      - alpha2
-      - numeric
+      description: Unenroll from ISSM and archive the enrollment
+      additionalProperties: false
       properties:
-        alpha3:
-          $ref: '#/components/schemas/countryCodeAlpha3'
-        alpha2:
-          $ref: '#/components/schemas/countryCodeAlpha2'
-        numeric:
-          $ref: '#/components/schemas/countryCodeNumeric'
-    discoverAcquirerIdCode:
-      type: string
-      description: Acquirer Institution ID code.
-      pattern: ^\d+$
-      minLength: 1
-      maxLength: 11
-    businessRegistrationNumber:
-      description: The Seller's Tax Identification Number or their functional equivalents.
-      type: string
-      pattern: ^[a-zA-Z0-9]+$
-      minLength: 1
-      maxLength: 15
+        type:
+          type: string
+          enum:
+          - issm
+          description: 'Type of the enrollment.
+
+            * `amex_sm` - American Express, Sponsored Merchant (**Please reach out to your technical account manager to enable your production access**)
+
+            * `issm` - Mastercom Identity Solutions Service Manager [DEPRECATED]
+
+            '
+        deleteReason:
+          $ref: '#/components/schemas/deleteReason'
+    stateOrProvince:
+      allOf:
+      - $ref: '#/components/schemas/ExtendedNameOfPeopleAndPlaces'
+      - description: 'The state (US) or province (non-US) of the address. Required for US Point of Sale (POS) acceptors. Clients not enrolled in the "extended character set beta" are still subject to the `^[\w ,\.\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u00FF-]+$` pattern for field input.
+
+          '
+        example: Noord-Holland
     discoverIsoId:
       type: string
       description: Unique number assigned by Discover to a certified ISO. This field is mandatory if the direct Merchant relationship is maintained by an ISO
       minLength: 1
       maxLength: 11
-    BaseEnrollmentCreate:
-      type: object
-      required:
-      - merchantKey
-      - type
-      properties:
-        merchantKey:
-          $ref: '#/components/schemas/merchantKey'
-        type:
-          $ref: '#/components/schemas/enrollmentCreateType'
-        binKey:
-          $ref: '#/components/schemas/binKey'
-    addressUpdateForAmexSMApi:
-      type: object
-      properties:
-        line1:
-          $ref: '#/components/schemas/addressLine'
-        line2:
-          $ref: '#/components/schemas/addressLine'
-        city:
-          $ref: '#/components/schemas/addressCity'
-        postalCode:
-          $ref: '#/components/schemas/postalCode'
-        countryCode:
-          $ref: '#/components/schemas/CountryCodeCreate'
-        stateOrProvince:
-          $ref: '#/components/schemas/stateOrProvince'
-    offsetToken:
+    ScofEnrollment:
+      allOf:
+      - $ref: '#/components/schemas/Enrollment'
+      - type: object
+        description: SCOF enrollment <a class="experimental-tag-link" href="https://docs.silverflow.com/guides/api-lifecycle#tag/EXPERIMENTAL-Tag"><span class="tag experimental-tag">EXPERIMENTAL</span></a>
+        required:
+        - enrollmentDetail
+        properties:
+          enrollmentDetail:
+            $ref: '#/components/schemas/ScofEnrollmentDetail'
+    postalCode:
       type: string
-      pattern: ^[a-zA-Z0-9%]+$
+      pattern: ^[A-Z0-9]+([ -][A-Z0-9]+)?$
       minLength: 1
-      maxLength: 2048
+      maxLength: 10
+      description: 'The postal code of the address. Clients not enrolled in the "extended character set beta" are still subject to the `^[A-Z0-9]+(\ [A-Z0-9]*)?$` pattern for field input.
+
+        '
+      example: 1114 AA
+    enrollmentType:
+      description: 'Type of the enrollment.
+
+        * `amex_sm` - American Express, Sponsored Merchant (**Please reach out to your technical account manager to enable your production access**)
+
+        * `discover-mpr` - Discover, Merchant Profile Registration
+
+        * `issm` - Mastercom Identity Solutions Service Manager [DEPRECATED]
+
+        * `scof` - Mastercom Secure Card on File
+
+        * `vau` - Visa Account Updater
+
+        * `vts` - Visa Token Service (see [guide](https://docs.silverflow.com/guides/merchant-enrollment#tag/Visa-VTS-Enrollment))
+
+        '
+      type: string
+      enum:
+      - amex_sm
+      - discover-mpr
+      - issm
+      - scof
+      - vau
+      - vts
+    acquirerSegmentId:
+      description: VAU acquirer segment identifier
+      type: number
+    DiscoverMerchantEnrollment:
+      allOf:
+      - $ref: '#/components/schemas/Enrollment'
+      - type: object
+        description: Discover enrollment <a class="experimental-tag-link" href="https://docs.silverflow.com/guides/api-lifecycle#tag/EXPERIMENTAL-Tag"><span class="tag experimental-tag">EXPERIMENTAL</span></a>
+        required:
+        - enrollmentDetail
+        properties:
+          enrollmentDetail:
+            $ref: '#/components/schemas/DiscoverMerchantEnrollmentDetail'
+        example:
+          key: enr-123456
+          status: active
+          agentKey: cgt-123123
+          merchantKey: mct-123123
+          type: discover-mpr
+          enrollmentStatus: enrolled
+          created: '2025-02-01T14:16:54.021Z'
+          version: 2
+          lastModified: '2025-03-01T14:00:00.123Z'
+          errorMessage: 2004-INVALID ISO ID, 2028-INVALID TAX ID NUMBER
+          enrollmentDetail:
+            key: enr-123456
+            mid: '123456789'
+            binKey: bin-1234444
+            mcc: '1033'
+            merchantType: self-managed-outlet
+            acquirerIdCode: '1234567'
+            isoId: '77777777777'
+            doingBusinessAsName: Acme Corp.
+            registeredAddress:
+              city: Abbeville
+              countryCode:
+                alpha3: USA
+                alpha2: US
+                numeric: '016'
+              line1: Wes Johnson
+              postalCode: '36310'
+              stateOrProvince: Alabama
+            customerInquiry: 00964833
+            taxRegistrationId: '123'
+            legalName: This is legal name
+            businessType: corporation
+            websiteUrl: https://www.silverlow.com
+            merchantReference: '11111111'
+            debtRepaymentIndicator: true
+            posDeviceDownloadIndicator: host-based-pos-device
+            headquarterAccountNumber: '7777777'
+            businessPrincipal:
+              firstName: John
+              homeAddress:
+                city: Abbeville
+                countryCode: USA
+                line1: Wes Johnson
+                postalCode: '36310'
+                stateOrProvince: Alabama
+              lastName: Smith
+              socialSecurityNumber: '123456789'
+            merchantStatus: open
+    phoneNumber:
+      type: string
+      description: An international phone number
+      pattern: ^(00|\+)[1-9]\d+$
+      minLength: 5
+      maxLength: 33
+      example: '+31850609160'
     tokenizationConfiguration:
       type: object
       description: VTS tokenization configuration.
@@ -2174,31 +1179,52 @@ components:
           type: string
         profileName:
           type: string
-    url:
+    enrollmentKey:
+      description: Uniquely identifies an Enrollment.
       type: string
-      description: A valid URL
-      pattern: ^http(s)?:\/\/[a-z0-9-_]+(\.[a-z0-9-_]+)+(\/.*)?$
-      minLength: 8
-      maxLength: 2048
-    VtsEnrollment:
-      allOf:
-      - $ref: '#/components/schemas/Enrollment'
-      - type: object
-        description: VTS enrollment <a class="experimental-tag-link" href="https://docs.silverflow.com/guides/api-lifecycle#tag/EXPERIMENTAL-Tag"><span class="tag experimental-tag">EXPERIMENTAL</span></a>
-        required:
-        - enrollmentDetail
-        properties:
-          enrollmentDetail:
-            $ref: '#/components/schemas/VtsEnrollmentDetail'
-    agentKey:
-      description: Uniquely identifies an Agent
-      type: string
-      pattern: ^cgt-[a-zA-Z0-9]+|current$
-      example: cgt-1UF2NafdfrdPMf2XrS2
-    businessIdentificationValue:
-      type: string
-      example: NL123456789B01
-      pattern: ^[a-zA-Z0-9]{1,15}$
+      pattern: ^enr-[a-zA-Z0-9]
+      example: enr-1UF2NafdfrdPMf2XrS2
+    AcceptorRef:
+      type: object
+      description: Reference key and status of the acceptor
+      required:
+      - key
+      - version
+      properties:
+        key:
+          $ref: '#/components/schemas/acceptorKey'
+        version:
+          $ref: '#/components/schemas/version'
+    posDeviceDownloadIndicator:
+      description: Defines how the POS device is managed/updated. In particular, describes how IIN range updates are made at the POS. Mandatory if Merchant Type is `self-managed-outlet` or `outlet-reporting-to-headquarter`
+      enum:
+      - host-based-pos-device
+      - terminal-based-pos-device
+      - software-pos-device
+      - all-other-pos-devices
+      - unknown
+    StandaloneEnrollment:
+      oneOf:
+      - $ref: '#/components/schemas/AmexSponsoredMerchantEnrollment'
+      - $ref: '#/components/schemas/DiscoverMerchantEnrollment'
+      - $ref: '#/components/schemas/IssmEnrollment'
+      - $ref: '#/components/schemas/ScofEnrollment'
+      - $ref: '#/components/schemas/VauEnrollment'
+      - $ref: '#/components/schemas/VtsEnrollment'
+      discriminator:
+        propertyName: type
+        mapping:
+          amex_sm: '#/components/schemas/AmexSponsoredMerchantEnrollment'
+          discover-mpr: '#/components/schemas/DiscoverMerchantEnrollment'
+          issm: '#/components/schemas/IssmEnrollment'
+          scof: '#/components/schemas/ScofEnrollment'
+          vau: '#/components/schemas/VauEnrollment'
+          vts: '#/components/schemas/VtsEnrollment'
+    CountryCodeCreate:
+      oneOf:
+      - $ref: '#/components/schemas/CountryCodeOnlyAlpha3'
+      - $ref: '#/components/schemas/CountryCodeOnlyAlpha2'
+      - $ref: '#/components/schemas/CountryCodeOnlyNumeric'
     AmexSponsoredMerchantEnrollmentCreate:
       allOf:
       - $ref: '#/components/schemas/BaseEnrollmentCreate'
@@ -2250,186 +1276,6 @@ components:
           reinstate:
             type: boolean
             description: Set this property to 'true' if this merchant has previously been cancelled.
-    line2:
-      allOf:
-      - $ref: '#/components/schemas/ExtendedNameOfPeopleAndPlaces'
-      - description: 'Address line 2. Clients not enrolled in the "extended character set beta" are still subject to the `^[\w ,\.\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u00FF-]+$` pattern for field input.
-
-          '
-      - example: Floor 3
-    businessIdentification:
-      type: object
-      description: '**Business identification should be used to enroll with VTS wherever possible.** Use the combination of `binKey` and `mid` for non-profit Merchants or if none of the business identification types below apply. Further requirements are detailed in the [VTS enrollment guide](https://docs.silverflow.com/guides/merchant-enrollment#tag/Visa-VTS-Enrollment).
-
-        '
-      required:
-      - type
-      - value
-      properties:
-        type:
-          $ref: '#/components/schemas/businessIdentificationType'
-        value:
-          $ref: '#/components/schemas/businessIdentificationValue'
-    CountryCodeOnlyAlpha3:
-      type: object
-      required:
-      - alpha3
-      additionalProperties: false
-      properties:
-        alpha3:
-          $ref: '#/components/schemas/countryCodeAlpha3'
-    discoverMerchantType:
-      description: This field identifies the type of Merchant Profile established with Discover.
-      type: string
-      enum:
-      - self-managed-outlet
-      - headquarter-account
-      - outlet-reporting-to-headquarter
-    businessPrincipal:
-      description: Primary contact person at the Merchant DBA location
-      type: object
-      required:
-      - firstName
-      - lastName
-      - socialSecurityNumber
-      - homeAddress
-      properties:
-        firstName:
-          type: string
-          description: First name of business principal
-          pattern: ^[\x20-\x7E\xA0-\xA3\xA5\xA7\xA9-\xB3\xB5-\xB7\xB9-\xBB\xBF-\xFF\u20AC\u0160\u0161\u017D\u017E\u0152\u0153\u0178]+$
-          minLength: 1
-          maxLength: 22
-        lastName:
-          type: string
-          description: Last name of business principal
-          pattern: ^[\x20-\x7E\xA0-\xA3\xA5\xA7\xA9-\xB3\xB5-\xB7\xB9-\xBB\xBF-\xFF\u20AC\u0160\u0161\u017D\u017E\u0152\u0153\u0178]+$
-          minLength: 1
-          maxLength: 22
-        socialSecurityNumber:
-          type: string
-          description: Social Security number of business principal
-          minLength: 1
-          maxLength: 9
-        homeAddress:
-          type: object
-          required:
-          - countryCode
-          - city
-          - line1
-          - postalCode
-          - stateOrProvince
-          additionalProperties: false
-          description: A postal home address of business principal
-          properties:
-            countryCode:
-              $ref: '#/components/schemas/countryCodeAlpha3'
-            stateOrProvince:
-              allOf:
-              - $ref: '#/components/schemas/ExtendedNameOfPeopleAndPlaces'
-              - description: 'Code of the state or province
-
-                  '
-                example: OH
-                minLength: 1
-                maxLength: 4
-            city:
-              allOf:
-              - $ref: '#/components/schemas/ExtendedNameOfPeopleAndPlaces'
-              - description: 'Address line 1. Clients not enrolled in the "extended character set beta" are still subject to the `^[\w ,\.\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u00FF-]+$` pattern for field input.
-
-                  '
-                example: Amsterdam
-                minLength: 1
-                maxLength: 28
-            line1:
-              allOf:
-              - $ref: '#/components/schemas/ExtendedNameOfPeopleAndPlaces'
-              - description: 'Address line 1. Clients not enrolled in the "extended character set beta" are still subject to the `^[\w ,\.\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u00FF-]+$` pattern for field input.
-
-                  '
-                example: Entrada 300
-                minLength: 1
-                maxLength: 40
-            line2:
-              allOf:
-              - $ref: '#/components/schemas/ExtendedNameOfPeopleAndPlaces'
-              - description: 'Address line 2. Clients not enrolled in the "extended character set beta" are still subject to the `^[\w ,\.\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u00FF-]+$` pattern for field input.
-
-                  '
-                example: Floor 6
-                minLength: 1
-                maxLength: 40
-            postalCode:
-              type: string
-              pattern: ^[A-Z0-9]+([ -][A-Z0-9]+)?$
-              minLength: 1
-              maxLength: 15
-              description: 'The postal code of the address.
-
-                '
-              example: 1114 AA
-    addressCity:
-      allOf:
-      - $ref: '#/components/schemas/city'
-      - minLength: 1
-      - maxLength: 40
-    businessIdentificationType:
-      type: string
-      example: VAT
-      enum:
-      - ABN
-      - ACN
-      - BIN
-      - BIR
-      - BN
-      - BRN
-      - BRNO
-      - CL
-      - CLN
-      - CN
-      - CNPJ
-      - CR
-      - CUIT
-      - EDRPOU
-      - EIN
-      - HKBR
-      - NATIONAL_ID
-      - NIB
-      - NID
-      - NZBN
-      - PAN
-      - RFC
-      - RNC
-      - RUC
-      - RUT
-      - SIN
-      - SSN
-      - TC
-      - UEN
-      - USCI
-      - VAT
-    enrollmentCreateType:
-      description: 'Type of the enrollment.
-
-        * `amex_sm` - American Express, Sponsored Merchant (**Please reach out to your technical account manager to enable your production access**)
-
-        * `discover-mpr` - Discover, Merchant Profile Registration
-
-        * `scof` - Mastercom Secure Card on File
-
-        * `vau` - Visa Account Updater
-
-        * `vts` - Visa Token Service (see [guide](https://docs.silverflow.com/guides/merchant-enrollment#tag/Visa-VTS-Enrollment))
-
-        '
-      type: string
-      enum:
-      - amex_sm
-      - discover-mpr
-      - scof
-      - vau
-      - vts
     Address:
       type: object
       required:
@@ -2454,6 +1300,867 @@ components:
           $ref: '#/components/schemas/line2'
         postalCode:
           $ref: '#/components/schemas/postalCode'
+    AmexSponsoredMerchantEnrollmentArchive:
+      type: object
+      description: Archive Sponsored Merchant request for American Express.
+      required:
+      - type
+      - reason
+      additionalProperties: false
+      properties:
+        type:
+          type: string
+          enum:
+          - amex_sm
+          description: 'Type of the enrollment.
+
+            * `amex_sm` - American Express, Sponsored Merchant (**Please reach out to your technical account manager to enable your production access**)
+
+            * `issm` - Mastercom Identity Solutions Service Manager [DEPRECATED]
+
+            '
+        reason:
+          $ref: '#/components/schemas/amexCancellationReason'
+    DiscoverMerchantEnrollmentDetail:
+      type: object
+      description: Discover merchant enrollment details
+      required:
+      - key
+      - mid
+      - binKey
+      - mcc
+      - merchantType
+      - acquirerIdCode
+      - doingBusinessAsName
+      - registeredAddress
+      - customerInquiry
+      - taxRegistrationId
+      - legalName
+      - businessType
+      - websiteUrl
+      - debtRepaymentIndicator
+      - businessPrincipal
+      - merchantStatus
+      properties:
+        key:
+          type: string
+        mid:
+          $ref: '#/components/schemas/discoverMid'
+        binKey:
+          $ref: '#/components/schemas/binKey'
+        mcc:
+          $ref: '#/components/schemas/mcc'
+        merchantType:
+          $ref: '#/components/schemas/discoverMerchantType'
+        acquirerIdCode:
+          $ref: '#/components/schemas/discoverAcquirerIdCode'
+        isoId:
+          $ref: '#/components/schemas/discoverIsoId'
+        doingBusinessAsName:
+          $ref: '#/components/schemas/discoverDoingBusinessAsName'
+        registeredAddress:
+          $ref: '#/components/schemas/Address'
+        customerInquiry:
+          $ref: '#/components/schemas/phoneNumber'
+        taxRegistrationId:
+          $ref: '#/components/schemas/taxRegistrationId'
+        legalName:
+          $ref: '#/components/schemas/merchantLegalName'
+        businessType:
+          $ref: '#/components/schemas/businessType'
+        websiteUrl:
+          $ref: '#/components/schemas/url'
+        debtRepaymentIndicator:
+          type: boolean
+        posDeviceDownloadIndicator:
+          $ref: '#/components/schemas/posDeviceDownloadIndicator'
+        headquarterAccountNumber:
+          $ref: '#/components/schemas/headquarterAccountNumber'
+        businessPrincipal:
+          $ref: '#/components/schemas/businessPrincipal'
+        merchantStatus:
+          $ref: '#/components/schemas/discoverMerchantStatus'
+    VtsEnrollmentDetail:
+      type: object
+      description: VTS specific detail.
+      required:
+      - key
+      - merchantName
+      - merchantWebsite
+      - merchantCity
+      - merchantCountryCode
+      - primaryContactEmail
+      properties:
+        key:
+          type: string
+          description: VTS enrollment detail key
+        merchantName:
+          allOf:
+          - $ref: '#/components/schemas/NameOfPeopleAndPlaces'
+          - description: The legal name of the Merchant
+        merchantWebsite:
+          $ref: '#/components/schemas/url'
+        merchantCity:
+          $ref: '#/components/schemas/city'
+        merchantCountryCode:
+          $ref: '#/components/schemas/countryCodeAlpha2'
+        primaryContactEmail:
+          $ref: '#/components/schemas/email'
+        acquirerId:
+          $ref: '#/components/schemas/acquirerIdCode'
+        mid:
+          $ref: '#/components/schemas/mid'
+        businessIdentificationValue:
+          $ref: '#/components/schemas/businessIdentificationValue'
+        businessIdentificationType:
+          $ref: '#/components/schemas/businessIdentificationType'
+        externalClientId:
+          type: string
+        tokenizationConfiguration:
+          $ref: '#/components/schemas/tokenizationConfiguration'
+    offsetToken:
+      type: string
+      pattern: ^[a-zA-Z0-9%]+$
+      minLength: 1
+      maxLength: 2048
+    signer:
+      allOf:
+      - $ref: '#/components/schemas/signerBase'
+      - type: object
+        description: This field is meant for signer of the Seller.
+        required:
+        - address
+        properties:
+          address:
+            $ref: '#/components/schemas/addressForAmexSMApi'
+    VtsEnrollment:
+      allOf:
+      - $ref: '#/components/schemas/Enrollment'
+      - type: object
+        description: VTS enrollment <a class="experimental-tag-link" href="https://docs.silverflow.com/guides/api-lifecycle#tag/EXPERIMENTAL-Tag"><span class="tag experimental-tag">EXPERIMENTAL</span></a>
+        required:
+        - enrollmentDetail
+        properties:
+          enrollmentDetail:
+            $ref: '#/components/schemas/VtsEnrollmentDetail'
+    DiscoverMerchantEnrollmentCreate:
+      allOf:
+      - $ref: '#/components/schemas/BaseEnrollmentCreate'
+      - type: object
+        description: Create merchant registration request for Discover.
+        required:
+        - type
+        - binKey
+        - mid
+        - merchantType
+        - doingBusinessAsName
+        - mcc
+        - businessPrincipal
+        - debtRepaymentIndicator
+        - merchantStatus
+        properties:
+          merchantType:
+            $ref: '#/components/schemas/discoverMerchantType'
+          type:
+            type: string
+            enum:
+            - discover-mpr
+            description: 'Type of the enrollment.
+
+              * `amex_sm` - American Express, Sponsored Merchant (**Please reach out to your technical account manager to enable your production access**)
+
+              * `discover-mpr` - Discover, Merchant Profile Registration
+
+              * `scof` - Mastercom Secure Card on File
+
+              * `vau` - Visa Account Updater
+
+              * `vts` - Visa Token Service (see [guide](https://docs.silverflow.com/guides/merchant-enrollment#tag/Visa-VTS-Enrollment))
+
+              '
+          binKey:
+            $ref: '#/components/schemas/binKey'
+          mid:
+            $ref: '#/components/schemas/discoverMid'
+          doingBusinessAsName:
+            $ref: '#/components/schemas/discoverDoingBusinessAsName'
+          mcc:
+            $ref: '#/components/schemas/mcc'
+          posDeviceDownloadIndicator:
+            $ref: '#/components/schemas/posDeviceDownloadIndicator'
+          debtRepaymentIndicator:
+            description: True if merchant is authorized for debt repayment.
+            type: boolean
+          businessPrincipal:
+            $ref: '#/components/schemas/businessPrincipal'
+          merchantStatus:
+            $ref: '#/components/schemas/discoverMerchantStatus'
+          headquarterAccountNumber:
+            $ref: '#/components/schemas/headquarterAccountNumber'
+    discoverMerchantType:
+      description: This field identifies the type of Merchant Profile established with Discover.
+      type: string
+      enum:
+      - self-managed-outlet
+      - headquarter-account
+      - outlet-reporting-to-headquarter
+    acceptorKey:
+      description: Uniquely identifies a Merchant Acceptor.
+      type: string
+      pattern: ^mac-[a-zA-Z0-9]+$
+      minLength: 5
+      maxLength: 120
+      example: mac-1JRadf2ffdfrdPMf2XrS2
+    CountryCodeOnlyAlpha2:
+      type: object
+      required:
+      - alpha2
+      additionalProperties: false
+      properties:
+        alpha2:
+          $ref: '#/components/schemas/countryCodeAlpha2'
+    addressLine:
+      allOf:
+      - $ref: '#/components/schemas/line1'
+      - minLength: 1
+      - maxLength: 40
+    discoverDoingBusinessAsName:
+      type: string
+      pattern: ^[\x20-\x7E\xA0-\xA3\xA5\xA7\xA9-\xB3\xB5-\xB7\xB9-\xBB\xBF-\xFF\u20AC\u0160\u0161\u017D\u017E\u0152\u0153\u0178]+$
+      minLength: 1
+      maxLength: 40
+      description: Assumed, trade or fictitious name of the merchant.
+      example: ACME Corp.
+    ScofEnrollmentCreate:
+      allOf:
+      - $ref: '#/components/schemas/BaseEnrollmentCreate'
+      - type: object
+        description: Create SCOF enrollment
+        required:
+        - merchantKey
+        - type
+        - binKey
+        - mid
+        - programType
+        - programName
+        properties:
+          type:
+            type: string
+            enum:
+            - scof
+            description: 'Type of the enrollment.
+
+              * `amex_sm` - American Express, Sponsored Merchant (**Please reach out to your technical account manager to enable your production access**)
+
+              * `discover-mpr` - Discover, Merchant Profile Registration
+
+              * `scof` - Mastercom Secure Card on File
+
+              * `vau` - Visa Account Updater
+
+              * `vts` - Visa Token Service (see [guide](https://docs.silverflow.com/guides/merchant-enrollment#tag/Visa-VTS-Enrollment))
+
+              '
+          binKey:
+            $ref: '#/components/schemas/binKey'
+          mid:
+            $ref: '#/components/schemas/mid'
+          programType:
+            $ref: '#/components/schemas/ScofProgramType'
+          programName:
+            $ref: '#/components/schemas/ScofProgramName'
+          mccs:
+            type: array
+            minItems: 1
+            maxItems: 20
+            items:
+              $ref: '#/components/schemas/mcc'
+    countryCodeAlpha2:
+      type: string
+      pattern: ^[A-Z]+$
+      minLength: 2
+      maxLength: 2
+      description: 'The ISO code of the country.
+
+
+        **European ISO Country Codes**
+
+
+        <details>
+
+
+        | Country | Alpha-2 code | Numeric |
+
+        | ------- | ------------ | ------- |
+
+        | Åland Islands | AX | 248 |
+
+        | Andorra | AD | 020 |
+
+        | Austria | AT | 040 |
+
+        | Belgium | BE | 056 |
+
+        | Cyprus | CY | 196 |
+
+        | Estonia | EE | 233 |  |
+
+        | Finland | FI | 246 |
+
+        | France | FR | 250 |
+
+        | French Guiana | GF | 254 |
+
+        | French Southern Territories | TF | 260 |
+
+        | Germany | DE | 280 |
+
+        | Greece | GR | 300 |
+
+        | Guadeloupe | GP | 312 |
+
+        | Ireland | IE | 372 |
+
+        | Italy | IT | 380 |
+
+        | Kosovo, United Nations Mission in Kosovo (UNMIK) | QZ | 900 |
+
+        | Latvia | LV | 428 |
+
+        | Lithuania | LT | 440 |
+
+        | Luxembourg | LU | 442 |
+
+        | Malta | MT | 470 |
+
+        | Martinique | MQ | 474 |
+
+        | Mayotte | YT | 175 |
+
+        | Monaco | MC | 492 |
+
+        | Montenegro | ME | 499 |
+
+        | Netherlands | NL | 528 |
+
+        | Portugal | PT | 620 |
+
+        | Reunion | RE | 638 |
+
+        | Saint Barthélemy | BL | 652 |
+
+        | Saint Martin (French Part) | MF | 663 |
+
+        | San Marino | SM | 674 |
+
+        | Slovakia | SK | 703 |
+
+        | Slovenia | SI | 705 |
+
+        | Spain | ES | 724 |
+
+        | St. Pierre and Miquelon | PM | 666 |
+
+        | Vatican City State (Holy See) | VA | 336 |
+
+
+        </details>
+
+
+        **US ISO Country Codes**
+
+
+        <details>
+
+
+        | Country | Alpha-2 code | Numeric |
+
+        | ------- | ------------ | ------- |
+
+        | American Samoa | AS | 016 |
+
+        | Bonaire, St. Eusasius and Saba | BQ | 535 |
+
+        | British Indian Ocean Territory | IO | 086 |
+
+        | Ecuador | EC | 218 |
+
+        | Guam | GU | 316 |
+
+        | Marshall Islands | MH | 584 |
+
+        | Micronesia, Federated States of | FM | 583 |
+
+        | Northern Mariana Islands | MP | 580 |
+
+        | Palau | PW | 585 |
+
+        | Palestine, State of | PS | 275 |
+
+        | Puerto Rico | PR | 630 |
+
+        | Timor-Leste | TP | 626 |
+
+        | Turks and Caicos Islands | TC | 796 |
+
+        | U.S. Minor Outlying Islands | UM | 581 |
+
+        | United States | US | 840 |
+
+        | Virgin Islands, British | VG | 092 |
+
+        | Virgin Islands, U.S. | VI | 850 |
+
+
+        </details>
+
+
+        **Other ISO Country Codes**
+
+
+        <details>
+
+
+        | Country | Alpha-2 code | Numeric |
+
+        | ------- | ------------ | ------- |
+
+        | Afghanistan | AF | 004 |
+
+        | Albania | AL | 008 |
+
+        | Algeria | DZ | 012 |
+
+        | Angola | AO | 024 |
+
+        | Anguilla | AI | 660 |
+
+        | Antarctica | AQ | 010 |
+
+        | Antigua and Barbuda | AG | 028 |
+
+        | Argentina | AR | 032 |
+
+        | Armenia | AM | 051 |
+
+        | Aruba | AW | 533 |
+
+        | Australia | AU | 036 |
+
+        | Azerbaijan | AZ | 031 |
+
+        | Bahamas | BS | 044 |
+
+        | Bahrain | BH | 048 |
+
+        | Bangladesh | BD | 050 |
+
+        | Barbados | BB | 052 |
+
+        | Belarus | BR | 112 |
+
+        | Belize | BZ | 084 |
+
+        | Benin | BJ | 204 |
+
+        | Bermuda | BM | 060 |
+
+        | Bhutan | BT | 064 |
+
+        | Bolivia, Plurinational State of | BO | 068 |
+
+        | Bosnia and Herzegovina | BA | 070 |
+
+        | Botswana | BW | 072 |
+
+        | Bouvet Island | BV | 074 |
+
+        | Brazil | BR | 076 |
+
+        | Brunei Darussalam | BN | 096 |
+
+        | Bulgaria | BG | 100 |
+
+        | Burkina Faso | BF | 854 |
+
+        | Burundi | BI | 108 |
+
+        | Cambodia | KH | 116 |
+
+        | Cameroon | CM | 120 |
+
+        | Canada | CA | 124 |
+
+        | Cape Verde | CV | 132 |
+
+        | Cayman Islands | KY | 136 |
+
+        | Central African Republic | CF | 140 |
+
+        | Chad | TD | 148 |
+
+        | Chile | CL | 152 |
+
+        | China | CN | 156 |
+
+        | Christmas Island | CX | 162 |
+
+        | Cocos (Keeling) Islands | CC | 166 |
+
+        | Colombia | CO | 170 |
+
+        | Comoros | KM | 174 |
+
+        | Congo | CG | 178 |
+
+        | Cook Islands | CK | 184 |
+
+        | Costa Rica | CR | 188 |
+
+        | Côte D''Ivoire | CI | 384 |
+
+        | Croatia | HR | 191 |
+
+        | Cuba | CU | 192 |
+
+        | Curacao | CW | 531 |
+
+        | Czech Republic | CZ | 203 |
+
+        | Democratic Republic of the Congo | CD | 180 |
+
+        | Denmark | DK | 208 |
+
+        | Djibouti | DJ | 262 |
+
+        | Dominica | DM | 212 |
+
+        | Dominican Republic | DO | 214 |
+
+        | Egypt | EG | 818 |
+
+        | El Salvador | SV | 222 |
+
+        | Equatorial Guinea | GQ | 226 |
+
+        | Eritrea | ER | 232 |
+
+        | Ethiopia | ET | 230 |
+
+        | Falkland Islands (Malvinas) | FK | 238 |
+
+        | Faroe Islands | FO | 234 |
+
+        | Fiji | FJ | 242 |
+
+        | French Polynesia | PF | 258 |
+
+        | Gabon | GA | 266 |
+
+        | Gambia | GM | 270 |
+
+        | Georgia | GE | 268 |
+
+        | Ghana | GH | 288 |
+
+        | Gibraltar | GI | 292 |
+
+        | Greenland | GL | 304 |
+
+        | Grenada | GD | 308 |
+
+        | Guatemala | GT | 320 |
+
+        | Guernsey | GG | 831 |
+
+        | Guinea | GN | 324 |
+
+        | Guinea-Bissau | GW | 624 |
+
+        | Guyana | GY | 328 |
+
+        | Haiti | HT | 332 |
+
+        | Heard and McDonald Islands | HM | 334 |
+
+        | Honduras | HN | 340 |
+
+        | Hong Kong | HK | 344 |
+
+        | Hungary | HU | 348 |
+
+        | Iceland | IS | 352 |
+
+        | India | IN | 356 |
+
+        | Indonesia | ID | 360 |
+
+        | Iraq | IQ | 368 |
+
+        | Isle of Man | IM | 833 |
+
+        | Israel | IL | 376 |
+
+        | Jamaica | JM | 388 |
+
+        | Japan | JP | 392 |
+
+        | Jersey | JE | 832 |
+
+        | Jordan | JO | 400 |
+
+        | Kazakhstan | KZ | 398 |
+
+        | Kenya | KE | 404 |
+
+        | Kiribati | KI | 296 |
+
+        | Korea, Republic of | KR | 410 |
+
+        | Kuwait | KW | 414 |
+
+        | Kyrgyzstan | KG | 417 |
+
+        | Lao People''s Democratic Republic | LA | 418 |
+
+        | Lebanon | LB | 422 |
+
+        | Lesotho | LS | 426 |
+
+        | Liberia | LR | 430 |
+
+        | Libyan Arab Jamahiriya | LY | 434 |
+
+        | Liechtenstein | LI | 438 |
+
+        | Macao | MO | 446 |
+
+        | Macedonia | MK | 807 |
+
+        | Madagascar | MG | 450 |
+
+        | Malawi | MW | 454 |
+
+        | Malaysia | MY | 458 |
+
+        | Maldives | MV | 462 |
+
+        | Mali | ML | 466 |
+
+        | Mauritania | MR | 478 |
+
+        | Mauritius | MU | 480 |
+
+        | Mexico | MX | 484 |
+
+        | Moldova, Republic of | MD | 498 |
+
+        | Mongolia | MN | 496 |
+
+        | Montserrat | MS | 500 |
+
+        | Morocco | MA | 504 |
+
+        | Mozambique | MZ | 508 |
+
+        | Myanmar (effective 1 November 2012) | MM | 104 |
+
+        | Namibia | NA | 516 |
+
+        | Nauru | NR | 520 |
+
+        | Nepal | NP | 524 |
+
+        | Netherlands Antilles | AN | 530 |
+
+        | New Caledonia | NC | 540 |
+
+        | New Zealand | NZ | 554 |
+
+        | Nicaragua | NI | 558 |
+
+        | Niger | NE | 562 |
+
+        | Nigeria | NG | 566 |
+
+        | Niue | NU | 570 |
+
+        | Norfolk Island | NF | 574 |
+
+        | Norway | NO | 578 |
+
+        | Oman | OM | 512 |
+
+        | Pakistan | PK | 586 |
+
+        | Panama | PA | 591 |
+
+        | Papua New Guinea | PG | 598 |
+
+        | Paraguay | PY | 600 |
+
+        | Peru | PE | 604 |
+
+        | Philippines | PH | 608 |
+
+        | Pitcairn | PN | 612 |
+
+        | Poland | PL | 616 |
+
+        | Qatar | QA | 634 |
+
+        | Republic of South Sudan | SS | 728 |
+
+        | Romania | RO | 642 |
+
+        | Russian Federation | RU | 643 |
+
+        | Rwanda | RW | 646 |
+
+        | Samoa | WS | 882 |
+
+        | Sao Tome and Principe | ST | 678 |
+
+        | Saudi Arabia | SA | 682 |
+
+        | Senegal | SN | 686 |
+
+        | Serbia | RS | 688 |
+
+        | Seychelles | SC | 690 |
+
+        | Sierra Leone | SL | 694 |
+
+        | Singapore | SG | 702 |
+
+        | Sint Maarten (Dutch Part) | SX | 534 |
+
+        | Solomon Islands | SB | 090 |
+
+        | Somalia | SO | 706 |
+
+        | South Africa | ZA | 710 |
+
+        | South Georgia and the South Sandwich Islands | GS | 239 |
+
+        | Sri Lanka | LK | 144 |
+
+        | Saint Helena, Ascension and Tristan Da Cunha | SH | 654 |
+
+        | St. Kitts and Nevis | KN | 659 |
+
+        | St. Lucia | LC | 662 |
+
+        | St. Vincent and the Grenadines | VC | 670 |
+
+        | Suriname | SR | 740 |
+
+        | Svalbard and Jan Mayen | SJ | 744 |
+
+        | Swaziland | SZ | 748 |
+
+        | Sweden | SE | 752 |
+
+        | Switzerland | CH | 756 |
+
+        | Taiwan | TW | 158 |
+
+        | Tajikistan | TJ | 762 |
+
+        | Tanzania, United Republic of | TZ | 834 |
+
+        | Thailand | TH | 764 |
+
+        | Togo | TG | 768 |
+
+        | Tokelau | TK | 772 |
+
+        | Tonga | TO | 776 |
+
+        | Trinidad and Tobago | TT | 780 |
+
+        | Tunisia | TN | 788 |
+
+        | Turkey | TR | 792 |
+
+        | Turkmenistan | TM | 795 |
+
+        | Tuvalu | TV | 798 |
+
+        | Uganda | UG | 800 |
+
+        | Ukraine | UA | 804 |
+
+        | United Arab Emirates | AE | 784 |
+
+        | United Kingdom | GB | 826 |
+
+        | Uruguay | UY | 858 |
+
+        | Uzbekistan | UZ | 860 |
+
+        | Vanuatu | VU | 548 |
+
+        | Venezuela, Bolivarian Republic of | VE | 862 |
+
+        | Vietnam | VN | 704 |
+
+        | Wallis and Futuna | WF | 876 |
+
+        | Western Sahara | EH | 732 |
+
+        | Yemen | YE | 886 |
+
+        | Zambia | ZM | 894 |
+
+        | Zimbabwe | ZW | 716 |
+
+
+        </details>'
+      externalDocs:
+        description: Find more info here
+        url: https://www.iso.org/iso-3166-country-codes.html
+      example: NL
+    IssmEnrollmentDetail:
+      type: object
+      description: ISSM specific detail
+      required:
+      - key
+      - mid
+      - acquirerBin
+      - acquirerId
+      - merchantLegalName
+      properties:
+        key:
+          type: string
+          description: ISSM enrollment detail key
+        mid:
+          $ref: '#/components/schemas/mid'
+        acquirerBin:
+          $ref: '#/components/schemas/acquirerBin'
+        acquirerId:
+          $ref: '#/components/schemas/acquirerIdCode'
+        merchantLegalName:
+          allOf:
+          - $ref: '#/components/schemas/NameOfPeopleAndPlaces'
+          - description: The legal name of the Merchant
+          - maxLength: 25
+        deleteReason:
+          $ref: '#/components/schemas/deleteReason'
+    discoverMid:
+      type: string
+      description: 'As per card network requirements, the Merchant ID assigned by the acquirer must uniquely identify a legal merchant per acquirer BIN.
+
+        '
+      pattern: ^[a-zA-Z0-9-_\.]+$
+      minLength: 1
+      maxLength: 15
+      example: UO2344SDDAUOGS
+    taxRegistrationId:
+      type: string
+      description: "A unique identifier assigned to individuals or entities for tax-related purposes. The format, name and use of this id may vary depending on the country and card network. \n<br> **Visa** requires all acquirers to include the SIRET for France or the Tax Identification Number for Belgium and Luxembourg for all domestic transactions.\n<br> **Mastercard** and **Discover** require the Tax Id Number in the US for commercial card transactions.\n"
+      pattern: ^[a-zA-Z0-9]+$
+      maxLength: 20
     VauEnrollment:
       allOf:
       - $ref: '#/components/schemas/Enrollment'
@@ -2464,71 +2171,13 @@ components:
         properties:
           enrollmentDetail:
             $ref: '#/components/schemas/VauEnrollmentDetail'
-    Page:
-      type: object
-      properties:
-        offsetToken:
-          $ref: '#/components/schemas/offsetToken'
-        moreItems:
-          $ref: '#/components/schemas/moreItems'
-    AmexSponsoredMerchantEnrollmentDetail:
-      type: object
-      description: AMEX Sponsored Merchant Enrollment Detail
-      required:
-      - key
-      - acquirerBin
-      - sellerCurrency
-      - mid
-      - mcc
-      - legalName
-      - doingBusinessAsName
-      - sellerEmail
-      - registeredAddress
-      - websiteUrl
-      - phoneNumber
-      - signer
-      properties:
-        key:
-          type: string
-        acquirerBin:
-          type: string
-          description: Acquirer Bin. The Bin number assigned by the card network.
-          pattern: ^\d+$
-          minLength: 10
-          maxLength: 10
-        sellerCurrency:
-          $ref: '#/components/schemas/authorizationCurrency'
-        mid:
-          $ref: '#/components/schemas/mid'
-        mcc:
-          $ref: '#/components/schemas/mcc'
-        legalName:
-          $ref: '#/components/schemas/sellerLegalName'
-        doingBusinessAsName:
-          $ref: '#/components/schemas/sellerDoingBusinessAsName'
-        sellerEmail:
-          allOf:
-          - $ref: '#/components/schemas/email'
-          - maxLength: 254
-        registeredAddress:
-          $ref: '#/components/schemas/addressForAmexSMApi'
-        websiteUrl:
-          $ref: '#/components/schemas/url'
-        businessRegistrationNumber:
-          $ref: '#/components/schemas/businessRegistrationNumber'
-        phoneNumber:
-          $ref: '#/components/schemas/amex_phoneNumber'
-        signer:
-          $ref: '#/components/schemas/signer'
-    discoverMid:
-      type: string
-      description: 'As per card network requirements, the Merchant ID assigned by the acquirer must uniquely identify a legal merchant per acquirer BIN.
+    line2:
+      allOf:
+      - $ref: '#/components/schemas/ExtendedNameOfPeopleAndPlaces'
+      - description: 'Address line 2. Clients not enrolled in the "extended character set beta" are still subject to the `^[\w ,\.\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u00FF-]+$` pattern for field input.
 
-        '
-      pattern: ^[a-zA-Z0-9-_\.]+$
-      minLength: 1
-      maxLength: 15
-      example: UO2344SDDAUOGS
+          '
+      - example: Floor 3
     countryCodeNumeric:
       type: string
       pattern: ^[0-9]+$
@@ -3075,178 +2724,101 @@ components:
         description: Find more info here
         url: https://www.iso.org/iso-3166-country-codes.html
       example: '528'
-    merchantLegalName:
+    signerCreate:
       allOf:
-      - $ref: '#/components/schemas/ExtendedNameOfPeopleAndPlaces'
-      - description: The legal name of the Merchant. Clients not enrolled in the "extended character set beta" are still subject to the `^[\w ,\.\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u00FF-\/]+$` pattern for field input.
-    posDeviceDownloadIndicator:
-      description: Defines how the POS device is managed/updated. In particular, describes how IIN range updates are made at the POS. Mandatory if Merchant Type is `self-managed-outlet` or `outlet-reporting-to-headquarter`
-      enum:
-      - host-based-pos-device
-      - terminal-based-pos-device
-      - software-pos-device
-      - all-other-pos-devices
-      - unknown
-    AmexSponsoredMerchantEnrollmentUpdate:
+      - $ref: '#/components/schemas/signerBase'
+      - type: object
+        description: This field is mean for signer of Seller during creation.
+        required:
+        - address
+        properties:
+          address:
+            $ref: '#/components/schemas/addressCreateForAmexSMApi'
+    AmexSponsoredMerchantEnrollmentDetail:
       type: object
-      description: Update Sponsored Merchant request for American Express.
+      description: AMEX Sponsored Merchant Enrollment Detail
       required:
-      - type
-      additionalProperties: false
+      - key
+      - acquirerBin
+      - sellerCurrency
+      - mid
+      - mcc
+      - legalName
+      - doingBusinessAsName
+      - sellerEmail
+      - registeredAddress
+      - websiteUrl
+      - phoneNumber
+      - signer
       properties:
-        type:
+        key:
           type: string
-          enum:
-          - amex_sm
-          description: 'Type of the enrollment.
-
-            * `amex_sm` - American Express, Sponsored Merchant (**Please reach out to your technical account manager to enable your production access**)
-
-            '
+        acquirerBin:
+          type: string
+          description: Acquirer Bin. The Bin number assigned by the card network.
+          pattern: ^\d+$
+          minLength: 10
+          maxLength: 10
+        sellerCurrency:
+          $ref: '#/components/schemas/authorizationCurrency'
+        mid:
+          $ref: '#/components/schemas/mid'
         mcc:
           $ref: '#/components/schemas/mcc'
-        doingBusinessAsName:
-          $ref: '#/components/schemas/sellerDoingBusinessAsName'
-        phoneNumber:
-          $ref: '#/components/schemas/amex_phoneNumber'
         legalName:
           $ref: '#/components/schemas/sellerLegalName'
+        doingBusinessAsName:
+          $ref: '#/components/schemas/sellerDoingBusinessAsName'
+        sellerEmail:
+          allOf:
+          - $ref: '#/components/schemas/email'
+          - maxLength: 254
+        registeredAddress:
+          $ref: '#/components/schemas/addressForAmexSMApi'
+        websiteUrl:
+          $ref: '#/components/schemas/url'
         businessRegistrationNumber:
-          $ref: '#/components/schemas/nullableBusinessRegistrationNumber'
+          $ref: '#/components/schemas/businessRegistrationNumber'
+        phoneNumber:
+          $ref: '#/components/schemas/amex_phoneNumber'
         signer:
-          $ref: '#/components/schemas/signerUpdate'
-    postalCode:
-      type: string
-      pattern: ^[A-Z0-9]+([ -][A-Z0-9]+)?$
-      minLength: 1
-      maxLength: 10
-      description: 'The postal code of the address. Clients not enrolled in the "extended character set beta" are still subject to the `^[A-Z0-9]+(\ [A-Z0-9]*)?$` pattern for field input.
+          $ref: '#/components/schemas/signer'
+    enrollmentCreateType:
+      description: 'Type of the enrollment.
+
+        * `amex_sm` - American Express, Sponsored Merchant (**Please reach out to your technical account manager to enable your production access**)
+
+        * `discover-mpr` - Discover, Merchant Profile Registration
+
+        * `scof` - Mastercom Secure Card on File
+
+        * `vau` - Visa Account Updater
+
+        * `vts` - Visa Token Service (see [guide](https://docs.silverflow.com/guides/merchant-enrollment#tag/Visa-VTS-Enrollment))
 
         '
-      example: 1114 AA
-    acceptorKey:
-      description: Uniquely identifies a Merchant Acceptor.
       type: string
-      pattern: ^mac-[a-zA-Z0-9]+$
-      minLength: 5
-      maxLength: 120
-      example: mac-1JRadf2ffdfrdPMf2XrS2
-    BadRequestProblemDetail:
-      description: 'A ''problem detail'' object for Bad Request (400) errors. Extends the base ProblemDetail
-
-        with a validationErrors array that provides detailed information about validation failures.
-
-        '
-      allOf:
-      - $ref: '#/components/schemas/ProblemDetail'
-      - type: object
-        required:
-        - type
-        - title
-        - status
-        - detail
-        - instance
-        properties:
-          type:
-            type: string
-            description: URI reference identifying the problem type.
-            enum:
-            - /silverflow/problems/bad-request
-            example: /silverflow/problems/bad-request
-          title:
-            type: string
-            description: A short summary of the problem type.
-            enum:
-            - Bad Request
-          status:
-            type: integer
-            format: int32
-            description: The HTTP status code (400 for Bad Request).
-            enum:
-            - 400
-          detail:
-            type: string
-            description: A human readable explanation specific to this occurrence of the problem.
-            example: Validation errors occurred
-          instance:
-            type: string
-            description: An absolute URI that identifies the specific occurrence of the problem.
-          validationErrors:
-            type: array
-            description: 'An array of validation errors that occurred during request processing. Each item can be either
-
-              a simple string message or an object with detailed error information including the path and message.
-
-              '
-            items:
-              oneOf:
-              - type: string
-                description: A simple validation error message
-                example: Invalid 'mid' length
-              - type: object
-                description: A detailed validation error with path and message
-                required:
-                - instancePath
-                - message
-                properties:
-                  instancePath:
-                    type: string
-                    description: The JSON path to the field that caused the validation error
-                    example: /merchantAcceptor/mid
-                  message:
-                    type: string
-                    description: The validation error message
-                    example: must be at most 15 characters
-        additionalProperties: false
-    AmexSponsoredMerchantEnrollmentArchive:
-      type: object
-      description: Archive Sponsored Merchant request for American Express.
-      required:
-      - type
-      - reason
-      additionalProperties: false
-      properties:
-        type:
-          type: string
-          enum:
-          - amex_sm
-          description: 'Type of the enrollment.
-
-            * `amex_sm` - American Express, Sponsored Merchant (**Please reach out to your technical account manager to enable your production access**)
-
-            * `issm` - Mastercom Identity Solutions Service Manager [DEPRECATED]
-
-            '
-        reason:
-          $ref: '#/components/schemas/amexCancellationReason'
-    ExtendedNameOfPeopleAndPlaces:
-      type: string
-      pattern: ^[\x20-\x7E\xA0-\xA3\xA5\xA7\xA9-\xB3\xB5-\xB7\xB9-\xBB\xBF-\xFF\u20AC\u0160\u0161\u017D\u017E\u0152\u0153\u0178]+$
-      minLength: 1
-      maxLength: 120
-    acquirerIdCode:
-      type: string
-      description: Acquirer Institution ID code. For Mastercard, this field corresponds to the Acquirer ICA. For Visa, this field corresponds to the CIB, which usually has the same value as the Bin. For AMEX, this field corresponds to Submitter ID.
-      pattern: ^\d+$
-      minLength: 6
-      maxLength: 6
-    ScofEnrollmentCreate:
+      enum:
+      - amex_sm
+      - discover-mpr
+      - scof
+      - vau
+      - vts
+    VauEnrollmentCreate:
       allOf:
       - $ref: '#/components/schemas/BaseEnrollmentCreate'
       - type: object
-        description: Create SCOF enrollment
+        description: Create VAU enrollment.
         required:
-        - merchantKey
         - type
         - binKey
         - mid
-        - programType
-        - programName
+        - mcc
         properties:
           type:
             type: string
             enum:
-            - scof
+            - vau
             description: 'Type of the enrollment.
 
               * `amex_sm` - American Express, Sponsored Merchant (**Please reach out to your technical account manager to enable your production access**)
@@ -3264,354 +2836,36 @@ components:
             $ref: '#/components/schemas/binKey'
           mid:
             $ref: '#/components/schemas/mid'
-          programType:
-            $ref: '#/components/schemas/ScofProgramType'
-          programName:
-            $ref: '#/components/schemas/ScofProgramName'
-          mccs:
-            type: array
-            minItems: 1
-            maxItems: 20
-            items:
-              $ref: '#/components/schemas/mcc'
-    ScofEnrollment:
-      allOf:
-      - $ref: '#/components/schemas/Enrollment'
-      - type: object
-        description: SCOF enrollment <a class="experimental-tag-link" href="https://docs.silverflow.com/guides/api-lifecycle#tag/EXPERIMENTAL-Tag"><span class="tag experimental-tag">EXPERIMENTAL</span></a>
-        required:
-        - enrollmentDetail
-        properties:
-          enrollmentDetail:
-            $ref: '#/components/schemas/ScofEnrollmentDetail'
-    authorizationCurrency:
+          mcc:
+            $ref: '#/components/schemas/mcc'
+    mid:
       type: string
-      allOf:
-      - description: Used by American Express to verify an authorization for the provided SE Number. <br> **Note:** The following currencies are not permitted; **Belarusian Ruble(BYN), Cuban Peso(CUP), Iranian Rial(IRR), North Korean Won(KPW), Russian Federation Ruble(RUB), and Syrian Pound(SYP)**.
-      - $ref: '#/components/schemas/currencyCode'
-    AcceptorRef:
-      type: object
-      description: Reference key and status of the acceptor
-      required:
-      - key
-      - version
-      properties:
-        key:
-          $ref: '#/components/schemas/acceptorKey'
-        version:
-          $ref: '#/components/schemas/version'
-    amexCancellationReason:
-      description: This field required when cancelling an AMEX Enrollment.
-      type: string
-      enum:
-      - derogatory
-      - non_derogatory
-    acquirerSegmentId:
-      description: VAU acquirer segment identifier
-      type: number
-    amex_phoneNumber:
-      description: The phone number for the Seller's physical location. Phone numbers must contain the international telephone country code.
-      type: string
-      pattern: \d{1,24}
-    addressLine:
-      allOf:
-      - $ref: '#/components/schemas/line1'
-      - minLength: 1
-      - maxLength: 40
-    IssmEnrollmentDetail:
-      type: object
-      description: ISSM specific detail
-      required:
-      - key
-      - mid
-      - acquirerBin
-      - acquirerId
-      - merchantLegalName
-      properties:
-        key:
-          type: string
-          description: ISSM enrollment detail key
-        mid:
-          $ref: '#/components/schemas/mid'
-        acquirerBin:
-          $ref: '#/components/schemas/acquirerBin'
-        acquirerId:
-          $ref: '#/components/schemas/acquirerIdCode'
-        merchantLegalName:
-          allOf:
-          - $ref: '#/components/schemas/NameOfPeopleAndPlaces'
-          - description: The legal name of the Merchant
-          - maxLength: 25
-        deleteReason:
-          $ref: '#/components/schemas/deleteReason'
-    email:
-      type: string
-      description: A valid email address
-      pattern: \w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*
-    CountryCodeCreate:
-      oneOf:
-      - $ref: '#/components/schemas/CountryCodeOnlyAlpha3'
-      - $ref: '#/components/schemas/CountryCodeOnlyAlpha2'
-      - $ref: '#/components/schemas/CountryCodeOnlyNumeric'
-    CreateEnrollment:
-      oneOf:
-      - $ref: '#/components/schemas/AmexSponsoredMerchantEnrollmentCreate'
-      - $ref: '#/components/schemas/DiscoverMerchantEnrollmentCreate'
-      - $ref: '#/components/schemas/ScofEnrollmentCreate'
-      - $ref: '#/components/schemas/VauEnrollmentCreate'
-      - $ref: '#/components/schemas/VtsEnrollmentCreate'
-      discriminator:
-        propertyName: type
-        mapping:
-          vts: '#/components/schemas/VtsEnrollmentCreate'
-          vau: '#/components/schemas/VauEnrollmentCreate'
-          scof: '#/components/schemas/ScofEnrollmentCreate'
-          discover-mpr: '#/components/schemas/DiscoverMerchantEnrollmentCreate'
-          amex_sm: '#/components/schemas/AmexSponsoredMerchantEnrollmentCreate'
-    city:
-      allOf:
-      - $ref: '#/components/schemas/ExtendedNameOfPeopleAndPlaces'
-      - description: 'The city of the address. Clients not enrolled in the "extended character set beta" are still subject to the `^[\w ,\.\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u00FF-]+$` pattern for field input.
+      description: 'As per card network requirements, the Merchant ID assigned by the acquirer must uniquely identify a legal merchant per acquirer BIN.
 
-          '
-        example: Amsterdam-Duivendrecht
-    phoneNumber:
-      type: string
-      description: An international phone number
-      pattern: ^(00|\+)[1-9]\d+$
-      minLength: 5
-      maxLength: 33
-      example: '+31850609160'
-    DiscoverMerchantEnrollmentDetail:
-      type: object
-      description: Discover merchant enrollment details
-      required:
-      - key
-      - mid
-      - binKey
-      - mcc
-      - merchantType
-      - acquirerIdCode
-      - doingBusinessAsName
-      - registeredAddress
-      - customerInquiry
-      - taxRegistrationId
-      - legalName
-      - businessType
-      - websiteUrl
-      - debtRepaymentIndicator
-      - businessPrincipal
-      - merchantStatus
-      properties:
-        key:
-          type: string
-        mid:
-          $ref: '#/components/schemas/discoverMid'
-        binKey:
-          $ref: '#/components/schemas/binKey'
-        mcc:
-          $ref: '#/components/schemas/mcc'
-        merchantType:
-          $ref: '#/components/schemas/discoverMerchantType'
-        acquirerIdCode:
-          $ref: '#/components/schemas/discoverAcquirerIdCode'
-        isoId:
-          $ref: '#/components/schemas/discoverIsoId'
-        doingBusinessAsName:
-          $ref: '#/components/schemas/discoverDoingBusinessAsName'
-        registeredAddress:
-          $ref: '#/components/schemas/Address'
-        customerInquiry:
-          $ref: '#/components/schemas/phoneNumber'
-        taxRegistrationId:
-          $ref: '#/components/schemas/taxRegistrationId'
-        legalName:
-          $ref: '#/components/schemas/merchantLegalName'
-        businessType:
-          $ref: '#/components/schemas/businessType'
-        websiteUrl:
-          $ref: '#/components/schemas/url'
-        debtRepaymentIndicator:
-          type: boolean
-        posDeviceDownloadIndicator:
-          $ref: '#/components/schemas/posDeviceDownloadIndicator'
-        headquarterAccountNumber:
-          $ref: '#/components/schemas/headquarterAccountNumber'
-        businessPrincipal:
-          $ref: '#/components/schemas/businessPrincipal'
-        merchantStatus:
-          $ref: '#/components/schemas/discoverMerchantStatus'
-    version:
-      type: integer
-      description: The version of this object
-      format: int64
-    discoverMerchantStatus:
-      type: string
-      enum:
-      - open
-      - open-active-bankruptcy
-      - open-existing-merchant-entitled-for-card-acceptance
-      - conversion-renumbered
-    taxRegistrationId:
-      type: string
-      description: "A unique identifier assigned to individuals or entities for tax-related purposes. The format, name and use of this id may vary depending on the country and card network. \n<br> **Visa** requires all acquirers to include the SIRET for France or the Tax Identification Number for Belgium and Luxembourg for all domestic transactions.\n<br> **Mastercard** and **Discover** require the Tax Id Number in the US for commercial card transactions.\n"
-      pattern: ^[a-zA-Z0-9]+$
-      maxLength: 20
-    discoverDoingBusinessAsName:
-      type: string
-      pattern: ^[\x20-\x7E\xA0-\xA3\xA5\xA7\xA9-\xB3\xB5-\xB7\xB9-\xBB\xBF-\xFF\u20AC\u0160\u0161\u017D\u017E\u0152\u0153\u0178]+$
+
+        **Note:** For AMEX merchant acceptors, either provide Seller ID of a seller onboarded by a Payfac, or SE number of an AMEX Direct Merchant.
+
+
+        | Network | Length | Characters | Pattern |
+
+        | ------- | ------ | ---------- | --------|
+
+        | AMEX  | 1-20 | alphanumeric |  /^[a-zA-Z0-9-_\.]+$/ |
+
+        | Bancontact  | 1-15 | alphanumeric | /^[a-zA-Z0-9-_\.]+$/ |
+
+        | Diners | 1-15 | alphanumeric |  /^[a-zA-Z0-9# -]+$/ |
+
+        | Discover | 1-15 | alphanumeric | /^[a-zA-Z0-9-_\.]+$/  |
+
+        | Mastercard | 1-15 | alphanumeric | /^[a-zA-Z0-9-_\.]+$/ |
+
+        | Visa  | 1-15 | alphanumeric | /^[a-zA-Z0-9-_\.]+$/ |
+
+        '
       minLength: 1
-      maxLength: 40
-      description: Assumed, trade or fictitious name of the merchant.
-      example: ACME Corp.
-    VtsEnrollmentDetail:
-      type: object
-      description: VTS specific detail.
-      required:
-      - key
-      - merchantName
-      - merchantWebsite
-      - merchantCity
-      - merchantCountryCode
-      - primaryContactEmail
-      properties:
-        key:
-          type: string
-          description: VTS enrollment detail key
-        merchantName:
-          allOf:
-          - $ref: '#/components/schemas/NameOfPeopleAndPlaces'
-          - description: The legal name of the Merchant
-        merchantWebsite:
-          $ref: '#/components/schemas/url'
-        merchantCity:
-          $ref: '#/components/schemas/city'
-        merchantCountryCode:
-          $ref: '#/components/schemas/countryCodeAlpha2'
-        primaryContactEmail:
-          $ref: '#/components/schemas/email'
-        acquirerId:
-          $ref: '#/components/schemas/acquirerIdCode'
-        mid:
-          $ref: '#/components/schemas/mid'
-        businessIdentificationValue:
-          $ref: '#/components/schemas/businessIdentificationValue'
-        businessIdentificationType:
-          $ref: '#/components/schemas/businessIdentificationType'
-        externalClientId:
-          type: string
-        tokenizationConfiguration:
-          $ref: '#/components/schemas/tokenizationConfiguration'
-    businessType:
-      type: string
-      description: "The business type of the merchant. Specifying the businessType for your legal entity may qualify the merchant to benefit from lower interchange fees in the United States (Mastercard and Visa). \n<br> For US merchants, **Mastercard** requires this field for commercial card transactions. If none of the values closely match your business type please contact your Technical Account Manager.\n"
-      enum:
-      - corporation
-      - sole_proprietorship
-      - partnership
-      - non_profit_organization
-      - government_agency
-      - limited_liability_company
-    deleteReason:
-      type: string
-      enum:
-      - Data Entry Error
-      - Merchant No Longer Participating
-      - Acquirer BIN Change
-      - Acquirer Primary ICA Change
-      - Other
-      description: Issm Unenrollment reason. If empty `Other` will be used.
-    DiscoverMerchantEnrollment:
-      allOf:
-      - $ref: '#/components/schemas/Enrollment'
-      - type: object
-        description: Discover enrollment <a class="experimental-tag-link" href="https://docs.silverflow.com/guides/api-lifecycle#tag/EXPERIMENTAL-Tag"><span class="tag experimental-tag">EXPERIMENTAL</span></a>
-        required:
-        - enrollmentDetail
-        properties:
-          enrollmentDetail:
-            $ref: '#/components/schemas/DiscoverMerchantEnrollmentDetail'
-        example:
-          key: enr-123456
-          status: active
-          agentKey: cgt-123123
-          merchantKey: mct-123123
-          type: discover-mpr
-          enrollmentStatus: enrolled
-          created: '2025-02-01T14:16:54.021Z'
-          version: 2
-          lastModified: '2025-03-01T14:00:00.123Z'
-          errorMessage: 2004-INVALID ISO ID, 2028-INVALID TAX ID NUMBER
-          enrollmentDetail:
-            key: enr-123456
-            mid: '123456789'
-            binKey: bin-1234444
-            mcc: '1033'
-            merchantType: self-managed-outlet
-            acquirerIdCode: '1234567'
-            isoId: '77777777777'
-            doingBusinessAsName: Acme Corp.
-            registeredAddress:
-              city: Abbeville
-              countryCode:
-                alpha3: USA
-                alpha2: US
-                numeric: '016'
-              line1: Wes Johnson
-              postalCode: '36310'
-              stateOrProvince: Alabama
-            customerInquiry: 00964833
-            taxRegistrationId: '123'
-            legalName: This is legal name
-            businessType: corporation
-            websiteUrl: https://www.silverlow.com
-            merchantReference: '11111111'
-            debtRepaymentIndicator: true
-            posDeviceDownloadIndicator: host-based-pos-device
-            headquarterAccountNumber: '7777777'
-            businessPrincipal:
-              firstName: John
-              homeAddress:
-                city: Abbeville
-                countryCode: USA
-                line1: Wes Johnson
-                postalCode: '36310'
-                stateOrProvince: Alabama
-              lastName: Smith
-              socialSecurityNumber: '123456789'
-            merchantStatus: open
-    signerBase:
-      description: Base properties for the Seller's Authorized Signer.
-      type: object
-      required:
-      - firstName
-      - lastName
-      - identificationNumber
-      - dateOfBirth
-      properties:
-        firstName:
-          $ref: '#/components/schemas/signerFirstName'
-        lastName:
-          $ref: '#/components/schemas/signerLastName'
-        identificationNumber:
-          $ref: '#/components/schemas/signerIdentificationNumber'
-        dateOfBirth:
-          $ref: '#/components/schemas/signerDateOfBirth'
-    headquarterAccountNumber:
-      type: string
-      description: Headquarter account number. Required only when `merchantType` is `outlet-reporting-to-headquarter`.
-    IssmEnrollment:
-      allOf:
-      - $ref: '#/components/schemas/Enrollment'
-      - type: object
-        description: ISSM Enrollment
-        required:
-        - enrollmentDetail
-        properties:
-          merchantAcceptorRef:
-            $ref: '#/components/schemas/AcceptorRef'
-          enrollmentDetail:
-            $ref: '#/components/schemas/IssmEnrollmentDetail'
+      maxLength: 20
+      example: UO2344SDDAUOGS
     countryCodeAlpha3:
       type: string
       pattern: ^[A-Z]+$
@@ -4158,6 +3412,757 @@ components:
         description: Find more info here
         url: https://www.iso.org/iso-3166-country-codes.html
       example: NLD
+    ScofProgramType:
+      type: string
+      enum:
+      - merchant_obo
+      - commerce_platform_obo
+      description: ProgramType in SCOF. Please reach out to your TAM before using `commerce_platform_obo` program type.
+    NameOfPeopleAndPlaces:
+      type: string
+      pattern: ^[\w ,\.\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u00FF-]+$
+      minLength: 1
+      maxLength: 120
+    businessPrincipal:
+      description: Primary contact person at the Merchant DBA location
+      type: object
+      required:
+      - firstName
+      - lastName
+      - socialSecurityNumber
+      - homeAddress
+      properties:
+        firstName:
+          type: string
+          description: First name of business principal
+          pattern: ^[\x20-\x7E\xA0-\xA3\xA5\xA7\xA9-\xB3\xB5-\xB7\xB9-\xBB\xBF-\xFF\u20AC\u0160\u0161\u017D\u017E\u0152\u0153\u0178]+$
+          minLength: 1
+          maxLength: 22
+        lastName:
+          type: string
+          description: Last name of business principal
+          pattern: ^[\x20-\x7E\xA0-\xA3\xA5\xA7\xA9-\xB3\xB5-\xB7\xB9-\xBB\xBF-\xFF\u20AC\u0160\u0161\u017D\u017E\u0152\u0153\u0178]+$
+          minLength: 1
+          maxLength: 22
+        socialSecurityNumber:
+          type: string
+          description: Social Security number of business principal
+          minLength: 1
+          maxLength: 9
+        homeAddress:
+          type: object
+          required:
+          - countryCode
+          - city
+          - line1
+          - postalCode
+          - stateOrProvince
+          additionalProperties: false
+          description: A postal home address of business principal
+          properties:
+            countryCode:
+              $ref: '#/components/schemas/countryCodeAlpha3'
+            stateOrProvince:
+              allOf:
+              - $ref: '#/components/schemas/ExtendedNameOfPeopleAndPlaces'
+              - description: 'Code of the state or province
+
+                  '
+                example: OH
+                minLength: 1
+                maxLength: 4
+            city:
+              allOf:
+              - $ref: '#/components/schemas/ExtendedNameOfPeopleAndPlaces'
+              - description: 'Address line 1. Clients not enrolled in the "extended character set beta" are still subject to the `^[\w ,\.\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u00FF-]+$` pattern for field input.
+
+                  '
+                example: Amsterdam
+                minLength: 1
+                maxLength: 28
+            line1:
+              allOf:
+              - $ref: '#/components/schemas/ExtendedNameOfPeopleAndPlaces'
+              - description: 'Address line 1. Clients not enrolled in the "extended character set beta" are still subject to the `^[\w ,\.\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u00FF-]+$` pattern for field input.
+
+                  '
+                example: Entrada 300
+                minLength: 1
+                maxLength: 40
+            line2:
+              allOf:
+              - $ref: '#/components/schemas/ExtendedNameOfPeopleAndPlaces'
+              - description: 'Address line 2. Clients not enrolled in the "extended character set beta" are still subject to the `^[\w ,\.\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u00FF-]+$` pattern for field input.
+
+                  '
+                example: Floor 6
+                minLength: 1
+                maxLength: 40
+            postalCode:
+              type: string
+              pattern: ^[A-Z0-9]+([ -][A-Z0-9]+)?$
+              minLength: 1
+              maxLength: 15
+              description: 'The postal code of the address.
+
+                '
+              example: 1114 AA
+    line1:
+      allOf:
+      - $ref: '#/components/schemas/ExtendedNameOfPeopleAndPlaces'
+      - description: 'Address line 1. Clients not enrolled in the "extended character set beta" are still subject to the `^[\w ,\.\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u00FF-]+$` pattern for field input.
+
+          '
+        example: Entrada 300
+    mcc:
+      type: string
+      pattern: ^\d+$
+      minLength: 4
+      maxLength: 4
+      description: The Merchant category.
+      example: 742
+    amex_phoneNumber:
+      description: The phone number for the Seller's physical location. Phone numbers must contain the international telephone country code.
+      type: string
+      pattern: \d{1,24}
+    EnrollmentsPage:
+      allOf:
+      - $ref: '#/components/schemas/Page'
+      - type: object
+        required:
+        - enrollments
+        properties:
+          enrollments:
+            type: array
+            items:
+              $ref: '#/components/schemas/StandaloneEnrollment'
+    amexCancellationReason:
+      description: This field required when cancelling an AMEX Enrollment.
+      type: string
+      enum:
+      - derogatory
+      - non_derogatory
+    businessIdentification:
+      type: object
+      description: '**Business identification should be used to enroll with VTS wherever possible.** Use the combination of `binKey` and `mid` for non-profit Merchants or if none of the business identification types below apply. Further requirements are detailed in the [VTS enrollment guide](https://docs.silverflow.com/guides/merchant-enrollment#tag/Visa-VTS-Enrollment).
+
+        '
+      required:
+      - type
+      - value
+      properties:
+        type:
+          $ref: '#/components/schemas/businessIdentificationType'
+        value:
+          $ref: '#/components/schemas/businessIdentificationValue'
+    sellerDoingBusinessAsName:
+      allOf:
+      - $ref: '#/components/schemas/ExtendedNameOfPeopleAndPlaces'
+      - description: The Seller's business name that appears on the store front and/or Customer receipts, commonly referred to as the Doing Business As (DBA) name. If the name is more than 60 characters, use a proper and meaningful abbreviation, when possible. Do not truncate.
+      - minLength: 1
+      - maxLength: 60
+    CountryCode:
+      type: object
+      required:
+      - alpha3
+      - alpha2
+      - numeric
+      properties:
+        alpha3:
+          $ref: '#/components/schemas/countryCodeAlpha3'
+        alpha2:
+          $ref: '#/components/schemas/countryCodeAlpha2'
+        numeric:
+          $ref: '#/components/schemas/countryCodeNumeric'
+    Enrollment:
+      type: object
+      required:
+      - key
+      - status
+      - agentKey
+      - merchantKey
+      - type
+      - enrollmentStatus
+      - created
+      - version
+      properties:
+        key:
+          $ref: '#/components/schemas/enrollmentKey'
+        status:
+          $ref: '#/components/schemas/status'
+        agentKey:
+          $ref: '#/components/schemas/agentKey'
+        merchantKey:
+          $ref: '#/components/schemas/merchantKey'
+        type:
+          $ref: '#/components/schemas/enrollmentType'
+        enrollmentStatus:
+          $ref: '#/components/schemas/enrollmentStatus'
+        created:
+          type: string
+          format: date-time
+          description: Enrollment creation date.
+        version:
+          type: integer
+          description: Enrollment version.
+        lastModified:
+          type: string
+          format: date-time
+          description: Enrollment last modification date.
+        errorMessage:
+          type: string
+          description: Error message in case 'enrollmentStatus' is error.
+    businessRegistrationNumber:
+      description: The Seller's Tax Identification Number or their functional equivalents.
+      type: string
+      pattern: ^[a-zA-Z0-9]+$
+      minLength: 1
+      maxLength: 15
+    discoverAcquirerIdCode:
+      type: string
+      description: Acquirer Institution ID code.
+      pattern: ^\d+$
+      minLength: 1
+      maxLength: 11
+    BadRequestProblemDetail:
+      description: 'A ''problem detail'' object for Bad Request (400) errors. Extends the base ProblemDetail
+
+        with a validationErrors array that provides detailed information about validation failures.
+
+        '
+      allOf:
+      - $ref: '#/components/schemas/ProblemDetail'
+      - type: object
+        required:
+        - type
+        - title
+        - status
+        - detail
+        - instance
+        properties:
+          type:
+            type: string
+            description: URI reference identifying the problem type.
+            enum:
+            - /silverflow/problems/bad-request
+            example: /silverflow/problems/bad-request
+          title:
+            type: string
+            description: A short summary of the problem type.
+            enum:
+            - Bad Request
+          status:
+            type: integer
+            format: int32
+            description: The HTTP status code (400 for Bad Request).
+            enum:
+            - 400
+          detail:
+            type: string
+            description: A human readable explanation specific to this occurrence of the problem.
+            example: Validation errors occurred
+          instance:
+            type: string
+            description: An absolute URI that identifies the specific occurrence of the problem.
+          validationErrors:
+            type: array
+            description: 'An array of validation errors that occurred during request processing. Each item can be either
+
+              a simple string message or an object with detailed error information including the path and message.
+
+              '
+            items:
+              oneOf:
+              - type: string
+                description: A simple validation error message
+                example: Invalid 'mid' length
+              - type: object
+                description: A detailed validation error with path and message
+                required:
+                - instancePath
+                - message
+                properties:
+                  instancePath:
+                    type: string
+                    description: The JSON path to the field that caused the validation error
+                    example: /merchantAcceptor/mid
+                  message:
+                    type: string
+                    description: The validation error message
+                    example: must be at most 15 characters
+        additionalProperties: false
+    version:
+      type: integer
+      description: The version of this object
+      format: int64
+    addressCity:
+      allOf:
+      - $ref: '#/components/schemas/city'
+      - minLength: 1
+      - maxLength: 40
+    addressUpdateForAmexSMApi:
+      type: object
+      properties:
+        line1:
+          $ref: '#/components/schemas/addressLine'
+        line2:
+          $ref: '#/components/schemas/addressLine'
+        city:
+          $ref: '#/components/schemas/addressCity'
+        postalCode:
+          $ref: '#/components/schemas/postalCode'
+        countryCode:
+          $ref: '#/components/schemas/CountryCodeCreate'
+        stateOrProvince:
+          $ref: '#/components/schemas/stateOrProvince'
+    Page:
+      type: object
+      properties:
+        offsetToken:
+          $ref: '#/components/schemas/offsetToken'
+        moreItems:
+          $ref: '#/components/schemas/moreItems'
+    VtsEnrollmentCreate:
+      type: object
+      description: Create VTS enrollment.
+      required:
+      - merchantKey
+      - type
+      properties:
+        merchantKey:
+          $ref: '#/components/schemas/merchantKey'
+        type:
+          type: string
+          enum:
+          - vts
+          description: 'Type of the enrollment.
+
+            * `amex_sm` - American Express, Sponsored Merchant (**Please reach out to your technical account manager to enable your production access**)
+
+            * `discover-mpr` - Discover, Merchant Profile Registration
+
+            * `scof` - Mastercom Secure Card on File
+
+            * `vau` - Visa Account Updater
+
+            * `vts` - Visa Token Service (see [guide](https://docs.silverflow.com/guides/merchant-enrollment#tag/Visa-VTS-Enrollment))
+
+            '
+        businessIdentification:
+          $ref: '#/components/schemas/businessIdentification'
+        binKey:
+          allOf:
+          - description: A key assigned by Silverflow to uniquely identify a Bin. **Do not provide if business identification is supplied.**
+          - $ref: '#/components/schemas/binKey'
+        mid:
+          allOf:
+          - description: "As per card network requirements, the Merchant ID assigned by the acquirer must uniquely identify a legal merchant per acquirer BIN. \n**Do not provide if business identification is supplied.**\n\n**Note:** For AMEX merchant acceptors, provide the Seller ID for this property.\n\n| Network | Length | Characters |\n| ------- | ------ | ---------- |\n| AMEX  | 1-20 | alphanumeric |\n| Bancontact  | 1-15 | alphanumeric |\n| Discover | 1-15 | alphanumeric |\n| Mastercard | 1-15 | alphanumeric |\n| Visa  | 1-15 | alphanumeric |\n"
+          - $ref: '#/components/schemas/mid'
+    signerFirstName:
+      type: string
+      description: The Seller's Authorized Signer complete first name.
+      pattern: ^[a-zA-Z0-9]+$
+      minLength: 1
+      maxLength: 20
+    city:
+      allOf:
+      - $ref: '#/components/schemas/ExtendedNameOfPeopleAndPlaces'
+      - description: 'The city of the address. Clients not enrolled in the "extended character set beta" are still subject to the `^[\w ,\.\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u00FF-]+$` pattern for field input.
+
+          '
+        example: Amsterdam-Duivendrecht
+    enrollmentStatus:
+      description: Status of an Enrollment.
+      type: string
+      enum:
+      - pending
+      - enrolled
+      - unenrolled
+      - pendingUnenroll
+      - error
+      - failed
+    url:
+      type: string
+      description: A valid URL
+      pattern: ^http(s)?:\/\/[a-z0-9-_]+(\.[a-z0-9-_]+)+(\/.*)?$
+      minLength: 8
+      maxLength: 2048
+    VauEnrollmentDetail:
+      type: object
+      description: VAU specific detail
+      required:
+      - key
+      - acquirerSegmentId
+      - binKey
+      - acquirerIdCode
+      - merchantLegalName
+      - merchantCountryCode
+      - mid
+      - mcc
+      properties:
+        key:
+          type: string
+          description: VAU enrollment detail key
+        acquirerSegmentId:
+          $ref: '#/components/schemas/acquirerSegmentId'
+        binKey:
+          $ref: '#/components/schemas/binKey'
+        acquirerIdCode:
+          $ref: '#/components/schemas/acquirerIdCode'
+        merchantLegalName:
+          allOf:
+          - $ref: '#/components/schemas/NameOfPeopleAndPlaces'
+          - description: The legal name of the Merchant
+        merchantCountryCode:
+          $ref: '#/components/schemas/CountryCode'
+        mid:
+          $ref: '#/components/schemas/mid'
+        mcc:
+          $ref: '#/components/schemas/mcc'
+    status:
+      type: string
+      description: The status of the object
+      enum:
+      - active
+      - archived
+    signerIdentificationNumber:
+      type: string
+      description: The identification number of the Seller's Authorized Signer.
+      pattern: ^[a-zA-Z0-9]+$
+      minLength: 1
+      maxLength: 30
+    BaseEnrollmentCreate:
+      type: object
+      required:
+      - merchantKey
+      - type
+      properties:
+        merchantKey:
+          $ref: '#/components/schemas/merchantKey'
+        type:
+          $ref: '#/components/schemas/enrollmentCreateType'
+        binKey:
+          $ref: '#/components/schemas/binKey'
+    ScofEnrollmentDetail:
+      type: object
+      description: SCOF specific detail
+      required:
+      - key
+      - mid
+      - binKey
+      - programType
+      - programName
+      properties:
+        key:
+          type: string
+          description: SCOF DPA
+        mid:
+          $ref: '#/components/schemas/mid'
+        binKey:
+          $ref: '#/components/schemas/binKey'
+        programType:
+          $ref: '#/components/schemas/ScofProgramType'
+        programName:
+          $ref: '#/components/schemas/ScofProgramName'
+        mccs:
+          type: array
+          minItems: 1
+          maxItems: 20
+          items:
+            $ref: '#/components/schemas/mcc'
+        serviceId:
+          type: string
+          description: ServiceId assigned by Mastercard SCOF Service
+    IssmEnrollment:
+      allOf:
+      - $ref: '#/components/schemas/Enrollment'
+      - type: object
+        description: ISSM Enrollment
+        required:
+        - enrollmentDetail
+        properties:
+          merchantAcceptorRef:
+            $ref: '#/components/schemas/AcceptorRef'
+          enrollmentDetail:
+            $ref: '#/components/schemas/IssmEnrollmentDetail'
+    AmexSponsoredMerchantEnrollmentUpdate:
+      type: object
+      description: Update Sponsored Merchant request for American Express.
+      required:
+      - type
+      additionalProperties: false
+      properties:
+        type:
+          type: string
+          enum:
+          - amex_sm
+          description: 'Type of the enrollment.
+
+            * `amex_sm` - American Express, Sponsored Merchant (**Please reach out to your technical account manager to enable your production access**)
+
+            '
+        mcc:
+          $ref: '#/components/schemas/mcc'
+        doingBusinessAsName:
+          $ref: '#/components/schemas/sellerDoingBusinessAsName'
+        phoneNumber:
+          $ref: '#/components/schemas/amex_phoneNumber'
+        legalName:
+          $ref: '#/components/schemas/sellerLegalName'
+        businessRegistrationNumber:
+          $ref: '#/components/schemas/nullableBusinessRegistrationNumber'
+        signer:
+          $ref: '#/components/schemas/signerUpdate'
+    businessIdentificationValue:
+      type: string
+      example: NL123456789B01
+      pattern: ^[a-zA-Z0-9]{1,15}$
+    signerBase:
+      description: Base properties for the Seller's Authorized Signer.
+      type: object
+      required:
+      - firstName
+      - lastName
+      - identificationNumber
+      - dateOfBirth
+      properties:
+        firstName:
+          $ref: '#/components/schemas/signerFirstName'
+        lastName:
+          $ref: '#/components/schemas/signerLastName'
+        identificationNumber:
+          $ref: '#/components/schemas/signerIdentificationNumber'
+        dateOfBirth:
+          $ref: '#/components/schemas/signerDateOfBirth'
+    sellerLegalName:
+      allOf:
+      - $ref: '#/components/schemas/ExtendedNameOfPeopleAndPlaces'
+      - description: The Seller's legal name. If the name is more than 60 characters, use proper and meaningful abbreviation, when possible. Do not truncate.
+      - minLength: 1
+      - maxLength: 60
+    headquarterAccountNumber:
+      type: string
+      description: Headquarter account number. Required only when `merchantType` is `outlet-reporting-to-headquarter`.
+    ArchiveEnrollment:
+      oneOf:
+      - $ref: '#/components/schemas/AmexSponsoredMerchantEnrollmentArchive'
+      - $ref: '#/components/schemas/IssmEnrollmentArchive'
+      discriminator:
+        propertyName: type
+        mapping:
+          amex_sm: '#/components/schemas/AmexSponsoredMerchantEnrollmentArchive'
+          issm: '#/components/schemas/IssmEnrollmentArchive'
+    ProblemDetail:
+      type: object
+      description: 'The ''problem detail'' object relays detailed information about the error that occurred. It is defined
+
+        by [RFC 7807 - Problem Details for HTTP APIs](https://tools.ietf.org/html/rfc7807).
+
+
+        Note that additional properties may be used to relay error specific information.
+
+        '
+      properties:
+        type:
+          type: string
+          description: 'An absolute URI that identifies the problem type.
+
+            '
+          default: about:blank
+          example: https://api.silverflow.co/problem/constraint-violation
+        title:
+          type: string
+          description: 'A short, summary of the problem type. Written in english and readable
+
+            for engineers (usually not suited for non technical stakeholders and
+
+            not localized);
+
+            '
+          example: Service Unavailable
+        status:
+          type: integer
+          format: int32
+          description: 'The HTTP status code generated by the origin server for this occurrence
+
+            of the problem.
+
+            '
+          minimum: 100
+          maximum: 599
+          example: 503
+        detail:
+          type: string
+          description: 'A human readable explanation specific to this occurrence of the
+
+            problem.
+
+            '
+          example: Connection to database timed out
+        instance:
+          type: string
+          description: 'An absolute URI that identifies the specific occurrence of the problem.
+
+            It may or may not yield further information if dereferenced.
+
+            '
+      additionalProperties: true
+    agentKey:
+      description: Uniquely identifies an Agent
+      type: string
+      pattern: ^cgt-[a-zA-Z0-9]+|current$
+      example: cgt-1UF2NafdfrdPMf2XrS2
+    email:
+      type: string
+      description: A valid email address
+      pattern: \w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*
+    acquirerBin:
+      type: string
+      description: Acquirer Bin. The Bin number as assigned by the card network. For Mastercard, this is also referred to as the Acquirer Reference ID.
+      pattern: ^\d+$
+      minLength: 6
+      maxLength: 6
+    AmexSponsoredMerchantEnrollment:
+      allOf:
+      - $ref: '#/components/schemas/Enrollment'
+      - type: object
+        description: AMEX Sponsored Merchant enrollment <a class="experimental-tag-link" href="https://docs.silverflow.com/guides/api-lifecycle#tag/EXPERIMENTAL-Tag"><span class="tag experimental-tag">EXPERIMENTAL</span></a>
+        required:
+        - enrollmentDetail
+        - type
+        properties:
+          type:
+            type: string
+            enum:
+            - amex_sm
+          warningMessage:
+            type: string
+            description: Warning message, could occur in case of error or success.
+          enrollmentDetail:
+            $ref: '#/components/schemas/AmexSponsoredMerchantEnrollmentDetail'
+    acquirerIdCode:
+      type: string
+      description: Acquirer Institution ID code. For Mastercard, this field corresponds to the Acquirer ICA. For Visa, this field corresponds to the CIB, which usually has the same value as the Bin. For AMEX, this field corresponds to Submitter ID.
+      pattern: ^\d+$
+      minLength: 6
+      maxLength: 6
+    addressForAmexSMApi:
+      type: object
+      required:
+      - line1
+      - city
+      - postalCode
+      - countryCode
+      properties:
+        line1:
+          $ref: '#/components/schemas/addressLine'
+        line2:
+          $ref: '#/components/schemas/addressLine'
+        city:
+          $ref: '#/components/schemas/addressCity'
+        postalCode:
+          $ref: '#/components/schemas/postalCode'
+        countryCode:
+          $ref: '#/components/schemas/CountryCode'
+        stateOrProvince:
+          $ref: '#/components/schemas/stateOrProvince'
+    CountryCodeOnlyAlpha3:
+      type: object
+      required:
+      - alpha3
+      additionalProperties: false
+      properties:
+        alpha3:
+          $ref: '#/components/schemas/countryCodeAlpha3'
+    CreateEnrollment:
+      oneOf:
+      - $ref: '#/components/schemas/AmexSponsoredMerchantEnrollmentCreate'
+      - $ref: '#/components/schemas/DiscoverMerchantEnrollmentCreate'
+      - $ref: '#/components/schemas/ScofEnrollmentCreate'
+      - $ref: '#/components/schemas/VauEnrollmentCreate'
+      - $ref: '#/components/schemas/VtsEnrollmentCreate'
+      discriminator:
+        propertyName: type
+        mapping:
+          vts: '#/components/schemas/VtsEnrollmentCreate'
+          vau: '#/components/schemas/VauEnrollmentCreate'
+          scof: '#/components/schemas/ScofEnrollmentCreate'
+          discover-mpr: '#/components/schemas/DiscoverMerchantEnrollmentCreate'
+          amex_sm: '#/components/schemas/AmexSponsoredMerchantEnrollmentCreate'
+    signerLastName:
+      type: string
+      description: The Seller's Authorized Signer complete last name. For individuals whose name includes two or more family names (i.e. father's surname and mother's surname), all family names must be included in this field without exception.
+      pattern: ^[a-zA-Z0-9 -]+$
+      minLength: 1
+      maxLength: 20
+    merchantKey:
+      description: Uniquely identifies a Merchant
+      type: string
+      pattern: ^mct-[a-zA-Z0-9]+$
+      minLength: 5
+      maxLength: 120
+      example: mct-123dinkqFqfq3q2f2adfa
+    businessIdentificationType:
+      type: string
+      example: VAT
+      enum:
+      - ABN
+      - ACN
+      - BIN
+      - BIR
+      - BN
+      - BRN
+      - BRNO
+      - CL
+      - CLN
+      - CN
+      - CNPJ
+      - CR
+      - CUIT
+      - EDRPOU
+      - EIN
+      - HKBR
+      - NATIONAL_ID
+      - NIB
+      - NID
+      - NZBN
+      - PAN
+      - RFC
+      - RNC
+      - RUC
+      - RUT
+      - SIN
+      - SSN
+      - TC
+      - UEN
+      - USCI
+      - VAT
+    signerDateOfBirth:
+      type: string
+      description: The date of birth of the Seller's Authorized Signer, in the format <YYYY/MM/DD>.
+      pattern: ^(19|20)\d{2}\/(0[1-9]|1[0-2])\/(0[1-9]|[12]\d|3[01])$
+    moreItems:
+      type: boolean
+    UpdateEnrollment:
+      oneOf:
+      - $ref: '#/components/schemas/AmexSponsoredMerchantEnrollmentUpdate'
+      discriminator:
+        propertyName: type
+        mapping:
+          amex_sm: '#/components/schemas/AmexSponsoredMerchantEnrollmentUpdate'
+    discoverMerchantStatus:
+      type: string
+      enum:
+      - open
+      - open-active-bankruptcy
+      - open-existing-merchant-entitled-for-card-acceptance
+      - conversion-renumbered
+    ScofProgramName:
+      description: SCOF program name.
+      type: string
+      pattern: ^[\w]+$
+      minLength: 1
+      maxLength: 100
     signerUpdate:
       description: Base properties for the Seller's Authorized Signer.
       type: object
@@ -4172,121 +4177,82 @@ components:
           $ref: '#/components/schemas/signerDateOfBirth'
         address:
           $ref: '#/components/schemas/addressUpdateForAmexSMApi'
-    acquirerBin:
+    deleteReason:
       type: string
-      description: Acquirer Bin. The Bin number as assigned by the card network. For Mastercard, this is also referred to as the Acquirer Reference ID.
-      pattern: ^\d+$
-      minLength: 6
-      maxLength: 6
+      enum:
+      - Data Entry Error
+      - Merchant No Longer Participating
+      - Acquirer BIN Change
+      - Acquirer Primary ICA Change
+      - Other
+      description: Issm Unenrollment reason. If empty `Other` will be used.
+    businessType:
+      type: string
+      description: "The business type of the merchant. Specifying the businessType for your legal entity may qualify the merchant to benefit from lower interchange fees in the United States (Mastercard and Visa). \n<br> For US merchants, **Mastercard** requires this field for commercial card transactions. If none of the values closely match your business type please contact your Technical Account Manager.\n"
+      enum:
+      - corporation
+      - sole_proprietorship
+      - partnership
+      - non_profit_organization
+      - government_agency
+      - limited_liability_company
+    CountryCodeOnlyNumeric:
+      type: object
+      required:
+      - numeric
+      additionalProperties: false
+      properties:
+        numeric:
+          $ref: '#/components/schemas/countryCodeNumeric'
+    nullableBusinessRegistrationNumber:
+      description: The Seller's Tax Identification Number or their functional equivalents.
+      type:
+      - string
+      - 'null'
+      pattern: ^[a-zA-Z0-9]+$
+      minLength: 1
+      maxLength: 15
     binKey:
       description: A key assigned by Silverflow to uniquely identify a Bin.
       type: string
       pattern: ^bin-[a-zA-Z0-9]+$
       minLength: 5
       maxLength: 120
-    line1:
+    merchantLegalName:
       allOf:
       - $ref: '#/components/schemas/ExtendedNameOfPeopleAndPlaces'
-      - description: 'Address line 1. Clients not enrolled in the "extended character set beta" are still subject to the `^[\w ,\.\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u00FF-]+$` pattern for field input.
-
-          '
-        example: Entrada 300
-  examples:
-    create-vau-enrollment:
-      summary: VAU Enrollment
-      value:
-        merchantKey: mct-123dinkqFqfq3q2f2adfa
-        type: vau
-        binKey: bin-1QAl5suBCAwOrolEIAB2
-        mid: UO2344SDDAUOGS
-        mcc: '0742'
-    create-vts-enrollment:
-      summary: VTS Enrollment
-      value:
-        merchantKey: mct-123dinkqFqfq3q2f2adfa
-        type: vts
-        businessIdentification:
-          type: VAT
-          value: NL123456789B01
-    create-enrollment-scof:
-      summary: Creates an enrollment for a merchant acceptor
-      value:
-        key: enr-2gDxu06uE6ocfcvPj8K2
-        status: active
-        agentKey: cgt-28nJRFOK6lqRnBqJkyXg
-        merchantKey: mct-28okZKr7v9rD4z1LX459
-        type: scof
-        enrollmentStatus: pending
-        enrollmentDetail:
-          key: cgt-28nJRFOK6lqRnBqJkyXg#mct-28okZKr7v9rD4z1LX459#scof#merchant_obo#1234#bin-1QAl5suBCAwOrolEIAB2#programEnrollmentName
-          mid: '1234'
-          binKey: bin-1QAl5suBCAwOrolEIAB2
-          programType: merchant_obo
-          programName: programEnrollmentName
-        created: '2022-05-12T09:13:46.067Z'
-        lastModified: '2022-05-12T09:13:46.099Z'
-        version: 1
-    create-amex-sm-enrollment:
-      summary: AMEX Sponsored Merchant Enrollment
-      value:
-        merchantKey: mct-123dinkqFqfq3q2f2adfa
-        type: amex_sm
-        binKey: bin-1QAl5suBCAwOrolEIAB2
-        mid: UO2344SDDAUOGS
-        doingBusinessAsName: ACME Corp.
-        mcc: '0742'
-        legalName: ACME Corporation
-        phoneNumber: 0612345678
-        businessRegistrationNumber: REG123456
-        signer:
-          firstName: Jane
-          lastName: Cardholder
-          identificationNumber: ID123456
-          dateOfBirth: 1993/05/02
-          address:
-            line1: Entrada 300
-            city: Amsterdam
-            postalCode: 1114AA
-            countryCode:
-              alpha3: NLD
-    create-scof-enrollment:
-      summary: SCOF Enrollment
-      value:
-        merchantKey: mct-123dinkqFqfq3q2f2adfa
-        type: scof
-        mid: UO2344SDDAUOGS
-        binKey: bin-1QAl5suBCAwOrolEIAB2
-        programType: merchant_obo
-        programName: programEnrollmentName
-    create-discover-mpr-enrollment:
-      summary: Discover MPR Enrollment
-      value:
-        merchantKey: mct-123dinkqFqfq3q2f2adfa
-        merchantType: self-managed-outlet
-        type: discover-mpr
-        binKey: bin-1QAl5suBCAwOrolEIAB2
-        mid: UO2344SDDAUOGS
-        doingBusinessAsName: ACME Corp.
-        mcc: '0742'
-        debtRepaymentIndicator: false
-        businessPrincipal:
-          firstName: John
-          lastName: Cardholder
-          socialSecurityNumber: '567891234'
-          homeAddress:
-            countryCode: USA
-            stateOrProvince: CA
-            city: Hill Valley
-            line1: Riverside Drive
-            postalCode: '91103'
-        merchantStatus: open
+      - description: The legal name of the Merchant. Clients not enrolled in the "extended character set beta" are still subject to the `^[\w ,\.\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u00FF-\/]+$` pattern for field input.
+    ExtendedNameOfPeopleAndPlaces:
+      type: string
+      pattern: ^[\x20-\x7E\xA0-\xA3\xA5\xA7\xA9-\xB3\xB5-\xB7\xB9-\xBB\xBF-\xFF\u20AC\u0160\u0161\u017D\u017E\u0152\u0153\u0178]+$
+      minLength: 1
+      maxLength: 120
+    authorizationCurrency:
+      type: string
+      allOf:
+      - description: Used by American Express to verify an authorization for the provided SE Number. <br> **Note:** The following currencies are not permitted; **Belarusian Ruble(BYN), Cuban Peso(CUP), Iranian Rial(IRR), North Korean Won(KPW), Russian Federation Ruble(RUB), and Syrian Pound(SYP)**.
+      - $ref: '#/components/schemas/currencyCode'
+    addressCreateForAmexSMApi:
+      type: object
+      required:
+      - line1
+      - city
+      - postalCode
+      - countryCode
+      properties:
+        line1:
+          $ref: '#/components/schemas/addressLine'
+        line2:
+          $ref: '#/components/schemas/addressLine'
+        city:
+          $ref: '#/components/schemas/addressCity'
+        postalCode:
+          $ref: '#/components/schemas/postalCode'
+        countryCode:
+          $ref: '#/components/schemas/CountryCodeCreate'
+        stateOrProvince:
+          $ref: '#/components/schemas/stateOrProvince'
   responses:
-    ConflictError:
-      description: The request could not be completed due to a conflict with the current state of the resources involved in the request.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ProblemDetail'
     TooManyRequestsError:
       description: The number of requests (per minute) has exceeded the configured maximum
       content:
@@ -4299,33 +4265,6 @@ components:
             status: 429
             detail: You have exceeded the rate limit. Please try again after the specified delay.
             instance: /silverflow/b0451a9d-f66d-4ef7-9f5d-d48064a2bb3e
-    BadRequestError:
-      description: The request was malformed. See the response body for details
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/BadRequestProblemDetail'
-          example:
-            type: /silverflow/problems/bad-request
-            title: Bad Request
-            status: 400
-            detail: Validation errors occurred
-            instance: https://api.silverflow.co/v1/merchants/mct-1hPdFqhgstYTUhlphPDp
-            validationErrors:
-            - instancePath: /tags/0/businessId
-              message: must not be longer than 255 characters
-    NotFoundError:
-      description: The requested resource was not found
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ProblemDetail'
-          example:
-            type: https://datatracker.ietf.org/doc/html/rfc2616#section-10.4.5
-            title: Not Found
-            status: 404
-            detail: The entity referenced in the request could not be found
-            instance: https://api.silverflow.co/v1/merchants/mct-1hPdFqhgstYTUhlphPDp
     UnauthorizedError:
       description: Authentication information is missing or invalid
       headers:
@@ -4341,6 +4280,21 @@ components:
             title: Unauthorized
             status: 401
             detail: The credentials supplied in the request are either missing, invalid, or not applicable in the current scope
+    BadRequestError:
+      description: The request was malformed. See the response body for details
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/BadRequestProblemDetail'
+          example:
+            type: /silverflow/problems/bad-request
+            title: Bad Request
+            status: 400
+            detail: Validation errors occurred
+            instance: https://api.silverflow.co/v1/merchants/mct-1hPdFqhgstYTUhlphPDp
+            validationErrors:
+            - instancePath: /tags/0/businessId
+              message: must not be longer than 255 characters
     ForbiddenError:
       description: The authenticated client is forbidden to make the request for the resource identified.
       content:
@@ -4365,67 +4319,113 @@ components:
             status: 405
             title: Method Not Allowed
             type: /silverflow/problems/method-not-allowed
-  parameters:
-    offsetToken:
-      name: offsetToken
-      description: The offset token. This token is returned in the response of previous request.
-      in: query
-      required: false
-      schema:
-        $ref: '#/components/schemas/offsetToken'
-    sortOrder:
-      name: sortOrder
-      description: The sort order, __asc__ending or __desc__ending
-      in: query
-      required: false
-      schema:
-        type: string
-        enum:
-        - asc
-        - desc
-      example: desc
-    archived:
-      name: archived
-      description: 'If set to true it will return only archived merchants.
-
-        '
-      in: query
-      required: false
-      schema:
-        type: boolean
-    limit:
-      name: limit
-      description: The number of items to return
-      in: query
-      required: false
-      schema:
-        type: integer
-        format: int32
-        minimum: 1
-        maximum: 100
-        default: 10
-      example: 1
-    merchantKeyQs:
-      name: merchantKey
-      description: 'Immutable, unique identifier of the merchant
-
-        '
-      in: query
-      required: false
-      schema:
-        $ref: '#/components/schemas/merchantKey'
-    enrollmentKey:
-      name: enrollmentKey
-      description: 'Uniquely identifies an Enrollment.
-
-        '
-      in: path
-      required: true
-      schema:
-        type: string
-        pattern: ^enr-[a-zA-Z0-9]+$
-        minLength: 5
-        maxLength: 120
+    ConflictError:
+      description: The request could not be completed due to a conflict with the current state of the resources involved in the request.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ProblemDetail'
+    NotFoundError:
+      description: The requested resource was not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ProblemDetail'
+          example:
+            type: https://datatracker.ietf.org/doc/html/rfc2616#section-10.4.5
+            title: Not Found
+            status: 404
+            detail: The entity referenced in the request could not be found
+            instance: https://api.silverflow.co/v1/merchants/mct-1hPdFqhgstYTUhlphPDp
+  examples:
+    create-amex-sm-enrollment:
+      summary: AMEX Sponsored Merchant Enrollment
+      value:
+        merchantKey: mct-123dinkqFqfq3q2f2adfa
+        type: amex_sm
+        binKey: bin-1QAl5suBCAwOrolEIAB2
+        mid: UO2344SDDAUOGS
+        doingBusinessAsName: ACME Corp.
+        mcc: '0742'
+        legalName: ACME Corporation
+        phoneNumber: 0612345678
+        businessRegistrationNumber: REG123456
+        signer:
+          firstName: Jane
+          lastName: Cardholder
+          identificationNumber: ID123456
+          dateOfBirth: 1993/05/02
+          address:
+            line1: Entrada 300
+            city: Amsterdam
+            postalCode: 1114AA
+            countryCode:
+              alpha3: NLD
+    create-enrollment-scof:
+      summary: Creates an enrollment for a merchant acceptor
+      value:
+        key: enr-2gDxu06uE6ocfcvPj8K2
+        status: active
+        agentKey: cgt-28nJRFOK6lqRnBqJkyXg
+        merchantKey: mct-28okZKr7v9rD4z1LX459
+        type: scof
+        enrollmentStatus: pending
+        enrollmentDetail:
+          key: cgt-28nJRFOK6lqRnBqJkyXg#mct-28okZKr7v9rD4z1LX459#scof#merchant_obo#1234#bin-1QAl5suBCAwOrolEIAB2#programEnrollmentName
+          mid: '1234'
+          binKey: bin-1QAl5suBCAwOrolEIAB2
+          programType: merchant_obo
+          programName: programEnrollmentName
+        created: '2022-05-12T09:13:46.067Z'
+        lastModified: '2022-05-12T09:13:46.099Z'
+        version: 1
+    create-discover-mpr-enrollment:
+      summary: Discover MPR Enrollment
+      value:
+        merchantKey: mct-123dinkqFqfq3q2f2adfa
+        merchantType: self-managed-outlet
+        type: discover-mpr
+        binKey: bin-1QAl5suBCAwOrolEIAB2
+        mid: UO2344SDDAUOGS
+        doingBusinessAsName: ACME Corp.
+        mcc: '0742'
+        debtRepaymentIndicator: false
+        businessPrincipal:
+          firstName: John
+          lastName: Cardholder
+          socialSecurityNumber: '567891234'
+          homeAddress:
+            countryCode: USA
+            stateOrProvince: CA
+            city: Hill Valley
+            line1: Riverside Drive
+            postalCode: '91103'
+        merchantStatus: open
+    create-vts-enrollment:
+      summary: VTS Enrollment
+      value:
+        merchantKey: mct-123dinkqFqfq3q2f2adfa
+        type: vts
+        businessIdentification:
+          type: VAT
+          value: NL123456789B01
+    create-scof-enrollment:
+      summary: SCOF Enrollment
+      value:
+        merchantKey: mct-123dinkqFqfq3q2f2adfa
+        type: scof
+        mid: UO2344SDDAUOGS
+        binKey: bin-1QAl5suBCAwOrolEIAB2
+        programType: merchant_obo
+        programName: programEnrollmentName
+    create-vau-enrollment:
+      summary: VAU Enrollment
+      value:
+        merchantKey: mct-123dinkqFqfq3q2f2adfa
+        type: vau
+        binKey: bin-1QAl5suBCAwOrolEIAB2
+        mid: UO2344SDDAUOGS
+        mcc: '0742'
   securitySchemes:
     ApiKey:
       description: "The primary method of authenticating to the Silverflow API is through API keys.\n\nAPI keys can be created by calling the [createApiKey](#operation/createApiKey) endpoint. You can create up to 40 API keys and also update and delete them, allowing for _credential rotation_.\n\nThe _Agent Activation_ process will generate an initial API Key for you. See [Activate Agent](#section/Getting-Started).\n\nA call to the [createApiKey](#operation/createApiKey) endpoint will return the following structure:\n\n```json\n{\n    \"key\": \"apk-1wtRxni5IsPsSpBLWpwr\",\n    \"status\": \"active\",\n    \"agentKey\": \"cgt-1wtRvFLIjDOyyUR5Q2LB\",\n    \"description\": \"Data lake API key\",\n    \"permissions\": [\n        \"charges:List\",\n        \"reports:All\"\n    ],\n    \"created\": \"2021-06-22T11:21:45.115Z\",\n    \"secret\": \"FWtnOOHAjbD6rNxWWEeVOCj7JXSEPGJQ\",\n    \"version\": 1\n}\n```\n\n> **Important:** The `secret` is only returned once in the response to the `createApiKey` call.\n\nOnce created, the `key` and `secret` fields from the API key must be used in the HTTP `Authorization` header using the `Basic` scheme.\nThe Basic scheme requires a **username** and **password** to be specified, separated by a `:` (colon) and Base64 encoded.\n\nUse the following values from the API key to construct a Basic authentication header:\n\n| Basic field | API key field | Example |\n| ----------- | ------------- | ------- |\n| username | `key` | `apk-1wtRxni5IsPsSpBLWpwr` |\n| password | `secret` | `FWtnOOHAjbD6rNxWWEeVOCj7JXSEPGJQ` |\n\nIn pseudo-code a valid HTTP Basic Authentication header would be constructed as follows:\n\n```ts\nconst apiKeyId = \"apk-1wtRxni5IsPsSpBLWpwr\";\nconst apiKeySecret = \"FWtnOOHAjbD6rNxWWEeVOCj7JXSEPGJQ\";\nconst authnValue = \"Basic \" + base64Encode(apiKeyId + \":\" + apiKeySecret);\nrequest.setHeader(\"Authorization\", authnValue);\n```\n\nUsing the values from the example a valid HTTP request would look like the following:\n\n```http\nGET /v1/agents/current HTTP/1.1\nAccept: application/json\nAuthorization: Basic YXBrLTF3dFJ4bmk1SXNQc1NwQkxXcHdyOkZXdG5PT0hBamJENnJOeFdXRWVWT0NqN0pYU0VQR0pR\n```\n\nMore information on the Basic scheme can be found in [RFC-7617 - The 'Basic' HTTP Authentication Scheme](https://datatracker.ietf.org/doc/html/rfc7617)."

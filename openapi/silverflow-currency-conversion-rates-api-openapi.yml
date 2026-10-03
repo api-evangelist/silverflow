@@ -55,99 +55,20 @@ paths:
         '429':
           $ref: '#/components/responses/responses-TooManyRequestsError'
 components:
-  responses:
-    responses-UnauthorizedError:
-      description: Authentication information is missing or invalid
-      headers:
-        WWW_Authenticate:
-          schema:
-            type: string
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/schemas-ProblemDetail'
-          example:
-            type: https://datatracker.ietf.org/doc/html/rfc2616#section-10.4.2
-            title: Unauthorized
-            status: 401
-            detail: The credentials supplied in the request are either missing, invalid, or not applicable in the current scope
-    responses-TooManyRequestsError:
-      description: The number of requests (per minute) has exceeded the configured maximum
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/schemas-ProblemDetail'
-          example:
-            type: https://api.silverflow.co/problem/too-many-requests
-            title: Too Many Requests
-            status: 429
-            detail: The number of requests performed by the client has exceeded the configured maximum for a given period
-    responses-ForbiddenError:
-      description: The authenticated client is forbidden to make the request for the resource identified.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/schemas-ProblemDetail'
-          example:
-            type: https://datatracker.ietf.org/doc/html/rfc2616#section-10.4.4
-            title: Forbidden
-            status: 403
-            detail: The server is refusing to execute the request for the current authenticated user
-            instance: https://api.silverflow.co/v1/merchants/mct-1hPdFqhgstYTUhlphPDp
-    responses-BadRequestError:
-      description: The request was malformed. See the response body for details
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/schemas-ProblemDetail'
-          example:
-            type: https://datatracker.ietf.org/doc/html/rfc2616#section-10.4.1
-            title: Bad Request
-            status: 400
-            detail: The request could not be processed as it contained an invalid request entity
-            instance: https://api.silverflow.co/v1/merchants/mct-1hPdFqhgstYTUhlphPDp
-            validationErrors:
-            - The value of property 'status' should be one of 'idle', 'active' or 'archived'
-            - The value of property 'tags.0.businessId' must not be longer than 255 characters
-  parameters:
-    effectiveDate:
-      name: effectiveDate
-      description: The date for which the currency rates are effective. Ex:2022-10-30.
-      in: path
-      required: true
-      schema:
-        type: string
-        format: date
-    openapi_components-parameters-offsetToken:
-      name: offsetToken
-      description: The offset token. This token is returned in the response of previous request.
-      in: query
-      required: false
-      schema:
-        $ref: '#/components/schemas/openapi_components-schemas-offsetToken'
-    limit:
-      name: limit
-      description: The number of items to return
-      in: query
-      required: false
-      schema:
-        type: integer
-        format: int32
-        minimum: 1
-        maximum: 100
-        default: 10
-      example: 1
-    network:
-      name: network
-      description: The card network for which the currency rates are requested.
-      in: path
-      required: true
-      schema:
-        type: string
-        enum:
-        - mastercard
-        - visa
   schemas:
+    SellRate:
+      description: The sell rate.
+      type: object
+      required:
+      - rate
+      - exponent
+      properties:
+        rate:
+          type: integer
+          format: int64
+        exponent:
+          type: integer
+          format: int64
     components-schemas-Page:
       type: object
       properties:
@@ -165,74 +86,15 @@ components:
         exponent:
           type: integer
           format: int64
-    SellRate:
-      description: The sell rate.
-      type: object
-      required:
-      - rate
-      - exponent
-      properties:
-        rate:
-          type: integer
-          format: int64
-        exponent:
-          type: integer
-          format: int64
-    CurrencyRate:
-      type: object
-      required:
-      - id
-      - network
-      - effectiveDate
-      - effectiveFrom
-      - sell
-      - buy
-      - sourceCurrency
-      - targetCurrency
-      properties:
-        id:
-          description: Unique id for each item
-          type: string
-        network:
-          description: The card network for which the currency rates are requested.
-          $ref: '#/components/schemas/cardNetwork'
-        effectiveDate:
-          description: The date for which the currency rates are effective.
-          type: string
-        effectiveFrom:
-          description: The datetime in utc from which the currency rates are effective.
-          type: string
-        sell:
-          description: The sell rate.
-          $ref: '#/components/schemas/SellRate'
-        buy:
-          description: The buy rate.
-          $ref: '#/components/schemas/BuyRate'
-        mid:
-          description: The mid rate.
-          $ref: '#/components/schemas/MidRate'
-        sourceCurrency:
-          description: The source currency.
-          $ref: '#/components/schemas/CurrencyExponent'
-        targetCurrency:
-          description: The target currency.
-          $ref: '#/components/schemas/CurrencyExponent'
-    openapi_components-schemas-offsetToken:
-      type: string
-      pattern: ^[a-zA-Z0-9%]+$
-    MidRate:
-      description: The mid rate.
-      type: object
-      required:
-      - rate
-      - exponent
-      properties:
-        rate:
-          type: integer
-          format: int64
-        exponent:
-          type: integer
-          format: int64
+    CurrencyRatePage:
+      allOf:
+      - $ref: '#/components/schemas/components-schemas-Page'
+      - type: object
+        properties:
+          items:
+            type: array
+            items:
+              $ref: '#/components/schemas/CurrencyRate'
     BuyRate:
       description: The buy rate.
       type: object
@@ -246,22 +108,6 @@ components:
         exponent:
           type: integer
           format: int64
-    cardNetwork:
-      type: string
-      description: The card network
-      enum:
-      - mastercard
-      - visa
-      example: mastercard
-    CurrencyRatePage:
-      allOf:
-      - $ref: '#/components/schemas/components-schemas-Page'
-      - type: object
-        properties:
-          items:
-            type: array
-            items:
-              $ref: '#/components/schemas/CurrencyRate'
     schemas-ProblemDetail:
       type: object
       description: 'The ''problem detail'' object relays detailed information about the error that occurred. It is defined
@@ -328,6 +174,160 @@ components:
         validationErrors:
         - The value of property 'status' should be one of 'idle', 'active' or 'archived'
         - The value of property 'tags.0.businessId' must not be longer than 255 characters
+    CurrencyRate:
+      type: object
+      required:
+      - id
+      - network
+      - effectiveDate
+      - effectiveFrom
+      - sell
+      - buy
+      - sourceCurrency
+      - targetCurrency
+      properties:
+        id:
+          description: Unique id for each item
+          type: string
+        network:
+          description: The card network for which the currency rates are requested.
+          $ref: '#/components/schemas/cardNetwork'
+        effectiveDate:
+          description: The date for which the currency rates are effective.
+          type: string
+        effectiveFrom:
+          description: The datetime in utc from which the currency rates are effective.
+          type: string
+        sell:
+          description: The sell rate.
+          $ref: '#/components/schemas/SellRate'
+        buy:
+          description: The buy rate.
+          $ref: '#/components/schemas/BuyRate'
+        mid:
+          description: The mid rate.
+          $ref: '#/components/schemas/MidRate'
+        sourceCurrency:
+          description: The source currency.
+          $ref: '#/components/schemas/CurrencyExponent'
+        targetCurrency:
+          description: The target currency.
+          $ref: '#/components/schemas/CurrencyExponent'
+    cardNetwork:
+      type: string
+      description: The card network
+      enum:
+      - mastercard
+      - visa
+      example: mastercard
+    MidRate:
+      description: The mid rate.
+      type: object
+      required:
+      - rate
+      - exponent
+      properties:
+        rate:
+          type: integer
+          format: int64
+        exponent:
+          type: integer
+          format: int64
+    openapi_components-schemas-offsetToken:
+      type: string
+      pattern: ^[a-zA-Z0-9%]+$
+  responses:
+    responses-TooManyRequestsError:
+      description: The number of requests (per minute) has exceeded the configured maximum
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/schemas-ProblemDetail'
+          example:
+            type: https://api.silverflow.co/problem/too-many-requests
+            title: Too Many Requests
+            status: 429
+            detail: The number of requests performed by the client has exceeded the configured maximum for a given period
+    responses-ForbiddenError:
+      description: The authenticated client is forbidden to make the request for the resource identified.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/schemas-ProblemDetail'
+          example:
+            type: https://datatracker.ietf.org/doc/html/rfc2616#section-10.4.4
+            title: Forbidden
+            status: 403
+            detail: The server is refusing to execute the request for the current authenticated user
+            instance: https://api.silverflow.co/v1/merchants/mct-1hPdFqhgstYTUhlphPDp
+    responses-BadRequestError:
+      description: The request was malformed. See the response body for details
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/schemas-ProblemDetail'
+          example:
+            type: https://datatracker.ietf.org/doc/html/rfc2616#section-10.4.1
+            title: Bad Request
+            status: 400
+            detail: The request could not be processed as it contained an invalid request entity
+            instance: https://api.silverflow.co/v1/merchants/mct-1hPdFqhgstYTUhlphPDp
+            validationErrors:
+            - The value of property 'status' should be one of 'idle', 'active' or 'archived'
+            - The value of property 'tags.0.businessId' must not be longer than 255 characters
+    responses-UnauthorizedError:
+      description: Authentication information is missing or invalid
+      headers:
+        WWW_Authenticate:
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/schemas-ProblemDetail'
+          example:
+            type: https://datatracker.ietf.org/doc/html/rfc2616#section-10.4.2
+            title: Unauthorized
+            status: 401
+            detail: The credentials supplied in the request are either missing, invalid, or not applicable in the current scope
+  parameters:
+    limit:
+      name: limit
+      description: The number of items to return
+      in: query
+      required: false
+      schema:
+        type: integer
+        format: int32
+        minimum: 1
+        maximum: 100
+        default: 10
+      example: 1
+    effectiveDate:
+      name: effectiveDate
+      description: The date for which the currency rates are effective. Ex:2022-10-30.
+      in: path
+      required: true
+      schema:
+        type: string
+        format: date
+    network:
+      name: network
+      description: The card network for which the currency rates are requested.
+      in: path
+      required: true
+      schema:
+        type: string
+        enum:
+        - mastercard
+        - visa
+    openapi_components-parameters-offsetToken:
+      name: offsetToken
+      description: The offset token. This token is returned in the response of previous request.
+      in: query
+      required: false
+      schema:
+        $ref: '#/components/schemas/openapi_components-schemas-offsetToken'
   examples:
     response-currency-rates-visa:
       summary: Example of a Currency Rate Response for a Visa network and effectiveDate

@@ -95,75 +95,11 @@ paths:
           $ref: '#/components/responses/openapi_components-responses-TooManyRequestsError-3'
 components:
   schemas:
-    InputValidationError:
-      type: object
-      required:
-      - type
-      - title
-      - status
-      - detail
-      - instance
-      - validationErrors
-      properties:
-        type:
-          allOf:
-          - $ref: '#/components/schemas/errorType'
-          - enum:
-            - /silverflow/problems/invalid-input
-        title:
-          allOf:
-          - $ref: '#/components/schemas/errorTitle'
-          - enum:
-            - Invalid Input
-        status:
-          allOf:
-          - $ref: '#/components/schemas/errorStatus'
-          - enum:
-            - 400
-        detail:
-          allOf:
-          - $ref: '#/components/schemas/errorDetail'
-          - enum:
-            - The request does not adhere to the defined API schema.
-        instance:
-          $ref: '#/components/schemas/errorInstance'
-        validationErrors:
-          type: array
-          items:
-            $ref: '#/components/schemas/openapi_components-schemas-ValidationError'
-          description: A list of validation errors.
-    InvalidReportNameErrorDetails:
-      type: object
-      required:
-      - type
-      - title
-      - status
-      - detail
-      - instance
-      properties:
-        type:
-          allOf:
-          - $ref: '#/components/schemas/errorType'
-          - enum:
-            - /silverflow/problems/report/invalid-report-name
-        title:
-          allOf:
-          - $ref: '#/components/schemas/errorTitle'
-          - enum:
-            - Invalid report name
-        status:
-          allOf:
-          - $ref: '#/components/schemas/errorStatus'
-          - enum:
-            - 400
-        detail:
-          $ref: '#/components/schemas/errorDetail'
-        instance:
-          $ref: '#/components/schemas/errorInstance'
-    components-schemas-reference:
+    errorTitle:
       type: string
-      description: Unique ID used to identify a report.
-      maxLength: 120
+      description: 'A short, human-readable summary of the problem type. It does not change from occurrence to occurrence of the error.
+
+        '
     disputeHistoryEventsReportMimeType:
       type: string
       description: The mime-type in which the disputes report is available.
@@ -171,6 +107,16 @@ components:
       - text/csv
       - application/json
       - application/x-ndjson
+    errorDetail:
+      type: string
+      description: 'A human readable explanation specific to this occurrence of the problem.
+
+        '
+    createReportStatus:
+      description: The status of the report.
+      type: string
+      enum:
+      - scheduled
     disputeHistoryEventsReportParameters:
       type: object
       description: The query parameters used for a report.
@@ -195,9 +141,14 @@ components:
             format: date-time
           description: Include items that have a created date less than or equal to the specified date/date-time. Accepts both date (YYYY-MM-DD) and ISO 8601 datetime formats. Use date format for queries before 2026-04-01T00:00:00Z. `date` type support is deprecated (April 1st, 2026).
           example: '2025-04-25'
-    errorDetail:
+    openapi_components-schemas-created-2:
       type: string
-      description: 'A human readable explanation specific to this occurrence of the problem.
+      description: The date and time this object was created
+      format: date-time
+      readOnly: true
+    errorInstance:
+      type: string
+      description: 'A reference that identifies the specific occurrence of the error. The instance is unique for every error.
 
         '
     BinNotFoundErrorDetails:
@@ -236,7 +187,60 @@ components:
         of the problem.
 
         '
-    InvalidDateRangeErrorDetails:
+    AgentKey:
+      description: Uniquely identifies an Agent
+      type: string
+      pattern: ^cgt-[a-zA-Z0-9]+|current$
+      readOnly: true
+      example: cgt-1UF2NafdfrdPMf2XrS2
+    DisputeHistoryEventsReportName:
+      type: string
+      description: The name of the report.
+      enum:
+      - DisputeHistoryEvents
+    errorType:
+      type: string
+      description: 'A relative URI reference, this property can be used to perform automated error handling.
+
+        '
+    InputValidationError:
+      type: object
+      required:
+      - type
+      - title
+      - status
+      - detail
+      - instance
+      - validationErrors
+      properties:
+        type:
+          allOf:
+          - $ref: '#/components/schemas/errorType'
+          - enum:
+            - /silverflow/problems/invalid-input
+        title:
+          allOf:
+          - $ref: '#/components/schemas/errorTitle'
+          - enum:
+            - Invalid Input
+        status:
+          allOf:
+          - $ref: '#/components/schemas/errorStatus'
+          - enum:
+            - 400
+        detail:
+          allOf:
+          - $ref: '#/components/schemas/errorDetail'
+          - enum:
+            - The request does not adhere to the defined API schema.
+        instance:
+          $ref: '#/components/schemas/errorInstance'
+        validationErrors:
+          type: array
+          items:
+            $ref: '#/components/schemas/openapi_components-schemas-ValidationError'
+          description: A list of validation errors.
+    NotAuthorizedErrorDetails:
       type: object
       required:
       - type
@@ -249,12 +253,40 @@ components:
           allOf:
           - $ref: '#/components/schemas/errorType'
           - enum:
-            - /silverflow/problems/report/invalid-date-range
+            - /silverflow/problems/report/not-authorized
         title:
           allOf:
           - $ref: '#/components/schemas/errorTitle'
           - enum:
-            - Invalid date range
+            - Not authorized
+        status:
+          allOf:
+          - $ref: '#/components/schemas/errorStatus'
+          - enum:
+            - 401
+        detail:
+          $ref: '#/components/schemas/errorDetail'
+        instance:
+          $ref: '#/components/schemas/errorInstance'
+    InvalidReportNameErrorDetails:
+      type: object
+      required:
+      - type
+      - title
+      - status
+      - detail
+      - instance
+      properties:
+        type:
+          allOf:
+          - $ref: '#/components/schemas/errorType'
+          - enum:
+            - /silverflow/problems/report/invalid-report-name
+        title:
+          allOf:
+          - $ref: '#/components/schemas/errorTitle'
+          - enum:
+            - Invalid report name
         status:
           allOf:
           - $ref: '#/components/schemas/errorStatus'
@@ -264,66 +296,6 @@ components:
           $ref: '#/components/schemas/errorDetail'
         instance:
           $ref: '#/components/schemas/errorInstance'
-    createReportStatus:
-      description: The status of the report.
-      type: string
-      enum:
-      - scheduled
-    openapi_components-schemas-created-2:
-      type: string
-      description: The date and time this object was created
-      format: date-time
-      readOnly: true
-    errorInstance:
-      type: string
-      description: 'A reference that identifies the specific occurrence of the error. The instance is unique for every error.
-
-        '
-    errorType:
-      type: string
-      description: 'A relative URI reference, this property can be used to perform automated error handling.
-
-        '
-    distributions:
-      description: 'The distribution objects'' keys.
-
-
-        If passed, the report will be distributed when generation is completed.
-
-        '
-      type: array
-      items:
-        $ref: '#/components/schemas/distributionKey'
-    openapi_components-schemas-ValidationError:
-      type: object
-      required:
-      - path
-      - errorCode
-      - message
-      properties:
-        path:
-          type: string
-          description: The path to the error location in the request params or body.
-        errorCode:
-          type: string
-          description: The error code identifying the error type.
-        message:
-          type: string
-          description: The error message.
-    distributionKey:
-      description: Uniquely identifies a distribution object
-      type: string
-      pattern: ^dst-[a-zA-Z0-9]+$
-      minLength: 10
-      maxLength: 120
-      example: dst-1e1dAHhgstYTUhlphPzZ
-    reportKey:
-      description: Uniquely identifies a report object
-      type: string
-      pattern: ^rep-[a-zA-Z0-9]+$
-      minLength: 10
-      maxLength: 120
-      example: rep-1e1dAHhgstYTUhlphPzZ
     CreateDisputeHistoryEventsReportResponse:
       type: object
       required:
@@ -353,39 +325,7 @@ components:
           $ref: '#/components/schemas/openapi_components-schemas-created-2'
         distributions:
           $ref: '#/components/schemas/distributions'
-    errorTitle:
-      type: string
-      description: 'A short, human-readable summary of the problem type. It does not change from occurrence to occurrence of the error.
-
-        '
-    DisputeHistoryEventsReportName:
-      type: string
-      description: The name of the report.
-      enum:
-      - DisputeHistoryEvents
-    AgentKey:
-      description: Uniquely identifies an Agent
-      type: string
-      pattern: ^cgt-[a-zA-Z0-9]+|current$
-      readOnly: true
-      example: cgt-1UF2NafdfrdPMf2XrS2
-    DisputeHistoryEventsReportRequest:
-      type: object
-      required:
-      - parameters
-      - mimeType
-      description: Create Disputes History Events Report
-      additionalProperties: false
-      properties:
-        parameters:
-          $ref: '#/components/schemas/disputeHistoryEventsReportParameters'
-        mimeType:
-          $ref: '#/components/schemas/disputeHistoryEventsReportMimeType'
-        reference:
-          $ref: '#/components/schemas/components-schemas-reference'
-        distributions:
-          $ref: '#/components/schemas/distributions'
-    NotAuthorizedErrorDetails:
+    InvalidDateRangeErrorDetails:
       type: object
       required:
       - type
@@ -398,21 +338,58 @@ components:
           allOf:
           - $ref: '#/components/schemas/errorType'
           - enum:
-            - /silverflow/problems/report/not-authorized
+            - /silverflow/problems/report/invalid-date-range
         title:
           allOf:
           - $ref: '#/components/schemas/errorTitle'
           - enum:
-            - Not authorized
+            - Invalid date range
         status:
           allOf:
           - $ref: '#/components/schemas/errorStatus'
           - enum:
-            - 401
+            - 400
         detail:
           $ref: '#/components/schemas/errorDetail'
         instance:
           $ref: '#/components/schemas/errorInstance'
+    distributions:
+      description: 'The distribution objects'' keys.
+
+
+        If passed, the report will be distributed when generation is completed.
+
+        '
+      type: array
+      items:
+        $ref: '#/components/schemas/distributionKey'
+    reportKey:
+      description: Uniquely identifies a report object
+      type: string
+      pattern: ^rep-[a-zA-Z0-9]+$
+      minLength: 10
+      maxLength: 120
+      example: rep-1e1dAHhgstYTUhlphPzZ
+    components-schemas-reference:
+      type: string
+      description: Unique ID used to identify a report.
+      maxLength: 120
+    openapi_components-schemas-ValidationError:
+      type: object
+      required:
+      - path
+      - errorCode
+      - message
+      properties:
+        path:
+          type: string
+          description: The path to the error location in the request params or body.
+        errorCode:
+          type: string
+          description: The error code identifying the error type.
+        message:
+          type: string
+          description: The error message.
     openapi_components-schemas-ProblemDetail-2:
       type: object
       description: 'The ''problem detail'' object relays detailed information about the error that occurred. It is defined
@@ -479,19 +456,30 @@ components:
         validationErrors:
         - The value of property 'status' should be one of 'idle', 'active' or 'archived'
         - The value of property 'tags.0.businessId' must not be longer than 255 characters
+    DisputeHistoryEventsReportRequest:
+      type: object
+      required:
+      - parameters
+      - mimeType
+      description: Create Disputes History Events Report
+      additionalProperties: false
+      properties:
+        parameters:
+          $ref: '#/components/schemas/disputeHistoryEventsReportParameters'
+        mimeType:
+          $ref: '#/components/schemas/disputeHistoryEventsReportMimeType'
+        reference:
+          $ref: '#/components/schemas/components-schemas-reference'
+        distributions:
+          $ref: '#/components/schemas/distributions'
+    distributionKey:
+      description: Uniquely identifies a distribution object
+      type: string
+      pattern: ^dst-[a-zA-Z0-9]+$
+      minLength: 10
+      maxLength: 120
+      example: dst-1e1dAHhgstYTUhlphPzZ
   responses:
-    openapi_components-responses-ForbiddenError-3:
-      description: The authenticated client is forbidden to make the request for the resource identified.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/openapi_components-schemas-ProblemDetail-2'
-          example:
-            type: /silverflow/problems/forbidden
-            title: Forbidden
-            status: 403
-            detail: 'Authenticated user ''apk-33GjasQdWl4781OsErvi'' is missing the following permission(s): reports:List'
-            instance: /silverflow/b0451a9d-f66d-4ef7-9f5d-d48064a2bb3e
     openapi_components-responses-TooManyRequestsError-3:
       description: The number of requests (per minute) has exceeded the configured maximum
       content:
@@ -503,6 +491,18 @@ components:
             title: Too Many Requests
             status: 429
             detail: You have exceeded the rate limit. Please try again after the specified delay.
+            instance: /silverflow/b0451a9d-f66d-4ef7-9f5d-d48064a2bb3e
+    openapi_components-responses-ForbiddenError-3:
+      description: The authenticated client is forbidden to make the request for the resource identified.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/openapi_components-schemas-ProblemDetail-2'
+          example:
+            type: /silverflow/problems/forbidden
+            title: Forbidden
+            status: 403
+            detail: 'Authenticated user ''apk-33GjasQdWl4781OsErvi'' is missing the following permission(s): reports:List'
             instance: /silverflow/b0451a9d-f66d-4ef7-9f5d-d48064a2bb3e
   securitySchemes:
     ApiKey:
