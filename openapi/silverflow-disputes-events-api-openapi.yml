@@ -349,27 +349,482 @@ webhooks:
     - url: https://eu-west-1.api-sbx.silverflow.com/v1
       description: Sandbox URL - Equivalent to https://api-sbx.silverflow.co/v1
 components:
-  examples:
-    defense-initiated:
-      summary: Defense was initiated for Dispute
-      value:
-        type: com.silverflow.disputes.defenseInitiated
+  schemas:
+    common_version:
+      type: integer
+      description: The version of this object.
+      format: int64
+      minimum: 1
+      maximum: 1000
+      example: 1
+      readOnly: false
+    openapi_components-schemas-created-4:
+      type: string
+      description: The date and time this object was created.
+      format: date-time
+      readOnly: false
+    openapi_components-schemas-version-3:
+      type: string
+      description: The version of the spec.
+      pattern: ^[1-9]+.[0-9]+$
+      example: '1.0'
+    DisputeEventDataVersion1_0:
+      type: object
+      description: The event data.
+      required:
+      - key
+      - disputeStatus
+      - arn
+      - created
+      - version
+      properties:
+        key:
+          $ref: '#/components/schemas/disputeKey'
+        disputeStatus:
+          $ref: '#/components/schemas/disputeStatusBase'
+        networkReference:
+          $ref: '#/components/schemas/schemas-networkReference'
+        arn:
+          $ref: '#/components/schemas/acquirerReferenceNumber'
+        created:
+          $ref: '#/components/schemas/openapi_components-schemas-created-4'
+        lastModified:
+          $ref: '#/components/schemas/openapi_components-schemas-lastModified-3'
+        version:
+          allOf:
+          - $ref: '#/components/schemas/common_version'
+          - example: 2
+    DisputeEventNotificationVersion1_0Reversed:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/DisputeEventNotificationVersion1_0'
+      properties:
+        type:
+          allOf:
+          - $ref: '#/components/schemas/disputeEventType'
+          - enum:
+            - com.silverflow.disputes.reversed
         data:
-          disputeStatus: defenseInitiated
-          key: dsp-1JRadf2ffdfrdPMf2XrS2
-          networkReference: '28543746470772988'
-          arn: '12345678901234567890123'
-          created: '2019-08-24T14:15:22Z'
-          lastModified: '2019-08-24T14:15:22Z'
-          version: 2
-        source: https://silverflow.com/disputes
-        specversion: '1.0'
-        subject: dsp-1JRadf2ffdfrdPMf2XrS2
-        dataschema: https://silverflow.com/schemas/events/disputes/1.0
-        id: evt-1e1dAHhgstYTUhlphPzZ
-        datacontenttype: application/json
-        time: '2019-08-24T14:15:22Z'
-        agent: cgt-EFG67b4yPre23ZDrLX
+          allOf:
+          - type: object
+            required:
+            - disputeStatus
+            - lastModified
+            properties:
+              disputeStatus:
+                allOf:
+                - $ref: '#/components/schemas/disputeStatusBase'
+                - enum:
+                  - reversed
+          - $ref: '#/components/schemas/DisputeEventDataVersion1_0'
+    DisputeEventNotificationVersion1_0AcceptanceInitiated:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/DisputeEventNotificationVersion1_0'
+      properties:
+        type:
+          allOf:
+          - enum:
+            - com.silverflow.disputes.acceptanceInitiated
+          - example: com.silverflow.disputes.acceptanceInitiated
+          - $ref: '#/components/schemas/disputeEventType'
+        data:
+          allOf:
+          - type: object
+            required:
+            - disputeStatus
+            - lastModified
+            properties:
+              disputeStatus:
+                allOf:
+                - $ref: '#/components/schemas/disputeStatusBase'
+                - enum:
+                  - acceptanceInitiated
+          - $ref: '#/components/schemas/DisputeEventDataVersion1_0'
+    DisputeEventNotificationVersion1_0AcceptanceFailed:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/DisputeEventNotificationVersion1_0'
+      properties:
+        type:
+          allOf:
+          - $ref: '#/components/schemas/disputeEventType'
+          - enum:
+            - com.silverflow.disputes.acceptanceFailed
+        data:
+          allOf:
+          - type: object
+            required:
+            - disputeStatus
+            - lastModified
+            properties:
+              disputeStatus:
+                allOf:
+                - $ref: '#/components/schemas/disputeStatusBase'
+                - enum:
+                  - acceptanceFailed
+          - $ref: '#/components/schemas/DisputeEventDataVersion1_0'
+    common_agentKey:
+      description: Uniquely identifies an Agent.
+      type: string
+      pattern: ^cgt-[a-zA-Z0-9]+$
+      readOnly: true
+      example: cgt-EFG67b4yPre23ZDrLX
+      title: agentKey
+    dataschema:
+      type: string
+      description: The event schema with the data version of the event.
+    DisputeEventNotificationVersion1_0DefenseInitiated:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/DisputeEventNotificationVersion1_0'
+      properties:
+        type:
+          allOf:
+          - $ref: '#/components/schemas/disputeEventType'
+          - enum:
+            - com.silverflow.disputes.defenseInitiated
+        data:
+          allOf:
+          - type: object
+            required:
+            - disputeStatus
+            - lastModified
+            properties:
+              disputeStatus:
+                allOf:
+                - $ref: '#/components/schemas/disputeStatusBase'
+                - enum:
+                  - defenseInitiated
+          - $ref: '#/components/schemas/DisputeEventDataVersion1_0'
+    time:
+      type: string
+      format: date-time
+      description: Date and time when the event was sent.
+    openapi_components-schemas-lastModified-3:
+      type: string
+      description: The date and time this object was last modified.
+      format: date-time
+      readOnly: false
+    schemas-networkReference:
+      type: string
+      description: 'Unique ID assigned by the network when authorizing. This ID is returned in the response of the authorization.
+
+        '
+      pattern: ^[a-zA-Z0-9()+,\-.:=@;$_!*\/?#|]+$
+      minLength: 1
+      maxLength: 120
+      example: '28543746470772988'
+    DisputeEventNotificationVersion1_0ClosedAccepted:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/DisputeEventNotificationVersion1_0'
+      properties:
+        type:
+          allOf:
+          - $ref: '#/components/schemas/disputeEventType'
+          - enum:
+            - com.silverflow.disputes.closedAccepted
+        data:
+          allOf:
+          - type: object
+            required:
+            - disputeStatus
+            - lastModified
+            properties:
+              disputeStatus:
+                allOf:
+                - $ref: '#/components/schemas/disputeStatusBase'
+                - enum:
+                  - closedAccepted
+          - $ref: '#/components/schemas/DisputeEventDataVersion1_0'
+    PublicCloudEvent:
+      type: object
+      required:
+      - id
+      - source
+      - specversion
+      - type
+      - datacontenttype
+      - dataschema
+      - subject
+      - time
+      - agent
+      - data
+      properties:
+        id:
+          $ref: '#/components/schemas/eventId'
+        specversion:
+          allOf:
+          - description: The version of the current spec.
+          - enum:
+            - '1.0'
+          - $ref: '#/components/schemas/openapi_components-schemas-version-3'
+        datacontenttype:
+          $ref: '#/components/schemas/dataContentType'
+        dataschema:
+          $ref: '#/components/schemas/dataschema'
+        time:
+          $ref: '#/components/schemas/time'
+        agent:
+          $ref: '#/components/schemas/common_agentKey'
+    disputeEventType:
+      type: string
+      description: The event type.
+      pattern: ^com.silverflow.disputes.[a-zA-Z]+$
+      example: com.silverflow.disputes.received
+    DisputeEventNotificationVersion1_0:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/PublicCloudEvent'
+      required:
+      - data
+      properties:
+        data:
+          $ref: '#/components/schemas/DisputeEventDataVersion1_0'
+        source:
+          allOf:
+          - $ref: '#/components/schemas/source'
+          - enum:
+            - https://silverflow.com/disputes
+        specversion:
+          allOf:
+          - $ref: '#/components/schemas/openapi_components-schemas-version-3'
+          - enum:
+            - '1.0'
+        subject:
+          allOf:
+          - description: The subject key, which is a `key`.
+          - $ref: '#/components/schemas/disputeKey'
+        type:
+          $ref: '#/components/schemas/disputeEventType'
+        dataschema:
+          allOf:
+          - $ref: '#/components/schemas/dataschema'
+          - example: https://silverflow.com/schemas/events/disputes/1.0
+          - enum:
+            - https://silverflow.com/schemas/events/disputes/1.0
+    DisputeEventNotificationVersion1_0EvidenceRejected:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/DisputeEventNotificationVersion1_0'
+      properties:
+        type:
+          allOf:
+          - $ref: '#/components/schemas/disputeEventType'
+          - enum:
+            - com.silverflow.disputes.evidenceRejected
+        data:
+          allOf:
+          - type: object
+            required:
+            - disputeStatus
+            - lastModified
+            properties:
+              disputeStatus:
+                allOf:
+                - $ref: '#/components/schemas/disputeStatusBase'
+                - enum:
+                  - evidenceRejected
+          - $ref: '#/components/schemas/DisputeEventDataVersion1_0'
+    source:
+      type: string
+      description: Source system of the event.
+      pattern: ^https://silverflow.com/[a-zA-Z]+$
+    DisputeEventNotificationVersion1_0Withdrawn:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/DisputeEventNotificationVersion1_0'
+      properties:
+        type:
+          allOf:
+          - $ref: '#/components/schemas/disputeEventType'
+          - enum:
+            - com.silverflow.disputes.withdrawn
+        data:
+          allOf:
+          - type: object
+            required:
+            - disputeStatus
+            - lastModified
+            properties:
+              disputeStatus:
+                allOf:
+                - $ref: '#/components/schemas/disputeStatusBase'
+                - enum:
+                  - withdrawn
+          - $ref: '#/components/schemas/DisputeEventDataVersion1_0'
+    dataContentType:
+      type: string
+      description: The content type of the event.
+      enum:
+      - application/json
+    DisputeEventNotificationVersion1_0EvidenceSubmitted:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/DisputeEventNotificationVersion1_0'
+      properties:
+        type:
+          allOf:
+          - $ref: '#/components/schemas/disputeEventType'
+          - enum:
+            - com.silverflow.disputes.evidenceSubmitted
+        data:
+          allOf:
+          - type: object
+            required:
+            - disputeStatus
+            - lastModified
+            properties:
+              disputeStatus:
+                allOf:
+                - $ref: '#/components/schemas/disputeStatusBase'
+                - enum:
+                  - evidenceSubmitted
+          - $ref: '#/components/schemas/DisputeEventDataVersion1_0'
+    DisputeEventNotificationVersion1_0ClosedLost:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/DisputeEventNotificationVersion1_0'
+      properties:
+        type:
+          allOf:
+          - $ref: '#/components/schemas/disputeEventType'
+          - enum:
+            - com.silverflow.disputes.closedLost
+        data:
+          allOf:
+          - type: object
+            required:
+            - disputeStatus
+            - lastModified
+            properties:
+              disputeStatus:
+                allOf:
+                - $ref: '#/components/schemas/disputeStatusBase'
+                - enum:
+                  - closedLost
+          - $ref: '#/components/schemas/DisputeEventDataVersion1_0'
+    disputeStatusBase:
+      description: The current status of a Dispute.
+      type: string
+    DisputeEventNotificationVersion1_0Received:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/DisputeEventNotificationVersion1_0'
+      properties:
+        type:
+          allOf:
+          - $ref: '#/components/schemas/disputeEventType'
+          - enum:
+            - com.silverflow.disputes.received
+          - example:
+            - com.silverflow.disputes.received
+        data:
+          allOf:
+          - type: object
+            required:
+            - disputeStatus
+            properties:
+              disputeStatus:
+                allOf:
+                - $ref: '#/components/schemas/disputeStatusBase'
+                - enum:
+                  - received
+          - $ref: '#/components/schemas/DisputeEventDataVersion1_0'
+    DisputeEventNotificationVersion1_0AwaitingResponse:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/DisputeEventNotificationVersion1_0'
+      properties:
+        type:
+          allOf:
+          - $ref: '#/components/schemas/disputeEventType'
+          - enum:
+            - com.silverflow.disputes.awaitingResponse
+        data:
+          allOf:
+          - type: object
+            required:
+            - disputeStatus
+            - lastModified
+            properties:
+              disputeStatus:
+                allOf:
+                - $ref: '#/components/schemas/disputeStatusBase'
+                - enum:
+                  - awaitingResponse
+          - $ref: '#/components/schemas/DisputeEventDataVersion1_0'
+    acquirerReferenceNumber:
+      description: Unique identifier assigned by the acquirer at clearing. Used to identify the transaction with the card networks.
+      type: string
+      pattern: ^\d+$
+      minLength: 23
+      maxLength: 23
+      readOnly: false
+      example: '12345678901234567890123'
+    disputeKey:
+      description: Uniquely identifies a Dispute.
+      type: string
+      pattern: ^dsp-[a-zA-Z0-9]+$
+      minLength: 1
+      maxLength: 120
+      readOnly: false
+      example: dsp-1JRadf2ffdfrdPMf2XrS2
+    eventId:
+      type: string
+      description: Uniquely identifies an event.
+      pattern: ^evt-[a-zA-Z0-9]+$
+      minLength: 5
+      maxLength: 120
+      example: evt-1e1dAHhgstYTUhlphPzZ
+    DisputeEventNotificationVersion1_0DefenseFailed:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/DisputeEventNotificationVersion1_0'
+      properties:
+        type:
+          allOf:
+          - $ref: '#/components/schemas/disputeEventType'
+          - enum:
+            - com.silverflow.disputes.defenseFailed
+        data:
+          allOf:
+          - type: object
+            required:
+            - disputeStatus
+            - lastModified
+            properties:
+              disputeStatus:
+                allOf:
+                - $ref: '#/components/schemas/disputeStatusBase'
+                - enum:
+                  - defenseFailed
+          - $ref: '#/components/schemas/DisputeEventDataVersion1_0'
+    DisputeEventNotificationVersion1_0ClosedWon:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/DisputeEventNotificationVersion1_0'
+      properties:
+        type:
+          allOf:
+          - $ref: '#/components/schemas/disputeEventType'
+          - enum:
+            - com.silverflow.disputes.closedWon
+        data:
+          allOf:
+          - type: object
+            required:
+            - disputeStatus
+            - lastModified
+            properties:
+              disputeStatus:
+                allOf:
+                - $ref: '#/components/schemas/disputeStatusBase'
+                - enum:
+                  - closedWon
+          - $ref: '#/components/schemas/DisputeEventDataVersion1_0'
+  examples:
     closed-lost:
       summary: Dispute was lost
       value:
@@ -390,12 +845,52 @@ components:
         datacontenttype: application/json
         time: '2019-08-24T14:15:22Z'
         agent: cgt-EFG67b4yPre23ZDrLX
-    defense-failed:
-      summary: Defense failed for Dispute
+    defense-initiated:
+      summary: Defense was initiated for Dispute
       value:
-        type: com.silverflow.disputes.defenseFailed
+        type: com.silverflow.disputes.defenseInitiated
         data:
-          disputeStatus: defenseFailed
+          disputeStatus: defenseInitiated
+          key: dsp-1JRadf2ffdfrdPMf2XrS2
+          networkReference: '28543746470772988'
+          arn: '12345678901234567890123'
+          created: '2019-08-24T14:15:22Z'
+          lastModified: '2019-08-24T14:15:22Z'
+          version: 2
+        source: https://silverflow.com/disputes
+        specversion: '1.0'
+        subject: dsp-1JRadf2ffdfrdPMf2XrS2
+        dataschema: https://silverflow.com/schemas/events/disputes/1.0
+        id: evt-1e1dAHhgstYTUhlphPzZ
+        datacontenttype: application/json
+        time: '2019-08-24T14:15:22Z'
+        agent: cgt-EFG67b4yPre23ZDrLX
+    reversed:
+      summary: Dispute was reversed
+      value:
+        type: com.silverflow.disputes.reversed
+        data:
+          disputeStatus: reversed
+          key: dsp-1JRadf2ffdfrdPMf2XrS2
+          networkReference: '28543746470772988'
+          arn: '12345678901234567890123'
+          created: '2019-08-24T14:15:22Z'
+          lastModified: '2019-08-24T14:15:22Z'
+          version: 2
+        source: https://silverflow.com/disputes
+        specversion: '1.0'
+        subject: dsp-1JRadf2ffdfrdPMf2XrS2
+        dataschema: https://silverflow.com/schemas/events/disputes/1.0
+        id: evt-1e1dAHhgstYTUhlphPzZ
+        datacontenttype: application/json
+        time: '2019-08-24T14:15:22Z'
+        agent: cgt-EFG67b4yPre23ZDrLX
+    evidence-rejected:
+      summary: Evidence was rejected for Dispute
+      value:
+        type: com.silverflow.disputes.evidenceRejected
+        data:
+          disputeStatus: evidenceRejected
           key: dsp-1JRadf2ffdfrdPMf2XrS2
           networkReference: '28543746470772988'
           arn: '12345678901234567890123'
@@ -450,25 +945,6 @@ components:
         datacontenttype: application/json
         time: '2019-08-24T14:15:22Z'
         agent: cgt-EFG67b4yPre23ZDrLX
-    received:
-      summary: Dispute was received
-      value:
-        type: com.silverflow.disputes.received
-        data:
-          disputeStatus: received
-          key: dsp-1JRadf2ffdfrdPMf2XrS2
-          networkReference: '28543746470772988'
-          arn: '12345678901234567890123'
-          created: '2019-08-24T14:15:22Z'
-          version: 1
-        source: https://silverflow.com/disputes
-        specversion: '1.0'
-        subject: dsp-1JRadf2ffdfrdPMf2XrS2
-        dataschema: https://silverflow.com/schemas/events/disputes/1.0
-        id: evt-1e1dAHhgstYTUhlphPzZ
-        datacontenttype: application/json
-        time: '2019-08-24T14:15:22Z'
-        agent: cgt-EFG67b4yPre23ZDrLX
     withdrawn:
       summary: Dispute was withdrawn
       value:
@@ -509,46 +985,6 @@ components:
         datacontenttype: application/json
         time: '2019-08-24T14:15:22Z'
         agent: cgt-EFG67b4yPre23ZDrLX
-    evidence-rejected:
-      summary: Evidence was rejected for Dispute
-      value:
-        type: com.silverflow.disputes.evidenceRejected
-        data:
-          disputeStatus: evidenceRejected
-          key: dsp-1JRadf2ffdfrdPMf2XrS2
-          networkReference: '28543746470772988'
-          arn: '12345678901234567890123'
-          created: '2019-08-24T14:15:22Z'
-          lastModified: '2019-08-24T14:15:22Z'
-          version: 3
-        source: https://silverflow.com/disputes
-        specversion: '1.0'
-        subject: dsp-1JRadf2ffdfrdPMf2XrS2
-        dataschema: https://silverflow.com/schemas/events/disputes/1.0
-        id: evt-1e1dAHhgstYTUhlphPzZ
-        datacontenttype: application/json
-        time: '2019-08-24T14:15:22Z'
-        agent: cgt-EFG67b4yPre23ZDrLX
-    reversed:
-      summary: Dispute was reversed
-      value:
-        type: com.silverflow.disputes.reversed
-        data:
-          disputeStatus: reversed
-          key: dsp-1JRadf2ffdfrdPMf2XrS2
-          networkReference: '28543746470772988'
-          arn: '12345678901234567890123'
-          created: '2019-08-24T14:15:22Z'
-          lastModified: '2019-08-24T14:15:22Z'
-          version: 2
-        source: https://silverflow.com/disputes
-        specversion: '1.0'
-        subject: dsp-1JRadf2ffdfrdPMf2XrS2
-        dataschema: https://silverflow.com/schemas/events/disputes/1.0
-        id: evt-1e1dAHhgstYTUhlphPzZ
-        datacontenttype: application/json
-        time: '2019-08-24T14:15:22Z'
-        agent: cgt-EFG67b4yPre23ZDrLX
     closed-won:
       summary: Dispute was won
       value:
@@ -569,18 +1005,17 @@ components:
         datacontenttype: application/json
         time: '2019-08-24T14:15:22Z'
         agent: cgt-EFG67b4yPre23ZDrLX
-    awaiting-response:
-      summary: Dispute is awaiting a response
+    received:
+      summary: Dispute was received
       value:
-        type: com.silverflow.disputes.awaitingResponse
+        type: com.silverflow.disputes.received
         data:
-          disputeStatus: awaitingResponse
+          disputeStatus: received
           key: dsp-1JRadf2ffdfrdPMf2XrS2
           networkReference: '28543746470772988'
           arn: '12345678901234567890123'
           created: '2019-08-24T14:15:22Z'
-          lastModified: '2019-08-24T14:15:22Z'
-          version: 3
+          version: 1
         source: https://silverflow.com/disputes
         specversion: '1.0'
         subject: dsp-1JRadf2ffdfrdPMf2XrS2
@@ -609,481 +1044,46 @@ components:
         datacontenttype: application/json
         time: '2019-08-24T14:15:22Z'
         agent: cgt-EFG67b4yPre23ZDrLX
-  schemas:
-    DisputeEventNotificationVersion1_0EvidenceRejected:
-      type: object
-      allOf:
-      - $ref: '#/components/schemas/DisputeEventNotificationVersion1_0'
-      properties:
-        type:
-          allOf:
-          - $ref: '#/components/schemas/disputeEventType'
-          - enum:
-            - com.silverflow.disputes.evidenceRejected
+    defense-failed:
+      summary: Defense failed for Dispute
+      value:
+        type: com.silverflow.disputes.defenseFailed
         data:
-          allOf:
-          - type: object
-            required:
-            - disputeStatus
-            - lastModified
-            properties:
-              disputeStatus:
-                allOf:
-                - $ref: '#/components/schemas/disputeStatusBase'
-                - enum:
-                  - evidenceRejected
-          - $ref: '#/components/schemas/DisputeEventDataVersion1_0'
-    DisputeEventNotificationVersion1_0AcceptanceInitiated:
-      type: object
-      allOf:
-      - $ref: '#/components/schemas/DisputeEventNotificationVersion1_0'
-      properties:
-        type:
-          allOf:
-          - enum:
-            - com.silverflow.disputes.acceptanceInitiated
-          - example: com.silverflow.disputes.acceptanceInitiated
-          - $ref: '#/components/schemas/disputeEventType'
+          disputeStatus: defenseFailed
+          key: dsp-1JRadf2ffdfrdPMf2XrS2
+          networkReference: '28543746470772988'
+          arn: '12345678901234567890123'
+          created: '2019-08-24T14:15:22Z'
+          lastModified: '2019-08-24T14:15:22Z'
+          version: 3
+        source: https://silverflow.com/disputes
+        specversion: '1.0'
+        subject: dsp-1JRadf2ffdfrdPMf2XrS2
+        dataschema: https://silverflow.com/schemas/events/disputes/1.0
+        id: evt-1e1dAHhgstYTUhlphPzZ
+        datacontenttype: application/json
+        time: '2019-08-24T14:15:22Z'
+        agent: cgt-EFG67b4yPre23ZDrLX
+    awaiting-response:
+      summary: Dispute is awaiting a response
+      value:
+        type: com.silverflow.disputes.awaitingResponse
         data:
-          allOf:
-          - type: object
-            required:
-            - disputeStatus
-            - lastModified
-            properties:
-              disputeStatus:
-                allOf:
-                - $ref: '#/components/schemas/disputeStatusBase'
-                - enum:
-                  - acceptanceInitiated
-          - $ref: '#/components/schemas/DisputeEventDataVersion1_0'
-    openapi_components-schemas-created-4:
-      type: string
-      description: The date and time this object was created.
-      format: date-time
-      readOnly: false
-    common_version:
-      type: integer
-      description: The version of this object.
-      format: int64
-      minimum: 1
-      maximum: 1000
-      example: 1
-      readOnly: false
-    DisputeEventNotificationVersion1_0AwaitingResponse:
-      type: object
-      allOf:
-      - $ref: '#/components/schemas/DisputeEventNotificationVersion1_0'
-      properties:
-        type:
-          allOf:
-          - $ref: '#/components/schemas/disputeEventType'
-          - enum:
-            - com.silverflow.disputes.awaitingResponse
-        data:
-          allOf:
-          - type: object
-            required:
-            - disputeStatus
-            - lastModified
-            properties:
-              disputeStatus:
-                allOf:
-                - $ref: '#/components/schemas/disputeStatusBase'
-                - enum:
-                  - awaitingResponse
-          - $ref: '#/components/schemas/DisputeEventDataVersion1_0'
-    DisputeEventNotificationVersion1_0Received:
-      type: object
-      allOf:
-      - $ref: '#/components/schemas/DisputeEventNotificationVersion1_0'
-      properties:
-        type:
-          allOf:
-          - $ref: '#/components/schemas/disputeEventType'
-          - enum:
-            - com.silverflow.disputes.received
-          - example:
-            - com.silverflow.disputes.received
-        data:
-          allOf:
-          - type: object
-            required:
-            - disputeStatus
-            properties:
-              disputeStatus:
-                allOf:
-                - $ref: '#/components/schemas/disputeStatusBase'
-                - enum:
-                  - received
-          - $ref: '#/components/schemas/DisputeEventDataVersion1_0'
-    disputeStatusBase:
-      description: The current status of a Dispute.
-      type: string
-    DisputeEventNotificationVersion1_0ClosedAccepted:
-      type: object
-      allOf:
-      - $ref: '#/components/schemas/DisputeEventNotificationVersion1_0'
-      properties:
-        type:
-          allOf:
-          - $ref: '#/components/schemas/disputeEventType'
-          - enum:
-            - com.silverflow.disputes.closedAccepted
-        data:
-          allOf:
-          - type: object
-            required:
-            - disputeStatus
-            - lastModified
-            properties:
-              disputeStatus:
-                allOf:
-                - $ref: '#/components/schemas/disputeStatusBase'
-                - enum:
-                  - closedAccepted
-          - $ref: '#/components/schemas/DisputeEventDataVersion1_0'
-    DisputeEventNotificationVersion1_0Reversed:
-      type: object
-      allOf:
-      - $ref: '#/components/schemas/DisputeEventNotificationVersion1_0'
-      properties:
-        type:
-          allOf:
-          - $ref: '#/components/schemas/disputeEventType'
-          - enum:
-            - com.silverflow.disputes.reversed
-        data:
-          allOf:
-          - type: object
-            required:
-            - disputeStatus
-            - lastModified
-            properties:
-              disputeStatus:
-                allOf:
-                - $ref: '#/components/schemas/disputeStatusBase'
-                - enum:
-                  - reversed
-          - $ref: '#/components/schemas/DisputeEventDataVersion1_0'
-    DisputeEventNotificationVersion1_0EvidenceSubmitted:
-      type: object
-      allOf:
-      - $ref: '#/components/schemas/DisputeEventNotificationVersion1_0'
-      properties:
-        type:
-          allOf:
-          - $ref: '#/components/schemas/disputeEventType'
-          - enum:
-            - com.silverflow.disputes.evidenceSubmitted
-        data:
-          allOf:
-          - type: object
-            required:
-            - disputeStatus
-            - lastModified
-            properties:
-              disputeStatus:
-                allOf:
-                - $ref: '#/components/schemas/disputeStatusBase'
-                - enum:
-                  - evidenceSubmitted
-          - $ref: '#/components/schemas/DisputeEventDataVersion1_0'
-    source:
-      type: string
-      description: Source system of the event.
-      pattern: ^https://silverflow.com/[a-zA-Z]+$
-    DisputeEventNotificationVersion1_0DefenseInitiated:
-      type: object
-      allOf:
-      - $ref: '#/components/schemas/DisputeEventNotificationVersion1_0'
-      properties:
-        type:
-          allOf:
-          - $ref: '#/components/schemas/disputeEventType'
-          - enum:
-            - com.silverflow.disputes.defenseInitiated
-        data:
-          allOf:
-          - type: object
-            required:
-            - disputeStatus
-            - lastModified
-            properties:
-              disputeStatus:
-                allOf:
-                - $ref: '#/components/schemas/disputeStatusBase'
-                - enum:
-                  - defenseInitiated
-          - $ref: '#/components/schemas/DisputeEventDataVersion1_0'
-    DisputeEventNotificationVersion1_0Withdrawn:
-      type: object
-      allOf:
-      - $ref: '#/components/schemas/DisputeEventNotificationVersion1_0'
-      properties:
-        type:
-          allOf:
-          - $ref: '#/components/schemas/disputeEventType'
-          - enum:
-            - com.silverflow.disputes.withdrawn
-        data:
-          allOf:
-          - type: object
-            required:
-            - disputeStatus
-            - lastModified
-            properties:
-              disputeStatus:
-                allOf:
-                - $ref: '#/components/schemas/disputeStatusBase'
-                - enum:
-                  - withdrawn
-          - $ref: '#/components/schemas/DisputeEventDataVersion1_0'
-    dataschema:
-      type: string
-      description: The event schema with the data version of the event.
-    DisputeEventDataVersion1_0:
-      type: object
-      description: The event data.
-      required:
-      - key
-      - disputeStatus
-      - arn
-      - created
-      - version
-      properties:
-        key:
-          $ref: '#/components/schemas/disputeKey'
-        disputeStatus:
-          $ref: '#/components/schemas/disputeStatusBase'
-        networkReference:
-          $ref: '#/components/schemas/schemas-networkReference'
-        arn:
-          $ref: '#/components/schemas/acquirerReferenceNumber'
-        created:
-          $ref: '#/components/schemas/openapi_components-schemas-created-4'
-        lastModified:
-          $ref: '#/components/schemas/openapi_components-schemas-lastModified-3'
-        version:
-          allOf:
-          - $ref: '#/components/schemas/common_version'
-          - example: 2
-    openapi_components-schemas-version-3:
-      type: string
-      description: The version of the spec.
-      pattern: ^[1-9]+.[0-9]+$
-      example: '1.0'
-    PublicCloudEvent:
-      type: object
-      required:
-      - id
-      - source
-      - specversion
-      - type
-      - datacontenttype
-      - dataschema
-      - subject
-      - time
-      - agent
-      - data
-      properties:
-        id:
-          $ref: '#/components/schemas/eventId'
-        specversion:
-          allOf:
-          - description: The version of the current spec.
-          - enum:
-            - '1.0'
-          - $ref: '#/components/schemas/openapi_components-schemas-version-3'
-        datacontenttype:
-          $ref: '#/components/schemas/dataContentType'
-        dataschema:
-          $ref: '#/components/schemas/dataschema'
-        time:
-          $ref: '#/components/schemas/time'
-        agent:
-          $ref: '#/components/schemas/common_agentKey'
-    eventId:
-      type: string
-      description: Uniquely identifies an event.
-      pattern: ^evt-[a-zA-Z0-9]+$
-      minLength: 5
-      maxLength: 120
-      example: evt-1e1dAHhgstYTUhlphPzZ
-    DisputeEventNotificationVersion1_0ClosedWon:
-      type: object
-      allOf:
-      - $ref: '#/components/schemas/DisputeEventNotificationVersion1_0'
-      properties:
-        type:
-          allOf:
-          - $ref: '#/components/schemas/disputeEventType'
-          - enum:
-            - com.silverflow.disputes.closedWon
-        data:
-          allOf:
-          - type: object
-            required:
-            - disputeStatus
-            - lastModified
-            properties:
-              disputeStatus:
-                allOf:
-                - $ref: '#/components/schemas/disputeStatusBase'
-                - enum:
-                  - closedWon
-          - $ref: '#/components/schemas/DisputeEventDataVersion1_0'
-    DisputeEventNotificationVersion1_0:
-      type: object
-      allOf:
-      - $ref: '#/components/schemas/PublicCloudEvent'
-      required:
-      - data
-      properties:
-        data:
-          $ref: '#/components/schemas/DisputeEventDataVersion1_0'
-        source:
-          allOf:
-          - $ref: '#/components/schemas/source'
-          - enum:
-            - https://silverflow.com/disputes
-        specversion:
-          allOf:
-          - $ref: '#/components/schemas/openapi_components-schemas-version-3'
-          - enum:
-            - '1.0'
-        subject:
-          allOf:
-          - description: The subject key, which is a `key`.
-          - $ref: '#/components/schemas/disputeKey'
-        type:
-          $ref: '#/components/schemas/disputeEventType'
-        dataschema:
-          allOf:
-          - $ref: '#/components/schemas/dataschema'
-          - example: https://silverflow.com/schemas/events/disputes/1.0
-          - enum:
-            - https://silverflow.com/schemas/events/disputes/1.0
-    DisputeEventNotificationVersion1_0AcceptanceFailed:
-      type: object
-      allOf:
-      - $ref: '#/components/schemas/DisputeEventNotificationVersion1_0'
-      properties:
-        type:
-          allOf:
-          - $ref: '#/components/schemas/disputeEventType'
-          - enum:
-            - com.silverflow.disputes.acceptanceFailed
-        data:
-          allOf:
-          - type: object
-            required:
-            - disputeStatus
-            - lastModified
-            properties:
-              disputeStatus:
-                allOf:
-                - $ref: '#/components/schemas/disputeStatusBase'
-                - enum:
-                  - acceptanceFailed
-          - $ref: '#/components/schemas/DisputeEventDataVersion1_0'
-    schemas-networkReference:
-      type: string
-      description: 'Unique ID assigned by the network when authorizing. This ID is returned in the response of the authorization.
-
-        '
-      pattern: ^[a-zA-Z0-9()+,\-.:=@;$_!*\/?#|]+$
-      minLength: 1
-      maxLength: 120
-      example: '28543746470772988'
-    acquirerReferenceNumber:
-      description: Unique identifier assigned by the acquirer at clearing. Used to identify the transaction with the card networks.
-      type: string
-      pattern: ^\d+$
-      minLength: 23
-      maxLength: 23
-      readOnly: false
-      example: '12345678901234567890123'
-    common_agentKey:
-      description: Uniquely identifies an Agent.
-      type: string
-      pattern: ^cgt-[a-zA-Z0-9]+$
-      readOnly: true
-      example: cgt-EFG67b4yPre23ZDrLX
-      title: agentKey
-    time:
-      type: string
-      format: date-time
-      description: Date and time when the event was sent.
-    dataContentType:
-      type: string
-      description: The content type of the event.
-      enum:
-      - application/json
-    disputeKey:
-      description: Uniquely identifies a Dispute.
-      type: string
-      pattern: ^dsp-[a-zA-Z0-9]+$
-      minLength: 1
-      maxLength: 120
-      readOnly: false
-      example: dsp-1JRadf2ffdfrdPMf2XrS2
-    openapi_components-schemas-lastModified-3:
-      type: string
-      description: The date and time this object was last modified.
-      format: date-time
-      readOnly: false
-    DisputeEventNotificationVersion1_0DefenseFailed:
-      type: object
-      allOf:
-      - $ref: '#/components/schemas/DisputeEventNotificationVersion1_0'
-      properties:
-        type:
-          allOf:
-          - $ref: '#/components/schemas/disputeEventType'
-          - enum:
-            - com.silverflow.disputes.defenseFailed
-        data:
-          allOf:
-          - type: object
-            required:
-            - disputeStatus
-            - lastModified
-            properties:
-              disputeStatus:
-                allOf:
-                - $ref: '#/components/schemas/disputeStatusBase'
-                - enum:
-                  - defenseFailed
-          - $ref: '#/components/schemas/DisputeEventDataVersion1_0'
-    disputeEventType:
-      type: string
-      description: The event type.
-      pattern: ^com.silverflow.disputes.[a-zA-Z]+$
-      example: com.silverflow.disputes.received
-    DisputeEventNotificationVersion1_0ClosedLost:
-      type: object
-      allOf:
-      - $ref: '#/components/schemas/DisputeEventNotificationVersion1_0'
-      properties:
-        type:
-          allOf:
-          - $ref: '#/components/schemas/disputeEventType'
-          - enum:
-            - com.silverflow.disputes.closedLost
-        data:
-          allOf:
-          - type: object
-            required:
-            - disputeStatus
-            - lastModified
-            properties:
-              disputeStatus:
-                allOf:
-                - $ref: '#/components/schemas/disputeStatusBase'
-                - enum:
-                  - closedLost
-          - $ref: '#/components/schemas/DisputeEventDataVersion1_0'
+          disputeStatus: awaitingResponse
+          key: dsp-1JRadf2ffdfrdPMf2XrS2
+          networkReference: '28543746470772988'
+          arn: '12345678901234567890123'
+          created: '2019-08-24T14:15:22Z'
+          lastModified: '2019-08-24T14:15:22Z'
+          version: 3
+        source: https://silverflow.com/disputes
+        specversion: '1.0'
+        subject: dsp-1JRadf2ffdfrdPMf2XrS2
+        dataschema: https://silverflow.com/schemas/events/disputes/1.0
+        id: evt-1e1dAHhgstYTUhlphPzZ
+        datacontenttype: application/json
+        time: '2019-08-24T14:15:22Z'
+        agent: cgt-EFG67b4yPre23ZDrLX
   securitySchemes:
     ApiKey:
       description: "The primary method of authenticating to the Silverflow API is through API keys.\n\nAPI keys can be created by calling the [createApiKey](#operation/createApiKey) endpoint. You can create up to 40 API keys and also update and delete them, allowing for _credential rotation_.\n\nThe _Agent Activation_ process will generate an initial API Key for you. See [Activate Agent](#section/Getting-Started).\n\nA call to the [createApiKey](#operation/createApiKey) endpoint will return the following structure:\n\n```json\n{\n    \"key\": \"apk-1wtRxni5IsPsSpBLWpwr\",\n    \"status\": \"active\",\n    \"agentKey\": \"cgt-1wtRvFLIjDOyyUR5Q2LB\",\n    \"description\": \"Data lake API key\",\n    \"permissions\": [\n        \"charges:List\",\n        \"reports:All\"\n    ],\n    \"created\": \"2021-06-22T11:21:45.115Z\",\n    \"secret\": \"FWtnOOHAjbD6rNxWWEeVOCj7JXSEPGJQ\",\n    \"version\": 1\n}\n```\n\n> **Important:** The `secret` is only returned once in the response to the `createApiKey` call.\n\nOnce created, the `key` and `secret` fields from the API key must be used in the HTTP `Authorization` header using the `Basic` scheme.\nThe Basic scheme requires a **username** and **password** to be specified, separated by a `:` (colon) and Base64 encoded.\n\nUse the following values from the API key to construct a Basic authentication header:\n\n| Basic field | API key field | Example |\n| ----------- | ------------- | ------- |\n| username | `key` | `apk-1wtRxni5IsPsSpBLWpwr` |\n| password | `secret` | `FWtnOOHAjbD6rNxWWEeVOCj7JXSEPGJQ` |\n\nIn pseudo-code a valid HTTP Basic Authentication header would be constructed as follows:\n\n```ts\nconst apiKeyId = \"apk-1wtRxni5IsPsSpBLWpwr\";\nconst apiKeySecret = \"FWtnOOHAjbD6rNxWWEeVOCj7JXSEPGJQ\";\nconst authnValue = \"Basic \" + base64Encode(apiKeyId + \":\" + apiKeySecret);\nrequest.setHeader(\"Authorization\", authnValue);\n```\n\nUsing the values from the example a valid HTTP request would look like the following:\n\n```http\nGET /v1/agents/current HTTP/1.1\nAccept: application/json\nAuthorization: Basic YXBrLTF3dFJ4bmk1SXNQc1NwQkxXcHdyOkZXdG5PT0hBamJENnJOeFdXRWVWT0NqN0pYU0VQR0pR\n```\n\nMore information on the Basic scheme can be found in [RFC-7617 - The 'Basic' HTTP Authentication Scheme](https://datatracker.ietf.org/doc/html/rfc7617)."

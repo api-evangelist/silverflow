@@ -179,725 +179,61 @@ paths:
         '429':
           $ref: '#/components/responses/responses-TooManyRequestsError'
 components:
-  examples:
-    get-screening-response-mc:
-      summary: Get a MATCH screening response
-      value:
-        key: scr-2VfOLO8cmTcIe0PkDgKl
-        agentKey: cgt-2VfOLO8cmTcIe0PkDgKl
-        binKey: bin-2VfOLO8cmTcIe0PkDgKl
-        merchantKey: mct-2VfOLO8cmTcIe0PkDgKl
-        status: active
-        screeningStatus: pending
-        screeningType: MATCH
-        created: '2021-12-02T13:00:18.487Z'
-        version: 1
-        totalNumberOfResults: 0
-        screeningDetail:
-          doingBusinessAsName: ACME Corp. A/S
-          acquirerIdCode: '123213'
-          legalName: ACME Corp. A/S
-          principals:
-          - lastName: Doe
-            firstName: Jane
-            phoneNumber: '31201234567'
-            address:
-              countryCode:
-                alpha2: NL
-                alpha3: NLD
-                numeric: '528'
-              stateOrProvince: Westeros
-              city: Braavos
-              line1: Kings Road
-              line2: '1'
-              postalCode: 1103JT
-          websiteUrl: https://www.acme.com
-          address:
-            countryCode:
-              alpha2: NL
-              alpha3: NLD
-              numeric: '528'
-            stateOrProvince: Westeros
-            city: Braavos
-            line1: Kings Road
-            line2: '1'
-            postalCode: 1103JT
-    screening-submit-response-mc-pro:
-      summary: Create a screening response MATCH_PRO
-      value:
-        key: scr-2VfOLO8cmTcIe0PkDgKl
-        created: '2021-12-02T13:00:18.487Z'
-        version: 1
-        agentKey: cgt-2VfOLO8cmTcIe0PkDgKl
-        binKey: bin-2VfOLO8cmTcIe0PkDgKl
-        merchantKey: mct-2VfOLO8cmTcIe0PkDgKl
-        status: active
-        screeningStatus: pending
-        screeningType: MATCH_PRO
-        screeningDetail:
-          doingBusinessAsName: ACME Corp. A/S
-          acquirerIdCode: '123213'
-          legalName: ACME Corp. A/S
-          merchantCategoryCode: '5999'
-          merchantPhoneNumber: '31850609160'
-          principals:
-          - lastName: Doe
-            firstName: Jane
-            phoneNumber: '31201234567'
-            email: jane.doe@acme.com
-            address:
-              countryCode:
-                alpha2: NL
-                alpha3: NLD
-                numeric: '528'
-              stateOrProvince: Westeros
-              city: Braavos
-              line1: Kings Road
-              line2: '1'
-              postalCode: 1103JT
-          websiteUrl: https://www.acme.com
-          address:
-            countryCode:
-              alpha2: NL
-              alpha3: NLD
-              numeric: '528'
-            stateOrProvince: Westeros
-            city: Braavos
-            line1: Kings Road
-            line2: '1'
-            postalCode: 1103JT
-    screening-submit-request-mc-pro:
-      summary: Create a screening request for MATCH_PRO
-      value:
-        screeningType: MATCH_PRO
-        doingBusinessAsName: ACME Corp. A/S
-        binKey: bin-123412414
-        merchantKey: mct-123412414
-        merchantPhoneNumber: '31641444444'
-        merchantCategoryCode: '1234'
-        principals:
-        - lastName: Doe
-          firstName: Jane
-          phoneNumber: '31201234567'
-          email: jane@doe.com
-          address:
-            countryCode:
-              alpha2: NL
-            stateOrProvince: Westeros
-            city: Braavos
-            line1: Kings Road
-            line2: '1'
-            postalCode: 1103JT
-    screening-submit-response-visa:
-      summary: Create a screening response VMSS
-      value:
-        key: scr-2VfOLO8cmTcIe0PkDgKl
-        created: '2021-12-02T13:00:18.487Z'
-        version: 1
-        agentKey: cgt-2VfOLO8cmTcIe0PkDgKl
-        binKey: bin-2VfOLO8cmTcIe0PkDgKl
-        merchantKey: mct-2VfOLO8cmTcIe0PkDgKl
-        status: active
-        screeningStatus: pending
-        screeningType: VMSS
-        screeningDetail:
-          bid: '10056588'
-          doingBusinessAsName: ACME Corp. A/S
-          tradeOverInternet: false
-          businessPhoneNumbers:
-          - '31201234567'
-          - '31201234568'
-          businessCategory: marketplace
-          principals:
-          - lastName: Doe
-            firstName: Jane
-          websiteUrl: https://www.acme.com
-          address:
-            countryCode:
-              alpha2: NL
-              alpha3: NLD
-              numeric: '528'
-            stateOrProvince: Westeros
-            city: Braavos
-            line1: Kings Road
-            line2: '1'
-            postalCode: 1103JT
-    list-screenings-no-match-response:
-      summary: Result no match
-      value:
-        moreItems: false
-        screeningResults: []
-    get-screening-response-mc-pro:
-      summary: Get a MATCH_PRO screening response
-      value:
-        key: scr-2VfOLO8cmTcIe0PkDgKl
-        agentKey: cgt-2VfOLO8cmTcIe0PkDgKl
-        binKey: bin-2VfOLO8cmTcIe0PkDgKl
-        merchantKey: mct-2VfOLO8cmTcIe0PkDgKl
-        status: active
-        screeningStatus: pending
-        screeningType: MATCH_PRO
-        created: '2021-12-02T13:00:18.487Z'
-        version: 1
-        totalNumberOfResults: 0
-        screeningDetail:
-          doingBusinessAsName: ACME Corp. A/S
-          acquirerIdCode: '123213'
-          legalName: ACME Corp. A/S
-          merchantCategoryCode: '5999'
-          merchantPhoneNumber: '31850609160'
-          principals:
-          - lastName: Doe
-            firstName: Jane
-            phoneNumber: '31201234567'
-            email: jane.doe@acme.com
-            address:
-              countryCode:
-                alpha2: NL
-                alpha3: NLD
-                numeric: '528'
-              stateOrProvince: Westeros
-              city: Braavos
-              line1: Kings Road
-              line2: '1'
-              postalCode: 1103JT
-          websiteUrl: https://www.acme.com
-          address:
-            countryCode:
-              alpha2: NL
-              alpha3: NLD
-              numeric: '528'
-            stateOrProvince: Westeros
-            city: Braavos
-            line1: Kings Road
-            line2: '1'
-            postalCode: 1103JT
-    get-screening-response-visa:
-      summary: Get a VMSS screening response
-      value:
-        key: scr-2VfOLO8cmTcIe0PkDgKl
-        agentKey: cgt-2VfOLO8cmTcIe0PkDgKl
-        binKey: bin-2VfOLO8cmTcIe0PkDgKl
-        merchantKey: mct-2VfOLO8cmTcIe0PkDgKl
-        status: active
-        screeningStatus: pending
-        screeningType: VMSS
-        created: '2021-12-02T13:00:18.487Z'
-        version: 1
-        screeningDetail:
-          bid: '10056588'
-          doingBusinessAsName: ACME Corp. A/S
-          tradeOverInternet: false
-          businessPhoneNumbers:
-          - '31201234567'
-          - '31201234568'
-          businessCategory: marketplace
-          principals:
-          - lastName: Doe
-            firstName: Jane
-          websiteUrl: https://www.acme.com
-          address:
-            countryCode:
-              alpha2: NL
-              alpha3: NLD
-              numeric: '528'
-            stateOrProvince: Westeros
-            city: Braavos
-            line1: Kings Road
-            line2: '1'
-            postalCode: 1103JT
-    list-screenings-response:
-      summary: List screenings response
-      value:
-        offsetToken: 23fOLO8cmTcIe0PkDgKl23fOLO8cmTcIe0PkDgKl
-        moreItems: true
-        screenings:
-        - key: scr-23fOLO8cmTcIe0PkDgKl
-          agentKey: cgt-2VfOLO8cmTcIe0PkDgKl
-          binKey: bin-2VfOLO8cmTcIe0PkDgKl
-          merchantKey: mct-2456O7O8cmTcIe0PkDgKl
-          status: active
-          screeningStatus: pending
-          screeningType: VMSS
-          created: '2021-12-02T13:00:18.487Z'
-          version: 1
-          screeningDetail:
-            bid: '10056588'
-            doingBusinessAsName: ACME Corp. A/S
-            tradeOverInternet: false
-            businessPhoneNumbers:
-            - '31201234567'
-            - '31201234568'
-            businessCategory: marketplace
-            principals:
-            - lastName: Doe
-              firstName: Jane
-            websiteUrl: https://www.acme.com
-            address:
-              countryCode:
-                alpha2: NL
-                alpha3: NLD
-                numeric: '528'
-              stateOrProvince: Westeros
-              city: Braavos
-              line1: Kings Road
-              line2: '1'
-              postalCode: 1103JT
-        - key: scr-2VfOLO8cmTcIe0PkDgKl
-          agentKey: cgt-2VfOLO8cmTcIe0PkDgKl
-          binKey: bin-2VfOLO8cmTcIe0PkDgKl
-          merchantKey: mct-2VfOLO8cmTcIe0PkDgKl
-          status: active
-          screeningStatus: pending
-          screeningType: MATCH
-          created: '2021-12-02T13:00:18.487Z'
-          version: 1
-          screeningDetail:
-            doingBusinessAsName: ACME Corp. A/S
-            acquirerIdCode: '123213'
-            legalName: ACME Corp. A/S
-            principals:
-            - lastName: Doe
-              firstName: Jane
-              phoneNumber: '31201234567'
-              address:
-                countryCode:
-                  alpha2: NL
-                  alpha3: NLD
-                  numeric: '528'
-                stateOrProvince: Westeros
-                city: Braavos
-                line1: Kings Road
-                line2: '1'
-                postalCode: 1103JT
-            websiteUrl: https://www.acme.com
-            address:
-              countryCode:
-                alpha2: NL
-                alpha3: NLD
-                numeric: '528'
-              stateOrProvince: Westeros
-              city: Braavos
-              line1: Kings Road
-              line2: '1'
-              postalCode: 1103JT
-    list-screenings-partial-match-response:
-      summary: Result with 2 partial match
-      value:
-        moreItems: false
-        screeningResults:
-        - terminationReason: common-point-of-purchase
-          terminatedMerchant:
-            acquirerIdCode: '123213'
-            legalName:
-              matchType: none
-              value: ACME Corp. A/S
-            doingBusinessAsName:
-              matchType: none
-              value: ACME Corp. A/S
-            address:
-              countryCode:
-                value: NLD
-                matchType: partial
-              stateOrProvince:
-                value: Westeros
-                matchType: partial
-              city:
-                value: Braavos
-                matchType: partial
-              line1:
-                value: Kings Road
-                matchType: partial
-              postalCode:
-                value: 1103JT
-                matchType: partial
-            websiteUrl:
-              matchType: phonetic
-              value:
-              - https://www.aqme.com
-            principals:
-            - firstName:
-                value: Jane
-                matchType: none
-              lastName:
-                value: Doe
-                matchType: partial
-              address:
-                countryCode:
-                  value: NLD
-                  matchType: partial
-                stateOrProvince:
-                  matchType: partial
-                  value: Westeros
-                city:
-                  matchType: partial
-                  value: Braavos
-                line1:
-                  matchType: partial
-                  value: Kings Road
-                postalCode:
-                  matchType: partial
-                  value: 1103JT
-              phoneNumber:
-                value: '31201234567'
-                matchType: partial
-        - terminationReason: excessive-chargebacks
-          terminatedMerchant:
-            acquirerIdCode: '2325'
-            doingBusinessAsName:
-              matchType: partial
-              value: ACME Corp. A/S
-            legalName:
-              matchType: none
-              value: ACME Corp. A/S
-            address:
-              countryCode:
-                value: NLD
-                matchType: partial
-              stateOrProvince:
-                matchType: partial
-                value: Westeros
-              city:
-                matchType: partial
-                value: Braavos
-              line1:
-                matchType: partial
-                value: Kings Road
-              postalCode:
-                matchType: partial
-                value: 1103JT
-            websiteUrl:
-              matchType: phonetic
-              value:
-              - https://www.aqme.com
-            principals:
-            - firstName:
-                value: Jane
-                matchType: none
-              lastName:
-                value: Doe
-                matchType: partial
-              address:
-                countryCode:
-                  value: NLD
-                  matchType: partial
-                stateOrProvince:
-                  matchType: partial
-                  value: Westeros
-                city:
-                  matchType: partial
-                  value: Braavos
-                line1:
-                  matchType: partial
-                  value: Kings Road
-                postalCode:
-                  matchType: partial
-                  value: 1103JT
-              phoneNumber:
-                value: '31201234567'
-                matchType: partial
-    screening-submit-request-visa:
-      summary: Create a screening request for VMSS
-      value:
-        screeningType: VMSS
-        doingBusinessAsName: ACME Corp. A/S
-        binKey: bin-123412414
-        merchantKey: mct-123412414
-        tradeOverInternet: false
-        businessPhoneNumbers:
-        - '31201234567'
-        - '31201234568'
-        principals:
-        - lastName: Doe
-          firstName: Jane
-        businessCategory: marketplace
-  parameters:
-    offsetToken:
-      name: offsetToken
-      description: The offset token. This token is returned in the response of previous request.
-      in: query
-      required: false
-      schema:
-        $ref: '#/components/schemas/offsetToken'
-    to:
-      name: to
-      description: Include only items that have a created date _less than_ the specified date
-      in: query
-      required: false
-      schema:
-        type: string
-        format: date-time
-      example: '2022-08-15T14:15:23Z'
-      allowReserved: true
-    from:
-      name: from
-      description: Include only items that have a created date _greater than or equal to_ the specified date
-      in: query
-      required: false
-      schema:
-        type: string
-        format: date-time
-      example: '2022-08-13T14:15:23Z'
-      allowReserved: true
-    limit:
-      name: limit
-      description: The number of items to return
-      in: query
-      required: false
-      schema:
-        type: integer
-        format: int32
-        minimum: 1
-        maximum: 100
-        default: 10
-      example: 1
-    screeningKey:
-      name: screeningKey
-      description: 'Immutable, unique identifier of the screening
-
-        '
-      in: path
-      required: true
-      schema:
-        $ref: '#/components/schemas/screeningKey'
-    sortOrder:
-      name: sortOrder
-      description: The sort order, __asc__ending or __desc__ending
-      in: query
-      required: false
-      schema:
-        type: string
-        enum:
-        - asc
-        - desc
-      example: desc
   schemas:
-    visaPrincipalLastName:
+    CountryCode:
+      type: object
+      required:
+      - alpha3
+      - alpha2
+      - numeric
+      properties:
+        alpha3:
+          $ref: '#/components/schemas/countryCodeAlpha3'
+        alpha2:
+          $ref: '#/components/schemas/countryCodeAlpha2'
+        numeric:
+          $ref: '#/components/schemas/countryCodeNumeric'
+    businessPhoneNumber:
       type: string
-      pattern: ^[\w ,\.\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u00FF-]+$
-      minLength: 1
-      maxLength: 15
-    terminatedMerchant:
-      oneOf:
-      - $ref: '#/components/schemas/VmssScreeningResult'
-      - anyOf:
-        - $ref: '#/components/schemas/MatchScreeningResult'
-        - $ref: '#/components/schemas/MatchProScreeningResult'
-    CountryCodeInput:
-      oneOf:
-      - $ref: '#/components/schemas/CountryCodeAlpha3'
-      - $ref: '#/components/schemas/CountryCodeAlpha2'
-      - $ref: '#/components/schemas/CountryCodeNumeric'
-    schemas-binKey:
-      description: A key assigned by Silverflow to uniquely identify a BIN.
-      type: string
-      pattern: ^bin-[a-zA-Z0-9]+$
-      minLength: 5
-      maxLength: 120
-    VmssScreeningDetail:
+      description: An international phone number. Within the USA, phone numbers have a length of 10, and for outside the US, it can be any length with a maximum of 12 digits. Within the U.S. phone numbers can not start with 0 or 1. If the number is outside the U.S. region; do not include the country code. The phone number must be digits only, with no format characters such as parenthesis or dashes.
+      pattern: ^[0-9]{10,12}$
+      minLength: 10
+      maxLength: 12
+      example: '31850609160'
+    VmssScreeningResult:
       type: object
       required:
       - bid
       - doingBusinessAsName
+      - businessPhoneNumbers
       - address
       - principals
-      - businessPhoneNumbers
-      - tradeOverInternet
       - websiteUrl
-      - businessCategory
-      description: 'Post an array of principals with all details to be screened for the merchant acceptor.
-
-        '
       properties:
         bid:
           $ref: '#/components/schemas/bid'
         doingBusinessAsName:
-          $ref: '#/components/schemas/vmssDoingBusinessAsName'
-        address:
-          $ref: '#/components/schemas/schemas-Address'
+          $ref: '#/components/schemas/RecordMatchString'
         businessPhoneNumbers:
-          type: array
-          description: Additional phone numbers of the merchant including the area code.
-          minItems: 1
-          maxItems: 5
-          items:
-            $ref: '#/components/schemas/businessPhoneNumber'
+          $ref: '#/components/schemas/RecordMatchStringArray'
         websiteUrl:
-          $ref: '#/components/schemas/schemas-url'
-        tradeOverInternet:
-          $ref: '#/components/schemas/tradeOverInternet'
-        businessCategory:
-          $ref: '#/components/schemas/businessCategory'
-          description: Category of the business
-        principals:
-          type: array
-          description: The principals of the business
-          minItems: 1
-          maxItems: 5
-          items:
-            $ref: '#/components/schemas/VmssPrincipal'
-    InvalidInputErrorDetails:
-      type: object
-      required:
-      - type
-      - title
-      - status
-      - detail
-      - instance
-      properties:
-        type:
-          type: string
-          description: A relative URI reference, this property can be used to perform automated error handling.
-          enum:
-          - /silverflow/problems/invalid-input
-        title:
-          type: string
-          description: A short, human-readable summary of the problem type. It does not change from occurrence to occurrence of the error.
-          enum:
-          - Invalid Input
-        status:
-          type: integer
-          format: int32
-          description: The HTTP status code generated by the origin server for this occurrence of the problem.
-          enum:
-          - 400
-        detail:
-          type: string
-          description: A human readable explanation specific to this occurrence of the problem.
-        instance:
-          type: string
-          description: A reference that identifies the specific occurrence of the error. The instance is unique for every error.
-        validationErrors:
-          type: array
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          description: A list of validation errors.
-    CountryCodeAlpha3:
-      type: object
-      required:
-      - alpha3
-      additionalProperties: false
-      properties:
-        alpha3:
-          $ref: '#/components/schemas/countryCodeAlpha3'
-    MatchPrincipal:
-      type: object
-      required:
-      - firstName
-      - lastName
-      - phoneNumber
-      - address
-      description: 'A principal of the business. Could be a director, founder, C-level executive, et cetera.
-
-        '
-      properties:
-        firstName:
-          allOf:
-          - description: First name of the principal legal owner of the merchant
-          - $ref: '#/components/schemas/NameOfPeopleAndPlaces'
-        lastName:
-          allOf:
-          - description: Last name of the principal legal owner of the merchant
-          - $ref: '#/components/schemas/NameOfPeopleAndPlaces'
-        phoneNumber:
-          $ref: '#/components/schemas/businessPhoneNumber'
-          description: The Business or Merchant's phone number, including the area code. Within the USA, phone numbers have a length of 10, and for outside the US, it can be any length with a maximum of 12 digits. Within the U.S. phone numbers can not start with 0 or 1. If the number is outside the U.S. region; do not include the country code. The phone number must be digits only, with no format characters such as parenthesis or dashes.
-        address:
-          $ref: '#/components/schemas/schemas-Address'
-    AddressMatch:
-      type: object
-      properties:
-        line1:
-          $ref: '#/components/schemas/RecordMatchString'
-        city:
-          $ref: '#/components/schemas/RecordMatchString'
-        stateOrProvince:
-          $ref: '#/components/schemas/RecordMatchString'
-        countryCode:
-          $ref: '#/components/schemas/RecordMatchString'
-        postalCode:
-          $ref: '#/components/schemas/RecordMatchString'
-    MatchProPrincipalResult:
-      type: object
-      required:
-      - firstName
-      - lastName
-      - address
-      - phoneNumber
-      properties:
-        firstName:
-          $ref: '#/components/schemas/RecordMatchString'
-        lastName:
-          $ref: '#/components/schemas/RecordMatchString'
+          $ref: '#/components/schemas/RecordMatchStringArray'
         address:
           $ref: '#/components/schemas/AddressMatch'
-        phoneNumber:
-          $ref: '#/components/schemas/RecordMatchString'
-        email:
-          $ref: '#/components/schemas/RecordMatchString'
-    MatchScreeningDetail:
-      type: object
-      required:
-      - acquirerIdCode
-      - legalName
-      - address
-      - doingBusinessAsName
-      - principals
-      - websiteUrl
-      description: 'Post an array of principals with all details to be screened for the merchant.
-
-        '
-      properties:
-        acquirerIdCode:
-          $ref: '#/components/schemas/schemas-acquirerIdCode'
-        legalName:
-          allOf:
-          - $ref: '#/components/schemas/ExtendedNameOfPeopleAndPlaces'
-          - description: The legal name of the Merchant. Clients not enrolled in the "extended character set beta" are still subject to the `^[\w ,\.\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u00FF-\/]+$` pattern for field input. LegalName will be trimmed if it is longer then 60 chars.
-        doingBusinessAsName:
-          $ref: '#/components/schemas/schemas-doingBusinessAsName'
-        address:
-          $ref: '#/components/schemas/schemas-Address'
-        websiteUrl:
-          $ref: '#/components/schemas/schemas-url'
         principals:
           type: array
-          description: The principals of the business
-          minItems: 1
-          maxItems: 5
           items:
-            $ref: '#/components/schemas/MatchPrincipal'
-    offsetToken:
-      type: string
-      pattern: ^[a-zA-Z0-9%]+$
-      minLength: 1
-      maxLength: 2048
-    schemas-city:
-      allOf:
-      - $ref: '#/components/schemas/ExtendedNameOfPeopleAndPlaces'
-      - description: 'The city of the address. Clients not enrolled in the "extended character set beta" are still subject to the `^[\w ,\.\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u00FF-]+$` pattern for field input.
-
-          '
-    MatchPrincipalResult:
+            $ref: '#/components/schemas/VmssPrincipalResult'
+    screeningResult:
       type: object
       required:
-      - firstName
-      - lastName
-      - address
-      - phoneNumber
+      - terminatedMerchant
+      - terminationReason
       properties:
-        firstName:
-          $ref: '#/components/schemas/RecordMatchString'
-        lastName:
-          $ref: '#/components/schemas/RecordMatchString'
-        address:
-          $ref: '#/components/schemas/AddressMatch'
-        phoneNumber:
-          $ref: '#/components/schemas/RecordMatchString'
-    schemas-doingBusinessAsName:
-      allOf:
-      - description: Assumed, trade or fictitious name of the merchant. The name will be trimmed if greater than 70 (VMSS) or 60 (MATCH_PRO).
-      - $ref: '#/components/schemas/ExtendedNameOfPeopleAndPlaces'
+        terminationReason:
+          $ref: '#/components/schemas/terminationReason'
+        terminatedMerchant:
+          $ref: '#/components/schemas/terminatedMerchant'
     schemas-ProblemDetail:
       type: object
       description: 'The ''problem detail'' object relays detailed information about the error that occurred. It is defined
@@ -964,15 +300,244 @@ components:
         validationErrors:
         - The value of property 'status' should be one of 'idle', 'active' or 'archived'
         - The value of property 'tags.0.businessId' must not be longer than 255 characters
-    lastModified:
+    MatchPrincipal:
+      type: object
+      required:
+      - firstName
+      - lastName
+      - phoneNumber
+      - address
+      description: 'A principal of the business. Could be a director, founder, C-level executive, et cetera.
+
+        '
+      properties:
+        firstName:
+          allOf:
+          - description: First name of the principal legal owner of the merchant
+          - $ref: '#/components/schemas/NameOfPeopleAndPlaces'
+        lastName:
+          allOf:
+          - description: Last name of the principal legal owner of the merchant
+          - $ref: '#/components/schemas/NameOfPeopleAndPlaces'
+        phoneNumber:
+          $ref: '#/components/schemas/businessPhoneNumber'
+          description: The Business or Merchant's phone number, including the area code. Within the USA, phone numbers have a length of 10, and for outside the US, it can be any length with a maximum of 12 digits. Within the U.S. phone numbers can not start with 0 or 1. If the number is outside the U.S. region; do not include the country code. The phone number must be digits only, with no format characters such as parenthesis or dashes.
+        address:
+          $ref: '#/components/schemas/schemas-Address'
+    NameOfPeopleAndPlaces:
       type: string
-      description: The date and time this object was last modified
-      format: date-time
-    countryCodeAlpha2:
+      pattern: ^[\w ,\.\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u00FF-]+$
+      minLength: 1
+      maxLength: 120
+    VmssPrincipal:
+      type: object
+      required:
+      - firstName
+      - lastName
+      description: 'A principal of the business. Could be a director, founder, C-level executive, et cetera.
+
+        '
+      properties:
+        firstName:
+          allOf:
+          - description: First name of the principal legal owner of the merchant
+          - $ref: '#/components/schemas/visaPrincipalName'
+        lastName:
+          allOf:
+          - description: Last name of the principal legal owner of the merchant
+          - $ref: '#/components/schemas/visaPrincipalLastName'
+    MatchProPrincipalResult:
+      type: object
+      required:
+      - firstName
+      - lastName
+      - address
+      - phoneNumber
+      properties:
+        firstName:
+          $ref: '#/components/schemas/RecordMatchString'
+        lastName:
+          $ref: '#/components/schemas/RecordMatchString'
+        address:
+          $ref: '#/components/schemas/AddressMatch'
+        phoneNumber:
+          $ref: '#/components/schemas/RecordMatchString'
+        email:
+          $ref: '#/components/schemas/RecordMatchString'
+    InvalidInputErrorDetails:
+      type: object
+      required:
+      - type
+      - title
+      - status
+      - detail
+      - instance
+      properties:
+        type:
+          type: string
+          description: A relative URI reference, this property can be used to perform automated error handling.
+          enum:
+          - /silverflow/problems/invalid-input
+        title:
+          type: string
+          description: A short, human-readable summary of the problem type. It does not change from occurrence to occurrence of the error.
+          enum:
+          - Invalid Input
+        status:
+          type: integer
+          format: int32
+          description: The HTTP status code generated by the origin server for this occurrence of the problem.
+          enum:
+          - 400
+        detail:
+          type: string
+          description: A human readable explanation specific to this occurrence of the problem.
+        instance:
+          type: string
+          description: A reference that identifies the specific occurrence of the error. The instance is unique for every error.
+        validationErrors:
+          type: array
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          description: A list of validation errors.
+    CountryCodeAlpha2:
+      type: object
+      required:
+      - alpha2
+      additionalProperties: false
+      properties:
+        alpha2:
+          $ref: '#/components/schemas/countryCodeAlpha2'
+    merchantKey:
+      description: Uniquely identifies a Merchant
+      type: string
+      pattern: ^mct-[a-zA-Z0-9]+$
+      minLength: 5
+      maxLength: 120
+      example: mct-123dinkqFqfq3q2f2adfa
+    RecordMatchString:
+      type: object
+      description: 'Describes the type of match and the value of the record that matched with the input.
+
+        Some sensitive fields will be masked by the card networks
+
+        '
+      required:
+      - matchType
+      properties:
+        matchType:
+          $ref: '#/components/schemas/matchType'
+        value:
+          type: string
+    Screening:
+      type: object
+      required:
+      - key
+      - merchantKey
+      - binKey
+      - screeningType
+      - agentKey
+      - created
+      - screeningStatus
+      - status
+      - screeningDetail
+      - version
+      description: 'A response on a submitted screening request.
+
+        '
+      properties:
+        key:
+          $ref: '#/components/schemas/screeningKey'
+        merchantKey:
+          $ref: '#/components/schemas/merchantKey'
+        binKey:
+          $ref: '#/components/schemas/schemas-binKey'
+        agentKey:
+          $ref: '#/components/schemas/agentKey'
+        screeningStatus:
+          $ref: '#/components/schemas/screeningStatus'
+        errorMessage:
+          $ref: '#/components/schemas/ErrorMessage'
+        screeningType:
+          $ref: '#/components/schemas/screeningType'
+        created:
+          $ref: '#/components/schemas/created'
+        lastModified:
+          $ref: '#/components/schemas/lastModified'
+        status:
+          $ref: '#/components/schemas/status'
+        version:
+          $ref: '#/components/schemas/version'
+        totalNumberOfResults:
+          $ref: '#/components/schemas/totalNumberOfResults'
+        screeningDetail:
+          $ref: '#/components/schemas/ScreeningDetail'
+    schemas-line1:
+      allOf:
+      - $ref: '#/components/schemas/ExtendedNameOfPeopleAndPlaces'
+      - description: 'Address line 1. Clients not enrolled in the "extended character set beta" are still subject to the `^[\w ,\.\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u00FF-]+$` pattern for field input.
+
+          '
+    schemas-line2:
+      allOf:
+      - $ref: '#/components/schemas/ExtendedNameOfPeopleAndPlaces'
+      - description: 'Address line 2. Clients not enrolled in the "extended character set beta" are still subject to the `^[\w ,\.\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u00FF-]+$` pattern for field input.
+
+          '
+    terminatedMerchant:
+      oneOf:
+      - $ref: '#/components/schemas/VmssScreeningResult'
+      - anyOf:
+        - $ref: '#/components/schemas/MatchScreeningResult'
+        - $ref: '#/components/schemas/MatchProScreeningResult'
+    MatchProScreeningDetail:
+      type: object
+      required:
+      - acquirerIdCode
+      - legalName
+      - address
+      - doingBusinessAsName
+      - merchantCategoryCode
+      - merchantPhoneNumber
+      - principals
+      - websiteUrl
+      description: 'Post an array of principals with all details to be screened for the merchant.
+
+        '
+      properties:
+        acquirerIdCode:
+          $ref: '#/components/schemas/schemas-acquirerIdCode'
+        legalName:
+          allOf:
+          - $ref: '#/components/schemas/ExtendedNameOfPeopleAndPlaces'
+          - description: The legal name of the Merchant. Clients not enrolled in the "extended character set beta" are still subject to the `^[\w ,\.\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u00FF-\/]+$` pattern for field input. LegalName will be trimmed if it is longer then 60 chars.
+        doingBusinessAsName:
+          $ref: '#/components/schemas/schemas-doingBusinessAsName'
+        merchantCategoryCode:
+          type: string
+          description: Assumed, trade or fictitious name of the merchant.
+          pattern: ^\d{4}$
+          minLength: 4
+          maxLength: 4
+        merchantPhoneNumber:
+          $ref: '#/components/schemas/businessPhoneNumber'
+          description: "The merchant's business phone number, including area code.\n  - For U.S. numbers\n    - Must be exactly 10 digits and cannot start with 0 or 1.\n  - For non-U.S. numbers\n    - Can be up to 25 digits. Do not include the country code. \n  - Formatting\n    - Digits only. Do not use symbols or formatting characters (e.g., parentheses, spaces, or dashes).\n"
+        address:
+          $ref: '#/components/schemas/schemas-Address'
+        websiteUrl:
+          $ref: '#/components/schemas/schemas-url'
+        principals:
+          type: array
+          description: The principals of the business
+          minItems: 1
+          maxItems: 5
+          items:
+            $ref: '#/components/schemas/MatchProPrincipal'
+    countryCodeAlpha3:
       type: string
       pattern: ^[A-Z]+$
-      minLength: 2
-      maxLength: 2
+      minLength: 3
+      maxLength: 3
       description: 'The ISO code of the country.
 
 
@@ -1513,7 +1078,90 @@ components:
       externalDocs:
         description: Find more info here
         url: https://www.iso.org/iso-3166-country-codes.html
-      example: NL
+      example: NLD
+    MatchProScreeningResult:
+      type: object
+      required:
+      - acquirerIdCode
+      - legalName
+      - address
+      - principals
+      - doingBusinessAsName
+      - websiteUrl
+      properties:
+        acquirerIdCode:
+          $ref: '#/components/schemas/terminatedByAcquirerIdCode'
+        legalName:
+          $ref: '#/components/schemas/RecordMatchString'
+        doingBusinessAsName:
+          $ref: '#/components/schemas/RecordMatchString'
+        merchantCategoryCode:
+          $ref: '#/components/schemas/RecordMatchString'
+        merchantPhoneNumber:
+          $ref: '#/components/schemas/RecordMatchString'
+        address:
+          $ref: '#/components/schemas/AddressMatch'
+        websiteUrl:
+          $ref: '#/components/schemas/RecordMatchStringArray'
+        principals:
+          type: array
+          items:
+            $ref: '#/components/schemas/MatchProPrincipalResult'
+    ScreeningsPage:
+      allOf:
+      - $ref: '#/components/schemas/Page'
+      - type: object
+        required:
+        - screenings
+        properties:
+          screenings:
+            type: array
+            items:
+              $ref: '#/components/schemas/Screening'
+    schemas-stateOrProvince:
+      allOf:
+      - $ref: '#/components/schemas/ExtendedNameOfPeopleAndPlaces'
+      - description: 'The state (US) or province (non-US) of the address. Clients not enrolled in the "extended character set beta" are still subject to the `^[\w ,\.\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u00FF-]+$` pattern for field input.
+
+          '
+    MatchPrincipalResult:
+      type: object
+      required:
+      - firstName
+      - lastName
+      - address
+      - phoneNumber
+      properties:
+        firstName:
+          $ref: '#/components/schemas/RecordMatchString'
+        lastName:
+          $ref: '#/components/schemas/RecordMatchString'
+        address:
+          $ref: '#/components/schemas/AddressMatch'
+        phoneNumber:
+          $ref: '#/components/schemas/RecordMatchString'
+    offsetToken:
+      type: string
+      pattern: ^[a-zA-Z0-9%]+$
+      minLength: 1
+      maxLength: 2048
+    schemas-binKey:
+      description: A key assigned by Silverflow to uniquely identify a BIN.
+      type: string
+      pattern: ^bin-[a-zA-Z0-9]+$
+      minLength: 5
+      maxLength: 120
+    screeningKey:
+      description: Uniquely identifies a screening
+      type: string
+      pattern: ^scr-[a-zA-Z0-9]+$
+      minLength: 5
+      maxLength: 120
+    CountryCodeInput:
+      oneOf:
+      - $ref: '#/components/schemas/CountryCodeAlpha3'
+      - $ref: '#/components/schemas/CountryCodeAlpha2'
+      - $ref: '#/components/schemas/CountryCodeNumeric'
     MatchProPrincipal:
       type: object
       required:
@@ -1539,6 +1187,39 @@ components:
           description: The Business or Merchant's phone number, including the area code. Within the USA, phone numbers have a length of 10, and for outside the US, it can be any length with a maximum of 12 digits. Within the U.S. phone numbers can not start with 0 or 1. If the number is outside the U.S. region; do not include the country code. The phone number must be digits only, with no format characters such as parenthesis or dashes.
         address:
           $ref: '#/components/schemas/schemas-Address'
+        email:
+          $ref: '#/components/schemas/MatchProEmail'
+    tradeOverInternet:
+      type: boolean
+      description: TradeOverInternet
+    MatchPrincipalName:
+      type: string
+      pattern: ^[\w ,\.\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u00FF-]+$
+      minLength: 1
+      maxLength: 40
+    MatchProPrincipalInput:
+      type: object
+      required:
+      - firstName
+      - lastName
+      - phoneNumber
+      - address
+      - email
+      description: 'A principal of the business. Could be a director, founder, C-level executive, et cetera.
+
+        '
+      properties:
+        firstName:
+          description: First name of the principal legal owner of the merchant
+          $ref: '#/components/schemas/MatchPrincipalName'
+        lastName:
+          description: Last name of the principal legal owner of the merchant
+          $ref: '#/components/schemas/MatchPrincipalName'
+        phoneNumber:
+          $ref: '#/components/schemas/businessPhoneNumber'
+          description: The Business or Merchant's phone number, including the area code. Within the USA, phone numbers have a length of 10, and for outside the US, it can be any length with a maximum of 12 digits. Within the U.S. phone numbers can not start with 0 or 1. If the number is outside the U.S. region; do not include the country code. The phone number must be digits only, with no format characters such as parenthesis or dashes.
+        address:
+          $ref: '#/components/schemas/MatchProAddressInput'
         email:
           $ref: '#/components/schemas/MatchProEmail'
     countryCodeNumeric:
@@ -2087,23 +1768,109 @@ components:
         description: Find more info here
         url: https://www.iso.org/iso-3166-country-codes.html
       example: '528'
+    created:
+      type: string
+      description: The date and time this object was created
+      format: date-time
     screeningType:
       type: string
       enum:
       - MATCH
       - VMSS
       - MATCH_PRO
+    ScreeningRequest:
+      oneOf:
+      - $ref: '#/components/schemas/MatchProScreeningRequest'
+      - $ref: '#/components/schemas/VmssScreeningRequest'
+      discriminator:
+        propertyName: screeningType
+        mapping:
+          MATCH_PRO: '#/components/schemas/MatchProScreeningRequest'
+          VMSS: '#/components/schemas/VmssScreeningRequest'
+    visaPrincipalLastName:
+      type: string
+      pattern: ^[\w ,\.\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u00FF-]+$
+      minLength: 1
+      maxLength: 15
+    schemas-acquirerIdCode:
+      type: string
+      description: Acquirer Institution ID code. For Mastercard, this field corresponds to the Acquirer ICA. For Visa, this field corresponds to the CIB, which usually has the same value as the BIN.
+      pattern: ^\d+$
+      minLength: 6
+      maxLength: 6
+    agentKey:
+      description: Uniquely identifies an Agent
+      type: string
+      pattern: ^cgt-[a-zA-Z0-9]+|current$
+      example: cgt-1UF2NafdfrdPMf2XrS2
+    schemas-url:
+      type: string
+      description: A valid URL
+      pattern: ^http(s)?:\/\/[a-z0-9-_]+(\.[a-z0-9-_]+)+(/.*)?$
+      minLength: 8
+      maxLength: 2048
     MatchProEmail:
       type: string
       description: Email address of a principal
       maxLength: 100
       pattern: \w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*
-    schemas-line2:
-      allOf:
-      - $ref: '#/components/schemas/ExtendedNameOfPeopleAndPlaces'
-      - description: 'Address line 2. Clients not enrolled in the "extended character set beta" are still subject to the `^[\w ,\.\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u00FF-]+$` pattern for field input.
+    MatchProAddressInput:
+      type: object
+      required:
+      - countryCode
+      - city
+      - line1
+      - postalCode
+      additionalProperties: false
+      description: 'A physical postal address
 
-          '
+        '
+      properties:
+        countryCode:
+          $ref: '#/components/schemas/CountryCodeInput'
+        stateOrProvince:
+          $ref: '#/components/schemas/schemas-stateOrProvince'
+        city:
+          type: string
+          pattern: ^[\x20-\x7E\xA0-\xA3\xA5\xA7\xA9-\xB3\xB5-\xB7\xB9-\xBB\xBF-\xFF\u20AC\u0160\u0161\u017D\u017E\u0152\u0153\u0178]+$
+          minLength: 1
+          maxLength: 40
+          description: 'The city of the address. Clients not enrolled in the "extended character set beta" are still subject to the `^[\w ,\.\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u00FF-]+$` pattern for field input.
+
+            '
+        line1:
+          type: string
+          pattern: ^[\x20-\x7E\xA0-\xA3\xA5\xA7\xA9-\xB3\xB5-\xB7\xB9-\xBB\xBF-\xFF\u20AC\u0160\u0161\u017D\u017E\u0152\u0153\u0178]+$
+          minLength: 1
+          maxLength: 60
+          description: 'Address line 1. Clients not enrolled in the "extended character set beta" are still subject to the `^[\w ,\.\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u00FF-]+$` pattern for field input.
+
+            '
+        line2:
+          type: string
+          pattern: ^[\x20-\x7E\xA0-\xA3\xA5\xA7\xA9-\xB3\xB5-\xB7\xB9-\xBB\xBF-\xFF\u20AC\u0160\u0161\u017D\u017E\u0152\u0153\u0178]+$
+          minLength: 1
+          maxLength: 60
+          description: 'Address line 2. Clients not enrolled in the "extended character set beta" are still subject to the `^[\w ,\.\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u00FF-]+$` pattern for field input.
+
+            '
+        postalCode:
+          $ref: '#/components/schemas/schemas-postalCode'
+    bid:
+      type: string
+      description: Visa assigned Business Identifier (BID) of the Acquirer.
+      pattern: ^[0-9]{8}$
+    ScreeningResultsPage:
+      allOf:
+      - $ref: '#/components/schemas/Page'
+      - type: object
+        required:
+        - screeningResults
+        properties:
+          screeningResults:
+            type: array
+            items:
+              $ref: '#/components/schemas/screeningResult'
     ValidationError:
       type: object
       required:
@@ -2119,6 +1886,30 @@ components:
         message:
           type: string
           description: A brief description of the validation error.
+    schemas-Address:
+      type: object
+      required:
+      - countryCode
+      - city
+      - line1
+      - postalCode
+      additionalProperties: false
+      description: 'A physical postal address
+
+        '
+      properties:
+        countryCode:
+          $ref: '#/components/schemas/CountryCode'
+        stateOrProvince:
+          $ref: '#/components/schemas/schemas-stateOrProvince'
+        city:
+          $ref: '#/components/schemas/schemas-city'
+        line1:
+          $ref: '#/components/schemas/schemas-line1'
+        line2:
+          $ref: '#/components/schemas/schemas-line2'
+        postalCode:
+          $ref: '#/components/schemas/schemas-postalCode'
     terminationReason:
       type: string
       enum:
@@ -2138,54 +1929,268 @@ components:
       - merchant-identity-theft
       - disqualified-from-network
       - non-f2f-adult-content
-    Screening:
+    status:
+      type: string
+      description: The status of the object
+      enum:
+      - active
+      - archived
+    lastModified:
+      type: string
+      description: The date and time this object was last modified
+      format: date-time
+    CountryCodeAlpha3:
       type: object
       required:
-      - key
-      - merchantKey
-      - binKey
-      - screeningType
-      - agentKey
-      - created
-      - screeningStatus
-      - status
-      - screeningDetail
-      - version
-      description: 'A response on a submitted screening request.
+      - alpha3
+      additionalProperties: false
+      properties:
+        alpha3:
+          $ref: '#/components/schemas/countryCodeAlpha3'
+    vmssDoingBusinessAsName:
+      type: string
+      description: Assumed, trade or fictitious name of the merchant. The name will be trimmed if greater than 70.
+      pattern: ^[\w\s\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u00FF,\-()'`.\/;:&$#!+?@=\\]*$
+    schemas-postalCode:
+      type: string
+      pattern: ^[A-Z0-9]+([ -][A-Z0-9]+)?$
+      minLength: 1
+      maxLength: 10
+      description: 'The postal code of the address. Clients not enrolled in the "extended character set beta" are still subject to the `^[A-Z0-9]+(\ [A-Z0-9]*)?$` pattern for field input.
+
+        '
+      example:
+      - 1114 AA
+      - 1115SB
+      - EC1A 1BB
+      - 123-456
+      - M1 1AE
+    schemas-doingBusinessAsName:
+      allOf:
+      - description: Assumed, trade or fictitious name of the merchant. The name will be trimmed if greater than 70 (VMSS) or 60 (MATCH_PRO).
+      - $ref: '#/components/schemas/ExtendedNameOfPeopleAndPlaces'
+    visaPrincipalName:
+      type: string
+      pattern: ^[\w ,\.\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u00FF-]+$
+      minLength: 1
+      maxLength: 15
+    Page:
+      type: object
+      properties:
+        offsetToken:
+          $ref: '#/components/schemas/offsetToken'
+        moreItems:
+          $ref: '#/components/schemas/moreItems'
+    schemas-city:
+      allOf:
+      - $ref: '#/components/schemas/ExtendedNameOfPeopleAndPlaces'
+      - description: 'The city of the address. Clients not enrolled in the "extended character set beta" are still subject to the `^[\w ,\.\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u00FF-]+$` pattern for field input.
+
+          '
+    VmssScreeningDetail:
+      type: object
+      required:
+      - bid
+      - doingBusinessAsName
+      - address
+      - principals
+      - businessPhoneNumbers
+      - tradeOverInternet
+      - websiteUrl
+      - businessCategory
+      description: 'Post an array of principals with all details to be screened for the merchant acceptor.
 
         '
       properties:
-        key:
-          $ref: '#/components/schemas/screeningKey'
+        bid:
+          $ref: '#/components/schemas/bid'
+        doingBusinessAsName:
+          $ref: '#/components/schemas/vmssDoingBusinessAsName'
+        address:
+          $ref: '#/components/schemas/schemas-Address'
+        businessPhoneNumbers:
+          type: array
+          description: Additional phone numbers of the merchant including the area code.
+          minItems: 1
+          maxItems: 5
+          items:
+            $ref: '#/components/schemas/businessPhoneNumber'
+        websiteUrl:
+          $ref: '#/components/schemas/schemas-url'
+        tradeOverInternet:
+          $ref: '#/components/schemas/tradeOverInternet'
+        businessCategory:
+          $ref: '#/components/schemas/businessCategory'
+          description: Category of the business
+        principals:
+          type: array
+          description: The principals of the business
+          minItems: 1
+          maxItems: 5
+          items:
+            $ref: '#/components/schemas/VmssPrincipal'
+    totalNumberOfResults:
+      type: number
+      description: Indicates the number of merchants that matched with the search criteria. `totalNumberOfResults` will be available when screening is completed.
+    ErrorMessage:
+      description: Error message in case `screeningStatus` is 'failed'.
+      type: string
+    matchType:
+      type: string
+      enum:
+      - none
+      - partial
+      - phonetic
+      - exact
+    VmssScreeningRequest:
+      type: object
+      required:
+      - screeningType
+      - merchantKey
+      - binKey
+      - doingBusinessAsName
+      - principals
+      - businessPhoneNumbers
+      - tradeOverInternet
+      - businessCategory
+      description: 'Post an array of principals with all details to be screened for the merchant acceptor.
+
+        '
+      properties:
+        screeningType:
+          type: string
+          enum:
+          - VMSS
         merchantKey:
           $ref: '#/components/schemas/merchantKey'
         binKey:
           $ref: '#/components/schemas/schemas-binKey'
-        agentKey:
-          $ref: '#/components/schemas/agentKey'
-        screeningStatus:
-          $ref: '#/components/schemas/screeningStatus'
-        errorMessage:
-          $ref: '#/components/schemas/ErrorMessage'
+        doingBusinessAsName:
+          $ref: '#/components/schemas/vmssDoingBusinessAsName'
+        businessPhoneNumbers:
+          type: array
+          description: Additional phone numbers of the merchant including the area code.
+          minItems: 1
+          maxItems: 5
+          items:
+            $ref: '#/components/schemas/businessPhoneNumber'
+        tradeOverInternet:
+          $ref: '#/components/schemas/tradeOverInternet'
+        businessCategory:
+          $ref: '#/components/schemas/businessCategory'
+          description: Category of the business
+        principals:
+          type: array
+          description: 'The principals of the business.
+
+
+            Note: Duplicate principals with the same firstName and lastName (case-insensitive) will be automatically deduplicated, keeping only the first occurrence.
+
+            '
+          minItems: 1
+          maxItems: 5
+          items:
+            $ref: '#/components/schemas/VmssPrincipal'
+        bid:
+          $ref: '#/components/schemas/bid'
+    terminatedByAcquirerIdCode:
+      type: string
+      description: AcquirerIdCode that terminated the merchant.
+    version:
+      type: integer
+      description: The version of this object
+      format: int64
+    MatchProScreeningRequest:
+      type: object
+      required:
+      - screeningType
+      - merchantKey
+      - binKey
+      - doingBusinessAsName
+      - principals
+      - merchantCategoryCode
+      - merchantPhoneNumber
+      description: 'Post an array of principals with all details to be screened for the merchant acceptor.
+
+        '
+      properties:
         screeningType:
-          $ref: '#/components/schemas/screeningType'
-        created:
-          $ref: '#/components/schemas/created'
-        lastModified:
-          $ref: '#/components/schemas/lastModified'
-        status:
-          $ref: '#/components/schemas/status'
-        version:
-          $ref: '#/components/schemas/version'
-        totalNumberOfResults:
-          $ref: '#/components/schemas/totalNumberOfResults'
-        screeningDetail:
-          $ref: '#/components/schemas/ScreeningDetail'
-    countryCodeAlpha3:
+          type: string
+          enum:
+          - MATCH_PRO
+        merchantKey:
+          $ref: '#/components/schemas/merchantKey'
+        binKey:
+          $ref: '#/components/schemas/schemas-binKey'
+        doingBusinessAsName:
+          type: string
+          description: Assumed, trade or fictitious name of the merchant.
+          pattern: ^[\x20-\x7E\xA0-\xA3\xA5\xA7\xA9-\xB3\xB5-\xB7\xB9-\xBB\xBF-\xFF\u20AC\u0160\u0161\u017D\u017E\u0152\u0153\u0178]+$
+          minLength: 1
+          maxLength: 110
+        merchantCategoryCode:
+          type: string
+          description: A classification code used in authorization, clearing and other transactions or reports to identify the type of merchant.
+          pattern: ^\d{4}$
+          minLength: 4
+          maxLength: 4
+        merchantPhoneNumber:
+          $ref: '#/components/schemas/businessPhoneNumber'
+          description: "The merchant's business phone number, including area code.\n  - For U.S. numbers\n    - Must be exactly 10 digits and cannot start with 0 or 1.\n  - For non-U.S. numbers\n    - Can be up to 25 digits. Do not include the country code. \n  - Formatting\n    - Digits only. Do not use symbols or formatting characters (e.g., parentheses, spaces, or dashes).\n"
+        principals:
+          type: array
+          description: The principals of the business
+          minItems: 1
+          maxItems: 5
+          items:
+            $ref: '#/components/schemas/MatchProPrincipalInput'
+    ExtendedNameOfPeopleAndPlaces:
+      type: string
+      pattern: ^[\x20-\x7E\xA0-\xA3\xA5\xA7\xA9-\xB3\xB5-\xB7\xB9-\xBB\xBF-\xFF\u20AC\u0160\u0161\u017D\u017E\u0152\u0153\u0178]+$
+      minLength: 1
+      maxLength: 120
+    MatchScreeningDetail:
+      type: object
+      required:
+      - acquirerIdCode
+      - legalName
+      - address
+      - doingBusinessAsName
+      - principals
+      - websiteUrl
+      description: 'Post an array of principals with all details to be screened for the merchant.
+
+        '
+      properties:
+        acquirerIdCode:
+          $ref: '#/components/schemas/schemas-acquirerIdCode'
+        legalName:
+          allOf:
+          - $ref: '#/components/schemas/ExtendedNameOfPeopleAndPlaces'
+          - description: The legal name of the Merchant. Clients not enrolled in the "extended character set beta" are still subject to the `^[\w ,\.\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u00FF-\/]+$` pattern for field input. LegalName will be trimmed if it is longer then 60 chars.
+        doingBusinessAsName:
+          $ref: '#/components/schemas/schemas-doingBusinessAsName'
+        address:
+          $ref: '#/components/schemas/schemas-Address'
+        websiteUrl:
+          $ref: '#/components/schemas/schemas-url'
+        principals:
+          type: array
+          description: The principals of the business
+          minItems: 1
+          maxItems: 5
+          items:
+            $ref: '#/components/schemas/MatchPrincipal'
+    ScreeningDetail:
+      oneOf:
+      - $ref: '#/components/schemas/MatchScreeningDetail'
+      - $ref: '#/components/schemas/MatchProScreeningDetail'
+      - $ref: '#/components/schemas/VmssScreeningDetail'
+    countryCodeAlpha2:
       type: string
       pattern: ^[A-Z]+$
-      minLength: 3
-      maxLength: 3
+      minLength: 2
+      maxLength: 2
       description: 'The ISO code of the country.
 
 
@@ -2726,29 +2731,46 @@ components:
       externalDocs:
         description: Find more info here
         url: https://www.iso.org/iso-3166-country-codes.html
-      example: NLD
-    vmssDoingBusinessAsName:
+      example: NL
+    businessCategory:
       type: string
-      description: Assumed, trade or fictitious name of the merchant. The name will be trimmed if greater than 70.
-      pattern: ^[\w\s\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u00FF,\-()'`.\/;:&$#!+?@=\\]*$
-    tradeOverInternet:
-      type: boolean
-      description: TradeOverInternet
-    NameOfPeopleAndPlaces:
-      type: string
-      pattern: ^[\w ,\.\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u00FF-]+$
-      minLength: 1
-      maxLength: 120
-    screeningResult:
+      enum:
+      - merchant
+      - paymentFacilitator
+      - marketplace
+    VmssPrincipalResult:
       type: object
       required:
-      - terminatedMerchant
-      - terminationReason
+      - firstName
+      - lastName
       properties:
-        terminationReason:
-          $ref: '#/components/schemas/terminationReason'
-        terminatedMerchant:
-          $ref: '#/components/schemas/terminatedMerchant'
+        firstName:
+          $ref: '#/components/schemas/RecordMatchString'
+        lastName:
+          $ref: '#/components/schemas/RecordMatchString'
+    AddressMatch:
+      type: object
+      properties:
+        line1:
+          $ref: '#/components/schemas/RecordMatchString'
+        city:
+          $ref: '#/components/schemas/RecordMatchString'
+        stateOrProvince:
+          $ref: '#/components/schemas/RecordMatchString'
+        countryCode:
+          $ref: '#/components/schemas/RecordMatchString'
+        postalCode:
+          $ref: '#/components/schemas/RecordMatchString'
+    CountryCodeNumeric:
+      type: object
+      required:
+      - numeric
+      additionalProperties: false
+      properties:
+        numeric:
+          $ref: '#/components/schemas/countryCodeNumeric'
+    moreItems:
+      type: boolean
     RecordMatchStringArray:
       type: object
       description: 'Describes the type of match and the value of the record that matched with the input.
@@ -2768,133 +2790,6 @@ components:
           maxItems: 5
           items:
             type: string
-    CountryCode:
-      type: object
-      required:
-      - alpha3
-      - alpha2
-      - numeric
-      properties:
-        alpha3:
-          $ref: '#/components/schemas/countryCodeAlpha3'
-        alpha2:
-          $ref: '#/components/schemas/countryCodeAlpha2'
-        numeric:
-          $ref: '#/components/schemas/countryCodeNumeric'
-    schemas-Address:
-      type: object
-      required:
-      - countryCode
-      - city
-      - line1
-      - postalCode
-      additionalProperties: false
-      description: 'A physical postal address
-
-        '
-      properties:
-        countryCode:
-          $ref: '#/components/schemas/CountryCode'
-        stateOrProvince:
-          $ref: '#/components/schemas/schemas-stateOrProvince'
-        city:
-          $ref: '#/components/schemas/schemas-city'
-        line1:
-          $ref: '#/components/schemas/schemas-line1'
-        line2:
-          $ref: '#/components/schemas/schemas-line2'
-        postalCode:
-          $ref: '#/components/schemas/schemas-postalCode'
-    VmssPrincipalResult:
-      type: object
-      required:
-      - firstName
-      - lastName
-      properties:
-        firstName:
-          $ref: '#/components/schemas/RecordMatchString'
-        lastName:
-          $ref: '#/components/schemas/RecordMatchString'
-    MatchPrincipalName:
-      type: string
-      pattern: ^[\w ,\.\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u00FF-]+$
-      minLength: 1
-      maxLength: 40
-    version:
-      type: integer
-      description: The version of this object
-      format: int64
-    VmssScreeningRequest:
-      type: object
-      required:
-      - screeningType
-      - merchantKey
-      - binKey
-      - doingBusinessAsName
-      - principals
-      - businessPhoneNumbers
-      - tradeOverInternet
-      - businessCategory
-      description: 'Post an array of principals with all details to be screened for the merchant acceptor.
-
-        '
-      properties:
-        screeningType:
-          type: string
-          enum:
-          - VMSS
-        merchantKey:
-          $ref: '#/components/schemas/merchantKey'
-        binKey:
-          $ref: '#/components/schemas/schemas-binKey'
-        doingBusinessAsName:
-          $ref: '#/components/schemas/vmssDoingBusinessAsName'
-        businessPhoneNumbers:
-          type: array
-          description: Additional phone numbers of the merchant including the area code.
-          minItems: 1
-          maxItems: 5
-          items:
-            $ref: '#/components/schemas/businessPhoneNumber'
-        tradeOverInternet:
-          $ref: '#/components/schemas/tradeOverInternet'
-        businessCategory:
-          $ref: '#/components/schemas/businessCategory'
-          description: Category of the business
-        principals:
-          type: array
-          description: 'The principals of the business.
-
-
-            Note: Duplicate principals with the same firstName and lastName (case-insensitive) will be automatically deduplicated, keeping only the first occurrence.
-
-            '
-          minItems: 1
-          maxItems: 5
-          items:
-            $ref: '#/components/schemas/VmssPrincipal'
-        bid:
-          $ref: '#/components/schemas/bid'
-    ScreeningRequest:
-      oneOf:
-      - $ref: '#/components/schemas/MatchProScreeningRequest'
-      - $ref: '#/components/schemas/VmssScreeningRequest'
-      discriminator:
-        propertyName: screeningType
-        mapping:
-          MATCH_PRO: '#/components/schemas/MatchProScreeningRequest'
-          VMSS: '#/components/schemas/VmssScreeningRequest'
-    ScreeningResultsPage:
-      allOf:
-      - $ref: '#/components/schemas/Page'
-      - type: object
-        required:
-        - screeningResults
-        properties:
-          screeningResults:
-            type: array
-            items:
-              $ref: '#/components/schemas/screeningResult'
     screeningStatus:
       description: Status of the screening request
       type: string
@@ -2926,405 +2821,505 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/MatchPrincipalResult'
-    ScreeningsPage:
-      allOf:
-      - $ref: '#/components/schemas/Page'
-      - type: object
-        required:
-        - screenings
-        properties:
-          screenings:
-            type: array
-            items:
-              $ref: '#/components/schemas/Screening'
-    Page:
-      type: object
-      properties:
-        offsetToken:
-          $ref: '#/components/schemas/offsetToken'
-        moreItems:
-          $ref: '#/components/schemas/moreItems'
-    schemas-acquirerIdCode:
-      type: string
-      description: Acquirer Institution ID code. For Mastercard, this field corresponds to the Acquirer ICA. For Visa, this field corresponds to the CIB, which usually has the same value as the BIN.
-      pattern: ^\d+$
-      minLength: 6
-      maxLength: 6
-    MatchProScreeningDetail:
-      type: object
-      required:
-      - acquirerIdCode
-      - legalName
-      - address
-      - doingBusinessAsName
-      - merchantCategoryCode
-      - merchantPhoneNumber
-      - principals
-      - websiteUrl
-      description: 'Post an array of principals with all details to be screened for the merchant.
-
-        '
-      properties:
-        acquirerIdCode:
-          $ref: '#/components/schemas/schemas-acquirerIdCode'
-        legalName:
-          allOf:
-          - $ref: '#/components/schemas/ExtendedNameOfPeopleAndPlaces'
-          - description: The legal name of the Merchant. Clients not enrolled in the "extended character set beta" are still subject to the `^[\w ,\.\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u00FF-\/]+$` pattern for field input. LegalName will be trimmed if it is longer then 60 chars.
-        doingBusinessAsName:
-          $ref: '#/components/schemas/schemas-doingBusinessAsName'
-        merchantCategoryCode:
-          type: string
-          description: Assumed, trade or fictitious name of the merchant.
-          pattern: ^\d{4}$
-          minLength: 4
-          maxLength: 4
-        merchantPhoneNumber:
-          $ref: '#/components/schemas/businessPhoneNumber'
-          description: "The merchant's business phone number, including area code.\n  - For U.S. numbers\n    - Must be exactly 10 digits and cannot start with 0 or 1.\n  - For non-U.S. numbers\n    - Can be up to 25 digits. Do not include the country code. \n  - Formatting\n    - Digits only. Do not use symbols or formatting characters (e.g., parentheses, spaces, or dashes).\n"
-        address:
-          $ref: '#/components/schemas/schemas-Address'
-        websiteUrl:
-          $ref: '#/components/schemas/schemas-url'
-        principals:
-          type: array
-          description: The principals of the business
-          minItems: 1
-          maxItems: 5
-          items:
-            $ref: '#/components/schemas/MatchProPrincipal'
-    status:
-      type: string
-      description: The status of the object
-      enum:
-      - active
-      - archived
-    screeningKey:
-      description: Uniquely identifies a screening
-      type: string
-      pattern: ^scr-[a-zA-Z0-9]+$
-      minLength: 5
-      maxLength: 120
-    bid:
-      type: string
-      description: Visa assigned Business Identifier (BID) of the Acquirer.
-      pattern: ^[0-9]{8}$
-    MatchProAddressInput:
-      type: object
-      required:
-      - countryCode
-      - city
-      - line1
-      - postalCode
-      additionalProperties: false
-      description: 'A physical postal address
-
-        '
-      properties:
-        countryCode:
-          $ref: '#/components/schemas/CountryCodeInput'
-        stateOrProvince:
-          $ref: '#/components/schemas/schemas-stateOrProvince'
-        city:
-          type: string
-          pattern: ^[\x20-\x7E\xA0-\xA3\xA5\xA7\xA9-\xB3\xB5-\xB7\xB9-\xBB\xBF-\xFF\u20AC\u0160\u0161\u017D\u017E\u0152\u0153\u0178]+$
-          minLength: 1
-          maxLength: 40
-          description: 'The city of the address. Clients not enrolled in the "extended character set beta" are still subject to the `^[\w ,\.\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u00FF-]+$` pattern for field input.
-
-            '
-        line1:
-          type: string
-          pattern: ^[\x20-\x7E\xA0-\xA3\xA5\xA7\xA9-\xB3\xB5-\xB7\xB9-\xBB\xBF-\xFF\u20AC\u0160\u0161\u017D\u017E\u0152\u0153\u0178]+$
-          minLength: 1
-          maxLength: 60
-          description: 'Address line 1. Clients not enrolled in the "extended character set beta" are still subject to the `^[\w ,\.\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u00FF-]+$` pattern for field input.
-
-            '
-        line2:
-          type: string
-          pattern: ^[\x20-\x7E\xA0-\xA3\xA5\xA7\xA9-\xB3\xB5-\xB7\xB9-\xBB\xBF-\xFF\u20AC\u0160\u0161\u017D\u017E\u0152\u0153\u0178]+$
-          minLength: 1
-          maxLength: 60
-          description: 'Address line 2. Clients not enrolled in the "extended character set beta" are still subject to the `^[\w ,\.\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u00FF-]+$` pattern for field input.
-
-            '
-        postalCode:
-          $ref: '#/components/schemas/schemas-postalCode'
-    MatchProPrincipalInput:
-      type: object
-      required:
-      - firstName
-      - lastName
-      - phoneNumber
-      - address
-      - email
-      description: 'A principal of the business. Could be a director, founder, C-level executive, et cetera.
-
-        '
-      properties:
-        firstName:
-          description: First name of the principal legal owner of the merchant
-          $ref: '#/components/schemas/MatchPrincipalName'
-        lastName:
-          description: Last name of the principal legal owner of the merchant
-          $ref: '#/components/schemas/MatchPrincipalName'
-        phoneNumber:
-          $ref: '#/components/schemas/businessPhoneNumber'
-          description: The Business or Merchant's phone number, including the area code. Within the USA, phone numbers have a length of 10, and for outside the US, it can be any length with a maximum of 12 digits. Within the U.S. phone numbers can not start with 0 or 1. If the number is outside the U.S. region; do not include the country code. The phone number must be digits only, with no format characters such as parenthesis or dashes.
-        address:
-          $ref: '#/components/schemas/MatchProAddressInput'
-        email:
-          $ref: '#/components/schemas/MatchProEmail'
-    totalNumberOfResults:
-      type: number
-      description: Indicates the number of merchants that matched with the search criteria. `totalNumberOfResults` will be available when screening is completed.
-    VmssPrincipal:
-      type: object
-      required:
-      - firstName
-      - lastName
-      description: 'A principal of the business. Could be a director, founder, C-level executive, et cetera.
-
-        '
-      properties:
-        firstName:
-          allOf:
-          - description: First name of the principal legal owner of the merchant
-          - $ref: '#/components/schemas/visaPrincipalName'
-        lastName:
-          allOf:
-          - description: Last name of the principal legal owner of the merchant
-          - $ref: '#/components/schemas/visaPrincipalLastName'
-    agentKey:
-      description: Uniquely identifies an Agent
-      type: string
-      pattern: ^cgt-[a-zA-Z0-9]+|current$
-      example: cgt-1UF2NafdfrdPMf2XrS2
-    schemas-stateOrProvince:
-      allOf:
-      - $ref: '#/components/schemas/ExtendedNameOfPeopleAndPlaces'
-      - description: 'The state (US) or province (non-US) of the address. Clients not enrolled in the "extended character set beta" are still subject to the `^[\w ,\.\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u00FF-]+$` pattern for field input.
-
-          '
-    ErrorMessage:
-      description: Error message in case `screeningStatus` is 'failed'.
-      type: string
-    MatchProScreeningRequest:
-      type: object
-      required:
-      - screeningType
-      - merchantKey
-      - binKey
-      - doingBusinessAsName
-      - principals
-      - merchantCategoryCode
-      - merchantPhoneNumber
-      description: 'Post an array of principals with all details to be screened for the merchant acceptor.
-
-        '
-      properties:
-        screeningType:
-          type: string
-          enum:
-          - MATCH_PRO
-        merchantKey:
-          $ref: '#/components/schemas/merchantKey'
-        binKey:
-          $ref: '#/components/schemas/schemas-binKey'
-        doingBusinessAsName:
-          type: string
-          description: Assumed, trade or fictitious name of the merchant.
-          pattern: ^[\x20-\x7E\xA0-\xA3\xA5\xA7\xA9-\xB3\xB5-\xB7\xB9-\xBB\xBF-\xFF\u20AC\u0160\u0161\u017D\u017E\u0152\u0153\u0178]+$
-          minLength: 1
-          maxLength: 110
-        merchantCategoryCode:
-          type: string
-          description: A classification code used in authorization, clearing and other transactions or reports to identify the type of merchant.
-          pattern: ^\d{4}$
-          minLength: 4
-          maxLength: 4
-        merchantPhoneNumber:
-          $ref: '#/components/schemas/businessPhoneNumber'
-          description: "The merchant's business phone number, including area code.\n  - For U.S. numbers\n    - Must be exactly 10 digits and cannot start with 0 or 1.\n  - For non-U.S. numbers\n    - Can be up to 25 digits. Do not include the country code. \n  - Formatting\n    - Digits only. Do not use symbols or formatting characters (e.g., parentheses, spaces, or dashes).\n"
-        principals:
-          type: array
-          description: The principals of the business
-          minItems: 1
-          maxItems: 5
-          items:
-            $ref: '#/components/schemas/MatchProPrincipalInput'
-    businessPhoneNumber:
-      type: string
-      description: An international phone number. Within the USA, phone numbers have a length of 10, and for outside the US, it can be any length with a maximum of 12 digits. Within the U.S. phone numbers can not start with 0 or 1. If the number is outside the U.S. region; do not include the country code. The phone number must be digits only, with no format characters such as parenthesis or dashes.
-      pattern: ^[0-9]{10,12}$
-      minLength: 10
-      maxLength: 12
-      example: '31850609160'
-    RecordMatchString:
-      type: object
-      description: 'Describes the type of match and the value of the record that matched with the input.
-
-        Some sensitive fields will be masked by the card networks
-
-        '
-      required:
-      - matchType
-      properties:
-        matchType:
-          $ref: '#/components/schemas/matchType'
-        value:
-          type: string
-    businessCategory:
-      type: string
-      enum:
-      - merchant
-      - paymentFacilitator
-      - marketplace
-    schemas-postalCode:
-      type: string
-      pattern: ^[A-Z0-9]+([ -][A-Z0-9]+)?$
-      minLength: 1
-      maxLength: 10
-      description: 'The postal code of the address. Clients not enrolled in the "extended character set beta" are still subject to the `^[A-Z0-9]+(\ [A-Z0-9]*)?$` pattern for field input.
-
-        '
-      example:
-      - 1114 AA
-      - 1115SB
-      - EC1A 1BB
-      - 123-456
-      - M1 1AE
-    schemas-line1:
-      allOf:
-      - $ref: '#/components/schemas/ExtendedNameOfPeopleAndPlaces'
-      - description: 'Address line 1. Clients not enrolled in the "extended character set beta" are still subject to the `^[\w ,\.\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u00FF-]+$` pattern for field input.
-
-          '
-    schemas-url:
-      type: string
-      description: A valid URL
-      pattern: ^http(s)?:\/\/[a-z0-9-_]+(\.[a-z0-9-_]+)+(/.*)?$
-      minLength: 8
-      maxLength: 2048
-    matchType:
-      type: string
-      enum:
-      - none
-      - partial
-      - phonetic
-      - exact
-    merchantKey:
-      description: Uniquely identifies a Merchant
-      type: string
-      pattern: ^mct-[a-zA-Z0-9]+$
-      minLength: 5
-      maxLength: 120
-      example: mct-123dinkqFqfq3q2f2adfa
-    CountryCodeNumeric:
-      type: object
-      required:
-      - numeric
-      additionalProperties: false
-      properties:
-        numeric:
-          $ref: '#/components/schemas/countryCodeNumeric'
-    moreItems:
-      type: boolean
-    CountryCodeAlpha2:
-      type: object
-      required:
-      - alpha2
-      additionalProperties: false
-      properties:
-        alpha2:
-          $ref: '#/components/schemas/countryCodeAlpha2'
-    MatchProScreeningResult:
-      type: object
-      required:
-      - acquirerIdCode
-      - legalName
-      - address
-      - principals
-      - doingBusinessAsName
-      - websiteUrl
-      properties:
-        acquirerIdCode:
-          $ref: '#/components/schemas/terminatedByAcquirerIdCode'
-        legalName:
-          $ref: '#/components/schemas/RecordMatchString'
-        doingBusinessAsName:
-          $ref: '#/components/schemas/RecordMatchString'
-        merchantCategoryCode:
-          $ref: '#/components/schemas/RecordMatchString'
-        merchantPhoneNumber:
-          $ref: '#/components/schemas/RecordMatchString'
-        address:
-          $ref: '#/components/schemas/AddressMatch'
-        websiteUrl:
-          $ref: '#/components/schemas/RecordMatchStringArray'
-        principals:
-          type: array
-          items:
-            $ref: '#/components/schemas/MatchProPrincipalResult'
-    terminatedByAcquirerIdCode:
-      type: string
-      description: AcquirerIdCode that terminated the merchant.
-    created:
-      type: string
-      description: The date and time this object was created
-      format: date-time
-    visaPrincipalName:
-      type: string
-      pattern: ^[\w ,\.\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u00FF-]+$
-      minLength: 1
-      maxLength: 15
-    ExtendedNameOfPeopleAndPlaces:
-      type: string
-      pattern: ^[\x20-\x7E\xA0-\xA3\xA5\xA7\xA9-\xB3\xB5-\xB7\xB9-\xBB\xBF-\xFF\u20AC\u0160\u0161\u017D\u017E\u0152\u0153\u0178]+$
-      minLength: 1
-      maxLength: 120
-    VmssScreeningResult:
-      type: object
-      required:
-      - bid
-      - doingBusinessAsName
-      - businessPhoneNumbers
-      - address
-      - principals
-      - websiteUrl
-      properties:
-        bid:
-          $ref: '#/components/schemas/bid'
-        doingBusinessAsName:
-          $ref: '#/components/schemas/RecordMatchString'
+  examples:
+    screening-submit-request-visa:
+      summary: Create a screening request for VMSS
+      value:
+        screeningType: VMSS
+        doingBusinessAsName: ACME Corp. A/S
+        binKey: bin-123412414
+        merchantKey: mct-123412414
+        tradeOverInternet: false
         businessPhoneNumbers:
-          $ref: '#/components/schemas/RecordMatchStringArray'
-        websiteUrl:
-          $ref: '#/components/schemas/RecordMatchStringArray'
-        address:
-          $ref: '#/components/schemas/AddressMatch'
+        - '31201234567'
+        - '31201234568'
         principals:
-          type: array
-          items:
-            $ref: '#/components/schemas/VmssPrincipalResult'
-    ScreeningDetail:
-      oneOf:
-      - $ref: '#/components/schemas/MatchScreeningDetail'
-      - $ref: '#/components/schemas/MatchProScreeningDetail'
-      - $ref: '#/components/schemas/VmssScreeningDetail'
+        - lastName: Doe
+          firstName: Jane
+        businessCategory: marketplace
+    screening-submit-response-mc-pro:
+      summary: Create a screening response MATCH_PRO
+      value:
+        key: scr-2VfOLO8cmTcIe0PkDgKl
+        created: '2021-12-02T13:00:18.487Z'
+        version: 1
+        agentKey: cgt-2VfOLO8cmTcIe0PkDgKl
+        binKey: bin-2VfOLO8cmTcIe0PkDgKl
+        merchantKey: mct-2VfOLO8cmTcIe0PkDgKl
+        status: active
+        screeningStatus: pending
+        screeningType: MATCH_PRO
+        screeningDetail:
+          doingBusinessAsName: ACME Corp. A/S
+          acquirerIdCode: '123213'
+          legalName: ACME Corp. A/S
+          merchantCategoryCode: '5999'
+          merchantPhoneNumber: '31850609160'
+          principals:
+          - lastName: Doe
+            firstName: Jane
+            phoneNumber: '31201234567'
+            email: jane.doe@acme.com
+            address:
+              countryCode:
+                alpha2: NL
+                alpha3: NLD
+                numeric: '528'
+              stateOrProvince: Westeros
+              city: Braavos
+              line1: Kings Road
+              line2: '1'
+              postalCode: 1103JT
+          websiteUrl: https://www.acme.com
+          address:
+            countryCode:
+              alpha2: NL
+              alpha3: NLD
+              numeric: '528'
+            stateOrProvince: Westeros
+            city: Braavos
+            line1: Kings Road
+            line2: '1'
+            postalCode: 1103JT
+    get-screening-response-visa:
+      summary: Get a VMSS screening response
+      value:
+        key: scr-2VfOLO8cmTcIe0PkDgKl
+        agentKey: cgt-2VfOLO8cmTcIe0PkDgKl
+        binKey: bin-2VfOLO8cmTcIe0PkDgKl
+        merchantKey: mct-2VfOLO8cmTcIe0PkDgKl
+        status: active
+        screeningStatus: pending
+        screeningType: VMSS
+        created: '2021-12-02T13:00:18.487Z'
+        version: 1
+        screeningDetail:
+          bid: '10056588'
+          doingBusinessAsName: ACME Corp. A/S
+          tradeOverInternet: false
+          businessPhoneNumbers:
+          - '31201234567'
+          - '31201234568'
+          businessCategory: marketplace
+          principals:
+          - lastName: Doe
+            firstName: Jane
+          websiteUrl: https://www.acme.com
+          address:
+            countryCode:
+              alpha2: NL
+              alpha3: NLD
+              numeric: '528'
+            stateOrProvince: Westeros
+            city: Braavos
+            line1: Kings Road
+            line2: '1'
+            postalCode: 1103JT
+    screening-submit-request-mc-pro:
+      summary: Create a screening request for MATCH_PRO
+      value:
+        screeningType: MATCH_PRO
+        doingBusinessAsName: ACME Corp. A/S
+        binKey: bin-123412414
+        merchantKey: mct-123412414
+        merchantPhoneNumber: '31641444444'
+        merchantCategoryCode: '1234'
+        principals:
+        - lastName: Doe
+          firstName: Jane
+          phoneNumber: '31201234567'
+          email: jane@doe.com
+          address:
+            countryCode:
+              alpha2: NL
+            stateOrProvince: Westeros
+            city: Braavos
+            line1: Kings Road
+            line2: '1'
+            postalCode: 1103JT
+    list-screenings-no-match-response:
+      summary: Result no match
+      value:
+        moreItems: false
+        screeningResults: []
+    list-screenings-response:
+      summary: List screenings response
+      value:
+        offsetToken: 23fOLO8cmTcIe0PkDgKl23fOLO8cmTcIe0PkDgKl
+        moreItems: true
+        screenings:
+        - key: scr-23fOLO8cmTcIe0PkDgKl
+          agentKey: cgt-2VfOLO8cmTcIe0PkDgKl
+          binKey: bin-2VfOLO8cmTcIe0PkDgKl
+          merchantKey: mct-2456O7O8cmTcIe0PkDgKl
+          status: active
+          screeningStatus: pending
+          screeningType: VMSS
+          created: '2021-12-02T13:00:18.487Z'
+          version: 1
+          screeningDetail:
+            bid: '10056588'
+            doingBusinessAsName: ACME Corp. A/S
+            tradeOverInternet: false
+            businessPhoneNumbers:
+            - '31201234567'
+            - '31201234568'
+            businessCategory: marketplace
+            principals:
+            - lastName: Doe
+              firstName: Jane
+            websiteUrl: https://www.acme.com
+            address:
+              countryCode:
+                alpha2: NL
+                alpha3: NLD
+                numeric: '528'
+              stateOrProvince: Westeros
+              city: Braavos
+              line1: Kings Road
+              line2: '1'
+              postalCode: 1103JT
+        - key: scr-2VfOLO8cmTcIe0PkDgKl
+          agentKey: cgt-2VfOLO8cmTcIe0PkDgKl
+          binKey: bin-2VfOLO8cmTcIe0PkDgKl
+          merchantKey: mct-2VfOLO8cmTcIe0PkDgKl
+          status: active
+          screeningStatus: pending
+          screeningType: MATCH
+          created: '2021-12-02T13:00:18.487Z'
+          version: 1
+          screeningDetail:
+            doingBusinessAsName: ACME Corp. A/S
+            acquirerIdCode: '123213'
+            legalName: ACME Corp. A/S
+            principals:
+            - lastName: Doe
+              firstName: Jane
+              phoneNumber: '31201234567'
+              address:
+                countryCode:
+                  alpha2: NL
+                  alpha3: NLD
+                  numeric: '528'
+                stateOrProvince: Westeros
+                city: Braavos
+                line1: Kings Road
+                line2: '1'
+                postalCode: 1103JT
+            websiteUrl: https://www.acme.com
+            address:
+              countryCode:
+                alpha2: NL
+                alpha3: NLD
+                numeric: '528'
+              stateOrProvince: Westeros
+              city: Braavos
+              line1: Kings Road
+              line2: '1'
+              postalCode: 1103JT
+    get-screening-response-mc-pro:
+      summary: Get a MATCH_PRO screening response
+      value:
+        key: scr-2VfOLO8cmTcIe0PkDgKl
+        agentKey: cgt-2VfOLO8cmTcIe0PkDgKl
+        binKey: bin-2VfOLO8cmTcIe0PkDgKl
+        merchantKey: mct-2VfOLO8cmTcIe0PkDgKl
+        status: active
+        screeningStatus: pending
+        screeningType: MATCH_PRO
+        created: '2021-12-02T13:00:18.487Z'
+        version: 1
+        totalNumberOfResults: 0
+        screeningDetail:
+          doingBusinessAsName: ACME Corp. A/S
+          acquirerIdCode: '123213'
+          legalName: ACME Corp. A/S
+          merchantCategoryCode: '5999'
+          merchantPhoneNumber: '31850609160'
+          principals:
+          - lastName: Doe
+            firstName: Jane
+            phoneNumber: '31201234567'
+            email: jane.doe@acme.com
+            address:
+              countryCode:
+                alpha2: NL
+                alpha3: NLD
+                numeric: '528'
+              stateOrProvince: Westeros
+              city: Braavos
+              line1: Kings Road
+              line2: '1'
+              postalCode: 1103JT
+          websiteUrl: https://www.acme.com
+          address:
+            countryCode:
+              alpha2: NL
+              alpha3: NLD
+              numeric: '528'
+            stateOrProvince: Westeros
+            city: Braavos
+            line1: Kings Road
+            line2: '1'
+            postalCode: 1103JT
+    screening-submit-response-visa:
+      summary: Create a screening response VMSS
+      value:
+        key: scr-2VfOLO8cmTcIe0PkDgKl
+        created: '2021-12-02T13:00:18.487Z'
+        version: 1
+        agentKey: cgt-2VfOLO8cmTcIe0PkDgKl
+        binKey: bin-2VfOLO8cmTcIe0PkDgKl
+        merchantKey: mct-2VfOLO8cmTcIe0PkDgKl
+        status: active
+        screeningStatus: pending
+        screeningType: VMSS
+        screeningDetail:
+          bid: '10056588'
+          doingBusinessAsName: ACME Corp. A/S
+          tradeOverInternet: false
+          businessPhoneNumbers:
+          - '31201234567'
+          - '31201234568'
+          businessCategory: marketplace
+          principals:
+          - lastName: Doe
+            firstName: Jane
+          websiteUrl: https://www.acme.com
+          address:
+            countryCode:
+              alpha2: NL
+              alpha3: NLD
+              numeric: '528'
+            stateOrProvince: Westeros
+            city: Braavos
+            line1: Kings Road
+            line2: '1'
+            postalCode: 1103JT
+    get-screening-response-mc:
+      summary: Get a MATCH screening response
+      value:
+        key: scr-2VfOLO8cmTcIe0PkDgKl
+        agentKey: cgt-2VfOLO8cmTcIe0PkDgKl
+        binKey: bin-2VfOLO8cmTcIe0PkDgKl
+        merchantKey: mct-2VfOLO8cmTcIe0PkDgKl
+        status: active
+        screeningStatus: pending
+        screeningType: MATCH
+        created: '2021-12-02T13:00:18.487Z'
+        version: 1
+        totalNumberOfResults: 0
+        screeningDetail:
+          doingBusinessAsName: ACME Corp. A/S
+          acquirerIdCode: '123213'
+          legalName: ACME Corp. A/S
+          principals:
+          - lastName: Doe
+            firstName: Jane
+            phoneNumber: '31201234567'
+            address:
+              countryCode:
+                alpha2: NL
+                alpha3: NLD
+                numeric: '528'
+              stateOrProvince: Westeros
+              city: Braavos
+              line1: Kings Road
+              line2: '1'
+              postalCode: 1103JT
+          websiteUrl: https://www.acme.com
+          address:
+            countryCode:
+              alpha2: NL
+              alpha3: NLD
+              numeric: '528'
+            stateOrProvince: Westeros
+            city: Braavos
+            line1: Kings Road
+            line2: '1'
+            postalCode: 1103JT
+    list-screenings-partial-match-response:
+      summary: Result with 2 partial match
+      value:
+        moreItems: false
+        screeningResults:
+        - terminationReason: common-point-of-purchase
+          terminatedMerchant:
+            acquirerIdCode: '123213'
+            legalName:
+              matchType: none
+              value: ACME Corp. A/S
+            doingBusinessAsName:
+              matchType: none
+              value: ACME Corp. A/S
+            address:
+              countryCode:
+                value: NLD
+                matchType: partial
+              stateOrProvince:
+                value: Westeros
+                matchType: partial
+              city:
+                value: Braavos
+                matchType: partial
+              line1:
+                value: Kings Road
+                matchType: partial
+              postalCode:
+                value: 1103JT
+                matchType: partial
+            websiteUrl:
+              matchType: phonetic
+              value:
+              - https://www.aqme.com
+            principals:
+            - firstName:
+                value: Jane
+                matchType: none
+              lastName:
+                value: Doe
+                matchType: partial
+              address:
+                countryCode:
+                  value: NLD
+                  matchType: partial
+                stateOrProvince:
+                  matchType: partial
+                  value: Westeros
+                city:
+                  matchType: partial
+                  value: Braavos
+                line1:
+                  matchType: partial
+                  value: Kings Road
+                postalCode:
+                  matchType: partial
+                  value: 1103JT
+              phoneNumber:
+                value: '31201234567'
+                matchType: partial
+        - terminationReason: excessive-chargebacks
+          terminatedMerchant:
+            acquirerIdCode: '2325'
+            doingBusinessAsName:
+              matchType: partial
+              value: ACME Corp. A/S
+            legalName:
+              matchType: none
+              value: ACME Corp. A/S
+            address:
+              countryCode:
+                value: NLD
+                matchType: partial
+              stateOrProvince:
+                matchType: partial
+                value: Westeros
+              city:
+                matchType: partial
+                value: Braavos
+              line1:
+                matchType: partial
+                value: Kings Road
+              postalCode:
+                matchType: partial
+                value: 1103JT
+            websiteUrl:
+              matchType: phonetic
+              value:
+              - https://www.aqme.com
+            principals:
+            - firstName:
+                value: Jane
+                matchType: none
+              lastName:
+                value: Doe
+                matchType: partial
+              address:
+                countryCode:
+                  value: NLD
+                  matchType: partial
+                stateOrProvince:
+                  matchType: partial
+                  value: Westeros
+                city:
+                  matchType: partial
+                  value: Braavos
+                line1:
+                  matchType: partial
+                  value: Kings Road
+                postalCode:
+                  matchType: partial
+                  value: 1103JT
+              phoneNumber:
+                value: '31201234567'
+                matchType: partial
+  parameters:
+    to:
+      name: to
+      description: Include only items that have a created date _less than_ the specified date
+      in: query
+      required: false
+      schema:
+        type: string
+        format: date-time
+      example: '2022-08-15T14:15:23Z'
+      allowReserved: true
+    sortOrder:
+      name: sortOrder
+      description: The sort order, __asc__ending or __desc__ending
+      in: query
+      required: false
+      schema:
+        type: string
+        enum:
+        - asc
+        - desc
+      example: desc
+    screeningKey:
+      name: screeningKey
+      description: 'Immutable, unique identifier of the screening
+
+        '
+      in: path
+      required: true
+      schema:
+        $ref: '#/components/schemas/screeningKey'
+    offsetToken:
+      name: offsetToken
+      description: The offset token. This token is returned in the response of previous request.
+      in: query
+      required: false
+      schema:
+        $ref: '#/components/schemas/offsetToken'
+    limit:
+      name: limit
+      description: The number of items to return
+      in: query
+      required: false
+      schema:
+        type: integer
+        format: int32
+        minimum: 1
+        maximum: 100
+        default: 10
+      example: 1
+    from:
+      name: from
+      description: Include only items that have a created date _greater than or equal to_ the specified date
+      in: query
+      required: false
+      schema:
+        type: string
+        format: date-time
+      example: '2022-08-13T14:15:23Z'
+      allowReserved: true
   responses:
-    responses-TooManyRequestsError:
-      description: The number of requests (per minute) has exceeded the configured maximum
+    responses-ConflictError:
+      description: The request could not be completed due to a conflict with the current state of the resources involved in the request.
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/schemas-ProblemDetail'
-          example:
-            type: https://api.silverflow.co/problem/too-many-requests
-            title: Too Many Requests
-            status: 429
-            detail: The number of requests performed by the client has exceeded the configured maximum for a given period
     responses-NotFoundError:
       description: The requested resource was not found
       content:
@@ -3337,6 +3332,29 @@ components:
             status: 404
             detail: The entity referenced in the request could not be found
             instance: https://api.silverflow.co/v1/merchants/mct-1hPdFqhgstYTUhlphPDp
+    responses-ForbiddenError:
+      description: The authenticated client is forbidden to make the request for the resource identified.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/schemas-ProblemDetail'
+          example:
+            type: https://datatracker.ietf.org/doc/html/rfc2616#section-10.4.4
+            title: Forbidden
+            status: 403
+            detail: The server is refusing to execute the request for the current authenticated user
+            instance: https://api.silverflow.co/v1/merchants/mct-1hPdFqhgstYTUhlphPDp
+    responses-TooManyRequestsError:
+      description: The number of requests (per minute) has exceeded the configured maximum
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/schemas-ProblemDetail'
+          example:
+            type: https://api.silverflow.co/problem/too-many-requests
+            title: Too Many Requests
+            status: 429
+            detail: The number of requests performed by the client has exceeded the configured maximum for a given period
     InvalidInputError:
       description: The request body was malformed
       content:
@@ -3352,24 +3370,6 @@ components:
             validationErrors:
             - path: /screenings
               message: '''screeningType'' must be equal to one of the allowed values: MATCH_PRO, VMSS.'
-    responses-ForbiddenError:
-      description: The authenticated client is forbidden to make the request for the resource identified.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/schemas-ProblemDetail'
-          example:
-            type: https://datatracker.ietf.org/doc/html/rfc2616#section-10.4.4
-            title: Forbidden
-            status: 403
-            detail: The server is refusing to execute the request for the current authenticated user
-            instance: https://api.silverflow.co/v1/merchants/mct-1hPdFqhgstYTUhlphPDp
-    responses-ConflictError:
-      description: The request could not be completed due to a conflict with the current state of the resources involved in the request.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/schemas-ProblemDetail'
     responses-UnauthorizedError:
       description: Authentication information is missing or invalid
       headers:

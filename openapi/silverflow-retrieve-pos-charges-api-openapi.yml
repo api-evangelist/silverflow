@@ -67,192 +67,100 @@ paths:
         '503':
           $ref: '#/components/responses/responses-ServiceUnavailableError'
 components:
-  responses:
-    responses-ServiceUnavailableError:
-      description: Service Unavailable - The service is temporarily unavailable. Please retry.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ServiceUnavailableErrorDetails'
-    openapi_components-responses-UnauthorizedError:
-      description: Authentication information is missing or invalid
-      headers:
-        WWW_Authenticate:
-          schema:
-            type: string
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/UnauthorizedErrorDetails'
-          examples:
-            AuthenticationRequired:
-              $ref: '#/components/examples/examples-AuthenticationRequiredExample'
-    responses-InternalServerError:
-      description: Internal Server Error
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/InternalServerErrorDetails'
-          examples:
-            InternalServerErrorExample:
-              $ref: '#/components/examples/components-examples-InternalServerErrorExample'
-    components-responses-ForbiddenError:
-      description: The authenticated client is forbidden to make the request for the resource identified.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ForbiddenErrorDetails'
-          examples:
-            ForbiddenErrorExample:
-              $ref: '#/components/examples/examples-ForbiddenErrorExample'
   schemas:
-    ServiceUnavailableErrorDetails:
+    components-schemas-intent:
+      description: The intention of the cardholder
+      type: string
+      enum:
+      - purchase
+      - reservation
+      - refund
+    schemas-merchantKey:
+      description: Uniquely identifies a merchant.
+      type: string
+      pattern: ^mct-[a-zA-Z0-9]+$
+      minLength: 5
+      maxLength: 120
+      example: mct-1234abcdef123
+    transactionReference:
+      type: string
+      description: 'Unique ID assigned by the merchant or payment service provider for the transaction. Used to identify the transaction.
+
+        '
+      pattern: ^[a-zA-Z0-9()+,\-.:=@;$_!*\/?|]+$
+      minLength: 1
+      maxLength: 120
+      example: Dz3dIzE74EfH1HeTInyE
+    schemas-ChargeType:
+      description: Describes the kind of POS charge the merchant wants to submit.
       type: object
       required:
-      - type
-      - title
-      - status
-      - detail
-      - instance
+      - intent
+      - cardEntry
+      - order
+      - terminalEntryMode
       properties:
-        type:
-          allOf:
-          - $ref: '#/components/schemas/errorType'
-          - enum:
-            - silverflow/problems/service-unavailable
-        title:
-          allOf:
-          - $ref: '#/components/schemas/errorTitle'
-          - enum:
-            - Service Unavailable
-        status:
-          allOf:
-          - $ref: '#/components/schemas/errorStatus'
-          - enum:
-            - 503
-        detail:
-          $ref: '#/components/schemas/errorDetail'
-        instance:
-          $ref: '#/components/schemas/errorInstance'
+        intent:
+          $ref: '#/components/schemas/components-schemas-intent'
+        cardEntry:
+          $ref: '#/components/schemas/components-schemas-cardEntry'
+        order:
+          $ref: '#/components/schemas/schemas-order'
+        terminalEntryMode:
+          $ref: '#/components/schemas/schemas-terminalEntryMode'
+        sequence:
+          $ref: '#/components/schemas/schemas-sequence'
     errorTitle:
       type: string
       description: 'A short, human-readable summary of the problem type. It does not change from occurrence to occurrence of the error.
 
         '
-    schemas-ResponseAmountBreakdown:
-      allOf:
-      - $ref: '#/components/schemas/schemas-BaseAmountBreakdown'
-      - type: object
-        properties:
-          cashback:
-            allOf:
-            - description: 'The cashback amount included in the total transaction `value` in minor units.
-
-                For example `$12.34` should be encoded as `1234`.
-
-                '
-            - $ref: '#/components/schemas/openapi_components-schemas-amountValue'
-          gratuity:
-            allOf:
-            - description: 'The gratuity amount included in the total transaction `value` in minor units.
-
-                For example `$12.34` should be encoded as `1234`.
-
-                '
-            - $ref: '#/components/schemas/openapi_components-schemas-amountValue'
+    chargeKey:
+      description: Uniquely identifies a charge.
+      type: string
+      pattern: ^chg-[a-zA-Z0-9]+$
+      minLength: 5
+      maxLength: 120
+      example: chg-1e1dAHhgstYTUhlphPzZ
+    InternalServerErrorDetails:
+      type: object
+      required:
+      - type
+      - title
+      - status
+      - detail
+      - instance
+      properties:
+        type:
+          allOf:
+          - $ref: '#/components/schemas/errorType'
+          - enum:
+            - /silverflow/problems/internal-server-error
+        title:
+          allOf:
+          - $ref: '#/components/schemas/errorTitle'
+          - enum:
+            - Internal Server Error
+        status:
+          allOf:
+          - $ref: '#/components/schemas/errorStatus'
+          - enum:
+            - 500
+        detail:
+          $ref: '#/components/schemas/errorDetail'
+        instance:
+          $ref: '#/components/schemas/errorInstance'
+    components-schemas-cardEntry:
+      description: The method used to capture the card details.
+      type: string
+      enum:
+      - terminal
+      example: terminal
     errorDetail:
       type: string
       description: 'A human readable explanation specific to this occurrence of the problem.
 
         '
-    ChargeListResponse:
-      type: object
-      required:
-      - itemCount
-      - moreItems
-      - charges
-      properties:
-        itemCount:
-          type: integer
-          format: int32
-        moreItems:
-          type: boolean
-        offsetToken:
-          $ref: '#/components/schemas/components-schemas-offsetToken'
-        charges:
-          type: array
-          items:
-            $ref: '#/components/schemas/ChargeListItem'
-          maxItems: 100
-    schemas-terminalEntryMode:
-      description: 'This field indicates the method used for PAN entry on
-
-        the terminal to initiate the transaction.
-
-        '
-      type: string
-      enum:
-      - contactless
-      - manual-entry
-      - chip
-      - magstripe
-      - magstripe-fallback
-    ForbiddenErrorDetails:
-      type: object
-      required:
-      - type
-      - title
-      - status
-      - detail
-      - instance
-      properties:
-        type:
-          allOf:
-          - $ref: '#/components/schemas/errorType'
-          - enum:
-            - /silverflow/problems/forbidden
-        title:
-          allOf:
-          - $ref: '#/components/schemas/errorTitle'
-          - enum:
-            - Forbidden
-        status:
-          allOf:
-          - $ref: '#/components/schemas/errorStatus'
-          - enum:
-            - 403
-        detail:
-          $ref: '#/components/schemas/errorDetail'
-        instance:
-          $ref: '#/components/schemas/errorInstance'
-    UnauthorizedErrorDetails:
-      type: object
-      required:
-      - type
-      - title
-      - status
-      - detail
-      - instance
-      properties:
-        type:
-          allOf:
-          - $ref: '#/components/schemas/errorType'
-          - enum:
-            - /silverflow/problems/authentication-required
-        title:
-          allOf:
-          - $ref: '#/components/schemas/errorTitle'
-          - enum:
-            - Authentication Required
-        status:
-          allOf:
-          - $ref: '#/components/schemas/errorStatus'
-          - enum:
-            - 401
-        detail:
-          $ref: '#/components/schemas/errorDetail'
-        instance:
-          $ref: '#/components/schemas/errorInstance'
     openapi_components-schemas-InvalidInputErrorDetails:
       type: object
       required:
@@ -287,70 +195,76 @@ components:
           items:
             $ref: '#/components/schemas/ValidationError'
           description: A list of validation errors.
-    ValidationError:
+    ChargeListItem:
       type: object
       required:
-      - path
-      - message
+      - chargeKey
+      - merchantKey
+      - terminalId
+      - created
+      - amount
+      - status
+      - cardMaskedNumber
+      - type
       properties:
-        path:
+        chargeKey:
+          $ref: '#/components/schemas/chargeKey'
+        merchantKey:
+          $ref: '#/components/schemas/schemas-merchantKey'
+        terminalId:
           type: string
-          description: A relative path to the error location within the request body.
-        errorCode:
+          description: Terminal's ID
+          pattern: ^[a-zA-Z0-9]+$
+          minLength: 1
+          maxLength: 8
+          example: AAFF
+        created:
           type: string
-          description: A code that identifies the error.
-        message:
+          description: The date and time this object was created
+          format: iso-8601-date-time
+        amount:
+          $ref: '#/components/schemas/schemas-ResponseAmount'
+        status:
           type: string
-          description: A brief description of the validation error.
-    schemas-order:
-      description: The method used to place the order.
-      type: string
-      enum:
-      - counter
+          description: Status of the charge
+          example: approved
+          enum:
+          - approved
+          - canceled
+          - refunded
+        cardMaskedNumber:
+          type: string
+          description: Masked card number
+          example: 47613499****1234
+        type:
+          $ref: '#/components/schemas/schemas-ChargeType'
+        transactionReference:
+          $ref: '#/components/schemas/transactionReference'
+    schemas-BaseAmountBreakdown:
+      type: object
+      required:
+      - baseAmount
+      description: 'A breakdown of the transaction `value`.
+
+
+        All provided amounts must exactly add up to `value`.
+
+        Providing a breakdown is only required if any other amounts besides the `baseAmount` are included.
+
+        '
+      properties:
+        baseAmount:
+          allOf:
+          - description: 'The base transaction value in minor units. For example `$12.34` should be encoded as `1234`.
+
+              '
+          - $ref: '#/components/schemas/openapi_components-schemas-amountValue'
     components-schemas-offsetToken:
       type: string
       pattern: ^[a-zA-Z0-9%]+$
       minLength: 1
       maxLength: 2048
       example: LUtyr0s918rNZ5WuWDYh5FNzqAli6HqKHpPDatcfdsaVlibrlO49BKcOdz9YccUOtDSoyLtc4kAiOLkmjSW5zLa8OCnOXXBRja2rDYh5FNzqAli6HqKHpPDatcfdsaVlibrlO49BKcOdz9Yc
-    errorInstance:
-      type: string
-      description: 'A reference that identifies the specific occurrence of the error. The instance is unique for every error.
-
-        '
-    components-schemas-cardEntry:
-      description: The method used to capture the card details.
-      type: string
-      enum:
-      - terminal
-      example: terminal
-    errorStatus:
-      type: integer
-      format: int32
-      description: 'The HTTP status code generated by the origin server for this occurrence
-
-        of the problem.
-
-        '
-    schemas-ChargeType:
-      description: Describes the kind of POS charge the merchant wants to submit.
-      type: object
-      required:
-      - intent
-      - cardEntry
-      - order
-      - terminalEntryMode
-      properties:
-        intent:
-          $ref: '#/components/schemas/components-schemas-intent'
-        cardEntry:
-          $ref: '#/components/schemas/components-schemas-cardEntry'
-        order:
-          $ref: '#/components/schemas/schemas-order'
-        terminalEntryMode:
-          $ref: '#/components/schemas/schemas-terminalEntryMode'
-        sequence:
-          $ref: '#/components/schemas/schemas-sequence'
     openapi_components-schemas-currencyCode-2:
       type: string
       enum:
@@ -518,27 +432,6 @@ components:
       description: 'A relative URI reference, this property can be used to perform automated error handling.
 
         '
-    components-schemas-intent:
-      description: The intention of the cardholder
-      type: string
-      enum:
-      - purchase
-      - reservation
-      - refund
-    chargeKey:
-      description: Uniquely identifies a charge.
-      type: string
-      pattern: ^chg-[a-zA-Z0-9]+$
-      minLength: 5
-      maxLength: 120
-      example: chg-1e1dAHhgstYTUhlphPzZ
-    schemas-merchantKey:
-      description: Uniquely identifies a merchant.
-      type: string
-      pattern: ^mct-[a-zA-Z0-9]+$
-      minLength: 5
-      maxLength: 120
-      example: mct-1234abcdef123
     schemas-ResponseAmount:
       type: object
       required:
@@ -565,89 +458,7 @@ components:
           $ref: '#/components/schemas/openapi_components-schemas-currencyCode-2'
         breakdown:
           $ref: '#/components/schemas/schemas-ResponseAmountBreakdown'
-    schemas-BaseAmountBreakdown:
-      type: object
-      required:
-      - baseAmount
-      description: 'A breakdown of the transaction `value`.
-
-
-        All provided amounts must exactly add up to `value`.
-
-        Providing a breakdown is only required if any other amounts besides the `baseAmount` are included.
-
-        '
-      properties:
-        baseAmount:
-          allOf:
-          - description: 'The base transaction value in minor units. For example `$12.34` should be encoded as `1234`.
-
-              '
-          - $ref: '#/components/schemas/openapi_components-schemas-amountValue'
-    ChargeListItem:
-      type: object
-      required:
-      - chargeKey
-      - merchantKey
-      - terminalId
-      - created
-      - amount
-      - status
-      - cardMaskedNumber
-      - type
-      properties:
-        chargeKey:
-          $ref: '#/components/schemas/chargeKey'
-        merchantKey:
-          $ref: '#/components/schemas/schemas-merchantKey'
-        terminalId:
-          type: string
-          description: Terminal's ID
-          pattern: ^[a-zA-Z0-9]+$
-          minLength: 1
-          maxLength: 8
-          example: AAFF
-        created:
-          type: string
-          description: The date and time this object was created
-          format: iso-8601-date-time
-        amount:
-          $ref: '#/components/schemas/schemas-ResponseAmount'
-        status:
-          type: string
-          description: Status of the charge
-          example: approved
-          enum:
-          - approved
-          - canceled
-          - refunded
-        cardMaskedNumber:
-          type: string
-          description: Masked card number
-          example: 47613499****1234
-        type:
-          $ref: '#/components/schemas/schemas-ChargeType'
-        transactionReference:
-          $ref: '#/components/schemas/transactionReference'
-    openapi_components-schemas-amountValue:
-      type: integer
-      format: int64
-      minimum: 1
-      maximum: 999999999999
-      description: 'An amount in minor units. For example `$12.34` should be encoded as `1234`.
-
-        '
-      example: 2599
-    transactionReference:
-      type: string
-      description: 'Unique ID assigned by the merchant or payment service provider for the transaction. Used to identify the transaction.
-
-        '
-      pattern: ^[a-zA-Z0-9()+,\-.:=@;$_!*\/?|]+$
-      minLength: 1
-      maxLength: 120
-      example: Dz3dIzE74EfH1HeTInyE
-    InternalServerErrorDetails:
+    ServiceUnavailableErrorDetails:
       type: object
       required:
       - type
@@ -660,21 +471,167 @@ components:
           allOf:
           - $ref: '#/components/schemas/errorType'
           - enum:
-            - /silverflow/problems/internal-server-error
+            - silverflow/problems/service-unavailable
         title:
           allOf:
           - $ref: '#/components/schemas/errorTitle'
           - enum:
-            - Internal Server Error
+            - Service Unavailable
         status:
           allOf:
           - $ref: '#/components/schemas/errorStatus'
           - enum:
-            - 500
+            - 503
         detail:
           $ref: '#/components/schemas/errorDetail'
         instance:
           $ref: '#/components/schemas/errorInstance'
+    schemas-terminalEntryMode:
+      description: 'This field indicates the method used for PAN entry on
+
+        the terminal to initiate the transaction.
+
+        '
+      type: string
+      enum:
+      - contactless
+      - manual-entry
+      - chip
+      - magstripe
+      - magstripe-fallback
+    openapi_components-schemas-amountValue:
+      type: integer
+      format: int64
+      minimum: 1
+      maximum: 999999999999
+      description: 'An amount in minor units. For example `$12.34` should be encoded as `1234`.
+
+        '
+      example: 2599
+    schemas-ResponseAmountBreakdown:
+      allOf:
+      - $ref: '#/components/schemas/schemas-BaseAmountBreakdown'
+      - type: object
+        properties:
+          cashback:
+            allOf:
+            - description: 'The cashback amount included in the total transaction `value` in minor units.
+
+                For example `$12.34` should be encoded as `1234`.
+
+                '
+            - $ref: '#/components/schemas/openapi_components-schemas-amountValue'
+          gratuity:
+            allOf:
+            - description: 'The gratuity amount included in the total transaction `value` in minor units.
+
+                For example `$12.34` should be encoded as `1234`.
+
+                '
+            - $ref: '#/components/schemas/openapi_components-schemas-amountValue'
+    ValidationError:
+      type: object
+      required:
+      - path
+      - message
+      properties:
+        path:
+          type: string
+          description: A relative path to the error location within the request body.
+        errorCode:
+          type: string
+          description: A code that identifies the error.
+        message:
+          type: string
+          description: A brief description of the validation error.
+    ForbiddenErrorDetails:
+      type: object
+      required:
+      - type
+      - title
+      - status
+      - detail
+      - instance
+      properties:
+        type:
+          allOf:
+          - $ref: '#/components/schemas/errorType'
+          - enum:
+            - /silverflow/problems/forbidden
+        title:
+          allOf:
+          - $ref: '#/components/schemas/errorTitle'
+          - enum:
+            - Forbidden
+        status:
+          allOf:
+          - $ref: '#/components/schemas/errorStatus'
+          - enum:
+            - 403
+        detail:
+          $ref: '#/components/schemas/errorDetail'
+        instance:
+          $ref: '#/components/schemas/errorInstance'
+    ChargeListResponse:
+      type: object
+      required:
+      - itemCount
+      - moreItems
+      - charges
+      properties:
+        itemCount:
+          type: integer
+          format: int32
+        moreItems:
+          type: boolean
+        offsetToken:
+          $ref: '#/components/schemas/components-schemas-offsetToken'
+        charges:
+          type: array
+          items:
+            $ref: '#/components/schemas/ChargeListItem'
+          maxItems: 100
+    UnauthorizedErrorDetails:
+      type: object
+      required:
+      - type
+      - title
+      - status
+      - detail
+      - instance
+      properties:
+        type:
+          allOf:
+          - $ref: '#/components/schemas/errorType'
+          - enum:
+            - /silverflow/problems/authentication-required
+        title:
+          allOf:
+          - $ref: '#/components/schemas/errorTitle'
+          - enum:
+            - Authentication Required
+        status:
+          allOf:
+          - $ref: '#/components/schemas/errorStatus'
+          - enum:
+            - 401
+        detail:
+          $ref: '#/components/schemas/errorDetail'
+        instance:
+          $ref: '#/components/schemas/errorInstance'
+    errorInstance:
+      type: string
+      description: 'A reference that identifies the specific occurrence of the error. The instance is unique for every error.
+
+        '
+    errorStatus:
+      type: integer
+      format: int32
+      description: 'The HTTP status code generated by the origin server for this occurrence
+
+        of the problem.
+
+        '
     schemas-sequence:
       description: 'This property indicates that the cardholder has entered Online PIN, when required by the issuer for a Mastercard Single Tap transaction.
 
@@ -682,6 +639,11 @@ components:
       type: string
       enum:
       - subsequent
+    schemas-order:
+      description: The method used to place the order.
+      type: string
+      enum:
+      - counter
   parameters:
     components-parameters-offsetToken:
       name: offsetToken
@@ -690,13 +652,16 @@ components:
       required: false
       schema:
         $ref: '#/components/schemas/components-schemas-offsetToken'
-    parameters-merchantKey:
-      name: merchantKey
-      description: The merchant identifier to filter charges by.
+    terminalId:
+      name: terminalId
+      description: The terminal identifier to filter charges by. When provided, only charges for this specific terminal are returned.
       in: query
-      required: true
+      required: false
       schema:
-        $ref: '#/components/schemas/schemas-merchantKey'
+        type: string
+        minLength: 1
+        maxLength: 8
+        pattern: ^[a-zA-Z0-9]+$
     limit:
       name: limit
       description: The number of items to return
@@ -709,16 +674,51 @@ components:
         maximum: 100
         default: 10
       example: 1
-    terminalId:
-      name: terminalId
-      description: The terminal identifier to filter charges by. When provided, only charges for this specific terminal are returned.
+    parameters-merchantKey:
+      name: merchantKey
+      description: The merchant identifier to filter charges by.
       in: query
-      required: false
+      required: true
       schema:
-        type: string
-        minLength: 1
-        maxLength: 8
-        pattern: ^[a-zA-Z0-9]+$
+        $ref: '#/components/schemas/schemas-merchantKey'
+  responses:
+    openapi_components-responses-UnauthorizedError:
+      description: Authentication information is missing or invalid
+      headers:
+        WWW_Authenticate:
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/UnauthorizedErrorDetails'
+          examples:
+            AuthenticationRequired:
+              $ref: '#/components/examples/examples-AuthenticationRequiredExample'
+    responses-ServiceUnavailableError:
+      description: Service Unavailable - The service is temporarily unavailable. Please retry.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ServiceUnavailableErrorDetails'
+    responses-InternalServerError:
+      description: Internal Server Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/InternalServerErrorDetails'
+          examples:
+            InternalServerErrorExample:
+              $ref: '#/components/examples/components-examples-InternalServerErrorExample'
+    components-responses-ForbiddenError:
+      description: The authenticated client is forbidden to make the request for the resource identified.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ForbiddenErrorDetails'
+          examples:
+            ForbiddenErrorExample:
+              $ref: '#/components/examples/examples-ForbiddenErrorExample'
   examples:
     examples-ForbiddenErrorExample:
       value:
@@ -727,6 +727,20 @@ components:
         status: 403
         detail: 'Authenticated user ''apk-33GjasQdWl4781OsErvi'' is missing the following permission(s): charges:Create.'
         instance: /silverflow/b0451a9d-f66d-4ef7-9f5d-d48064a2bb3e
+    components-examples-InternalServerErrorExample:
+      value:
+        type: /silverflow/problems/internal-server-error
+        title: Internal Server Error
+        status: 500
+        detail: The server encountered an unexpected condition.
+        instance: /silverflow/b045229d-f66d-4ef7-9f5d-d48064a2aa39
+    examples-AuthenticationRequiredExample:
+      value:
+        type: /silverflow/problems/authentication-required
+        title: Authentication Required
+        status: 401
+        detail: Authentication Required
+        instance: /silverflow/8e445b2e-d745-4b38-a38d-781fc998e442
     components-examples-Response:
       summary: List charges for a merchant
       value:
@@ -761,20 +775,6 @@ components:
             cardEntry: terminal
             order: counter
             terminalEntryMode: contactless
-    examples-AuthenticationRequiredExample:
-      value:
-        type: /silverflow/problems/authentication-required
-        title: Authentication Required
-        status: 401
-        detail: Authentication Required
-        instance: /silverflow/8e445b2e-d745-4b38-a38d-781fc998e442
-    components-examples-InternalServerErrorExample:
-      value:
-        type: /silverflow/problems/internal-server-error
-        title: Internal Server Error
-        status: 500
-        detail: The server encountered an unexpected condition.
-        instance: /silverflow/b045229d-f66d-4ef7-9f5d-d48064a2aa39
   securitySchemes:
     ApiKey:
       description: "The primary method of authenticating to the Silverflow API is through API keys.\n\nAPI keys can be created by calling the [createApiKey](#operation/createApiKey) endpoint. You can create up to 40 API keys and also update and delete them, allowing for _credential rotation_.\n\nThe _Agent Activation_ process will generate an initial API Key for you. See [Activate Agent](#section/Getting-Started).\n\nA call to the [createApiKey](#operation/createApiKey) endpoint will return the following structure:\n\n```json\n{\n    \"key\": \"apk-1wtRxni5IsPsSpBLWpwr\",\n    \"status\": \"active\",\n    \"agentKey\": \"cgt-1wtRvFLIjDOyyUR5Q2LB\",\n    \"description\": \"Data lake API key\",\n    \"permissions\": [\n        \"charges:List\",\n        \"reports:All\"\n    ],\n    \"created\": \"2021-06-22T11:21:45.115Z\",\n    \"secret\": \"FWtnOOHAjbD6rNxWWEeVOCj7JXSEPGJQ\",\n    \"version\": 1\n}\n```\n\n> **Important:** The `secret` is only returned once in the response to the `createApiKey` call.\n\nOnce created, the `key` and `secret` fields from the API key must be used in the HTTP `Authorization` header using the `Basic` scheme.\nThe Basic scheme requires a **username** and **password** to be specified, separated by a `:` (colon) and Base64 encoded.\n\nUse the following values from the API key to construct a Basic authentication header:\n\n| Basic field | API key field | Example |\n| ----------- | ------------- | ------- |\n| username | `key` | `apk-1wtRxni5IsPsSpBLWpwr` |\n| password | `secret` | `FWtnOOHAjbD6rNxWWEeVOCj7JXSEPGJQ` |\n\nIn pseudo-code a valid HTTP Basic Authentication header would be constructed as follows:\n\n```ts\nconst apiKeyId = \"apk-1wtRxni5IsPsSpBLWpwr\";\nconst apiKeySecret = \"FWtnOOHAjbD6rNxWWEeVOCj7JXSEPGJQ\";\nconst authnValue = \"Basic \" + base64Encode(apiKeyId + \":\" + apiKeySecret);\nrequest.setHeader(\"Authorization\", authnValue);\n```\n\nUsing the values from the example a valid HTTP request would look like the following:\n\n```http\nGET /v1/agents/current HTTP/1.1\nAccept: application/json\nAuthorization: Basic YXBrLTF3dFJ4bmk1SXNQc1NwQkxXcHdyOkZXdG5PT0hBamJENnJOeFdXRWVWT0NqN0pYU0VQR0pR\n```\n\nMore information on the Basic scheme can be found in [RFC-7617 - The 'Basic' HTTP Authentication Scheme](https://datatracker.ietf.org/doc/html/rfc7617)."

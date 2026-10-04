@@ -56,24 +56,6 @@ paths:
           $ref: '#/components/responses/responses-TooManyRequestsError'
 components:
   schemas:
-    SellRate:
-      description: The sell rate.
-      type: object
-      required:
-      - rate
-      - exponent
-      properties:
-        rate:
-          type: integer
-          format: int64
-        exponent:
-          type: integer
-          format: int64
-    components-schemas-Page:
-      type: object
-      properties:
-        offsetToken:
-          $ref: '#/components/schemas/openapi_components-schemas-offsetToken'
     CurrencyExponent:
       description: The source or target currency.
       type: object
@@ -86,28 +68,11 @@ components:
         exponent:
           type: integer
           format: int64
-    CurrencyRatePage:
-      allOf:
-      - $ref: '#/components/schemas/components-schemas-Page'
-      - type: object
-        properties:
-          items:
-            type: array
-            items:
-              $ref: '#/components/schemas/CurrencyRate'
-    BuyRate:
-      description: The buy rate.
+    components-schemas-Page:
       type: object
-      required:
-      - rate
-      - exponent
       properties:
-        rate:
-          type: integer
-          format: int64
-        exponent:
-          type: integer
-          format: int64
+        offsetToken:
+          $ref: '#/components/schemas/openapi_components-schemas-offsetToken'
     schemas-ProblemDetail:
       type: object
       description: 'The ''problem detail'' object relays detailed information about the error that occurred. It is defined
@@ -174,6 +139,42 @@ components:
         validationErrors:
         - The value of property 'status' should be one of 'idle', 'active' or 'archived'
         - The value of property 'tags.0.businessId' must not be longer than 255 characters
+    SellRate:
+      description: The sell rate.
+      type: object
+      required:
+      - rate
+      - exponent
+      properties:
+        rate:
+          type: integer
+          format: int64
+        exponent:
+          type: integer
+          format: int64
+    MidRate:
+      description: The mid rate.
+      type: object
+      required:
+      - rate
+      - exponent
+      properties:
+        rate:
+          type: integer
+          format: int64
+        exponent:
+          type: integer
+          format: int64
+    cardNetwork:
+      type: string
+      description: The card network
+      enum:
+      - mastercard
+      - visa
+      example: mastercard
+    openapi_components-schemas-offsetToken:
+      type: string
+      pattern: ^[a-zA-Z0-9%]+$
     CurrencyRate:
       type: object
       required:
@@ -213,15 +214,17 @@ components:
         targetCurrency:
           description: The target currency.
           $ref: '#/components/schemas/CurrencyExponent'
-    cardNetwork:
-      type: string
-      description: The card network
-      enum:
-      - mastercard
-      - visa
-      example: mastercard
-    MidRate:
-      description: The mid rate.
+    CurrencyRatePage:
+      allOf:
+      - $ref: '#/components/schemas/components-schemas-Page'
+      - type: object
+        properties:
+          items:
+            type: array
+            items:
+              $ref: '#/components/schemas/CurrencyRate'
+    BuyRate:
+      description: The buy rate.
       type: object
       required:
       - rate
@@ -233,9 +236,44 @@ components:
         exponent:
           type: integer
           format: int64
-    openapi_components-schemas-offsetToken:
-      type: string
-      pattern: ^[a-zA-Z0-9%]+$
+  examples:
+    response-currency-rates-visa:
+      summary: Example of a Currency Rate Response for a Visa network and effectiveDate
+      value:
+        offsetToken: string
+        items:
+        - id: visa#EUR#USD#2021-10-30
+          network: visa
+          effectiveDate: '2022-10-30'
+          effectiveFrom: '2022-10-30T11:00:00.000Z'
+          buy:
+            rate: 120000
+            exponent: 6
+          sell:
+            rate: 110000
+            exponent: 6
+          sourceCurrency:
+            code: EUR
+            exponent: 6
+          targetCurrency:
+            code: USD
+            exponent: 6
+        - id: visa#EUR#SEK#2021-10-30
+          network: visa
+          effectiveDate: '2021-10-30'
+          effectiveFrom: '2021-10-30T11:00:00.000Z'
+          buy:
+            rate: 90000
+            exponent: 6
+          sell:
+            rate: 70000
+            exponent: 6
+          sourceCurrency:
+            code: EUR
+            exponent: 6
+          targetCurrency:
+            code: SEK
+            exponent: 6
   responses:
     responses-TooManyRequestsError:
       description: The number of requests (per minute) has exceeded the configured maximum
@@ -291,6 +329,23 @@ components:
             status: 401
             detail: The credentials supplied in the request are either missing, invalid, or not applicable in the current scope
   parameters:
+    openapi_components-parameters-offsetToken:
+      name: offsetToken
+      description: The offset token. This token is returned in the response of previous request.
+      in: query
+      required: false
+      schema:
+        $ref: '#/components/schemas/openapi_components-schemas-offsetToken'
+    network:
+      name: network
+      description: The card network for which the currency rates are requested.
+      in: path
+      required: true
+      schema:
+        type: string
+        enum:
+        - mastercard
+        - visa
     limit:
       name: limit
       description: The number of items to return
@@ -311,61 +366,6 @@ components:
       schema:
         type: string
         format: date
-    network:
-      name: network
-      description: The card network for which the currency rates are requested.
-      in: path
-      required: true
-      schema:
-        type: string
-        enum:
-        - mastercard
-        - visa
-    openapi_components-parameters-offsetToken:
-      name: offsetToken
-      description: The offset token. This token is returned in the response of previous request.
-      in: query
-      required: false
-      schema:
-        $ref: '#/components/schemas/openapi_components-schemas-offsetToken'
-  examples:
-    response-currency-rates-visa:
-      summary: Example of a Currency Rate Response for a Visa network and effectiveDate
-      value:
-        offsetToken: string
-        items:
-        - id: visa#EUR#USD#2021-10-30
-          network: visa
-          effectiveDate: '2022-10-30'
-          effectiveFrom: '2022-10-30T11:00:00.000Z'
-          buy:
-            rate: 120000
-            exponent: 6
-          sell:
-            rate: 110000
-            exponent: 6
-          sourceCurrency:
-            code: EUR
-            exponent: 6
-          targetCurrency:
-            code: USD
-            exponent: 6
-        - id: visa#EUR#SEK#2021-10-30
-          network: visa
-          effectiveDate: '2021-10-30'
-          effectiveFrom: '2021-10-30T11:00:00.000Z'
-          buy:
-            rate: 90000
-            exponent: 6
-          sell:
-            rate: 70000
-            exponent: 6
-          sourceCurrency:
-            code: EUR
-            exponent: 6
-          targetCurrency:
-            code: SEK
-            exponent: 6
   securitySchemes:
     ApiKey:
       description: "The primary method of authenticating to the Silverflow API is through API keys.\n\nAPI keys can be created by calling the [createApiKey](#operation/createApiKey) endpoint. You can create up to 40 API keys and also update and delete them, allowing for _credential rotation_.\n\nThe _Agent Activation_ process will generate an initial API Key for you. See [Activate Agent](#section/Getting-Started).\n\nA call to the [createApiKey](#operation/createApiKey) endpoint will return the following structure:\n\n```json\n{\n    \"key\": \"apk-1wtRxni5IsPsSpBLWpwr\",\n    \"status\": \"active\",\n    \"agentKey\": \"cgt-1wtRvFLIjDOyyUR5Q2LB\",\n    \"description\": \"Data lake API key\",\n    \"permissions\": [\n        \"charges:List\",\n        \"reports:All\"\n    ],\n    \"created\": \"2021-06-22T11:21:45.115Z\",\n    \"secret\": \"FWtnOOHAjbD6rNxWWEeVOCj7JXSEPGJQ\",\n    \"version\": 1\n}\n```\n\n> **Important:** The `secret` is only returned once in the response to the `createApiKey` call.\n\nOnce created, the `key` and `secret` fields from the API key must be used in the HTTP `Authorization` header using the `Basic` scheme.\nThe Basic scheme requires a **username** and **password** to be specified, separated by a `:` (colon) and Base64 encoded.\n\nUse the following values from the API key to construct a Basic authentication header:\n\n| Basic field | API key field | Example |\n| ----------- | ------------- | ------- |\n| username | `key` | `apk-1wtRxni5IsPsSpBLWpwr` |\n| password | `secret` | `FWtnOOHAjbD6rNxWWEeVOCj7JXSEPGJQ` |\n\nIn pseudo-code a valid HTTP Basic Authentication header would be constructed as follows:\n\n```ts\nconst apiKeyId = \"apk-1wtRxni5IsPsSpBLWpwr\";\nconst apiKeySecret = \"FWtnOOHAjbD6rNxWWEeVOCj7JXSEPGJQ\";\nconst authnValue = \"Basic \" + base64Encode(apiKeyId + \":\" + apiKeySecret);\nrequest.setHeader(\"Authorization\", authnValue);\n```\n\nUsing the values from the example a valid HTTP request would look like the following:\n\n```http\nGET /v1/agents/current HTTP/1.1\nAccept: application/json\nAuthorization: Basic YXBrLTF3dFJ4bmk1SXNQc1NwQkxXcHdyOkZXdG5PT0hBamJENnJOeFdXRWVWT0NqN0pYU0VQR0pR\n```\n\nMore information on the Basic scheme can be found in [RFC-7617 - The 'Basic' HTTP Authentication Scheme](https://datatracker.ietf.org/doc/html/rfc7617)."

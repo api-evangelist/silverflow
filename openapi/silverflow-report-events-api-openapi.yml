@@ -51,6 +51,13 @@ webhooks:
       description: Sandbox URL - Equivalent to https://api-sbx.silverflow.co/v1
 components:
   schemas:
+    common_agentKey:
+      description: Uniquely identifies an Agent.
+      type: string
+      pattern: ^cgt-[a-zA-Z0-9]+$
+      readOnly: true
+      example: cgt-EFG67b4yPre23ZDrLX
+      title: agentKey
     ReportEventNotification1_0:
       type: object
       allOf:
@@ -83,6 +90,89 @@ components:
           - example: https://silverflow.com/schemas/events/reports/1.0
           - enum:
             - https://silverflow.com/schemas/events/reports/1.0
+    common_version:
+      type: integer
+      description: The version of this object.
+      format: int64
+      minimum: 1
+      maximum: 1000
+      example: 1
+      readOnly: false
+    dataschema:
+      type: string
+      description: The event schema with the data version of the event.
+    openapi_components-schemas-created-4:
+      type: string
+      description: The date and time this object was created.
+      format: date-time
+      readOnly: false
+    schema_reportKey:
+      description: Uniquely identifies a report object
+      type: string
+      pattern: ^rep-[a-zA-Z0-9]+$
+      minLength: 10
+      maxLength: 120
+      example: rep-1e1dAHhgstYTUhlphPzZ
+    time:
+      type: string
+      format: date-time
+      description: Date and time when the event was sent.
+    source:
+      type: string
+      description: Source system of the event.
+      pattern: ^https://silverflow.com/[a-zA-Z]+$
+    openapi_components-schemas-lastModified-3:
+      type: string
+      description: The date and time this object was last modified.
+      format: date-time
+      readOnly: false
+    openapi_components-schemas-version-3:
+      type: string
+      description: The version of the spec.
+      pattern: ^[1-9]+.[0-9]+$
+      example: '1.0'
+    dataContentType:
+      type: string
+      description: The content type of the event.
+      enum:
+      - application/json
+    PublicCloudEvent:
+      type: object
+      required:
+      - id
+      - source
+      - specversion
+      - type
+      - datacontenttype
+      - dataschema
+      - subject
+      - time
+      - agent
+      - data
+      properties:
+        id:
+          $ref: '#/components/schemas/eventId'
+        specversion:
+          allOf:
+          - description: The version of the current spec.
+          - enum:
+            - '1.0'
+          - $ref: '#/components/schemas/openapi_components-schemas-version-3'
+        datacontenttype:
+          $ref: '#/components/schemas/dataContentType'
+        dataschema:
+          $ref: '#/components/schemas/dataschema'
+        time:
+          $ref: '#/components/schemas/time'
+        agent:
+          $ref: '#/components/schemas/common_agentKey'
+    eventId:
+      type: string
+      description: Uniquely identifies an event.
+      pattern: ^evt-[a-zA-Z0-9]+$
+      minLength: 5
+      maxLength: 120
+      example: evt-1e1dAHhgstYTUhlphPzZ
     ReportEventNotificationData1_0:
       type: object
       required:
@@ -130,118 +220,7 @@ components:
           $ref: '#/components/schemas/openapi_components-schemas-lastModified-3'
         version:
           $ref: '#/components/schemas/common_version'
-    openapi_components-schemas-created-4:
-      type: string
-      description: The date and time this object was created.
-      format: date-time
-      readOnly: false
-    source:
-      type: string
-      description: Source system of the event.
-      pattern: ^https://silverflow.com/[a-zA-Z]+$
-    common_version:
-      type: integer
-      description: The version of this object.
-      format: int64
-      minimum: 1
-      maximum: 1000
-      example: 1
-      readOnly: false
-    openapi_components-schemas-version-3:
-      type: string
-      description: The version of the spec.
-      pattern: ^[1-9]+.[0-9]+$
-      example: '1.0'
-    dataschema:
-      type: string
-      description: The event schema with the data version of the event.
-    PublicCloudEvent:
-      type: object
-      required:
-      - id
-      - source
-      - specversion
-      - type
-      - datacontenttype
-      - dataschema
-      - subject
-      - time
-      - agent
-      - data
-      properties:
-        id:
-          $ref: '#/components/schemas/eventId'
-        specversion:
-          allOf:
-          - description: The version of the current spec.
-          - enum:
-            - '1.0'
-          - $ref: '#/components/schemas/openapi_components-schemas-version-3'
-        datacontenttype:
-          $ref: '#/components/schemas/dataContentType'
-        dataschema:
-          $ref: '#/components/schemas/dataschema'
-        time:
-          $ref: '#/components/schemas/time'
-        agent:
-          $ref: '#/components/schemas/common_agentKey'
-    schema_reportKey:
-      description: Uniquely identifies a report object
-      type: string
-      pattern: ^rep-[a-zA-Z0-9]+$
-      minLength: 10
-      maxLength: 120
-      example: rep-1e1dAHhgstYTUhlphPzZ
-    common_agentKey:
-      description: Uniquely identifies an Agent.
-      type: string
-      pattern: ^cgt-[a-zA-Z0-9]+$
-      readOnly: true
-      example: cgt-EFG67b4yPre23ZDrLX
-      title: agentKey
-    eventId:
-      type: string
-      description: Uniquely identifies an event.
-      pattern: ^evt-[a-zA-Z0-9]+$
-      minLength: 5
-      maxLength: 120
-      example: evt-1e1dAHhgstYTUhlphPzZ
-    time:
-      type: string
-      format: date-time
-      description: Date and time when the event was sent.
-    dataContentType:
-      type: string
-      description: The content type of the event.
-      enum:
-      - application/json
-    openapi_components-schemas-lastModified-3:
-      type: string
-      description: The date and time this object was last modified.
-      format: date-time
-      readOnly: false
   examples:
-    report-failed:
-      summary: Report Failed
-      value:
-        agent: cgt-5n22WlPy500PdVyGsqai
-        data:
-          created: '2026-01-15T12:23:46.775Z'
-          key: rep-5maCw8W3hdC6ZCLN5i6R
-          lastModified: '2026-01-15T12:23:47.604Z'
-          mimeType: application/vnd.ms-excel
-          reference: Visa AMMF Report
-          reportName: AmmfReport
-          status: failed
-          version: 2
-        datacontenttype: application/json
-        dataschema: https://silverflow.com/schemas/events/reports/1.0
-        id: evt-9294PkEltHXrPG8sonEHtGOyZC7y4KPLgDase505032
-        source: https://silverflow.com/reports
-        specversion: '1.0'
-        subject: rep-5maCw8W3hdC6ZCLN5i6R
-        time: '2026-01-15T12:23:47.612Z'
-        type: com.silverflow.reports.updated
     report-completed:
       summary: Report Completed
       value:
@@ -263,6 +242,27 @@ components:
         specversion: '1.0'
         subject: rep-5n00Z6q5PB3MqRc1A3zd
         time: '2026-01-21T08:01:41.939Z'
+        type: com.silverflow.reports.updated
+    report-failed:
+      summary: Report Failed
+      value:
+        agent: cgt-5n22WlPy500PdVyGsqai
+        data:
+          created: '2026-01-15T12:23:46.775Z'
+          key: rep-5maCw8W3hdC6ZCLN5i6R
+          lastModified: '2026-01-15T12:23:47.604Z'
+          mimeType: application/vnd.ms-excel
+          reference: Visa AMMF Report
+          reportName: AmmfReport
+          status: failed
+          version: 2
+        datacontenttype: application/json
+        dataschema: https://silverflow.com/schemas/events/reports/1.0
+        id: evt-9294PkEltHXrPG8sonEHtGOyZC7y4KPLgDase505032
+        source: https://silverflow.com/reports
+        specversion: '1.0'
+        subject: rep-5maCw8W3hdC6ZCLN5i6R
+        time: '2026-01-15T12:23:47.612Z'
         type: com.silverflow.reports.updated
   securitySchemes:
     ApiKey:

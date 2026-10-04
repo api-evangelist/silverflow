@@ -104,638 +104,39 @@ paths:
           $ref: '#/components/responses/responses-TooManyRequestsError'
 components:
   schemas:
-    components-schemas-countryCodeNumeric:
-      type: string
-      pattern: ^[0-9]{3}$
-      description: 'The ISO code of the country.
-
-
-        **European ISO Country Codes**
-
-
-        <details>
-
-
-        | Country                                          | Alpha-2 code | Numeric |
-
-        | ------------------------------------------------ | ------------ | ------- | --- |
-
-        | Åland Islands                                    | AX           | 248     |
-
-        | Andorra                                          | AD           | 020     |
-
-        | Austria                                          | AT           | 040     |
-
-        | Belgium                                          | BE           | 056     |
-
-        | Cyprus                                           | CY           | 196     |
-
-        | Estonia                                          | EE           | 233     |     |
-
-        | Finland                                          | FI           | 246     |
-
-        | France                                           | FR           | 250     |
-
-        | French Guiana                                    | GF           | 254     |
-
-        | French Southern Territories                      | TF           | 260     |
-
-        | Germany                                          | DE           | 280     |
-
-        | Greece                                           | GR           | 300     |
-
-        | Guadeloupe                                       | GP           | 312     |
-
-        | Ireland                                          | IE           | 372     |
-
-        | Italy                                            | IT           | 380     |
-
-        | Kosovo, United Nations Mission in Kosovo (UNMIK) | QZ           | 900     |
-
-        | Latvia                                           | LV           | 428     |
-
-        | Lithuania                                        | LT           | 440     |
-
-        | Luxembourg                                       | LU           | 442     |
-
-        | Malta                                            | MT           | 470     |
-
-        | Martinique                                       | MQ           | 474     |
-
-        | Mayotte                                          | YT           | 175     |
-
-        | Monaco                                           | MC           | 492     |
-
-        | Montenegro                                       | ME           | 499     |
-
-        | Netherlands                                      | NL           | 528     |
-
-        | Portugal                                         | PT           | 620     |
-
-        | Reunion                                          | RE           | 638     |
-
-        | Saint Barthélemy                                 | BL           | 652     |
-
-        | Saint Martin (French Part)                       | MF           | 663     |
-
-        | San Marino                                       | SM           | 674     |
-
-        | Slovakia                                         | SK           | 703     |
-
-        | Slovenia                                         | SI           | 705     |
-
-        | Spain                                            | ES           | 724     |
-
-        | St. Pierre and Miquelon                          | PM           | 666     |
-
-        | Vatican City State (Holy See)                    | VA           | 336     |
-
-
-        </details>
-
-
-        **US ISO Country Codes**
-
-
-        <details>
-
-
-        | Country                         | Alpha-2 code | Numeric |
-
-        | ------------------------------- | ------------ | ------- |
-
-        | American Samoa                  | AS           | 016     |
-
-        | Bonaire, St. Eusasius and Saba  | BQ           | 535     |
-
-        | British Indian Ocean Territory  | IO           | 086     |
-
-        | Ecuador                         | EC           | 218     |
-
-        | Guam                            | GU           | 316     |
-
-        | Marshall Islands                | MH           | 584     |
-
-        | Micronesia, Federated States of | FM           | 583     |
-
-        | Northern Mariana Islands        | MP           | 580     |
-
-        | Palau                           | PW           | 585     |
-
-        | Palestine, State of             | PS           | 275     |
-
-        | Puerto Rico                     | PR           | 630     |
-
-        | Timor-Leste                     | TP           | 626     |
-
-        | Turks and Caicos Islands        | TC           | 796     |
-
-        | U.S. Minor Outlying Islands     | UM           | 581     |
-
-        | United States                   | US           | 840     |
-
-        | Virgin Islands, British         | VG           | 092     |
-
-        | Virgin Islands, U.S.            | VI           | 850     |
-
-
-        </details>
-
-
-        **Other ISO Country Codes**
-
-
-        <details>
-
-
-        | Country                                      | Alpha-2 code | Numeric |
-
-        | -------------------------------------------- | ------------ | ------- |
-
-        | Afghanistan                                  | AF           | 004     |
-
-        | Albania                                      | AL           | 008     |
-
-        | Algeria                                      | DZ           | 012     |
-
-        | Angola                                       | AO           | 024     |
-
-        | Anguilla                                     | AI           | 660     |
-
-        | Antarctica                                   | AQ           | 010     |
-
-        | Antigua and Barbuda                          | AG           | 028     |
-
-        | Argentina                                    | AR           | 032     |
-
-        | Armenia                                      | AM           | 051     |
-
-        | Aruba                                        | AW           | 533     |
-
-        | Australia                                    | AU           | 036     |
-
-        | Azerbaijan                                   | AZ           | 031     |
-
-        | Bahamas                                      | BS           | 044     |
-
-        | Bahrain                                      | BH           | 048     |
-
-        | Bangladesh                                   | BD           | 050     |
-
-        | Barbados                                     | BB           | 052     |
-
-        | Belarus                                      | BR           | 112     |
-
-        | Belize                                       | BZ           | 084     |
-
-        | Benin                                        | BJ           | 204     |
-
-        | Bermuda                                      | BM           | 060     |
-
-        | Bhutan                                       | BT           | 064     |
-
-        | Bolivia, Plurinational State of              | BO           | 068     |
-
-        | Bosnia and Herzegovina                       | BA           | 070     |
-
-        | Botswana                                     | BW           | 072     |
-
-        | Bouvet Island                                | BV           | 074     |
-
-        | Brazil                                       | BR           | 076     |
-
-        | Brunei Darussalam                            | BN           | 096     |
-
-        | Bulgaria                                     | BG           | 100     |
-
-        | Burkina Faso                                 | BF           | 854     |
-
-        | Burundi                                      | BI           | 108     |
-
-        | Cambodia                                     | KH           | 116     |
-
-        | Cameroon                                     | CM           | 120     |
-
-        | Canada                                       | CA           | 124     |
-
-        | Cape Verde                                   | CV           | 132     |
-
-        | Cayman Islands                               | KY           | 136     |
-
-        | Central African Republic                     | CF           | 140     |
-
-        | Chad                                         | TD           | 148     |
-
-        | Chile                                        | CL           | 152     |
-
-        | China                                        | CN           | 156     |
-
-        | Christmas Island                             | CX           | 162     |
-
-        | Cocos (Keeling) Islands                      | CC           | 166     |
-
-        | Colombia                                     | CO           | 170     |
-
-        | Comoros                                      | KM           | 174     |
-
-        | Congo                                        | CG           | 178     |
-
-        | Cook Islands                                 | CK           | 184     |
-
-        | Costa Rica                                   | CR           | 188     |
-
-        | Côte D''Ivoire                                | CI           | 384     |
-
-        | Croatia                                      | HR           | 191     |
-
-        | Cuba                                         | CU           | 192     |
-
-        | Curacao                                      | CW           | 531     |
-
-        | Czech Republic                               | CZ           | 203     |
-
-        | Democratic Republic of the Congo             | CD           | 180     |
-
-        | Denmark                                      | DK           | 208     |
-
-        | Djibouti                                     | DJ           | 262     |
-
-        | Dominica                                     | DM           | 212     |
-
-        | Dominican Republic                           | DO           | 214     |
-
-        | Egypt                                        | EG           | 818     |
-
-        | El Salvador                                  | SV           | 222     |
-
-        | Equatorial Guinea                            | GQ           | 226     |
-
-        | Eritrea                                      | ER           | 232     |
-
-        | Ethiopia                                     | ET           | 230     |
-
-        | Falkland Islands (Malvinas)                  | FK           | 238     |
-
-        | Faroe Islands                                | FO           | 234     |
-
-        | Fiji                                         | FJ           | 242     |
-
-        | French Polynesia                             | PF           | 258     |
-
-        | Gabon                                        | GA           | 266     |
-
-        | Gambia                                       | GM           | 270     |
-
-        | Georgia                                      | GE           | 268     |
-
-        | Ghana                                        | GH           | 288     |
-
-        | Gibraltar                                    | GI           | 292     |
-
-        | Greenland                                    | GL           | 304     |
-
-        | Grenada                                      | GD           | 308     |
-
-        | Guatemala                                    | GT           | 320     |
-
-        | Guernsey                                     | GG           | 831     |
-
-        | Guinea                                       | GN           | 324     |
-
-        | Guinea-Bissau                                | GW           | 624     |
-
-        | Guyana                                       | GY           | 328     |
-
-        | Haiti                                        | HT           | 332     |
-
-        | Heard and McDonald Islands                   | HM           | 334     |
-
-        | Honduras                                     | HN           | 340     |
-
-        | Hong Kong                                    | HK           | 344     |
-
-        | Hungary                                      | HU           | 348     |
-
-        | Iceland                                      | IS           | 352     |
-
-        | India                                        | IN           | 356     |
-
-        | Indonesia                                    | ID           | 360     |
-
-        | Iraq                                         | IQ           | 368     |
-
-        | Isle of Man                                  | IM           | 833     |
-
-        | Israel                                       | IL           | 376     |
-
-        | Jamaica                                      | JM           | 388     |
-
-        | Japan                                        | JP           | 392     |
-
-        | Jersey                                       | JE           | 832     |
-
-        | Jordan                                       | JO           | 400     |
-
-        | Kazakhstan                                   | KZ           | 398     |
-
-        | Kenya                                        | KE           | 404     |
-
-        | Kiribati                                     | KI           | 296     |
-
-        | Korea, Republic of                           | KR           | 410     |
-
-        | Kuwait                                       | KW           | 414     |
-
-        | Kyrgyzstan                                   | KG           | 417     |
-
-        | Lao People''s Democratic Republic             | LA           | 418     |
-
-        | Lebanon                                      | LB           | 422     |
-
-        | Lesotho                                      | LS           | 426     |
-
-        | Liberia                                      | LR           | 430     |
-
-        | Libyan Arab Jamahiriya                       | LY           | 434     |
-
-        | Liechtenstein                                | LI           | 438     |
-
-        | Macao                                        | MO           | 446     |
-
-        | Macedonia                                    | MK           | 807     |
-
-        | Madagascar                                   | MG           | 450     |
-
-        | Malawi                                       | MW           | 454     |
-
-        | Malaysia                                     | MY           | 458     |
-
-        | Maldives                                     | MV           | 462     |
-
-        | Mali                                         | ML           | 466     |
-
-        | Mauritania                                   | MR           | 478     |
-
-        | Mauritius                                    | MU           | 480     |
-
-        | Mexico                                       | MX           | 484     |
-
-        | Moldova, Republic of                         | MD           | 498     |
-
-        | Mongolia                                     | MN           | 496     |
-
-        | Montserrat                                   | MS           | 500     |
-
-        | Morocco                                      | MA           | 504     |
-
-        | Mozambique                                   | MZ           | 508     |
-
-        | Myanmar (effective 1 November 2012)          | MM           | 104     |
-
-        | Namibia                                      | NA           | 516     |
-
-        | Nauru                                        | NR           | 520     |
-
-        | Nepal                                        | NP           | 524     |
-
-        | Netherlands Antilles                         | AN           | 530     |
-
-        | New Caledonia                                | NC           | 540     |
-
-        | New Zealand                                  | NZ           | 554     |
-
-        | Nicaragua                                    | NI           | 558     |
-
-        | Niger                                        | NE           | 562     |
-
-        | Nigeria                                      | NG           | 566     |
-
-        | Niue                                         | NU           | 570     |
-
-        | Norfolk Island                               | NF           | 574     |
-
-        | Norway                                       | NO           | 578     |
-
-        | Oman                                         | OM           | 512     |
-
-        | Pakistan                                     | PK           | 586     |
-
-        | Panama                                       | PA           | 591     |
-
-        | Papua New Guinea                             | PG           | 598     |
-
-        | Paraguay                                     | PY           | 600     |
-
-        | Peru                                         | PE           | 604     |
-
-        | Philippines                                  | PH           | 608     |
-
-        | Pitcairn                                     | PN           | 612     |
-
-        | Poland                                       | PL           | 616     |
-
-        | Qatar                                        | QA           | 634     |
-
-        | Republic of South Sudan                      | SS           | 728     |
-
-        | Romania                                      | RO           | 642     |
-
-        | Russian Federation                           | RU           | 643     |
-
-        | Rwanda                                       | RW           | 646     |
-
-        | Samoa                                        | WS           | 882     |
-
-        | Sao Tome and Principe                        | ST           | 678     |
-
-        | Saudi Arabia                                 | SA           | 682     |
-
-        | Senegal                                      | SN           | 686     |
-
-        | Serbia                                       | RS           | 688     |
-
-        | Seychelles                                   | SC           | 690     |
-
-        | Sierra Leone                                 | SL           | 694     |
-
-        | Singapore                                    | SG           | 702     |
-
-        | Sint Maarten (Dutch Part)                    | SX           | 534     |
-
-        | Solomon Islands                              | SB           | 090     |
-
-        | Somalia                                      | SO           | 706     |
-
-        | South Africa                                 | ZA           | 710     |
-
-        | South Georgia and the South Sandwich Islands | GS           | 239     |
-
-        | Sri Lanka                                    | LK           | 144     |
-
-        | Saint Helena, Ascension and Tristan Da Cunha | SH           | 654     |
-
-        | St. Kitts and Nevis                          | KN           | 659     |
-
-        | St. Lucia                                    | LC           | 662     |
-
-        | St. Vincent and the Grenadines               | VC           | 670     |
-
-        | Suriname                                     | SR           | 740     |
-
-        | Svalbard and Jan Mayen                       | SJ           | 744     |
-
-        | Swaziland                                    | SZ           | 748     |
-
-        | Sweden                                       | SE           | 752     |
-
-        | Switzerland                                  | CH           | 756     |
-
-        | Taiwan                                       | TW           | 158     |
-
-        | Tajikistan                                   | TJ           | 762     |
-
-        | Tanzania, United Republic of                 | TZ           | 834     |
-
-        | Thailand                                     | TH           | 764     |
-
-        | Togo                                         | TG           | 768     |
-
-        | Tokelau                                      | TK           | 772     |
-
-        | Tonga                                        | TO           | 776     |
-
-        | Trinidad and Tobago                          | TT           | 780     |
-
-        | Tunisia                                      | TN           | 788     |
-
-        | Turkey                                       | TR           | 792     |
-
-        | Turkmenistan                                 | TM           | 795     |
-
-        | Tuvalu                                       | TV           | 798     |
-
-        | Uganda                                       | UG           | 800     |
-
-        | Ukraine                                      | UA           | 804     |
-
-        | United Arab Emirates                         | AE           | 784     |
-
-        | United Kingdom                               | GB           | 826     |
-
-        | Uruguay                                      | UY           | 858     |
-
-        | Uzbekistan                                   | UZ           | 860     |
-
-        | Vanuatu                                      | VU           | 548     |
-
-        | Venezuela, Bolivarian Republic of            | VE           | 862     |
-
-        | Vietnam                                      | VN           | 704     |
-
-        | Wallis and Futuna                            | WF           | 876     |
-
-        | Western Sahara                               | EH           | 732     |
-
-        | Yemen                                        | YE           | 886     |
-
-        | Zambia                                       | ZM           | 894     |
-
-        | Zimbabwe                                     | ZW           | 716     |
-
-
-        </details>
-
-        '
-      externalDocs:
-        description: Find more info here
-        url: https://www.iso.org/iso-3166-country-codes.html
-      example: '528'
-    MastercardCardProgramIdentifier:
-      properties:
-        code:
-          type: string
-          enum:
-          - CIR
-          - DMC
-          - MCC
-          - MSI
-          - PRO
-          - PVL
-          - VIS
-        description:
-          type: string
-    VisaRegion:
-      properties:
-        code:
-          type: string
-          enum:
-          - '1'
-          - '2'
-          - '3'
-          - '4'
-          - '5'
-          - '6'
-        description:
-          type: string
-    MastercardSpecificCardInfo:
-      description: Mastercard-specific Card Information.
+    VisaSpecificCardInfoBase:
+      description: Visa-specific Card Information.
       type: object
       properties:
-        productType:
-          $ref: '#/components/schemas/MastercardProductType'
-        brandProducts:
-          type: array
-          minItems: 1
-          items:
-            $ref: '#/components/schemas/MastercardCardBrandProduct'
-        interchangeRegion:
-          $ref: '#/components/schemas/MastercardInterchangeRegion'
-        coBrandParticipation:
+        accountNumberLength:
+          description: Length of Account Numbers in this Card Range.
+          type: number
+        checkDigit:
+          description: Indicates whether the Card Range Uses a Check Digit.
           type: boolean
-        moneySendIndicator:
+        accountRangeRegion:
+          $ref: '#/components/schemas/VisaRegion'
+        domain:
+          $ref: '#/components/schemas/VisaDomain'
+        product:
+          $ref: '#/components/schemas/VisaProduct'
+        accountFundingSource:
+          $ref: '#/components/schemas/VisaAccountFundingSource'
+        visaDirectParticipation:
+          $ref: '#/components/schemas/VisaDirectParticipation'
+    DinersSpecificCardInfo:
+      type: object
+      description: Diners specific Card info.
+      properties:
+        accountNumberLength:
           type: string
-        anonymousPrepaidIndicator:
-          $ref: '#/components/schemas/MastercardAnonymousPrepaidIndicator'
-        dccIndicator:
+        issuerDxs:
           type: string
-          description: Cardholder Currency Indicator (IP0040T1 position 178). Indicates the card range's eligibility for Dynamic Currency Conversion (DCC) services.
-    SingleSourceResponse:
-      allOf:
-      - $ref: '#/components/schemas/CardInfoResponseBase'
-      - type: object
-        required:
-        - primaryCardNetwork
-        - infoSource
-        properties:
-          primaryCardNetwork:
-            description: The primary card network issuing this card range.
-            type: string
-            enum:
-            - mastercard
-            - visa
-            - bancontact
-            - american-express
-            - discover
-            - diners
-            - jcb
-            - union-pay
-            - paypal
-            - unknown
-          infoSource:
-            $ref: '#/components/schemas/InfoSource'
-            description: The source of the provided information.
-          mastercardCardInfo:
-            $ref: '#/components/schemas/MastercardSpecificCardInfo'
-          visaCardInfo:
-            $ref: '#/components/schemas/VisaSpecificCardInfo'
-          bancontactCardInfo:
-            $ref: '#/components/schemas/BancontactSpecificCardInfo'
-          americanExpressCardInfo:
-            $ref: '#/components/schemas/AmericanExpressSpecificCardInfo'
-          discoverCardInfo:
-            $ref: '#/components/schemas/DiscoverSpecificCardInfo'
-          dinersCardInfo:
-            $ref: '#/components/schemas/DinersSpecificCardInfo'
+        product:
+          type: object
+          properties:
+            productType:
+              type: string
     VisaDirectParticipation:
       properties:
         nonMoneyTransferOCTsDomestic:
@@ -762,6 +163,61 @@ components:
           type: boolean
         fastFundsCrossBorderGambling:
           type: boolean
+    cardProduct:
+      description: A Card Product.
+      required:
+      - code
+      - name
+      - accountFundingSource
+      properties:
+        code:
+          type: string
+          description: A code assigned by the card network identifying the Card Product
+        name:
+          type: string
+          description: Human-readable name of the Card Product.
+        accountFundingSource:
+          type: string
+          description: Manner in which the account belonging to the Card Product is funded.
+          enum:
+          - Credit
+          - Debit
+          - Prepaid
+          - Charge
+          - Deferred Debit
+          - Unknown
+        isDurbinRegulated:
+          description: Whether the Card Product is Durbin regulated.
+          type: boolean
+    CardInfoCardNetworkResponse:
+      type: object
+      required:
+      - items
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/SingleSourceResponse'
+    VisaSpecificCardInfo:
+      description: Visa-specific Card Information.
+      allOf:
+      - $ref: '#/components/schemas/VisaSpecificCardInfoBase'
+      - type: object
+        properties:
+          member:
+            $ref: '#/components/schemas/VisaSpecificMemberSingleResponse'
+    VisaDomain:
+      properties:
+        code:
+          type: string
+          enum:
+          - D
+          - N
+          - R
+          - W
+          - C
+        description:
+          type: string
     MastercardCardBrandProduct:
       properties:
         cardProgramIdentifier:
@@ -770,629 +226,6 @@ components:
           $ref: '#/components/schemas/MastercardBrandProduct'
         priority:
           type: string
-    CardInfoRequestByProcessorToken:
-      type: object
-      title: Processor Token Key Input
-      required:
-      - processorTokenKey
-      properties:
-        processorTokenKey:
-          type: string
-          description: A [processor token key](#tag/Processor-Tokenization).
-          pattern: ^ptk-[a-zA-Z0-9]+$
-          minLength: 5
-          maxLength: 120
-          example: ptk-1e1dA2fgs1YTUhlhyPOp
-        infoSource:
-          $ref: '#/components/schemas/InfoSource'
-    DuplicatedVisaCardInfo:
-      description: Visa-specific Card Information.
-      allOf:
-      - $ref: '#/components/schemas/VisaSpecificCardInfoBase'
-      - $ref: '#/components/schemas/CardInfoResponseBase'
-      - type: object
-        required:
-        - member
-        properties:
-          member:
-            $ref: '#/components/schemas/VisaSpecificMemberDuplicatedResponse'
-    DiscoverSpecificCardInfo:
-      type: object
-      description: Discover specific Card Info.
-      properties:
-        atmIndicator:
-          type: boolean
-        eligibleForNetworkStandInProcessingIndicator:
-          type: boolean
-        countryOfIssuanceIndicator:
-          type: boolean
-        accountLevelProcessingEnabledIndicator:
-          type: boolean
-        regulationIIIndicator:
-          type: string
-        discoverPayWithRewardsEnabledIndicator:
-          type: boolean
-        realTimeTransactionPricingIndicator:
-          type: boolean
-    MastercardProductType:
-      properties:
-        code:
-          type: string
-          enum:
-          - '1'
-          - '2'
-          - '3'
-          - '4'
-        description:
-          type: string
-    MastercardBrandProduct:
-      properties:
-        productClass:
-          $ref: '#/components/schemas/MastercardProductClass'
-        productCategory:
-          $ref: '#/components/schemas/MastercardProductCategory'
-    components-schemas-countryCodeAlpha3:
-      type: string
-      pattern: ^[A-Z]{3}$
-      description: 'The ISO code of the country.
-
-
-        **European ISO Country Codes**
-
-
-        <details>
-
-
-        | Country                                          | Alpha-2 code | Numeric |
-
-        | ------------------------------------------------ | ------------ | ------- | --- |
-
-        | Åland Islands                                    | AX           | 248     |
-
-        | Andorra                                          | AD           | 020     |
-
-        | Austria                                          | AT           | 040     |
-
-        | Belgium                                          | BE           | 056     |
-
-        | Cyprus                                           | CY           | 196     |
-
-        | Estonia                                          | EE           | 233     |     |
-
-        | Finland                                          | FI           | 246     |
-
-        | France                                           | FR           | 250     |
-
-        | French Guiana                                    | GF           | 254     |
-
-        | French Southern Territories                      | TF           | 260     |
-
-        | Germany                                          | DE           | 280     |
-
-        | Greece                                           | GR           | 300     |
-
-        | Guadeloupe                                       | GP           | 312     |
-
-        | Ireland                                          | IE           | 372     |
-
-        | Italy                                            | IT           | 380     |
-
-        | Kosovo, United Nations Mission in Kosovo (UNMIK) | QZ           | 900     |
-
-        | Latvia                                           | LV           | 428     |
-
-        | Lithuania                                        | LT           | 440     |
-
-        | Luxembourg                                       | LU           | 442     |
-
-        | Malta                                            | MT           | 470     |
-
-        | Martinique                                       | MQ           | 474     |
-
-        | Mayotte                                          | YT           | 175     |
-
-        | Monaco                                           | MC           | 492     |
-
-        | Montenegro                                       | ME           | 499     |
-
-        | Netherlands                                      | NL           | 528     |
-
-        | Portugal                                         | PT           | 620     |
-
-        | Reunion                                          | RE           | 638     |
-
-        | Saint Barthélemy                                 | BL           | 652     |
-
-        | Saint Martin (French Part)                       | MF           | 663     |
-
-        | San Marino                                       | SM           | 674     |
-
-        | Slovakia                                         | SK           | 703     |
-
-        | Slovenia                                         | SI           | 705     |
-
-        | Spain                                            | ES           | 724     |
-
-        | St. Pierre and Miquelon                          | PM           | 666     |
-
-        | Vatican City State (Holy See)                    | VA           | 336     |
-
-
-        </details>
-
-
-        **US ISO Country Codes**
-
-
-        <details>
-
-
-        | Country                         | Alpha-2 code | Numeric |
-
-        | ------------------------------- | ------------ | ------- |
-
-        | American Samoa                  | AS           | 016     |
-
-        | Bonaire, St. Eusasius and Saba  | BQ           | 535     |
-
-        | British Indian Ocean Territory  | IO           | 086     |
-
-        | Ecuador                         | EC           | 218     |
-
-        | Guam                            | GU           | 316     |
-
-        | Marshall Islands                | MH           | 584     |
-
-        | Micronesia, Federated States of | FM           | 583     |
-
-        | Northern Mariana Islands        | MP           | 580     |
-
-        | Palau                           | PW           | 585     |
-
-        | Palestine, State of             | PS           | 275     |
-
-        | Puerto Rico                     | PR           | 630     |
-
-        | Timor-Leste                     | TP           | 626     |
-
-        | Turks and Caicos Islands        | TC           | 796     |
-
-        | U.S. Minor Outlying Islands     | UM           | 581     |
-
-        | United States                   | US           | 840     |
-
-        | Virgin Islands, British         | VG           | 092     |
-
-        | Virgin Islands, U.S.            | VI           | 850     |
-
-
-        </details>
-
-
-        **Other ISO Country Codes**
-
-
-        <details>
-
-
-        | Country                                      | Alpha-2 code | Numeric |
-
-        | -------------------------------------------- | ------------ | ------- |
-
-        | Afghanistan                                  | AF           | 004     |
-
-        | Albania                                      | AL           | 008     |
-
-        | Algeria                                      | DZ           | 012     |
-
-        | Angola                                       | AO           | 024     |
-
-        | Anguilla                                     | AI           | 660     |
-
-        | Antarctica                                   | AQ           | 010     |
-
-        | Antigua and Barbuda                          | AG           | 028     |
-
-        | Argentina                                    | AR           | 032     |
-
-        | Armenia                                      | AM           | 051     |
-
-        | Aruba                                        | AW           | 533     |
-
-        | Australia                                    | AU           | 036     |
-
-        | Azerbaijan                                   | AZ           | 031     |
-
-        | Bahamas                                      | BS           | 044     |
-
-        | Bahrain                                      | BH           | 048     |
-
-        | Bangladesh                                   | BD           | 050     |
-
-        | Barbados                                     | BB           | 052     |
-
-        | Belarus                                      | BR           | 112     |
-
-        | Belize                                       | BZ           | 084     |
-
-        | Benin                                        | BJ           | 204     |
-
-        | Bermuda                                      | BM           | 060     |
-
-        | Bhutan                                       | BT           | 064     |
-
-        | Bolivia, Plurinational State of              | BO           | 068     |
-
-        | Bosnia and Herzegovina                       | BA           | 070     |
-
-        | Botswana                                     | BW           | 072     |
-
-        | Bouvet Island                                | BV           | 074     |
-
-        | Brazil                                       | BR           | 076     |
-
-        | Brunei Darussalam                            | BN           | 096     |
-
-        | Bulgaria                                     | BG           | 100     |
-
-        | Burkina Faso                                 | BF           | 854     |
-
-        | Burundi                                      | BI           | 108     |
-
-        | Cambodia                                     | KH           | 116     |
-
-        | Cameroon                                     | CM           | 120     |
-
-        | Canada                                       | CA           | 124     |
-
-        | Cape Verde                                   | CV           | 132     |
-
-        | Cayman Islands                               | KY           | 136     |
-
-        | Central African Republic                     | CF           | 140     |
-
-        | Chad                                         | TD           | 148     |
-
-        | Chile                                        | CL           | 152     |
-
-        | China                                        | CN           | 156     |
-
-        | Christmas Island                             | CX           | 162     |
-
-        | Cocos (Keeling) Islands                      | CC           | 166     |
-
-        | Colombia                                     | CO           | 170     |
-
-        | Comoros                                      | KM           | 174     |
-
-        | Congo                                        | CG           | 178     |
-
-        | Cook Islands                                 | CK           | 184     |
-
-        | Costa Rica                                   | CR           | 188     |
-
-        | Côte D''Ivoire                                | CI           | 384     |
-
-        | Croatia                                      | HR           | 191     |
-
-        | Cuba                                         | CU           | 192     |
-
-        | Curacao                                      | CW           | 531     |
-
-        | Czech Republic                               | CZ           | 203     |
-
-        | Democratic Republic of the Congo             | CD           | 180     |
-
-        | Denmark                                      | DK           | 208     |
-
-        | Djibouti                                     | DJ           | 262     |
-
-        | Dominica                                     | DM           | 212     |
-
-        | Dominican Republic                           | DO           | 214     |
-
-        | Egypt                                        | EG           | 818     |
-
-        | El Salvador                                  | SV           | 222     |
-
-        | Equatorial Guinea                            | GQ           | 226     |
-
-        | Eritrea                                      | ER           | 232     |
-
-        | Ethiopia                                     | ET           | 230     |
-
-        | Falkland Islands (Malvinas)                  | FK           | 238     |
-
-        | Faroe Islands                                | FO           | 234     |
-
-        | Fiji                                         | FJ           | 242     |
-
-        | French Polynesia                             | PF           | 258     |
-
-        | Gabon                                        | GA           | 266     |
-
-        | Gambia                                       | GM           | 270     |
-
-        | Georgia                                      | GE           | 268     |
-
-        | Ghana                                        | GH           | 288     |
-
-        | Gibraltar                                    | GI           | 292     |
-
-        | Greenland                                    | GL           | 304     |
-
-        | Grenada                                      | GD           | 308     |
-
-        | Guatemala                                    | GT           | 320     |
-
-        | Guernsey                                     | GG           | 831     |
-
-        | Guinea                                       | GN           | 324     |
-
-        | Guinea-Bissau                                | GW           | 624     |
-
-        | Guyana                                       | GY           | 328     |
-
-        | Haiti                                        | HT           | 332     |
-
-        | Heard and McDonald Islands                   | HM           | 334     |
-
-        | Honduras                                     | HN           | 340     |
-
-        | Hong Kong                                    | HK           | 344     |
-
-        | Hungary                                      | HU           | 348     |
-
-        | Iceland                                      | IS           | 352     |
-
-        | India                                        | IN           | 356     |
-
-        | Indonesia                                    | ID           | 360     |
-
-        | Iraq                                         | IQ           | 368     |
-
-        | Isle of Man                                  | IM           | 833     |
-
-        | Israel                                       | IL           | 376     |
-
-        | Jamaica                                      | JM           | 388     |
-
-        | Japan                                        | JP           | 392     |
-
-        | Jersey                                       | JE           | 832     |
-
-        | Jordan                                       | JO           | 400     |
-
-        | Kazakhstan                                   | KZ           | 398     |
-
-        | Kenya                                        | KE           | 404     |
-
-        | Kiribati                                     | KI           | 296     |
-
-        | Korea, Republic of                           | KR           | 410     |
-
-        | Kuwait                                       | KW           | 414     |
-
-        | Kyrgyzstan                                   | KG           | 417     |
-
-        | Lao People''s Democratic Republic             | LA           | 418     |
-
-        | Lebanon                                      | LB           | 422     |
-
-        | Lesotho                                      | LS           | 426     |
-
-        | Liberia                                      | LR           | 430     |
-
-        | Libyan Arab Jamahiriya                       | LY           | 434     |
-
-        | Liechtenstein                                | LI           | 438     |
-
-        | Macao                                        | MO           | 446     |
-
-        | Macedonia                                    | MK           | 807     |
-
-        | Madagascar                                   | MG           | 450     |
-
-        | Malawi                                       | MW           | 454     |
-
-        | Malaysia                                     | MY           | 458     |
-
-        | Maldives                                     | MV           | 462     |
-
-        | Mali                                         | ML           | 466     |
-
-        | Mauritania                                   | MR           | 478     |
-
-        | Mauritius                                    | MU           | 480     |
-
-        | Mexico                                       | MX           | 484     |
-
-        | Moldova, Republic of                         | MD           | 498     |
-
-        | Mongolia                                     | MN           | 496     |
-
-        | Montserrat                                   | MS           | 500     |
-
-        | Morocco                                      | MA           | 504     |
-
-        | Mozambique                                   | MZ           | 508     |
-
-        | Myanmar (effective 1 November 2012)          | MM           | 104     |
-
-        | Namibia                                      | NA           | 516     |
-
-        | Nauru                                        | NR           | 520     |
-
-        | Nepal                                        | NP           | 524     |
-
-        | Netherlands Antilles                         | AN           | 530     |
-
-        | New Caledonia                                | NC           | 540     |
-
-        | New Zealand                                  | NZ           | 554     |
-
-        | Nicaragua                                    | NI           | 558     |
-
-        | Niger                                        | NE           | 562     |
-
-        | Nigeria                                      | NG           | 566     |
-
-        | Niue                                         | NU           | 570     |
-
-        | Norfolk Island                               | NF           | 574     |
-
-        | Norway                                       | NO           | 578     |
-
-        | Oman                                         | OM           | 512     |
-
-        | Pakistan                                     | PK           | 586     |
-
-        | Panama                                       | PA           | 591     |
-
-        | Papua New Guinea                             | PG           | 598     |
-
-        | Paraguay                                     | PY           | 600     |
-
-        | Peru                                         | PE           | 604     |
-
-        | Philippines                                  | PH           | 608     |
-
-        | Pitcairn                                     | PN           | 612     |
-
-        | Poland                                       | PL           | 616     |
-
-        | Qatar                                        | QA           | 634     |
-
-        | Republic of South Sudan                      | SS           | 728     |
-
-        | Romania                                      | RO           | 642     |
-
-        | Russian Federation                           | RU           | 643     |
-
-        | Rwanda                                       | RW           | 646     |
-
-        | Samoa                                        | WS           | 882     |
-
-        | Sao Tome and Principe                        | ST           | 678     |
-
-        | Saudi Arabia                                 | SA           | 682     |
-
-        | Senegal                                      | SN           | 686     |
-
-        | Serbia                                       | RS           | 688     |
-
-        | Seychelles                                   | SC           | 690     |
-
-        | Sierra Leone                                 | SL           | 694     |
-
-        | Singapore                                    | SG           | 702     |
-
-        | Sint Maarten (Dutch Part)                    | SX           | 534     |
-
-        | Solomon Islands                              | SB           | 090     |
-
-        | Somalia                                      | SO           | 706     |
-
-        | South Africa                                 | ZA           | 710     |
-
-        | South Georgia and the South Sandwich Islands | GS           | 239     |
-
-        | Sri Lanka                                    | LK           | 144     |
-
-        | Saint Helena, Ascension and Tristan Da Cunha | SH           | 654     |
-
-        | St. Kitts and Nevis                          | KN           | 659     |
-
-        | St. Lucia                                    | LC           | 662     |
-
-        | St. Vincent and the Grenadines               | VC           | 670     |
-
-        | Suriname                                     | SR           | 740     |
-
-        | Svalbard and Jan Mayen                       | SJ           | 744     |
-
-        | Swaziland                                    | SZ           | 748     |
-
-        | Sweden                                       | SE           | 752     |
-
-        | Switzerland                                  | CH           | 756     |
-
-        | Taiwan                                       | TW           | 158     |
-
-        | Tajikistan                                   | TJ           | 762     |
-
-        | Tanzania, United Republic of                 | TZ           | 834     |
-
-        | Thailand                                     | TH           | 764     |
-
-        | Togo                                         | TG           | 768     |
-
-        | Tokelau                                      | TK           | 772     |
-
-        | Tonga                                        | TO           | 776     |
-
-        | Trinidad and Tobago                          | TT           | 780     |
-
-        | Tunisia                                      | TN           | 788     |
-
-        | Turkey                                       | TR           | 792     |
-
-        | Turkmenistan                                 | TM           | 795     |
-
-        | Tuvalu                                       | TV           | 798     |
-
-        | Uganda                                       | UG           | 800     |
-
-        | Ukraine                                      | UA           | 804     |
-
-        | United Arab Emirates                         | AE           | 784     |
-
-        | United Kingdom                               | GB           | 826     |
-
-        | Uruguay                                      | UY           | 858     |
-
-        | Uzbekistan                                   | UZ           | 860     |
-
-        | Vanuatu                                      | VU           | 548     |
-
-        | Venezuela, Bolivarian Republic of            | VE           | 862     |
-
-        | Vietnam                                      | VN           | 704     |
-
-        | Wallis and Futuna                            | WF           | 876     |
-
-        | Western Sahara                               | EH           | 732     |
-
-        | Yemen                                        | YE           | 886     |
-
-        | Zambia                                       | ZM           | 894     |
-
-        | Zimbabwe                                     | ZW           | 716     |
-
-
-        </details>
-
-        '
-      externalDocs:
-        description: Find more info here
-        url: https://www.iso.org/iso-3166-country-codes.html
-      example: NLD
-    components-schemas-CountryCode:
-      type: object
-      required:
-      - alpha2
-      - alpha3
-      - numeric
-      description: 'Card country value in different standards.
-
-        '
-      properties:
-        alpha3:
-          $ref: '#/components/schemas/components-schemas-countryCodeAlpha3'
-        alpha2:
-          $ref: '#/components/schemas/components-schemas-countryCodeAlpha2'
-        numeric:
-          $ref: '#/components/schemas/components-schemas-countryCodeNumeric'
     CardInfoResponseBase:
       type: object
       required:
@@ -1425,77 +258,6 @@ components:
           $ref: '#/components/schemas/cardInfoCurrencyCode'
         isTokenRange:
           $ref: '#/components/schemas/isTokenRange'
-    VisaSpecificMemberSingleResponse:
-      description: Visa-specific member properties.
-      properties:
-        cib:
-          description: Member processing base-2 CIB
-          type: string
-        iin:
-          description: Issuer identifier
-          type: string
-    VisaProduct:
-      properties:
-        visaProductID:
-          type: string
-        productDescription:
-          type: string
-        productType:
-          type: string
-        productSubTypeCode:
-          type: string
-        productSubTypeDescription:
-          type: string
-    cardProduct:
-      description: A Card Product.
-      required:
-      - code
-      - name
-      - accountFundingSource
-      properties:
-        code:
-          type: string
-          description: A code assigned by the card network identifying the Card Product
-        name:
-          type: string
-          description: Human-readable name of the Card Product.
-        accountFundingSource:
-          type: string
-          description: Manner in which the account belonging to the Card Product is funded.
-          enum:
-          - Credit
-          - Debit
-          - Prepaid
-          - Charge
-          - Deferred Debit
-          - Unknown
-        isDurbinRegulated:
-          description: Whether the Card Product is Durbin regulated.
-          type: boolean
-    InfoSource:
-      type: string
-      enum:
-      - american-express
-      - bancontact
-      - discover
-      - diners
-      - mastercard
-      - visa
-      description: 'The card network that should be the source of the information. If not provided, all sources will be checked!
-
-        '
-    MastercardProductClass:
-      properties:
-        gcmsProductID:
-          type: string
-        licensedProductID:
-          type: string
-        licensedProductDescription:
-          type: string
-        productClassID:
-          type: string
-        productClassDescription:
-          type: string
     cardInfoCurrencyCode:
       type: string
       enum:
@@ -2224,18 +986,14 @@ components:
         description: Find more info here
         url: https://www.iso.org/iso-4217-currency-codes.html
       example: EUR
-    VisaDomain:
+    isTokenRange:
+      type: boolean
+    MastercardBrandProduct:
       properties:
-        code:
-          type: string
-          enum:
-          - D
-          - N
-          - R
-          - W
-          - C
-        description:
-          type: string
+        productClass:
+          $ref: '#/components/schemas/MastercardProductClass'
+        productCategory:
+          $ref: '#/components/schemas/MastercardProductCategory'
     MastercardProductCategory:
       properties:
         code:
@@ -2247,57 +1005,6 @@ components:
           - N
         description:
           type: string
-    DuplicatedMastercardCardInfo:
-      description: Mastercard-specific Card Information.
-      allOf:
-      - $ref: '#/components/schemas/MastercardSpecificCardInfo'
-      - $ref: '#/components/schemas/CardInfoResponseBase'
-    CardCountry:
-      type: object
-      required:
-      - code
-      - isInEEA
-      properties:
-        code:
-          $ref: '#/components/schemas/components-schemas-CountryCode'
-        isInEEA:
-          description: Indicates whether the Card Country is part of the European Economic Area
-          type: boolean
-    VisaSpecificCardInfoBase:
-      description: Visa-specific Card Information.
-      type: object
-      properties:
-        accountNumberLength:
-          description: Length of Account Numbers in this Card Range.
-          type: number
-        checkDigit:
-          description: Indicates whether the Card Range Uses a Check Digit.
-          type: boolean
-        accountRangeRegion:
-          $ref: '#/components/schemas/VisaRegion'
-        domain:
-          $ref: '#/components/schemas/VisaDomain'
-        product:
-          $ref: '#/components/schemas/VisaProduct'
-        accountFundingSource:
-          $ref: '#/components/schemas/VisaAccountFundingSource'
-        visaDirectParticipation:
-          $ref: '#/components/schemas/VisaDirectParticipation'
-    AmericanExpressSpecificCardInfo:
-      type: object
-      description: American Express specific Card Info.
-    VisaAccountFundingSource:
-      properties:
-        code:
-          type: string
-          enum:
-          - C
-          - D
-          - P
-          - H
-          - R
-        description:
-          type: string
     BancontactSpecificCardInfo:
       type: object
       description: Bancontact specific Card Info.
@@ -2307,52 +1014,6 @@ components:
           enum:
           - Physical
           - Digital
-    DuplicatedBancontactCardInfo:
-      allOf:
-      - $ref: '#/components/schemas/BancontactSpecificCardInfo'
-      - $ref: '#/components/schemas/CardInfoResponseBase'
-    VisaSpecificCardInfo:
-      description: Visa-specific Card Information.
-      allOf:
-      - $ref: '#/components/schemas/VisaSpecificCardInfoBase'
-      - type: object
-        properties:
-          member:
-            $ref: '#/components/schemas/VisaSpecificMemberSingleResponse'
-    VisaSpecificMemberDuplicatedResponse:
-      description: Visa-specific member properties.
-      allOf:
-      - $ref: '#/components/schemas/VisaSpecificMemberSingleResponse'
-      - $ref: '#/components/schemas/cardNetworkMember'
-    cardNetworkMember:
-      type: object
-      description: A principal member of a card network.
-      required:
-      - id
-      - name
-      - countryCode
-      properties:
-        id:
-          type: string
-          description: Identifying code of the member assigned by the card network
-        name:
-          type: string
-          description: Human-readable name of the member.
-        countryCode:
-          $ref: '#/components/schemas/components-schemas-CountryCode'
-    MastercardInterchangeRegion:
-      properties:
-        code:
-          type: string
-          enum:
-          - '1'
-          - A
-          - B
-          - C
-          - D
-          - E
-        description:
-          type: string
     schemas-ProblemDetail:
       type: object
       description: 'The ''problem detail'' object relays detailed information about the error that occurred. It is defined
@@ -2419,92 +1080,1128 @@ components:
         validationErrors:
         - The value of property 'status' should be one of 'idle', 'active' or 'archived'
         - The value of property 'tags.0.businessId' must not be longer than 255 characters
-    CardInfoCardNetworkResponse:
-      type: object
-      required:
-      - items
-      properties:
-        items:
-          type: array
-          items:
-            $ref: '#/components/schemas/SingleSourceResponse'
-    components-schemas-pan:
-      type: string
-      description: Full digits of a card
-      pattern: ^\d+$
-      minLength: 12
-      maxLength: 19
-      format: password
-      example: '4761070000000905'
-    MultiSourceResponse:
-      allOf:
-      - $ref: '#/components/schemas/CardInfoResponseBase'
-      - type: object
-        required:
-        - primaryCardNetwork
-        - infoSource
-        properties:
-          primaryCardNetwork:
-            description: The primary card network issuing this card range.
-            type: string
-            enum:
-            - mastercard
-            - visa
-            - bancontact
-            - unknown
-          infoSource:
-            type: string
-            enum:
-            - mastercard
-            - visa
-            - bancontact
-            description: The source of the provided information.
-          mastercardCardInfo:
-            description: Mastercard-specific Card Info.
-            $ref: '#/components/schemas/DuplicatedMastercardCardInfo'
-          visaCardInfo:
-            description: Visa-specific Card Info.
-            $ref: '#/components/schemas/DuplicatedVisaCardInfo'
-          bancontactCardInfo:
-            description: Bancontact-specific Card Info.
-            $ref: '#/components/schemas/DuplicatedBancontactCardInfo'
-    MastercardAnonymousPrepaidIndicator:
+    MastercardCardProgramIdentifier:
       properties:
         code:
           type: string
           enum:
-          - A
-          - E
-          - N
-          - U
+          - CIR
+          - DMC
+          - MCC
+          - MSI
+          - PRO
+          - PVL
+          - VIS
         description:
           type: string
-    DinersSpecificCardInfo:
+    components-schemas-CountryCode:
       type: object
-      description: Diners specific Card info.
-      properties:
-        accountNumberLength:
-          type: string
-        issuerDxs:
-          type: string
-        product:
-          type: object
-          properties:
-            productType:
-              type: string
-    isTokenRange:
-      type: boolean
-    CardInfoRequestByCard:
-      type: object
-      title: Card Input
       required:
-      - cardNumber
+      - alpha2
+      - alpha3
+      - numeric
+      description: 'Card country value in different standards.
+
+        '
       properties:
-        cardNumber:
-          description: Full digits of a card. It is possible to replace a number of the trailing digits with zeroes ("0").
-          $ref: '#/components/schemas/components-schemas-pan'
-        infoSource:
-          $ref: '#/components/schemas/InfoSource'
+        alpha3:
+          $ref: '#/components/schemas/components-schemas-countryCodeAlpha3'
+        alpha2:
+          $ref: '#/components/schemas/components-schemas-countryCodeAlpha2'
+        numeric:
+          $ref: '#/components/schemas/components-schemas-countryCodeNumeric'
+    components-schemas-countryCodeAlpha3:
+      type: string
+      pattern: ^[A-Z]{3}$
+      description: 'The ISO code of the country.
+
+
+        **European ISO Country Codes**
+
+
+        <details>
+
+
+        | Country                                          | Alpha-2 code | Numeric |
+
+        | ------------------------------------------------ | ------------ | ------- | --- |
+
+        | Åland Islands                                    | AX           | 248     |
+
+        | Andorra                                          | AD           | 020     |
+
+        | Austria                                          | AT           | 040     |
+
+        | Belgium                                          | BE           | 056     |
+
+        | Cyprus                                           | CY           | 196     |
+
+        | Estonia                                          | EE           | 233     |     |
+
+        | Finland                                          | FI           | 246     |
+
+        | France                                           | FR           | 250     |
+
+        | French Guiana                                    | GF           | 254     |
+
+        | French Southern Territories                      | TF           | 260     |
+
+        | Germany                                          | DE           | 280     |
+
+        | Greece                                           | GR           | 300     |
+
+        | Guadeloupe                                       | GP           | 312     |
+
+        | Ireland                                          | IE           | 372     |
+
+        | Italy                                            | IT           | 380     |
+
+        | Kosovo, United Nations Mission in Kosovo (UNMIK) | QZ           | 900     |
+
+        | Latvia                                           | LV           | 428     |
+
+        | Lithuania                                        | LT           | 440     |
+
+        | Luxembourg                                       | LU           | 442     |
+
+        | Malta                                            | MT           | 470     |
+
+        | Martinique                                       | MQ           | 474     |
+
+        | Mayotte                                          | YT           | 175     |
+
+        | Monaco                                           | MC           | 492     |
+
+        | Montenegro                                       | ME           | 499     |
+
+        | Netherlands                                      | NL           | 528     |
+
+        | Portugal                                         | PT           | 620     |
+
+        | Reunion                                          | RE           | 638     |
+
+        | Saint Barthélemy                                 | BL           | 652     |
+
+        | Saint Martin (French Part)                       | MF           | 663     |
+
+        | San Marino                                       | SM           | 674     |
+
+        | Slovakia                                         | SK           | 703     |
+
+        | Slovenia                                         | SI           | 705     |
+
+        | Spain                                            | ES           | 724     |
+
+        | St. Pierre and Miquelon                          | PM           | 666     |
+
+        | Vatican City State (Holy See)                    | VA           | 336     |
+
+
+        </details>
+
+
+        **US ISO Country Codes**
+
+
+        <details>
+
+
+        | Country                         | Alpha-2 code | Numeric |
+
+        | ------------------------------- | ------------ | ------- |
+
+        | American Samoa                  | AS           | 016     |
+
+        | Bonaire, St. Eusasius and Saba  | BQ           | 535     |
+
+        | British Indian Ocean Territory  | IO           | 086     |
+
+        | Ecuador                         | EC           | 218     |
+
+        | Guam                            | GU           | 316     |
+
+        | Marshall Islands                | MH           | 584     |
+
+        | Micronesia, Federated States of | FM           | 583     |
+
+        | Northern Mariana Islands        | MP           | 580     |
+
+        | Palau                           | PW           | 585     |
+
+        | Palestine, State of             | PS           | 275     |
+
+        | Puerto Rico                     | PR           | 630     |
+
+        | Timor-Leste                     | TP           | 626     |
+
+        | Turks and Caicos Islands        | TC           | 796     |
+
+        | U.S. Minor Outlying Islands     | UM           | 581     |
+
+        | United States                   | US           | 840     |
+
+        | Virgin Islands, British         | VG           | 092     |
+
+        | Virgin Islands, U.S.            | VI           | 850     |
+
+
+        </details>
+
+
+        **Other ISO Country Codes**
+
+
+        <details>
+
+
+        | Country                                      | Alpha-2 code | Numeric |
+
+        | -------------------------------------------- | ------------ | ------- |
+
+        | Afghanistan                                  | AF           | 004     |
+
+        | Albania                                      | AL           | 008     |
+
+        | Algeria                                      | DZ           | 012     |
+
+        | Angola                                       | AO           | 024     |
+
+        | Anguilla                                     | AI           | 660     |
+
+        | Antarctica                                   | AQ           | 010     |
+
+        | Antigua and Barbuda                          | AG           | 028     |
+
+        | Argentina                                    | AR           | 032     |
+
+        | Armenia                                      | AM           | 051     |
+
+        | Aruba                                        | AW           | 533     |
+
+        | Australia                                    | AU           | 036     |
+
+        | Azerbaijan                                   | AZ           | 031     |
+
+        | Bahamas                                      | BS           | 044     |
+
+        | Bahrain                                      | BH           | 048     |
+
+        | Bangladesh                                   | BD           | 050     |
+
+        | Barbados                                     | BB           | 052     |
+
+        | Belarus                                      | BR           | 112     |
+
+        | Belize                                       | BZ           | 084     |
+
+        | Benin                                        | BJ           | 204     |
+
+        | Bermuda                                      | BM           | 060     |
+
+        | Bhutan                                       | BT           | 064     |
+
+        | Bolivia, Plurinational State of              | BO           | 068     |
+
+        | Bosnia and Herzegovina                       | BA           | 070     |
+
+        | Botswana                                     | BW           | 072     |
+
+        | Bouvet Island                                | BV           | 074     |
+
+        | Brazil                                       | BR           | 076     |
+
+        | Brunei Darussalam                            | BN           | 096     |
+
+        | Bulgaria                                     | BG           | 100     |
+
+        | Burkina Faso                                 | BF           | 854     |
+
+        | Burundi                                      | BI           | 108     |
+
+        | Cambodia                                     | KH           | 116     |
+
+        | Cameroon                                     | CM           | 120     |
+
+        | Canada                                       | CA           | 124     |
+
+        | Cape Verde                                   | CV           | 132     |
+
+        | Cayman Islands                               | KY           | 136     |
+
+        | Central African Republic                     | CF           | 140     |
+
+        | Chad                                         | TD           | 148     |
+
+        | Chile                                        | CL           | 152     |
+
+        | China                                        | CN           | 156     |
+
+        | Christmas Island                             | CX           | 162     |
+
+        | Cocos (Keeling) Islands                      | CC           | 166     |
+
+        | Colombia                                     | CO           | 170     |
+
+        | Comoros                                      | KM           | 174     |
+
+        | Congo                                        | CG           | 178     |
+
+        | Cook Islands                                 | CK           | 184     |
+
+        | Costa Rica                                   | CR           | 188     |
+
+        | Côte D''Ivoire                                | CI           | 384     |
+
+        | Croatia                                      | HR           | 191     |
+
+        | Cuba                                         | CU           | 192     |
+
+        | Curacao                                      | CW           | 531     |
+
+        | Czech Republic                               | CZ           | 203     |
+
+        | Democratic Republic of the Congo             | CD           | 180     |
+
+        | Denmark                                      | DK           | 208     |
+
+        | Djibouti                                     | DJ           | 262     |
+
+        | Dominica                                     | DM           | 212     |
+
+        | Dominican Republic                           | DO           | 214     |
+
+        | Egypt                                        | EG           | 818     |
+
+        | El Salvador                                  | SV           | 222     |
+
+        | Equatorial Guinea                            | GQ           | 226     |
+
+        | Eritrea                                      | ER           | 232     |
+
+        | Ethiopia                                     | ET           | 230     |
+
+        | Falkland Islands (Malvinas)                  | FK           | 238     |
+
+        | Faroe Islands                                | FO           | 234     |
+
+        | Fiji                                         | FJ           | 242     |
+
+        | French Polynesia                             | PF           | 258     |
+
+        | Gabon                                        | GA           | 266     |
+
+        | Gambia                                       | GM           | 270     |
+
+        | Georgia                                      | GE           | 268     |
+
+        | Ghana                                        | GH           | 288     |
+
+        | Gibraltar                                    | GI           | 292     |
+
+        | Greenland                                    | GL           | 304     |
+
+        | Grenada                                      | GD           | 308     |
+
+        | Guatemala                                    | GT           | 320     |
+
+        | Guernsey                                     | GG           | 831     |
+
+        | Guinea                                       | GN           | 324     |
+
+        | Guinea-Bissau                                | GW           | 624     |
+
+        | Guyana                                       | GY           | 328     |
+
+        | Haiti                                        | HT           | 332     |
+
+        | Heard and McDonald Islands                   | HM           | 334     |
+
+        | Honduras                                     | HN           | 340     |
+
+        | Hong Kong                                    | HK           | 344     |
+
+        | Hungary                                      | HU           | 348     |
+
+        | Iceland                                      | IS           | 352     |
+
+        | India                                        | IN           | 356     |
+
+        | Indonesia                                    | ID           | 360     |
+
+        | Iraq                                         | IQ           | 368     |
+
+        | Isle of Man                                  | IM           | 833     |
+
+        | Israel                                       | IL           | 376     |
+
+        | Jamaica                                      | JM           | 388     |
+
+        | Japan                                        | JP           | 392     |
+
+        | Jersey                                       | JE           | 832     |
+
+        | Jordan                                       | JO           | 400     |
+
+        | Kazakhstan                                   | KZ           | 398     |
+
+        | Kenya                                        | KE           | 404     |
+
+        | Kiribati                                     | KI           | 296     |
+
+        | Korea, Republic of                           | KR           | 410     |
+
+        | Kuwait                                       | KW           | 414     |
+
+        | Kyrgyzstan                                   | KG           | 417     |
+
+        | Lao People''s Democratic Republic             | LA           | 418     |
+
+        | Lebanon                                      | LB           | 422     |
+
+        | Lesotho                                      | LS           | 426     |
+
+        | Liberia                                      | LR           | 430     |
+
+        | Libyan Arab Jamahiriya                       | LY           | 434     |
+
+        | Liechtenstein                                | LI           | 438     |
+
+        | Macao                                        | MO           | 446     |
+
+        | Macedonia                                    | MK           | 807     |
+
+        | Madagascar                                   | MG           | 450     |
+
+        | Malawi                                       | MW           | 454     |
+
+        | Malaysia                                     | MY           | 458     |
+
+        | Maldives                                     | MV           | 462     |
+
+        | Mali                                         | ML           | 466     |
+
+        | Mauritania                                   | MR           | 478     |
+
+        | Mauritius                                    | MU           | 480     |
+
+        | Mexico                                       | MX           | 484     |
+
+        | Moldova, Republic of                         | MD           | 498     |
+
+        | Mongolia                                     | MN           | 496     |
+
+        | Montserrat                                   | MS           | 500     |
+
+        | Morocco                                      | MA           | 504     |
+
+        | Mozambique                                   | MZ           | 508     |
+
+        | Myanmar (effective 1 November 2012)          | MM           | 104     |
+
+        | Namibia                                      | NA           | 516     |
+
+        | Nauru                                        | NR           | 520     |
+
+        | Nepal                                        | NP           | 524     |
+
+        | Netherlands Antilles                         | AN           | 530     |
+
+        | New Caledonia                                | NC           | 540     |
+
+        | New Zealand                                  | NZ           | 554     |
+
+        | Nicaragua                                    | NI           | 558     |
+
+        | Niger                                        | NE           | 562     |
+
+        | Nigeria                                      | NG           | 566     |
+
+        | Niue                                         | NU           | 570     |
+
+        | Norfolk Island                               | NF           | 574     |
+
+        | Norway                                       | NO           | 578     |
+
+        | Oman                                         | OM           | 512     |
+
+        | Pakistan                                     | PK           | 586     |
+
+        | Panama                                       | PA           | 591     |
+
+        | Papua New Guinea                             | PG           | 598     |
+
+        | Paraguay                                     | PY           | 600     |
+
+        | Peru                                         | PE           | 604     |
+
+        | Philippines                                  | PH           | 608     |
+
+        | Pitcairn                                     | PN           | 612     |
+
+        | Poland                                       | PL           | 616     |
+
+        | Qatar                                        | QA           | 634     |
+
+        | Republic of South Sudan                      | SS           | 728     |
+
+        | Romania                                      | RO           | 642     |
+
+        | Russian Federation                           | RU           | 643     |
+
+        | Rwanda                                       | RW           | 646     |
+
+        | Samoa                                        | WS           | 882     |
+
+        | Sao Tome and Principe                        | ST           | 678     |
+
+        | Saudi Arabia                                 | SA           | 682     |
+
+        | Senegal                                      | SN           | 686     |
+
+        | Serbia                                       | RS           | 688     |
+
+        | Seychelles                                   | SC           | 690     |
+
+        | Sierra Leone                                 | SL           | 694     |
+
+        | Singapore                                    | SG           | 702     |
+
+        | Sint Maarten (Dutch Part)                    | SX           | 534     |
+
+        | Solomon Islands                              | SB           | 090     |
+
+        | Somalia                                      | SO           | 706     |
+
+        | South Africa                                 | ZA           | 710     |
+
+        | South Georgia and the South Sandwich Islands | GS           | 239     |
+
+        | Sri Lanka                                    | LK           | 144     |
+
+        | Saint Helena, Ascension and Tristan Da Cunha | SH           | 654     |
+
+        | St. Kitts and Nevis                          | KN           | 659     |
+
+        | St. Lucia                                    | LC           | 662     |
+
+        | St. Vincent and the Grenadines               | VC           | 670     |
+
+        | Suriname                                     | SR           | 740     |
+
+        | Svalbard and Jan Mayen                       | SJ           | 744     |
+
+        | Swaziland                                    | SZ           | 748     |
+
+        | Sweden                                       | SE           | 752     |
+
+        | Switzerland                                  | CH           | 756     |
+
+        | Taiwan                                       | TW           | 158     |
+
+        | Tajikistan                                   | TJ           | 762     |
+
+        | Tanzania, United Republic of                 | TZ           | 834     |
+
+        | Thailand                                     | TH           | 764     |
+
+        | Togo                                         | TG           | 768     |
+
+        | Tokelau                                      | TK           | 772     |
+
+        | Tonga                                        | TO           | 776     |
+
+        | Trinidad and Tobago                          | TT           | 780     |
+
+        | Tunisia                                      | TN           | 788     |
+
+        | Turkey                                       | TR           | 792     |
+
+        | Turkmenistan                                 | TM           | 795     |
+
+        | Tuvalu                                       | TV           | 798     |
+
+        | Uganda                                       | UG           | 800     |
+
+        | Ukraine                                      | UA           | 804     |
+
+        | United Arab Emirates                         | AE           | 784     |
+
+        | United Kingdom                               | GB           | 826     |
+
+        | Uruguay                                      | UY           | 858     |
+
+        | Uzbekistan                                   | UZ           | 860     |
+
+        | Vanuatu                                      | VU           | 548     |
+
+        | Venezuela, Bolivarian Republic of            | VE           | 862     |
+
+        | Vietnam                                      | VN           | 704     |
+
+        | Wallis and Futuna                            | WF           | 876     |
+
+        | Western Sahara                               | EH           | 732     |
+
+        | Yemen                                        | YE           | 886     |
+
+        | Zambia                                       | ZM           | 894     |
+
+        | Zimbabwe                                     | ZW           | 716     |
+
+
+        </details>
+
+        '
+      externalDocs:
+        description: Find more info here
+        url: https://www.iso.org/iso-3166-country-codes.html
+      example: NLD
+    components-schemas-countryCodeNumeric:
+      type: string
+      pattern: ^[0-9]{3}$
+      description: 'The ISO code of the country.
+
+
+        **European ISO Country Codes**
+
+
+        <details>
+
+
+        | Country                                          | Alpha-2 code | Numeric |
+
+        | ------------------------------------------------ | ------------ | ------- | --- |
+
+        | Åland Islands                                    | AX           | 248     |
+
+        | Andorra                                          | AD           | 020     |
+
+        | Austria                                          | AT           | 040     |
+
+        | Belgium                                          | BE           | 056     |
+
+        | Cyprus                                           | CY           | 196     |
+
+        | Estonia                                          | EE           | 233     |     |
+
+        | Finland                                          | FI           | 246     |
+
+        | France                                           | FR           | 250     |
+
+        | French Guiana                                    | GF           | 254     |
+
+        | French Southern Territories                      | TF           | 260     |
+
+        | Germany                                          | DE           | 280     |
+
+        | Greece                                           | GR           | 300     |
+
+        | Guadeloupe                                       | GP           | 312     |
+
+        | Ireland                                          | IE           | 372     |
+
+        | Italy                                            | IT           | 380     |
+
+        | Kosovo, United Nations Mission in Kosovo (UNMIK) | QZ           | 900     |
+
+        | Latvia                                           | LV           | 428     |
+
+        | Lithuania                                        | LT           | 440     |
+
+        | Luxembourg                                       | LU           | 442     |
+
+        | Malta                                            | MT           | 470     |
+
+        | Martinique                                       | MQ           | 474     |
+
+        | Mayotte                                          | YT           | 175     |
+
+        | Monaco                                           | MC           | 492     |
+
+        | Montenegro                                       | ME           | 499     |
+
+        | Netherlands                                      | NL           | 528     |
+
+        | Portugal                                         | PT           | 620     |
+
+        | Reunion                                          | RE           | 638     |
+
+        | Saint Barthélemy                                 | BL           | 652     |
+
+        | Saint Martin (French Part)                       | MF           | 663     |
+
+        | San Marino                                       | SM           | 674     |
+
+        | Slovakia                                         | SK           | 703     |
+
+        | Slovenia                                         | SI           | 705     |
+
+        | Spain                                            | ES           | 724     |
+
+        | St. Pierre and Miquelon                          | PM           | 666     |
+
+        | Vatican City State (Holy See)                    | VA           | 336     |
+
+
+        </details>
+
+
+        **US ISO Country Codes**
+
+
+        <details>
+
+
+        | Country                         | Alpha-2 code | Numeric |
+
+        | ------------------------------- | ------------ | ------- |
+
+        | American Samoa                  | AS           | 016     |
+
+        | Bonaire, St. Eusasius and Saba  | BQ           | 535     |
+
+        | British Indian Ocean Territory  | IO           | 086     |
+
+        | Ecuador                         | EC           | 218     |
+
+        | Guam                            | GU           | 316     |
+
+        | Marshall Islands                | MH           | 584     |
+
+        | Micronesia, Federated States of | FM           | 583     |
+
+        | Northern Mariana Islands        | MP           | 580     |
+
+        | Palau                           | PW           | 585     |
+
+        | Palestine, State of             | PS           | 275     |
+
+        | Puerto Rico                     | PR           | 630     |
+
+        | Timor-Leste                     | TP           | 626     |
+
+        | Turks and Caicos Islands        | TC           | 796     |
+
+        | U.S. Minor Outlying Islands     | UM           | 581     |
+
+        | United States                   | US           | 840     |
+
+        | Virgin Islands, British         | VG           | 092     |
+
+        | Virgin Islands, U.S.            | VI           | 850     |
+
+
+        </details>
+
+
+        **Other ISO Country Codes**
+
+
+        <details>
+
+
+        | Country                                      | Alpha-2 code | Numeric |
+
+        | -------------------------------------------- | ------------ | ------- |
+
+        | Afghanistan                                  | AF           | 004     |
+
+        | Albania                                      | AL           | 008     |
+
+        | Algeria                                      | DZ           | 012     |
+
+        | Angola                                       | AO           | 024     |
+
+        | Anguilla                                     | AI           | 660     |
+
+        | Antarctica                                   | AQ           | 010     |
+
+        | Antigua and Barbuda                          | AG           | 028     |
+
+        | Argentina                                    | AR           | 032     |
+
+        | Armenia                                      | AM           | 051     |
+
+        | Aruba                                        | AW           | 533     |
+
+        | Australia                                    | AU           | 036     |
+
+        | Azerbaijan                                   | AZ           | 031     |
+
+        | Bahamas                                      | BS           | 044     |
+
+        | Bahrain                                      | BH           | 048     |
+
+        | Bangladesh                                   | BD           | 050     |
+
+        | Barbados                                     | BB           | 052     |
+
+        | Belarus                                      | BR           | 112     |
+
+        | Belize                                       | BZ           | 084     |
+
+        | Benin                                        | BJ           | 204     |
+
+        | Bermuda                                      | BM           | 060     |
+
+        | Bhutan                                       | BT           | 064     |
+
+        | Bolivia, Plurinational State of              | BO           | 068     |
+
+        | Bosnia and Herzegovina                       | BA           | 070     |
+
+        | Botswana                                     | BW           | 072     |
+
+        | Bouvet Island                                | BV           | 074     |
+
+        | Brazil                                       | BR           | 076     |
+
+        | Brunei Darussalam                            | BN           | 096     |
+
+        | Bulgaria                                     | BG           | 100     |
+
+        | Burkina Faso                                 | BF           | 854     |
+
+        | Burundi                                      | BI           | 108     |
+
+        | Cambodia                                     | KH           | 116     |
+
+        | Cameroon                                     | CM           | 120     |
+
+        | Canada                                       | CA           | 124     |
+
+        | Cape Verde                                   | CV           | 132     |
+
+        | Cayman Islands                               | KY           | 136     |
+
+        | Central African Republic                     | CF           | 140     |
+
+        | Chad                                         | TD           | 148     |
+
+        | Chile                                        | CL           | 152     |
+
+        | China                                        | CN           | 156     |
+
+        | Christmas Island                             | CX           | 162     |
+
+        | Cocos (Keeling) Islands                      | CC           | 166     |
+
+        | Colombia                                     | CO           | 170     |
+
+        | Comoros                                      | KM           | 174     |
+
+        | Congo                                        | CG           | 178     |
+
+        | Cook Islands                                 | CK           | 184     |
+
+        | Costa Rica                                   | CR           | 188     |
+
+        | Côte D''Ivoire                                | CI           | 384     |
+
+        | Croatia                                      | HR           | 191     |
+
+        | Cuba                                         | CU           | 192     |
+
+        | Curacao                                      | CW           | 531     |
+
+        | Czech Republic                               | CZ           | 203     |
+
+        | Democratic Republic of the Congo             | CD           | 180     |
+
+        | Denmark                                      | DK           | 208     |
+
+        | Djibouti                                     | DJ           | 262     |
+
+        | Dominica                                     | DM           | 212     |
+
+        | Dominican Republic                           | DO           | 214     |
+
+        | Egypt                                        | EG           | 818     |
+
+        | El Salvador                                  | SV           | 222     |
+
+        | Equatorial Guinea                            | GQ           | 226     |
+
+        | Eritrea                                      | ER           | 232     |
+
+        | Ethiopia                                     | ET           | 230     |
+
+        | Falkland Islands (Malvinas)                  | FK           | 238     |
+
+        | Faroe Islands                                | FO           | 234     |
+
+        | Fiji                                         | FJ           | 242     |
+
+        | French Polynesia                             | PF           | 258     |
+
+        | Gabon                                        | GA           | 266     |
+
+        | Gambia                                       | GM           | 270     |
+
+        | Georgia                                      | GE           | 268     |
+
+        | Ghana                                        | GH           | 288     |
+
+        | Gibraltar                                    | GI           | 292     |
+
+        | Greenland                                    | GL           | 304     |
+
+        | Grenada                                      | GD           | 308     |
+
+        | Guatemala                                    | GT           | 320     |
+
+        | Guernsey                                     | GG           | 831     |
+
+        | Guinea                                       | GN           | 324     |
+
+        | Guinea-Bissau                                | GW           | 624     |
+
+        | Guyana                                       | GY           | 328     |
+
+        | Haiti                                        | HT           | 332     |
+
+        | Heard and McDonald Islands                   | HM           | 334     |
+
+        | Honduras                                     | HN           | 340     |
+
+        | Hong Kong                                    | HK           | 344     |
+
+        | Hungary                                      | HU           | 348     |
+
+        | Iceland                                      | IS           | 352     |
+
+        | India                                        | IN           | 356     |
+
+        | Indonesia                                    | ID           | 360     |
+
+        | Iraq                                         | IQ           | 368     |
+
+        | Isle of Man                                  | IM           | 833     |
+
+        | Israel                                       | IL           | 376     |
+
+        | Jamaica                                      | JM           | 388     |
+
+        | Japan                                        | JP           | 392     |
+
+        | Jersey                                       | JE           | 832     |
+
+        | Jordan                                       | JO           | 400     |
+
+        | Kazakhstan                                   | KZ           | 398     |
+
+        | Kenya                                        | KE           | 404     |
+
+        | Kiribati                                     | KI           | 296     |
+
+        | Korea, Republic of                           | KR           | 410     |
+
+        | Kuwait                                       | KW           | 414     |
+
+        | Kyrgyzstan                                   | KG           | 417     |
+
+        | Lao People''s Democratic Republic             | LA           | 418     |
+
+        | Lebanon                                      | LB           | 422     |
+
+        | Lesotho                                      | LS           | 426     |
+
+        | Liberia                                      | LR           | 430     |
+
+        | Libyan Arab Jamahiriya                       | LY           | 434     |
+
+        | Liechtenstein                                | LI           | 438     |
+
+        | Macao                                        | MO           | 446     |
+
+        | Macedonia                                    | MK           | 807     |
+
+        | Madagascar                                   | MG           | 450     |
+
+        | Malawi                                       | MW           | 454     |
+
+        | Malaysia                                     | MY           | 458     |
+
+        | Maldives                                     | MV           | 462     |
+
+        | Mali                                         | ML           | 466     |
+
+        | Mauritania                                   | MR           | 478     |
+
+        | Mauritius                                    | MU           | 480     |
+
+        | Mexico                                       | MX           | 484     |
+
+        | Moldova, Republic of                         | MD           | 498     |
+
+        | Mongolia                                     | MN           | 496     |
+
+        | Montserrat                                   | MS           | 500     |
+
+        | Morocco                                      | MA           | 504     |
+
+        | Mozambique                                   | MZ           | 508     |
+
+        | Myanmar (effective 1 November 2012)          | MM           | 104     |
+
+        | Namibia                                      | NA           | 516     |
+
+        | Nauru                                        | NR           | 520     |
+
+        | Nepal                                        | NP           | 524     |
+
+        | Netherlands Antilles                         | AN           | 530     |
+
+        | New Caledonia                                | NC           | 540     |
+
+        | New Zealand                                  | NZ           | 554     |
+
+        | Nicaragua                                    | NI           | 558     |
+
+        | Niger                                        | NE           | 562     |
+
+        | Nigeria                                      | NG           | 566     |
+
+        | Niue                                         | NU           | 570     |
+
+        | Norfolk Island                               | NF           | 574     |
+
+        | Norway                                       | NO           | 578     |
+
+        | Oman                                         | OM           | 512     |
+
+        | Pakistan                                     | PK           | 586     |
+
+        | Panama                                       | PA           | 591     |
+
+        | Papua New Guinea                             | PG           | 598     |
+
+        | Paraguay                                     | PY           | 600     |
+
+        | Peru                                         | PE           | 604     |
+
+        | Philippines                                  | PH           | 608     |
+
+        | Pitcairn                                     | PN           | 612     |
+
+        | Poland                                       | PL           | 616     |
+
+        | Qatar                                        | QA           | 634     |
+
+        | Republic of South Sudan                      | SS           | 728     |
+
+        | Romania                                      | RO           | 642     |
+
+        | Russian Federation                           | RU           | 643     |
+
+        | Rwanda                                       | RW           | 646     |
+
+        | Samoa                                        | WS           | 882     |
+
+        | Sao Tome and Principe                        | ST           | 678     |
+
+        | Saudi Arabia                                 | SA           | 682     |
+
+        | Senegal                                      | SN           | 686     |
+
+        | Serbia                                       | RS           | 688     |
+
+        | Seychelles                                   | SC           | 690     |
+
+        | Sierra Leone                                 | SL           | 694     |
+
+        | Singapore                                    | SG           | 702     |
+
+        | Sint Maarten (Dutch Part)                    | SX           | 534     |
+
+        | Solomon Islands                              | SB           | 090     |
+
+        | Somalia                                      | SO           | 706     |
+
+        | South Africa                                 | ZA           | 710     |
+
+        | South Georgia and the South Sandwich Islands | GS           | 239     |
+
+        | Sri Lanka                                    | LK           | 144     |
+
+        | Saint Helena, Ascension and Tristan Da Cunha | SH           | 654     |
+
+        | St. Kitts and Nevis                          | KN           | 659     |
+
+        | St. Lucia                                    | LC           | 662     |
+
+        | St. Vincent and the Grenadines               | VC           | 670     |
+
+        | Suriname                                     | SR           | 740     |
+
+        | Svalbard and Jan Mayen                       | SJ           | 744     |
+
+        | Swaziland                                    | SZ           | 748     |
+
+        | Sweden                                       | SE           | 752     |
+
+        | Switzerland                                  | CH           | 756     |
+
+        | Taiwan                                       | TW           | 158     |
+
+        | Tajikistan                                   | TJ           | 762     |
+
+        | Tanzania, United Republic of                 | TZ           | 834     |
+
+        | Thailand                                     | TH           | 764     |
+
+        | Togo                                         | TG           | 768     |
+
+        | Tokelau                                      | TK           | 772     |
+
+        | Tonga                                        | TO           | 776     |
+
+        | Trinidad and Tobago                          | TT           | 780     |
+
+        | Tunisia                                      | TN           | 788     |
+
+        | Turkey                                       | TR           | 792     |
+
+        | Turkmenistan                                 | TM           | 795     |
+
+        | Tuvalu                                       | TV           | 798     |
+
+        | Uganda                                       | UG           | 800     |
+
+        | Ukraine                                      | UA           | 804     |
+
+        | United Arab Emirates                         | AE           | 784     |
+
+        | United Kingdom                               | GB           | 826     |
+
+        | Uruguay                                      | UY           | 858     |
+
+        | Uzbekistan                                   | UZ           | 860     |
+
+        | Vanuatu                                      | VU           | 548     |
+
+        | Venezuela, Bolivarian Republic of            | VE           | 862     |
+
+        | Vietnam                                      | VN           | 704     |
+
+        | Wallis and Futuna                            | WF           | 876     |
+
+        | Western Sahara                               | EH           | 732     |
+
+        | Yemen                                        | YE           | 886     |
+
+        | Zambia                                       | ZM           | 894     |
+
+        | Zimbabwe                                     | ZW           | 716     |
+
+
+        </details>
+
+        '
+      externalDocs:
+        description: Find more info here
+        url: https://www.iso.org/iso-3166-country-codes.html
+      example: '528'
     components-schemas-countryCodeAlpha2:
       type: string
       pattern: ^[A-Z]{2}$
@@ -3051,82 +2748,417 @@ components:
         description: Find more info here
         url: https://www.iso.org/iso-3166-country-codes.html
       example: NL
+    MastercardInterchangeRegion:
+      properties:
+        code:
+          type: string
+          enum:
+          - '1'
+          - A
+          - B
+          - C
+          - D
+          - E
+        description:
+          type: string
+    MastercardProductType:
+      properties:
+        code:
+          type: string
+          enum:
+          - '1'
+          - '2'
+          - '3'
+          - '4'
+        description:
+          type: string
+    MastercardSpecificCardInfo:
+      description: Mastercard-specific Card Information.
+      type: object
+      properties:
+        productType:
+          $ref: '#/components/schemas/MastercardProductType'
+        brandProducts:
+          type: array
+          minItems: 1
+          items:
+            $ref: '#/components/schemas/MastercardCardBrandProduct'
+        interchangeRegion:
+          $ref: '#/components/schemas/MastercardInterchangeRegion'
+        coBrandParticipation:
+          type: boolean
+        moneySendIndicator:
+          type: string
+        anonymousPrepaidIndicator:
+          $ref: '#/components/schemas/MastercardAnonymousPrepaidIndicator'
+        dccIndicator:
+          type: string
+          description: Cardholder Currency Indicator (IP0040T1 position 178). Indicates the card range's eligibility for Dynamic Currency Conversion (DCC) services.
+    VisaRegion:
+      properties:
+        code:
+          type: string
+          enum:
+          - '1'
+          - '2'
+          - '3'
+          - '4'
+          - '5'
+          - '6'
+        description:
+          type: string
+    CardInfoRequestByCard:
+      type: object
+      title: Card Input
+      required:
+      - cardNumber
+      properties:
+        cardNumber:
+          description: Full digits of a card. It is possible to replace a number of the trailing digits with zeroes ("0").
+          $ref: '#/components/schemas/components-schemas-pan'
+        infoSource:
+          $ref: '#/components/schemas/InfoSource'
+    AmericanExpressSpecificCardInfo:
+      type: object
+      description: American Express specific Card Info.
+    DuplicatedMastercardCardInfo:
+      description: Mastercard-specific Card Information.
+      allOf:
+      - $ref: '#/components/schemas/MastercardSpecificCardInfo'
+      - $ref: '#/components/schemas/CardInfoResponseBase'
+    MultiSourceResponse:
+      allOf:
+      - $ref: '#/components/schemas/CardInfoResponseBase'
+      - type: object
+        required:
+        - primaryCardNetwork
+        - infoSource
+        properties:
+          primaryCardNetwork:
+            description: The primary card network issuing this card range.
+            type: string
+            enum:
+            - mastercard
+            - visa
+            - bancontact
+            - unknown
+          infoSource:
+            type: string
+            enum:
+            - mastercard
+            - visa
+            - bancontact
+            description: The source of the provided information.
+          mastercardCardInfo:
+            description: Mastercard-specific Card Info.
+            $ref: '#/components/schemas/DuplicatedMastercardCardInfo'
+          visaCardInfo:
+            description: Visa-specific Card Info.
+            $ref: '#/components/schemas/DuplicatedVisaCardInfo'
+          bancontactCardInfo:
+            description: Bancontact-specific Card Info.
+            $ref: '#/components/schemas/DuplicatedBancontactCardInfo'
+    DuplicatedBancontactCardInfo:
+      allOf:
+      - $ref: '#/components/schemas/BancontactSpecificCardInfo'
+      - $ref: '#/components/schemas/CardInfoResponseBase'
+    CardInfoRequestByProcessorToken:
+      type: object
+      title: Processor Token Key Input
+      required:
+      - processorTokenKey
+      properties:
+        processorTokenKey:
+          type: string
+          description: A [processor token key](#tag/Processor-Tokenization).
+          pattern: ^ptk-[a-zA-Z0-9]+$
+          minLength: 5
+          maxLength: 120
+          example: ptk-1e1dA2fgs1YTUhlhyPOp
+        infoSource:
+          $ref: '#/components/schemas/InfoSource'
+    SingleSourceResponse:
+      allOf:
+      - $ref: '#/components/schemas/CardInfoResponseBase'
+      - type: object
+        required:
+        - primaryCardNetwork
+        - infoSource
+        properties:
+          primaryCardNetwork:
+            description: The primary card network issuing this card range.
+            type: string
+            enum:
+            - mastercard
+            - visa
+            - bancontact
+            - american-express
+            - discover
+            - diners
+            - jcb
+            - union-pay
+            - paypal
+            - unknown
+          infoSource:
+            $ref: '#/components/schemas/InfoSource'
+            description: The source of the provided information.
+          mastercardCardInfo:
+            $ref: '#/components/schemas/MastercardSpecificCardInfo'
+          visaCardInfo:
+            $ref: '#/components/schemas/VisaSpecificCardInfo'
+          bancontactCardInfo:
+            $ref: '#/components/schemas/BancontactSpecificCardInfo'
+          americanExpressCardInfo:
+            $ref: '#/components/schemas/AmericanExpressSpecificCardInfo'
+          discoverCardInfo:
+            $ref: '#/components/schemas/DiscoverSpecificCardInfo'
+          dinersCardInfo:
+            $ref: '#/components/schemas/DinersSpecificCardInfo'
+    MastercardProductClass:
+      properties:
+        gcmsProductID:
+          type: string
+        licensedProductID:
+          type: string
+        licensedProductDescription:
+          type: string
+        productClassID:
+          type: string
+        productClassDescription:
+          type: string
+    cardNetworkMember:
+      type: object
+      description: A principal member of a card network.
+      required:
+      - id
+      - name
+      - countryCode
+      properties:
+        id:
+          type: string
+          description: Identifying code of the member assigned by the card network
+        name:
+          type: string
+          description: Human-readable name of the member.
+        countryCode:
+          $ref: '#/components/schemas/components-schemas-CountryCode'
+    VisaSpecificMemberDuplicatedResponse:
+      description: Visa-specific member properties.
+      allOf:
+      - $ref: '#/components/schemas/VisaSpecificMemberSingleResponse'
+      - $ref: '#/components/schemas/cardNetworkMember'
+    DuplicatedVisaCardInfo:
+      description: Visa-specific Card Information.
+      allOf:
+      - $ref: '#/components/schemas/VisaSpecificCardInfoBase'
+      - $ref: '#/components/schemas/CardInfoResponseBase'
+      - type: object
+        required:
+        - member
+        properties:
+          member:
+            $ref: '#/components/schemas/VisaSpecificMemberDuplicatedResponse'
+    MastercardAnonymousPrepaidIndicator:
+      properties:
+        code:
+          type: string
+          enum:
+          - A
+          - E
+          - N
+          - U
+        description:
+          type: string
+    VisaProduct:
+      properties:
+        visaProductID:
+          type: string
+        productDescription:
+          type: string
+        productType:
+          type: string
+        productSubTypeCode:
+          type: string
+        productSubTypeDescription:
+          type: string
+    CardCountry:
+      type: object
+      required:
+      - code
+      - isInEEA
+      properties:
+        code:
+          $ref: '#/components/schemas/components-schemas-CountryCode'
+        isInEEA:
+          description: Indicates whether the Card Country is part of the European Economic Area
+          type: boolean
+    VisaAccountFundingSource:
+      properties:
+        code:
+          type: string
+          enum:
+          - C
+          - D
+          - P
+          - H
+          - R
+        description:
+          type: string
+    InfoSource:
+      type: string
+      enum:
+      - american-express
+      - bancontact
+      - discover
+      - diners
+      - mastercard
+      - visa
+      description: 'The card network that should be the source of the information. If not provided, all sources will be checked!
+
+        '
+    components-schemas-pan:
+      type: string
+      description: Full digits of a card
+      pattern: ^\d+$
+      minLength: 12
+      maxLength: 19
+      format: password
+      example: '4761070000000905'
+    DiscoverSpecificCardInfo:
+      type: object
+      description: Discover specific Card Info.
+      properties:
+        atmIndicator:
+          type: boolean
+        eligibleForNetworkStandInProcessingIndicator:
+          type: boolean
+        countryOfIssuanceIndicator:
+          type: boolean
+        accountLevelProcessingEnabledIndicator:
+          type: boolean
+        regulationIIIndicator:
+          type: string
+        discoverPayWithRewardsEnabledIndicator:
+          type: boolean
+        realTimeTransactionPricingIndicator:
+          type: boolean
+    VisaSpecificMemberSingleResponse:
+      description: Visa-specific member properties.
+      properties:
+        cib:
+          description: Member processing base-2 CIB
+          type: string
+        iin:
+          description: Issuer identifier
+          type: string
   examples:
-    card-info-response-mastercard:
-      summary: Example of a Card Info Response for a Mastercard card
+    card-info-card-network-response-visa:
+      summary: Example of a Card Info Response for a Visa network
       value:
-        infoSource: mastercard
-        primaryCardNetwork: mastercard
-        cardCountry:
-          code:
-            alpha2: NL
-            alpha3: NLD
-            numeric: '528'
-          isInEEA: true
-        issuerAccountRangeLow: '5555555555500000000'
-        issuerAccountRangeHigh: '5555555555599999999'
-        member:
-          id: '00000123456'
-          name: The Iron Bank
-          countryCode:
-            alpha3: CYP
-            alpha2: CY
-            numeric: '196'
-        cardProducts:
-        - code: MDS
-          name: Debit Unembossed Mastercard® Card
-          accountFundingSource: Debit
-        cardholderBillingCurrency: USD
-        mastercardCardInfo:
-          productType:
-            code: '1'
-            description: Consumer
-          brandProducts:
-          - cardProgramIdentifier:
-              code: DMC
-              description: Debit Mastercard
-            brandProduct:
-              productClass:
-                gcmsProductID: MDS
-                licensedProductID: MDU
-                licensedProductDescription: Debit Unembossed Mastercard® Card
-                productClassID: DMC
-                productClassDescription: Debit Mastercard
-              productCategory:
-                code: D
-                description: Debit
-            priority: '01'
-          interchangeRegion:
-            code: D
-            description: Europe
-          coBrandParticipation: false
-          moneySendIndicator: U
-          anonymousPrepaidIndicator:
-            code: N
-            description: Not prepaid or non-anonymous prepaid program/default
-          dccIndicator: D
-          infoSource: mastercard
-          primaryCardNetwork: mastercard
+        items:
+        - infoSource: visa
+          primaryCardNetwork: visa
           cardCountry:
             code:
-              alpha2: NL
-              alpha3: NLD
-              numeric: '528'
+              alpha2: FR
+              alpha3: FRA
+              numeric: '250'
             isInEEA: true
-          issuerAccountRangeLow: '5555555555500000000'
-          issuerAccountRangeHigh: '5555555555599999999'
+          issuerAccountRangeLow: '444455000'
+          issuerAccountRangeHigh: '444455999'
           member:
-            id: '00000123456'
-            name: The Iron Bank
+            id: '123456'
+            name: First Main Bank
             countryCode:
-              alpha3: CYP
-              alpha2: CY
-              numeric: '196'
+              alpha3: GBR
+              alpha2: GB
+              numeric: '826'
           cardProducts:
-          - code: MDS
-            name: Debit Unembossed Mastercard® Card
-            accountFundingSource: Debit
+          - code: F
+            name: Visa Classic
+            accountFundingSource: Credit
           cardholderBillingCurrency: USD
+          visaCardInfo:
+            accountNumberLength: 16
+            checkDigit: true
+            accountRangeRegion:
+              code: '3'
+              description: Europe
+            domain:
+              code: W
+              description: Worldwide
+            product:
+              visaProductID: F
+              productType: Consumer
+              productDescription: Visa Classic
+              productSubTypeCode: ''
+            accountFundingSource:
+              code: C
+              description: Credit
+            visaDirectParticipation:
+              nonMoneyTransferOCTsDomestic: false
+              nonMoneyTransferOCTsCrossBorder: true
+              onlineGamblingOCTsDomestic: false
+              onlineGamblingOCTsCrossBorder: false
+              moneyTransferOCTsDomestic: false
+              moneyTransferOCTsCrossBorder: false
+              fastFundsDomesticMoneyTransfer: true
+              fastFundsDomesticNonMoneyTransfer: true
+              fastFundsDomesticGambling: true
+              fastFundsCrossBorderMoneyTransfer: false
+              fastFundsCrossBorderNonMoneyTransfer: false
+              fastFundsCrossBorderGambling: false
+        - infoSource: visa
+          primaryCardNetwork: visa
+          cardCountry:
+            code:
+              alpha2: FR
+              alpha3: FRA
+              numeric: '250'
+            isInEEA: true
+          issuerAccountRangeLow: '444456000'
+          issuerAccountRangeHigh: '444456999'
+          member:
+            id: '123456'
+            name: First Main Bank
+            countryCode:
+              alpha3: GBR
+              alpha2: GB
+              numeric: '826'
+          cardProducts:
+          - code: F
+            name: Visa Classic
+            accountFundingSource: Credit
+          cardholderBillingCurrency: USD
+          visaCardInfo:
+            accountNumberLength: 16
+            checkDigit: true
+            accountRangeRegion:
+              code: '3'
+              description: Europe
+            domain:
+              code: W
+              description: Worldwide
+            product:
+              visaProductID: F
+              productDescription: Visa Classic
+              productSubTypeCode: ''
+            accountFundingSource:
+              code: C
+              description: Credit
+            visaDirectParticipation:
+              nonMoneyTransferOCTsDomestic: false
+              nonMoneyTransferOCTsCrossBorder: true
+              onlineGamblingOCTsDomestic: false
+              onlineGamblingOCTsCrossBorder: false
+              moneyTransferOCTsDomestic: false
+              moneyTransferOCTsCrossBorder: false
+              fastFundsDomesticMoneyTransfer: true
+              fastFundsDomesticNonMoneyTransfer: true
+              fastFundsDomesticGambling: true
+              fastFundsCrossBorderMoneyTransfer: false
+              fastFundsCrossBorderNonMoneyTransfer: false
+              fastFundsCrossBorderGambling: false
     card-info-card-network-response-mastercard:
       summary: Example of a Card Info Response for a Mastercard network
       value:
@@ -3308,142 +3340,87 @@ components:
             name: Visa Classic
             accountFundingSource: Credit
           cardholderBillingCurrency: USD
-    card-info-card-network-response-visa:
-      summary: Example of a Card Info Response for a Visa network
+    card-info-response-mastercard:
+      summary: Example of a Card Info Response for a Mastercard card
       value:
-        items:
-        - infoSource: visa
-          primaryCardNetwork: visa
+        infoSource: mastercard
+        primaryCardNetwork: mastercard
+        cardCountry:
+          code:
+            alpha2: NL
+            alpha3: NLD
+            numeric: '528'
+          isInEEA: true
+        issuerAccountRangeLow: '5555555555500000000'
+        issuerAccountRangeHigh: '5555555555599999999'
+        member:
+          id: '00000123456'
+          name: The Iron Bank
+          countryCode:
+            alpha3: CYP
+            alpha2: CY
+            numeric: '196'
+        cardProducts:
+        - code: MDS
+          name: Debit Unembossed Mastercard® Card
+          accountFundingSource: Debit
+        cardholderBillingCurrency: USD
+        mastercardCardInfo:
+          productType:
+            code: '1'
+            description: Consumer
+          brandProducts:
+          - cardProgramIdentifier:
+              code: DMC
+              description: Debit Mastercard
+            brandProduct:
+              productClass:
+                gcmsProductID: MDS
+                licensedProductID: MDU
+                licensedProductDescription: Debit Unembossed Mastercard® Card
+                productClassID: DMC
+                productClassDescription: Debit Mastercard
+              productCategory:
+                code: D
+                description: Debit
+            priority: '01'
+          interchangeRegion:
+            code: D
+            description: Europe
+          coBrandParticipation: false
+          moneySendIndicator: U
+          anonymousPrepaidIndicator:
+            code: N
+            description: Not prepaid or non-anonymous prepaid program/default
+          dccIndicator: D
+          infoSource: mastercard
+          primaryCardNetwork: mastercard
           cardCountry:
             code:
-              alpha2: FR
-              alpha3: FRA
-              numeric: '250'
+              alpha2: NL
+              alpha3: NLD
+              numeric: '528'
             isInEEA: true
-          issuerAccountRangeLow: '444455000'
-          issuerAccountRangeHigh: '444455999'
+          issuerAccountRangeLow: '5555555555500000000'
+          issuerAccountRangeHigh: '5555555555599999999'
           member:
-            id: '123456'
-            name: First Main Bank
+            id: '00000123456'
+            name: The Iron Bank
             countryCode:
-              alpha3: GBR
-              alpha2: GB
-              numeric: '826'
+              alpha3: CYP
+              alpha2: CY
+              numeric: '196'
           cardProducts:
-          - code: F
-            name: Visa Classic
-            accountFundingSource: Credit
+          - code: MDS
+            name: Debit Unembossed Mastercard® Card
+            accountFundingSource: Debit
           cardholderBillingCurrency: USD
-          visaCardInfo:
-            accountNumberLength: 16
-            checkDigit: true
-            accountRangeRegion:
-              code: '3'
-              description: Europe
-            domain:
-              code: W
-              description: Worldwide
-            product:
-              visaProductID: F
-              productType: Consumer
-              productDescription: Visa Classic
-              productSubTypeCode: ''
-            accountFundingSource:
-              code: C
-              description: Credit
-            visaDirectParticipation:
-              nonMoneyTransferOCTsDomestic: false
-              nonMoneyTransferOCTsCrossBorder: true
-              onlineGamblingOCTsDomestic: false
-              onlineGamblingOCTsCrossBorder: false
-              moneyTransferOCTsDomestic: false
-              moneyTransferOCTsCrossBorder: false
-              fastFundsDomesticMoneyTransfer: true
-              fastFundsDomesticNonMoneyTransfer: true
-              fastFundsDomesticGambling: true
-              fastFundsCrossBorderMoneyTransfer: false
-              fastFundsCrossBorderNonMoneyTransfer: false
-              fastFundsCrossBorderGambling: false
-        - infoSource: visa
-          primaryCardNetwork: visa
-          cardCountry:
-            code:
-              alpha2: FR
-              alpha3: FRA
-              numeric: '250'
-            isInEEA: true
-          issuerAccountRangeLow: '444456000'
-          issuerAccountRangeHigh: '444456999'
-          member:
-            id: '123456'
-            name: First Main Bank
-            countryCode:
-              alpha3: GBR
-              alpha2: GB
-              numeric: '826'
-          cardProducts:
-          - code: F
-            name: Visa Classic
-            accountFundingSource: Credit
-          cardholderBillingCurrency: USD
-          visaCardInfo:
-            accountNumberLength: 16
-            checkDigit: true
-            accountRangeRegion:
-              code: '3'
-              description: Europe
-            domain:
-              code: W
-              description: Worldwide
-            product:
-              visaProductID: F
-              productDescription: Visa Classic
-              productSubTypeCode: ''
-            accountFundingSource:
-              code: C
-              description: Credit
-            visaDirectParticipation:
-              nonMoneyTransferOCTsDomestic: false
-              nonMoneyTransferOCTsCrossBorder: true
-              onlineGamblingOCTsDomestic: false
-              onlineGamblingOCTsCrossBorder: false
-              moneyTransferOCTsDomestic: false
-              moneyTransferOCTsCrossBorder: false
-              fastFundsDomesticMoneyTransfer: true
-              fastFundsDomesticNonMoneyTransfer: true
-              fastFundsDomesticGambling: true
-              fastFundsCrossBorderMoneyTransfer: false
-              fastFundsCrossBorderNonMoneyTransfer: false
-              fastFundsCrossBorderGambling: false
     request-card-info-mastercard:
       summary: Card Info Request Mastercard
       value:
         cardNumber: '5761070000000905'
         infoSource: mastercard
   responses:
-    responses-TooManyRequestsError:
-      description: The number of requests (per minute) has exceeded the configured maximum
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/schemas-ProblemDetail'
-          example:
-            type: https://api.silverflow.co/problem/too-many-requests
-            title: Too Many Requests
-            status: 429
-            detail: The number of requests performed by the client has exceeded the configured maximum for a given period
-    responses-ForbiddenError:
-      description: The authenticated client is forbidden to make the request for the resource identified.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/schemas-ProblemDetail'
-          example:
-            type: https://datatracker.ietf.org/doc/html/rfc2616#section-10.4.4
-            title: Forbidden
-            status: 403
-            detail: The server is refusing to execute the request for the current authenticated user
-            instance: https://api.silverflow.co/v1/merchants/mct-1hPdFqhgstYTUhlphPDp
     responses-NotFoundError:
       description: The requested resource was not found
       content:
@@ -3455,6 +3432,44 @@ components:
             title: Not Found
             status: 404
             detail: The entity referenced in the request could not be found
+            instance: https://api.silverflow.co/v1/merchants/mct-1hPdFqhgstYTUhlphPDp
+    responses-TooManyRequestsError:
+      description: The number of requests (per minute) has exceeded the configured maximum
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/schemas-ProblemDetail'
+          example:
+            type: https://api.silverflow.co/problem/too-many-requests
+            title: Too Many Requests
+            status: 429
+            detail: The number of requests performed by the client has exceeded the configured maximum for a given period
+    responses-UnauthorizedError:
+      description: Authentication information is missing or invalid
+      headers:
+        WWW_Authenticate:
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/schemas-ProblemDetail'
+          example:
+            type: https://datatracker.ietf.org/doc/html/rfc2616#section-10.4.2
+            title: Unauthorized
+            status: 401
+            detail: The credentials supplied in the request are either missing, invalid, or not applicable in the current scope
+    responses-ForbiddenError:
+      description: The authenticated client is forbidden to make the request for the resource identified.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/schemas-ProblemDetail'
+          example:
+            type: https://datatracker.ietf.org/doc/html/rfc2616#section-10.4.4
+            title: Forbidden
+            status: 403
+            detail: The server is refusing to execute the request for the current authenticated user
             instance: https://api.silverflow.co/v1/merchants/mct-1hPdFqhgstYTUhlphPDp
     responses-BadRequestError:
       description: The request was malformed. See the response body for details
@@ -3471,21 +3486,6 @@ components:
             validationErrors:
             - The value of property 'status' should be one of 'idle', 'active' or 'archived'
             - The value of property 'tags.0.businessId' must not be longer than 255 characters
-    responses-UnauthorizedError:
-      description: Authentication information is missing or invalid
-      headers:
-        WWW_Authenticate:
-          schema:
-            type: string
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/schemas-ProblemDetail'
-          example:
-            type: https://datatracker.ietf.org/doc/html/rfc2616#section-10.4.2
-            title: Unauthorized
-            status: 401
-            detail: The credentials supplied in the request are either missing, invalid, or not applicable in the current scope
   parameters:
     bulkCardInfoNetwork:
       name: network

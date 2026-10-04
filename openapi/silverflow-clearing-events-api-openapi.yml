@@ -67,6 +67,136 @@ webhooks:
       description: Sandbox URL - Equivalent to https://api-sbx.silverflow.co/v1
 components:
   schemas:
+    common_agentKey:
+      description: Uniquely identifies an Agent.
+      type: string
+      pattern: ^cgt-[a-zA-Z0-9]+$
+      readOnly: true
+      example: cgt-EFG67b4yPre23ZDrLX
+      title: agentKey
+    dataschema:
+      type: string
+      description: The event schema with the data version of the event.
+    ClearingEventNotificationVersion1_0AbandonedClearingEvent:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/PublicCloudEvent'
+      required:
+      - data
+      properties:
+        data:
+          $ref: '#/components/schemas/AbandonedClearingEventData1_0'
+        source:
+          allOf:
+          - $ref: '#/components/schemas/source'
+          - enum:
+            - https://silverflow.com/clearing
+        specversion:
+          allOf:
+          - $ref: '#/components/schemas/openapi_components-schemas-version-3'
+          - enum:
+            - '1.0'
+        subject:
+          allOf:
+          - description: The subject of the notification, which is the CRN, the unique identifier of the clearing
+          - $ref: '#/components/schemas/crn'
+        type:
+          type: string
+          description: The event type.
+          enum:
+          - com.silverflow.clearing.abandoned
+        dataschema:
+          allOf:
+          - $ref: '#/components/schemas/dataschema'
+          - enum:
+            - https://silverflow.com/schemas/events/clearing/1.0
+    OfflineRefundOutcomeEventData1_0:
+      type: object
+      required:
+      - arn
+      - chargeKey
+      - actionKey
+      - outcome
+      properties:
+        arn:
+          $ref: '#/components/schemas/crn'
+        actionReference:
+          $ref: '#/components/schemas/openapi_components-schemas-actionReference-2'
+        transactionReference:
+          type: string
+        chargeKey:
+          $ref: '#/components/schemas/openapi_components-schemas-chargeKey-2'
+        actionKey:
+          $ref: '#/components/schemas/schema_actionKey'
+        outcome:
+          type: string
+          description: The final state of the offline refund action.
+          enum:
+          - cleared
+          - abandoned
+    time:
+      type: string
+      format: date-time
+      description: Date and time when the event was sent.
+    openapi_components-schemas-actionReference-2:
+      description: Reference assigned by the agent to the clearing action.
+      type: string
+      minLength: 1
+      maxLength: 120
+    openapi_components-schemas-chargeKey-2:
+      description: Uniquely identifies a Charge.
+      type: string
+      pattern: ^chg-[a-zA-Z0-9]+$
+      minLength: 1
+      maxLength: 120
+      readOnly: false
+      example: chg-1e1dAHhgstYTUhlphPzZ
+    openapi_components-schemas-version-3:
+      type: string
+      description: The version of the spec.
+      pattern: ^[1-9]+.[0-9]+$
+      example: '1.0'
+    source:
+      type: string
+      description: Source system of the event.
+      pattern: ^https://silverflow.com/[a-zA-Z]+$
+    dataContentType:
+      type: string
+      description: The content type of the event.
+      enum:
+      - application/json
+    eventId:
+      type: string
+      description: Uniquely identifies an event.
+      pattern: ^evt-[a-zA-Z0-9]+$
+      minLength: 5
+      maxLength: 120
+      example: evt-1e1dAHhgstYTUhlphPzZ
+    AbandonedClearingEventData1_0:
+      type: object
+      required:
+      - chargeKey
+      - actionKey
+      - reason
+      properties:
+        actionReference:
+          $ref: '#/components/schemas/openapi_components-schemas-actionReference-2'
+        transactionReference:
+          type: string
+        chargeKey:
+          $ref: '#/components/schemas/openapi_components-schemas-chargeKey-2'
+        actionKey:
+          $ref: '#/components/schemas/schema_actionKey'
+        reason:
+          type: string
+          description: Human-readable reason why the clearing record was abandoned.
+    schema_actionKey:
+      description: Uniquely identifies an Action.
+      type: string
+      pattern: ^act-[a-zA-Z0-9]+$
+      minLength: 1
+      maxLength: 120
+      example: act-5vJNRKF4NDViSzkr8TQ5
     crn:
       description: Unique identifier of the clearing
       type: string
@@ -106,44 +236,6 @@ components:
           - $ref: '#/components/schemas/dataschema'
           - enum:
             - https://silverflow.com/schemas/events/clearing/1.0
-    OfflineRefundOutcomeEventData1_0:
-      type: object
-      required:
-      - arn
-      - chargeKey
-      - actionKey
-      - outcome
-      properties:
-        arn:
-          $ref: '#/components/schemas/crn'
-        actionReference:
-          $ref: '#/components/schemas/openapi_components-schemas-actionReference-2'
-        transactionReference:
-          type: string
-        chargeKey:
-          $ref: '#/components/schemas/openapi_components-schemas-chargeKey-2'
-        actionKey:
-          $ref: '#/components/schemas/schema_actionKey'
-        outcome:
-          type: string
-          description: The final state of the offline refund action.
-          enum:
-          - cleared
-          - abandoned
-    openapi_components-schemas-version-3:
-      type: string
-      description: The version of the spec.
-      pattern: ^[1-9]+.[0-9]+$
-      example: '1.0'
-    openapi_components-schemas-actionReference-2:
-      description: Reference assigned by the agent to the clearing action.
-      type: string
-      minLength: 1
-      maxLength: 120
-    source:
-      type: string
-      description: Source system of the event.
-      pattern: ^https://silverflow.com/[a-zA-Z]+$
     PublicCloudEvent:
       type: object
       required:
@@ -174,98 +266,6 @@ components:
           $ref: '#/components/schemas/time'
         agent:
           $ref: '#/components/schemas/common_agentKey'
-    schema_actionKey:
-      description: Uniquely identifies an Action.
-      type: string
-      pattern: ^act-[a-zA-Z0-9]+$
-      minLength: 1
-      maxLength: 120
-      example: act-5vJNRKF4NDViSzkr8TQ5
-    common_agentKey:
-      description: Uniquely identifies an Agent.
-      type: string
-      pattern: ^cgt-[a-zA-Z0-9]+$
-      readOnly: true
-      example: cgt-EFG67b4yPre23ZDrLX
-      title: agentKey
-    eventId:
-      type: string
-      description: Uniquely identifies an event.
-      pattern: ^evt-[a-zA-Z0-9]+$
-      minLength: 5
-      maxLength: 120
-      example: evt-1e1dAHhgstYTUhlphPzZ
-    ClearingEventNotificationVersion1_0AbandonedClearingEvent:
-      type: object
-      allOf:
-      - $ref: '#/components/schemas/PublicCloudEvent'
-      required:
-      - data
-      properties:
-        data:
-          $ref: '#/components/schemas/AbandonedClearingEventData1_0'
-        source:
-          allOf:
-          - $ref: '#/components/schemas/source'
-          - enum:
-            - https://silverflow.com/clearing
-        specversion:
-          allOf:
-          - $ref: '#/components/schemas/openapi_components-schemas-version-3'
-          - enum:
-            - '1.0'
-        subject:
-          allOf:
-          - description: The subject of the notification, which is the CRN, the unique identifier of the clearing
-          - $ref: '#/components/schemas/crn'
-        type:
-          type: string
-          description: The event type.
-          enum:
-          - com.silverflow.clearing.abandoned
-        dataschema:
-          allOf:
-          - $ref: '#/components/schemas/dataschema'
-          - enum:
-            - https://silverflow.com/schemas/events/clearing/1.0
-    time:
-      type: string
-      format: date-time
-      description: Date and time when the event was sent.
-    dataContentType:
-      type: string
-      description: The content type of the event.
-      enum:
-      - application/json
-    AbandonedClearingEventData1_0:
-      type: object
-      required:
-      - chargeKey
-      - actionKey
-      - reason
-      properties:
-        actionReference:
-          $ref: '#/components/schemas/openapi_components-schemas-actionReference-2'
-        transactionReference:
-          type: string
-        chargeKey:
-          $ref: '#/components/schemas/openapi_components-schemas-chargeKey-2'
-        actionKey:
-          $ref: '#/components/schemas/schema_actionKey'
-        reason:
-          type: string
-          description: Human-readable reason why the clearing record was abandoned.
-    dataschema:
-      type: string
-      description: The event schema with the data version of the event.
-    openapi_components-schemas-chargeKey-2:
-      description: Uniquely identifies a Charge.
-      type: string
-      pattern: ^chg-[a-zA-Z0-9]+$
-      minLength: 1
-      maxLength: 120
-      readOnly: false
-      example: chg-1e1dAHhgstYTUhlphPzZ
   securitySchemes:
     ApiKey:
       description: "The primary method of authenticating to the Silverflow API is through API keys.\n\nAPI keys can be created by calling the [createApiKey](#operation/createApiKey) endpoint. You can create up to 40 API keys and also update and delete them, allowing for _credential rotation_.\n\nThe _Agent Activation_ process will generate an initial API Key for you. See [Activate Agent](#section/Getting-Started).\n\nA call to the [createApiKey](#operation/createApiKey) endpoint will return the following structure:\n\n```json\n{\n    \"key\": \"apk-1wtRxni5IsPsSpBLWpwr\",\n    \"status\": \"active\",\n    \"agentKey\": \"cgt-1wtRvFLIjDOyyUR5Q2LB\",\n    \"description\": \"Data lake API key\",\n    \"permissions\": [\n        \"charges:List\",\n        \"reports:All\"\n    ],\n    \"created\": \"2021-06-22T11:21:45.115Z\",\n    \"secret\": \"FWtnOOHAjbD6rNxWWEeVOCj7JXSEPGJQ\",\n    \"version\": 1\n}\n```\n\n> **Important:** The `secret` is only returned once in the response to the `createApiKey` call.\n\nOnce created, the `key` and `secret` fields from the API key must be used in the HTTP `Authorization` header using the `Basic` scheme.\nThe Basic scheme requires a **username** and **password** to be specified, separated by a `:` (colon) and Base64 encoded.\n\nUse the following values from the API key to construct a Basic authentication header:\n\n| Basic field | API key field | Example |\n| ----------- | ------------- | ------- |\n| username | `key` | `apk-1wtRxni5IsPsSpBLWpwr` |\n| password | `secret` | `FWtnOOHAjbD6rNxWWEeVOCj7JXSEPGJQ` |\n\nIn pseudo-code a valid HTTP Basic Authentication header would be constructed as follows:\n\n```ts\nconst apiKeyId = \"apk-1wtRxni5IsPsSpBLWpwr\";\nconst apiKeySecret = \"FWtnOOHAjbD6rNxWWEeVOCj7JXSEPGJQ\";\nconst authnValue = \"Basic \" + base64Encode(apiKeyId + \":\" + apiKeySecret);\nrequest.setHeader(\"Authorization\", authnValue);\n```\n\nUsing the values from the example a valid HTTP request would look like the following:\n\n```http\nGET /v1/agents/current HTTP/1.1\nAccept: application/json\nAuthorization: Basic YXBrLTF3dFJ4bmk1SXNQc1NwQkxXcHdyOkZXdG5PT0hBamJENnJOeFdXRWVWT0NqN0pYU0VQR0pR\n```\n\nMore information on the Basic scheme can be found in [RFC-7617 - The 'Basic' HTTP Authentication Scheme](https://datatracker.ietf.org/doc/html/rfc7617)."

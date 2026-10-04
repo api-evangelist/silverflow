@@ -87,117 +87,201 @@ paths:
         '429':
           $ref: '#/components/responses/openapi_components-responses-TooManyRequestsError-2'
 components:
-  examples:
-    report-network-funds-transfers:
-      summary: Example of a Page of Network Funds Transfers
-      value:
-        networkFundsTransfers:
-        - key: nft-aTrKhISSAKrbPeEMHJQ5
-          cardNetwork: mastercard
-          reportingFor: '021010'
-          settlementService:
-            code: EU00000008
-            name: Settlement Bank, Frankfurt
-            currency: EUR
-          reported:
-            amount:
-              value: 800235
-              impact: credit
-              currency: EUR
-          fundsTransferBookDate: '2023-01-10'
-          fundsTransferDate: '2023-01-10'
-          created: '2023-01-09T07:15:57.272Z'
-          lastModified: '2023-01-09T12:23:45.008Z'
-          status: pending
-        - key: nft-v0P069tMYq8ivga5oaM6
-          cardNetwork: mastercard
-          reportingFor: '021010'
-          settlementService:
-            code: EU00000012
-            name: Settlement Bank, London
-            currency: GBP
-          reported:
-            amount:
-              value: 123235
-              impact: credit
-              currency: EUR
-          fundsTransferBookDate: '2023-01-10'
-          fundsTransferDate: '2023-01-10'
-          created: '2023-01-09T09:15:57.272Z'
-          lastModified: '2023-01-09T12:23:45.008Z'
-          status: completed
-        - key: nft-jv4Og3CCLwE4uph5PII8
-          cardNetwork: visa
-          reportingFor: '9000000001'
-          settlementService:
-            code: 080
-            name: Euro Area Net Settlement Service
-            currency: EUR
-          reported:
-            amount:
-              value: 442050
-              impact: credit
-              currency: EUR
-          fundsTransferBookDate: '2023-01-10'
-          fundsTransferDate: '2023-01-09'
-          created: '2023-01-09T08:05:57.272Z'
-          lastModified: '2023-01-09T12:23:45.008Z'
-          status: pending
-        - key: nft-p163R0xUx0HBuCUeVPTZ
-          cardNetwork: visa
-          reportingFor: '9000000002'
-          settlementService:
-            code: '001'
-            name: International Settlement Service
-            currency: NOK
-          reported:
-            amount:
-              value: 53200150
-              impact: credit
-              currency: NOK
-          fundsTransferBookDate: '2023-01-11'
-          fundsTransferDate: '2023-01-11'
-          created: '2023-01-09T08:25:57.272Z'
-          lastModified: '2023-01-09T12:23:45.008Z'
-          status: completed
-        moreItems: false
-    error-invalid-offset-token:
-      summary: Invalid offset token error
-      value:
-        status: 400
-        type: /silverflow/problems/invalid-offset-token
-        title: Invalid Offset Token
-        detail: The provided offset token is invalid.
-        instance: /silverflow/dbfaddea-8178-469a-bc23-c5af05a3fb48
-    report-network-funds-transfer:
-      summary: Example of a Network Funds Transfer
-      value:
-        key: nft-aTrKhISSAKrbPeEMHJQ5
-        cardNetwork: mastercard
-        reportingFor: '021010'
-        settlementService:
-          code: EU00000008
-          name: Settlement Bank, Frankfurt
-          currency: EUR
-        reported:
-          amount:
-            value: 800235
-            impact: credit
-            currency: EUR
-        fundsTransferBookDate: '2023-01-10'
-        fundsTransferDate: '2023-01-10'
-        created: '2023-01-09T07:15:57.272Z'
-        lastModified: '2023-01-09T12:23:45.008Z'
-        status: pending
-    error-bad-request:
-      summary: Generic bad request error
-      value:
-        status: 400
-        type: /silverflow/problems/bad-request
-        title: Bad Request
-        detail: The submitted request was syntactically or semantically invalid
-        instance: /silverflow/dbfaddea-8178-469a-bc23-c5af05a3fa00
+  responses:
+    openapi_components-responses-UnauthorizedError-3:
+      description: Authentication information is missing or invalid
+      headers:
+        WWW_Authenticate:
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            allOf:
+            - $ref: '#/components/schemas/openapi_components-schemas-ProblemDetail'
+            - type: object
+              properties:
+                type:
+                  enum:
+                  - /silverflow/problems/authentication-required
+                title:
+                  enum:
+                  - Authentication Required
+          example:
+            summary: Authentication Required Error
+            value:
+              status: 401
+              type: /silverflow/problems/authentication-required
+              title: Authentication Required
+              detail: Authentication Required
+              instance: /silverflow/RjLFu5Sund7ryJFNhZpFRGFsMzeuMym2BNoIxjvXTfxjtGZZlEpFnQ==
+    openapi_components-responses-TooManyRequestsError-2:
+      description: The number of requests (per minute) has exceeded the configured maximum
+      content:
+        application/json:
+          schema:
+            allOf:
+            - $ref: '#/components/schemas/openapi_components-schemas-ProblemDetail'
+            - type: object
+              properties:
+                type:
+                  enum:
+                  - /silverflow/problems/authentication-required
+                title:
+                  enum:
+                  - Authentication Required
+          example:
+            summary: Too many requests error
+            value:
+              status: 429
+              type: /silverflow/problems/too-many-requests
+              title: Too Many Requests
+              detail: The number of requests performed by the client has exceeded the configured maximum for a given period
+              instance: /silverflow/b68c4b1e-a40a-467f-afa3-095f8eb451d2
+    components-responses-BadRequestError:
+      description: The request was malformed. See the response body for details
+      content:
+        application/json:
+          schema:
+            oneOf:
+            - $ref: '#/components/schemas/GenericBadRequestError'
+            - $ref: '#/components/schemas/InvalidOffsetTokenError'
+          examples:
+            genericBadRequestError:
+              $ref: '#/components/examples/error-bad-request'
+            invalidOffsetTokenError:
+              $ref: '#/components/examples/error-invalid-offset-token'
+    openapi_components-responses-NotFoundError:
+      description: The requested resource was not found
+      content:
+        application/json:
+          schema:
+            allOf:
+            - $ref: '#/components/schemas/openapi_components-schemas-ProblemDetail'
+            - type: object
+              properties:
+                type:
+                  enum:
+                  - /silverflow/problems/not-found
+                title:
+                  enum:
+                  - Not Found
+          example:
+            summary: Not found error
+            value:
+              status: 404
+              type: /silverflow/problems/not-found
+              title: Not Found
+              detail: The entity referenced in the request could not be found
+              instance: /silverflow/3da2b6cf-b522-4c4a-891b-01514ba6c1c4
+    openapi_components-responses-ForbiddenError-2:
+      description: The authenticated client is forbidden to make the request for the resource identified.
+      content:
+        application/json:
+          schema:
+            allOf:
+            - $ref: '#/components/schemas/openapi_components-schemas-ProblemDetail'
+            - type: object
+              properties:
+                type:
+                  enum:
+                  - /silverflow/problems/forbidden
+                title:
+                  enum:
+                  - Forbidden
+          example:
+            summary: Forbidden error
+            value:
+              status: 403
+              type: /silverflow/problems/forbidden
+              title: Forbidden
+              detail: 'Authenticated user ''apk-33GjasQdWl4781OsErvi'' is missing the following permission(s): charges:Create.'
+              instance: /silverflow/b0451a9d-f66d-4ef7-9f5d-d48064a2bb3e
+  parameters:
+    sortOrder:
+      name: sortOrder
+      description: The sort order, __asc__ending or __desc__ending
+      in: query
+      required: false
+      schema:
+        type: string
+        enum:
+        - asc
+        - desc
+      example: desc
+    fundsTransferDatePath:
+      name: fundsTransferDate
+      description: Includes only items that have a funds transfer date _equal_ to the specified date
+      example: '2021-01-31'
+      in: path
+      required: true
+      schema:
+        type: string
+        format: date
+    networkFundsTransferKeyPath:
+      name: key
+      in: path
+      required: true
+      description: 'Uniquely identifies a networkFundsTransfer object.
+
+        '
+      schema:
+        $ref: '#/components/schemas/NetworkFundsTransferKey'
+    limit:
+      name: limit
+      description: The number of items to return
+      in: query
+      required: false
+      schema:
+        type: integer
+        format: int32
+        minimum: 1
+        maximum: 100
+        default: 10
+      example: 1
+    openapi_components-parameters-offsetToken-2:
+      name: offsetToken
+      description: The offset token. This token is returned in the response of previous request.
+      in: query
+      required: false
+      schema:
+        $ref: '#/components/schemas/requestOffsetToken'
   schemas:
+    InvalidOffsetTokenError:
+      allOf:
+      - $ref: '#/components/schemas/openapi_components-schemas-ProblemDetail'
+      - type: object
+        properties:
+          type:
+            enum:
+            - /silverflow/problems/invalid-offset-token
+          title:
+            enum:
+            - Invalid Offset Token
+    openapi_components-schemas-lastModified:
+      type: string
+      description: The date and time this object was last modified
+      format: date-time
+      readOnly: true
+    GenericBadRequestError:
+      allOf:
+      - $ref: '#/components/schemas/openapi_components-schemas-ProblemDetail'
+      - type: object
+        properties:
+          type:
+            enum:
+            - /silverflow/problems/bad-request
+          title:
+            enum:
+            - Bad Request
+    Reported:
+      type: object
+      description: The properties of the Funds Transfer as reported by the Card Network
+      required:
+      - amount
+      properties:
+        amount:
+          $ref: '#/components/schemas/ReportedAmount'
     openapi_components-schemas-currencyCode-5:
       type: string
       enum:
@@ -917,133 +1001,10 @@ components:
         description: Find more info here
         url: https://www.iso.org/iso-4217-currency-codes.html
       example: EUR
-    openapi_components-schemas-amountValue-3:
-      type: integer
-      format: int64
-      minimum: 0
-      maximum: 900000000
-      description: 'The amount in minor units. For example `$12.34` should be encoded as `1234`. Note that not all
-
-        currencies have 2 minor units; some have three or zero.
-
-        '
-    InvalidOffsetTokenError:
-      allOf:
-      - $ref: '#/components/schemas/openapi_components-schemas-ProblemDetail'
-      - type: object
-        properties:
-          type:
-            enum:
-            - /silverflow/problems/invalid-offset-token
-          title:
-            enum:
-            - Invalid Offset Token
-    ReportedAmount:
-      type: object
-      description: The Net Settlement Amount of the Funds Transfer as reported by the Card Network
-      required:
-      - value
-      - impact
-      - currency
-      properties:
-        value:
-          $ref: '#/components/schemas/fundsTransferAmountValue'
-        impact:
-          enum:
-          - credit
-          - debit
-        currency:
-          $ref: '#/components/schemas/openapi_components-schemas-currencyCode-5'
-    GenericBadRequestError:
-      allOf:
-      - $ref: '#/components/schemas/openapi_components-schemas-ProblemDetail'
-      - type: object
-        properties:
-          type:
-            enum:
-            - /silverflow/problems/bad-request
-          title:
-            enum:
-            - Bad Request
-    NetworkFundsTransferKey:
-      description: Uniquely identifies a networkFundsTransfer object
-      type: string
-      pattern: ^nft-[a-zA-Z0-9]+$
-      readOnly: true
-    openapi_components-schemas-created-2:
-      type: string
-      description: The date and time this object was created
-      format: date-time
-      readOnly: true
-    OpeningDebitBalance:
-      type: object
-      description: The opening debit balance of the account at the time of funds transfer.
-      required:
-      - value
-      - impact
-      - currency
-      properties:
-        value:
-          $ref: '#/components/schemas/openapi_components-schemas-amountValue-3'
-        impact:
-          enum:
-          - debit
-        currency:
-          $ref: '#/components/schemas/openapi_components-schemas-currencyCode-5'
     requestOffsetToken:
       type: string
       pattern: ^[a-zA-Z0-9%]+$
       description: The offset token. This token is returned in the response of previous request.
-    NetworkFundsTransfersPage:
-      type: object
-      required:
-      - networkFundsTransfers
-      - moreItems
-      properties:
-        networkFundsTransfers:
-          type: array
-          items:
-            $ref: '#/components/schemas/NetworkFundsTransfer'
-        moreItems:
-          type: boolean
-        offsetToken:
-          $ref: '#/components/schemas/responseOffsetToken'
-    Reported:
-      type: object
-      description: The properties of the Funds Transfer as reported by the Card Network
-      required:
-      - amount
-      properties:
-        amount:
-          $ref: '#/components/schemas/ReportedAmount'
-    reportingFor:
-      type: string
-      description: Identifier for which Settlement Information is reported by the Card Networks (Visa SRE, Mastercard ICA).
-    networkFundsTransfer_SettlementService:
-      type: object
-      description: The Settlement Service concerned
-      required:
-      - code
-      - name
-      - currency
-      properties:
-        code:
-          description: Unique code of settlement service
-          type: string
-        name:
-          description: Name of settlement service
-          type: string
-        currency:
-          $ref: '#/components/schemas/openapi_components-schemas-currencyCode-5'
-    fundsTransferAmountValue:
-      type: integer
-      format: int64
-      minimum: 0
-      description: 'The amount in minor units. For example `$12.34` should be encoded as `1234`. Note that not all
-
-        currencies have 2 minor units; some have three or zero.
-
-        '
     openapi_components-schemas-ProblemDetail:
       type: object
       description: 'The ''problem detail'' object relays detailed information about the error that occurred. It is defined
@@ -1100,12 +1061,58 @@ components:
 
             '
       additionalProperties: true
-    networkfundsTransferStatus:
+    reportingFor:
       type: string
-      description: The status of the networkFundsTransfer. When flagged as `pending` the networkFundsTransfer is expected to change in the future as a result of new reports coming in from the card scheme. When flagged as `completed` the networkFundsTransfer is final.
+      description: Identifier for which Settlement Information is reported by the Card Networks (Visa SRE, Mastercard ICA).
+    openapi_components-schemas-amountValue-3:
+      type: integer
+      format: int64
+      minimum: 0
+      maximum: 900000000
+      description: 'The amount in minor units. For example `$12.34` should be encoded as `1234`. Note that not all
+
+        currencies have 2 minor units; some have three or zero.
+
+        '
+    responseOffsetToken:
+      type: string
+      pattern: ^[a-zA-Z0-9%]+$
+      description: The offset token. Can be used to continue paginating in the next request.
+    NetworkFundsTransferKey:
+      description: Uniquely identifies a networkFundsTransfer object
+      type: string
+      pattern: ^nft-[a-zA-Z0-9]+$
+      readOnly: true
+    openapi_components-schemas-created-2:
+      type: string
+      description: The date and time this object was created
+      format: date-time
+      readOnly: true
+    openapi_components-schemas-cardNetwork:
+      type: string
+      description: The card network
       enum:
-      - completed
-      - pending
+      - mastercard
+      - visa
+      - bancontact
+      - american-express
+      - discover
+      example: mastercard
+    OpeningDebitBalance:
+      type: object
+      description: The opening debit balance of the account at the time of funds transfer.
+      required:
+      - value
+      - impact
+      - currency
+      properties:
+        value:
+          $ref: '#/components/schemas/openapi_components-schemas-amountValue-3'
+        impact:
+          enum:
+          - debit
+        currency:
+          $ref: '#/components/schemas/openapi_components-schemas-currencyCode-5'
     NetworkFundsTransfer:
       type: object
       required:
@@ -1147,184 +1154,177 @@ components:
           $ref: '#/components/schemas/networkfundsTransferStatus'
         openingDebitBalance:
           $ref: '#/components/schemas/OpeningDebitBalance'
-    openapi_components-schemas-lastModified:
-      type: string
-      description: The date and time this object was last modified
-      format: date-time
-      readOnly: true
-    openapi_components-schemas-cardNetwork:
-      type: string
-      description: The card network
-      enum:
-      - mastercard
-      - visa
-      - bancontact
-      - american-express
-      - discover
-      example: mastercard
-    responseOffsetToken:
-      type: string
-      pattern: ^[a-zA-Z0-9%]+$
-      description: The offset token. Can be used to continue paginating in the next request.
-  responses:
-    openapi_components-responses-NotFoundError:
-      description: The requested resource was not found
-      content:
-        application/json:
-          schema:
-            allOf:
-            - $ref: '#/components/schemas/openapi_components-schemas-ProblemDetail'
-            - type: object
-              properties:
-                type:
-                  enum:
-                  - /silverflow/problems/not-found
-                title:
-                  enum:
-                  - Not Found
-          example:
-            summary: Not found error
-            value:
-              status: 404
-              type: /silverflow/problems/not-found
-              title: Not Found
-              detail: The entity referenced in the request could not be found
-              instance: /silverflow/3da2b6cf-b522-4c4a-891b-01514ba6c1c4
-    openapi_components-responses-TooManyRequestsError-2:
-      description: The number of requests (per minute) has exceeded the configured maximum
-      content:
-        application/json:
-          schema:
-            allOf:
-            - $ref: '#/components/schemas/openapi_components-schemas-ProblemDetail'
-            - type: object
-              properties:
-                type:
-                  enum:
-                  - /silverflow/problems/authentication-required
-                title:
-                  enum:
-                  - Authentication Required
-          example:
-            summary: Too many requests error
-            value:
-              status: 429
-              type: /silverflow/problems/too-many-requests
-              title: Too Many Requests
-              detail: The number of requests performed by the client has exceeded the configured maximum for a given period
-              instance: /silverflow/b68c4b1e-a40a-467f-afa3-095f8eb451d2
-    components-responses-BadRequestError:
-      description: The request was malformed. See the response body for details
-      content:
-        application/json:
-          schema:
-            oneOf:
-            - $ref: '#/components/schemas/GenericBadRequestError'
-            - $ref: '#/components/schemas/InvalidOffsetTokenError'
-          examples:
-            genericBadRequestError:
-              $ref: '#/components/examples/error-bad-request'
-            invalidOffsetTokenError:
-              $ref: '#/components/examples/error-invalid-offset-token'
-    openapi_components-responses-ForbiddenError-2:
-      description: The authenticated client is forbidden to make the request for the resource identified.
-      content:
-        application/json:
-          schema:
-            allOf:
-            - $ref: '#/components/schemas/openapi_components-schemas-ProblemDetail'
-            - type: object
-              properties:
-                type:
-                  enum:
-                  - /silverflow/problems/forbidden
-                title:
-                  enum:
-                  - Forbidden
-          example:
-            summary: Forbidden error
-            value:
-              status: 403
-              type: /silverflow/problems/forbidden
-              title: Forbidden
-              detail: 'Authenticated user ''apk-33GjasQdWl4781OsErvi'' is missing the following permission(s): charges:Create.'
-              instance: /silverflow/b0451a9d-f66d-4ef7-9f5d-d48064a2bb3e
-    openapi_components-responses-UnauthorizedError-3:
-      description: Authentication information is missing or invalid
-      headers:
-        WWW_Authenticate:
-          schema:
-            type: string
-      content:
-        application/json:
-          schema:
-            allOf:
-            - $ref: '#/components/schemas/openapi_components-schemas-ProblemDetail'
-            - type: object
-              properties:
-                type:
-                  enum:
-                  - /silverflow/problems/authentication-required
-                title:
-                  enum:
-                  - Authentication Required
-          example:
-            summary: Authentication Required Error
-            value:
-              status: 401
-              type: /silverflow/problems/authentication-required
-              title: Authentication Required
-              detail: Authentication Required
-              instance: /silverflow/RjLFu5Sund7ryJFNhZpFRGFsMzeuMym2BNoIxjvXTfxjtGZZlEpFnQ==
-  parameters:
-    networkFundsTransferKeyPath:
-      name: key
-      in: path
-      required: true
-      description: 'Uniquely identifies a networkFundsTransfer object.
+    fundsTransferAmountValue:
+      type: integer
+      format: int64
+      minimum: 0
+      description: 'The amount in minor units. For example `$12.34` should be encoded as `1234`. Note that not all
+
+        currencies have 2 minor units; some have three or zero.
 
         '
-      schema:
-        $ref: '#/components/schemas/NetworkFundsTransferKey'
-    limit:
-      name: limit
-      description: The number of items to return
-      in: query
-      required: false
-      schema:
-        type: integer
-        format: int32
-        minimum: 1
-        maximum: 100
-        default: 10
-      example: 1
-    fundsTransferDatePath:
-      name: fundsTransferDate
-      description: Includes only items that have a funds transfer date _equal_ to the specified date
-      example: '2021-01-31'
-      in: path
-      required: true
-      schema:
-        type: string
-        format: date
-    openapi_components-parameters-offsetToken-2:
-      name: offsetToken
-      description: The offset token. This token is returned in the response of previous request.
-      in: query
-      required: false
-      schema:
-        $ref: '#/components/schemas/requestOffsetToken'
-    sortOrder:
-      name: sortOrder
-      description: The sort order, __asc__ending or __desc__ending
-      in: query
-      required: false
-      schema:
-        type: string
-        enum:
-        - asc
-        - desc
-      example: desc
+    networkfundsTransferStatus:
+      type: string
+      description: The status of the networkFundsTransfer. When flagged as `pending` the networkFundsTransfer is expected to change in the future as a result of new reports coming in from the card scheme. When flagged as `completed` the networkFundsTransfer is final.
+      enum:
+      - completed
+      - pending
+    ReportedAmount:
+      type: object
+      description: The Net Settlement Amount of the Funds Transfer as reported by the Card Network
+      required:
+      - value
+      - impact
+      - currency
+      properties:
+        value:
+          $ref: '#/components/schemas/fundsTransferAmountValue'
+        impact:
+          enum:
+          - credit
+          - debit
+        currency:
+          $ref: '#/components/schemas/openapi_components-schemas-currencyCode-5'
+    networkFundsTransfer_SettlementService:
+      type: object
+      description: The Settlement Service concerned
+      required:
+      - code
+      - name
+      - currency
+      properties:
+        code:
+          description: Unique code of settlement service
+          type: string
+        name:
+          description: Name of settlement service
+          type: string
+        currency:
+          $ref: '#/components/schemas/openapi_components-schemas-currencyCode-5'
+    NetworkFundsTransfersPage:
+      type: object
+      required:
+      - networkFundsTransfers
+      - moreItems
+      properties:
+        networkFundsTransfers:
+          type: array
+          items:
+            $ref: '#/components/schemas/NetworkFundsTransfer'
+        moreItems:
+          type: boolean
+        offsetToken:
+          $ref: '#/components/schemas/responseOffsetToken'
+  examples:
+    report-network-funds-transfers:
+      summary: Example of a Page of Network Funds Transfers
+      value:
+        networkFundsTransfers:
+        - key: nft-aTrKhISSAKrbPeEMHJQ5
+          cardNetwork: mastercard
+          reportingFor: '021010'
+          settlementService:
+            code: EU00000008
+            name: Settlement Bank, Frankfurt
+            currency: EUR
+          reported:
+            amount:
+              value: 800235
+              impact: credit
+              currency: EUR
+          fundsTransferBookDate: '2023-01-10'
+          fundsTransferDate: '2023-01-10'
+          created: '2023-01-09T07:15:57.272Z'
+          lastModified: '2023-01-09T12:23:45.008Z'
+          status: pending
+        - key: nft-v0P069tMYq8ivga5oaM6
+          cardNetwork: mastercard
+          reportingFor: '021010'
+          settlementService:
+            code: EU00000012
+            name: Settlement Bank, London
+            currency: GBP
+          reported:
+            amount:
+              value: 123235
+              impact: credit
+              currency: EUR
+          fundsTransferBookDate: '2023-01-10'
+          fundsTransferDate: '2023-01-10'
+          created: '2023-01-09T09:15:57.272Z'
+          lastModified: '2023-01-09T12:23:45.008Z'
+          status: completed
+        - key: nft-jv4Og3CCLwE4uph5PII8
+          cardNetwork: visa
+          reportingFor: '9000000001'
+          settlementService:
+            code: 080
+            name: Euro Area Net Settlement Service
+            currency: EUR
+          reported:
+            amount:
+              value: 442050
+              impact: credit
+              currency: EUR
+          fundsTransferBookDate: '2023-01-10'
+          fundsTransferDate: '2023-01-09'
+          created: '2023-01-09T08:05:57.272Z'
+          lastModified: '2023-01-09T12:23:45.008Z'
+          status: pending
+        - key: nft-p163R0xUx0HBuCUeVPTZ
+          cardNetwork: visa
+          reportingFor: '9000000002'
+          settlementService:
+            code: '001'
+            name: International Settlement Service
+            currency: NOK
+          reported:
+            amount:
+              value: 53200150
+              impact: credit
+              currency: NOK
+          fundsTransferBookDate: '2023-01-11'
+          fundsTransferDate: '2023-01-11'
+          created: '2023-01-09T08:25:57.272Z'
+          lastModified: '2023-01-09T12:23:45.008Z'
+          status: completed
+        moreItems: false
+    error-bad-request:
+      summary: Generic bad request error
+      value:
+        status: 400
+        type: /silverflow/problems/bad-request
+        title: Bad Request
+        detail: The submitted request was syntactically or semantically invalid
+        instance: /silverflow/dbfaddea-8178-469a-bc23-c5af05a3fa00
+    report-network-funds-transfer:
+      summary: Example of a Network Funds Transfer
+      value:
+        key: nft-aTrKhISSAKrbPeEMHJQ5
+        cardNetwork: mastercard
+        reportingFor: '021010'
+        settlementService:
+          code: EU00000008
+          name: Settlement Bank, Frankfurt
+          currency: EUR
+        reported:
+          amount:
+            value: 800235
+            impact: credit
+            currency: EUR
+        fundsTransferBookDate: '2023-01-10'
+        fundsTransferDate: '2023-01-10'
+        created: '2023-01-09T07:15:57.272Z'
+        lastModified: '2023-01-09T12:23:45.008Z'
+        status: pending
+    error-invalid-offset-token:
+      summary: Invalid offset token error
+      value:
+        status: 400
+        type: /silverflow/problems/invalid-offset-token
+        title: Invalid Offset Token
+        detail: The provided offset token is invalid.
+        instance: /silverflow/dbfaddea-8178-469a-bc23-c5af05a3fb48
   securitySchemes:
     ApiKey:
       description: "The primary method of authenticating to the Silverflow API is through API keys.\n\nAPI keys can be created by calling the [createApiKey](#operation/createApiKey) endpoint. You can create up to 40 API keys and also update and delete them, allowing for _credential rotation_.\n\nThe _Agent Activation_ process will generate an initial API Key for you. See [Activate Agent](#section/Getting-Started).\n\nA call to the [createApiKey](#operation/createApiKey) endpoint will return the following structure:\n\n```json\n{\n    \"key\": \"apk-1wtRxni5IsPsSpBLWpwr\",\n    \"status\": \"active\",\n    \"agentKey\": \"cgt-1wtRvFLIjDOyyUR5Q2LB\",\n    \"description\": \"Data lake API key\",\n    \"permissions\": [\n        \"charges:List\",\n        \"reports:All\"\n    ],\n    \"created\": \"2021-06-22T11:21:45.115Z\",\n    \"secret\": \"FWtnOOHAjbD6rNxWWEeVOCj7JXSEPGJQ\",\n    \"version\": 1\n}\n```\n\n> **Important:** The `secret` is only returned once in the response to the `createApiKey` call.\n\nOnce created, the `key` and `secret` fields from the API key must be used in the HTTP `Authorization` header using the `Basic` scheme.\nThe Basic scheme requires a **username** and **password** to be specified, separated by a `:` (colon) and Base64 encoded.\n\nUse the following values from the API key to construct a Basic authentication header:\n\n| Basic field | API key field | Example |\n| ----------- | ------------- | ------- |\n| username | `key` | `apk-1wtRxni5IsPsSpBLWpwr` |\n| password | `secret` | `FWtnOOHAjbD6rNxWWEeVOCj7JXSEPGJQ` |\n\nIn pseudo-code a valid HTTP Basic Authentication header would be constructed as follows:\n\n```ts\nconst apiKeyId = \"apk-1wtRxni5IsPsSpBLWpwr\";\nconst apiKeySecret = \"FWtnOOHAjbD6rNxWWEeVOCj7JXSEPGJQ\";\nconst authnValue = \"Basic \" + base64Encode(apiKeyId + \":\" + apiKeySecret);\nrequest.setHeader(\"Authorization\", authnValue);\n```\n\nUsing the values from the example a valid HTTP request would look like the following:\n\n```http\nGET /v1/agents/current HTTP/1.1\nAccept: application/json\nAuthorization: Basic YXBrLTF3dFJ4bmk1SXNQc1NwQkxXcHdyOkZXdG5PT0hBamJENnJOeFdXRWVWT0NqN0pYU0VQR0pR\n```\n\nMore information on the Basic scheme can be found in [RFC-7617 - The 'Basic' HTTP Authentication Scheme](https://datatracker.ietf.org/doc/html/rfc7617)."

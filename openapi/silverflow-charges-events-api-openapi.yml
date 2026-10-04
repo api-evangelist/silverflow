@@ -59,6 +59,147 @@ webhooks:
     - url: https://eu-west-1.api-sbx.silverflow.com/v1
       description: Sandbox URL - Equivalent to https://api-sbx.silverflow.co/v1
 components:
+  schemas:
+    ChargeActionEventDataVersion1_0:
+      type: object
+      description: The event data.
+      required:
+      - chargeKey
+      - actionKey
+      - actionType
+      properties:
+        chargeKey:
+          $ref: '#/components/schemas/openapi_components-schemas-chargeKey-2'
+        actionKey:
+          $ref: '#/components/schemas/openapi_components-schemas-actionKey'
+        actionType:
+          $ref: '#/components/schemas/actionType'
+    openapi_components-schemas-version-3:
+      type: string
+      description: The version of the spec.
+      pattern: ^[1-9]+.[0-9]+$
+      example: '1.0'
+    common_agentKey:
+      description: Uniquely identifies an Agent.
+      type: string
+      pattern: ^cgt-[a-zA-Z0-9]+$
+      readOnly: true
+      example: cgt-EFG67b4yPre23ZDrLX
+      title: agentKey
+    dataschema:
+      type: string
+      description: The event schema with the data version of the event.
+    openapi_components-schemas-actionKey:
+      description: Uniquely identifies an Action.
+      type: string
+      pattern: ^act-[a-zA-Z0-9]+$
+      minLength: 1
+      maxLength: 120
+      example: act-5oRIijJIHA8BstUy0dpd
+    time:
+      type: string
+      format: date-time
+      description: Date and time when the event was sent.
+    actionType:
+      description: The type of action that was created or updated.
+      type: string
+      enum:
+      - authorization
+      - reversal
+      - refund
+      - offline-refund
+      - clearing
+      - increment
+    PublicCloudEvent:
+      type: object
+      required:
+      - id
+      - source
+      - specversion
+      - type
+      - datacontenttype
+      - dataschema
+      - subject
+      - time
+      - agent
+      - data
+      properties:
+        id:
+          $ref: '#/components/schemas/eventId'
+        specversion:
+          allOf:
+          - description: The version of the current spec.
+          - enum:
+            - '1.0'
+          - $ref: '#/components/schemas/openapi_components-schemas-version-3'
+        datacontenttype:
+          $ref: '#/components/schemas/dataContentType'
+        dataschema:
+          $ref: '#/components/schemas/dataschema'
+        time:
+          $ref: '#/components/schemas/time'
+        agent:
+          $ref: '#/components/schemas/common_agentKey'
+    ChargeActionEventNotificationVersion1_0:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/PublicCloudEvent'
+      required:
+      - data
+      properties:
+        type:
+          $ref: '#/components/schemas/chargeActionEventType'
+        data:
+          $ref: '#/components/schemas/ChargeActionEventDataVersion1_0'
+        source:
+          allOf:
+          - $ref: '#/components/schemas/source'
+          - enum:
+            - https://silverflow.com/charges
+        specversion:
+          allOf:
+          - $ref: '#/components/schemas/openapi_components-schemas-version-3'
+          - enum:
+            - '1.0'
+        subject:
+          allOf:
+          - description: The subject key, which is the action `key`.
+          - $ref: '#/components/schemas/openapi_components-schemas-actionKey'
+        dataschema:
+          allOf:
+          - $ref: '#/components/schemas/dataschema'
+          - example: https://silverflow.com/schemas/events/charges/action/1.0
+          - enum:
+            - https://silverflow.com/schemas/events/charges/action/1.0
+    source:
+      type: string
+      description: Source system of the event.
+      pattern: ^https://silverflow.com/[a-zA-Z]+$
+    dataContentType:
+      type: string
+      description: The content type of the event.
+      enum:
+      - application/json
+    openapi_components-schemas-chargeKey-2:
+      description: Uniquely identifies a Charge.
+      type: string
+      pattern: ^chg-[a-zA-Z0-9]+$
+      minLength: 1
+      maxLength: 120
+      readOnly: false
+      example: chg-1e1dAHhgstYTUhlphPzZ
+    eventId:
+      type: string
+      description: Uniquely identifies an event.
+      pattern: ^evt-[a-zA-Z0-9]+$
+      minLength: 5
+      maxLength: 120
+      example: evt-1e1dAHhgstYTUhlphPzZ
+    chargeActionEventType:
+      type: string
+      description: The event type.
+      enum:
+      - com.silverflow.charges.action
   examples:
     increment:
       summary: Charge action event for an increment
@@ -76,22 +217,6 @@ components:
         datacontenttype: application/json
         time: '2026-02-03T10:30:17.234Z'
         agent: cgt-1MQQgZdQ2bB3CJTdZH7f
-    refund:
-      summary: Charge action event for a refund
-      value:
-        type: com.silverflow.charges.action
-        data:
-          chargeKey: chg-5oRIiaZi9oRQi7dlN5Yi
-          actionKey: act-3nLRoKw5xDdStXuZ4jMg
-          actionType: refund
-        source: https://silverflow.com/charges
-        specversion: '1.0'
-        subject: act-3nLRoKw5xDdStXuZ4jMg
-        dataschema: https://silverflow.com/schemas/events/charges/action/1.0
-        id: evt-3g3fCJ2iuvAVWjnrjRbB
-        datacontenttype: application/json
-        time: '2026-02-03T10:22:05.456Z'
-        agent: cgt-1MQQgZdQ2bB3CJTdZH7f
     reversal:
       summary: Charge action event for a reversal
       value:
@@ -107,22 +232,6 @@ components:
         id: evt-2f2eBI1htuZUVimqiQaA
         datacontenttype: application/json
         time: '2026-02-03T10:20:12.123Z'
-        agent: cgt-1MQQgZdQ2bB3CJTdZH7f
-    authorization:
-      summary: Charge action event for an authorization
-      value:
-        type: com.silverflow.charges.action
-        data:
-          chargeKey: chg-5oRIiaZi9oRQi7dlN5Yi
-          actionKey: act-5oRIijJIHA8BstUy0dpd
-          actionType: authorization
-        source: https://silverflow.com/charges
-        specversion: '1.0'
-        subject: act-5oRIijJIHA8BstUy0dpd
-        dataschema: https://silverflow.com/schemas/events/charges/action/1.0
-        id: evt-1e1dAHhgstYTUhlphPzZ
-        datacontenttype: application/json
-        time: '2026-02-03T10:18:43.566Z'
         agent: cgt-1MQQgZdQ2bB3CJTdZH7f
     clearing:
       summary: Charge action event for a clearing
@@ -156,147 +265,38 @@ components:
         datacontenttype: application/json
         time: '2026-02-03T10:25:33.789Z'
         agent: cgt-1MQQgZdQ2bB3CJTdZH7f
-  schemas:
-    ChargeActionEventDataVersion1_0:
-      type: object
-      description: The event data.
-      required:
-      - chargeKey
-      - actionKey
-      - actionType
-      properties:
-        chargeKey:
-          $ref: '#/components/schemas/openapi_components-schemas-chargeKey-2'
-        actionKey:
-          $ref: '#/components/schemas/openapi_components-schemas-actionKey'
-        actionType:
-          $ref: '#/components/schemas/actionType'
-    source:
-      type: string
-      description: Source system of the event.
-      pattern: ^https://silverflow.com/[a-zA-Z]+$
-    ChargeActionEventNotificationVersion1_0:
-      type: object
-      allOf:
-      - $ref: '#/components/schemas/PublicCloudEvent'
-      required:
-      - data
-      properties:
-        type:
-          $ref: '#/components/schemas/chargeActionEventType'
+    authorization:
+      summary: Charge action event for an authorization
+      value:
+        type: com.silverflow.charges.action
         data:
-          $ref: '#/components/schemas/ChargeActionEventDataVersion1_0'
-        source:
-          allOf:
-          - $ref: '#/components/schemas/source'
-          - enum:
-            - https://silverflow.com/charges
-        specversion:
-          allOf:
-          - $ref: '#/components/schemas/openapi_components-schemas-version-3'
-          - enum:
-            - '1.0'
-        subject:
-          allOf:
-          - description: The subject key, which is the action `key`.
-          - $ref: '#/components/schemas/openapi_components-schemas-actionKey'
-        dataschema:
-          allOf:
-          - $ref: '#/components/schemas/dataschema'
-          - example: https://silverflow.com/schemas/events/charges/action/1.0
-          - enum:
-            - https://silverflow.com/schemas/events/charges/action/1.0
-    actionType:
-      description: The type of action that was created or updated.
-      type: string
-      enum:
-      - authorization
-      - reversal
-      - refund
-      - offline-refund
-      - clearing
-      - increment
-    dataschema:
-      type: string
-      description: The event schema with the data version of the event.
-    openapi_components-schemas-version-3:
-      type: string
-      description: The version of the spec.
-      pattern: ^[1-9]+.[0-9]+$
-      example: '1.0'
-    PublicCloudEvent:
-      type: object
-      required:
-      - id
-      - source
-      - specversion
-      - type
-      - datacontenttype
-      - dataschema
-      - subject
-      - time
-      - agent
-      - data
-      properties:
-        id:
-          $ref: '#/components/schemas/eventId'
-        specversion:
-          allOf:
-          - description: The version of the current spec.
-          - enum:
-            - '1.0'
-          - $ref: '#/components/schemas/openapi_components-schemas-version-3'
-        datacontenttype:
-          $ref: '#/components/schemas/dataContentType'
-        dataschema:
-          $ref: '#/components/schemas/dataschema'
-        time:
-          $ref: '#/components/schemas/time'
-        agent:
-          $ref: '#/components/schemas/common_agentKey'
-    eventId:
-      type: string
-      description: Uniquely identifies an event.
-      pattern: ^evt-[a-zA-Z0-9]+$
-      minLength: 5
-      maxLength: 120
-      example: evt-1e1dAHhgstYTUhlphPzZ
-    openapi_components-schemas-chargeKey-2:
-      description: Uniquely identifies a Charge.
-      type: string
-      pattern: ^chg-[a-zA-Z0-9]+$
-      minLength: 1
-      maxLength: 120
-      readOnly: false
-      example: chg-1e1dAHhgstYTUhlphPzZ
-    openapi_components-schemas-actionKey:
-      description: Uniquely identifies an Action.
-      type: string
-      pattern: ^act-[a-zA-Z0-9]+$
-      minLength: 1
-      maxLength: 120
-      example: act-5oRIijJIHA8BstUy0dpd
-    common_agentKey:
-      description: Uniquely identifies an Agent.
-      type: string
-      pattern: ^cgt-[a-zA-Z0-9]+$
-      readOnly: true
-      example: cgt-EFG67b4yPre23ZDrLX
-      title: agentKey
-    time:
-      type: string
-      format: date-time
-      description: Date and time when the event was sent.
-    chargeActionEventType:
-      type: string
-      description: The event type.
-      enum:
-      - com.silverflow.charges.action
-    dataContentType:
-      type: string
-      description: The content type of the event.
-      enum:
-      - application/json
+          chargeKey: chg-5oRIiaZi9oRQi7dlN5Yi
+          actionKey: act-5oRIijJIHA8BstUy0dpd
+          actionType: authorization
+        source: https://silverflow.com/charges
+        specversion: '1.0'
+        subject: act-5oRIijJIHA8BstUy0dpd
+        dataschema: https://silverflow.com/schemas/events/charges/action/1.0
+        id: evt-1e1dAHhgstYTUhlphPzZ
+        datacontenttype: application/json
+        time: '2026-02-03T10:18:43.566Z'
+        agent: cgt-1MQQgZdQ2bB3CJTdZH7f
+    refund:
+      summary: Charge action event for a refund
+      value:
+        type: com.silverflow.charges.action
+        data:
+          chargeKey: chg-5oRIiaZi9oRQi7dlN5Yi
+          actionKey: act-3nLRoKw5xDdStXuZ4jMg
+          actionType: refund
+        source: https://silverflow.com/charges
+        specversion: '1.0'
+        subject: act-3nLRoKw5xDdStXuZ4jMg
+        dataschema: https://silverflow.com/schemas/events/charges/action/1.0
+        id: evt-3g3fCJ2iuvAVWjnrjRbB
+        datacontenttype: application/json
+        time: '2026-02-03T10:22:05.456Z'
+        agent: cgt-1MQQgZdQ2bB3CJTdZH7f
   securitySchemes:
     ApiKey:
       description: "The primary method of authenticating to the Silverflow API is through API keys.\n\nAPI keys can be created by calling the [createApiKey](#operation/createApiKey) endpoint. You can create up to 40 API keys and also update and delete them, allowing for _credential rotation_.\n\nThe _Agent Activation_ process will generate an initial API Key for you. See [Activate Agent](#section/Getting-Started).\n\nA call to the [createApiKey](#operation/createApiKey) endpoint will return the following structure:\n\n```json\n{\n    \"key\": \"apk-1wtRxni5IsPsSpBLWpwr\",\n    \"status\": \"active\",\n    \"agentKey\": \"cgt-1wtRvFLIjDOyyUR5Q2LB\",\n    \"description\": \"Data lake API key\",\n    \"permissions\": [\n        \"charges:List\",\n        \"reports:All\"\n    ],\n    \"created\": \"2021-06-22T11:21:45.115Z\",\n    \"secret\": \"FWtnOOHAjbD6rNxWWEeVOCj7JXSEPGJQ\",\n    \"version\": 1\n}\n```\n\n> **Important:** The `secret` is only returned once in the response to the `createApiKey` call.\n\nOnce created, the `key` and `secret` fields from the API key must be used in the HTTP `Authorization` header using the `Basic` scheme.\nThe Basic scheme requires a **username** and **password** to be specified, separated by a `:` (colon) and Base64 encoded.\n\nUse the following values from the API key to construct a Basic authentication header:\n\n| Basic field | API key field | Example |\n| ----------- | ------------- | ------- |\n| username | `key` | `apk-1wtRxni5IsPsSpBLWpwr` |\n| password | `secret` | `FWtnOOHAjbD6rNxWWEeVOCj7JXSEPGJQ` |\n\nIn pseudo-code a valid HTTP Basic Authentication header would be constructed as follows:\n\n```ts\nconst apiKeyId = \"apk-1wtRxni5IsPsSpBLWpwr\";\nconst apiKeySecret = \"FWtnOOHAjbD6rNxWWEeVOCj7JXSEPGJQ\";\nconst authnValue = \"Basic \" + base64Encode(apiKeyId + \":\" + apiKeySecret);\nrequest.setHeader(\"Authorization\", authnValue);\n```\n\nUsing the values from the example a valid HTTP request would look like the following:\n\n```http\nGET /v1/agents/current HTTP/1.1\nAccept: application/json\nAuthorization: Basic YXBrLTF3dFJ4bmk1SXNQc1NwQkxXcHdyOkZXdG5PT0hBamJENnJOeFdXRWVWT0NqN0pYU0VQR0pR\n```\n\nMore information on the Basic scheme can be found in [RFC-7617 - The 'Basic' HTTP Authentication Scheme](https://datatracker.ietf.org/doc/html/rfc7617)."

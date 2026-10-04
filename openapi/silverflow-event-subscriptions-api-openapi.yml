@@ -188,71 +188,7 @@ paths:
         '429':
           $ref: '#/components/responses/TooManyRequestsError'
 components:
-  parameters:
-    eventSubscriptionKey:
-      name: eventSubscriptionKey
-      description: 'Uniquely identifies an Event Subscription.
-
-        '
-      in: path
-      required: true
-      schema:
-        $ref: '#/components/schemas/eventSubscriptionKey'
-    offsetToken:
-      name: offsetToken
-      description: The offset token. This token is returned in the response of previous request.
-      in: query
-      required: false
-      schema:
-        $ref: '#/components/schemas/offsetToken'
-    limit:
-      name: limit
-      description: The number of items to return
-      in: query
-      required: false
-      schema:
-        type: integer
-        format: int32
-        minimum: 1
-        maximum: 100
-        default: 10
-      example: 1
-    sortOrder:
-      name: sortOrder
-      description: The sort order, __asc__ending or __desc__ending
-      in: query
-      required: false
-      schema:
-        type: string
-        enum:
-        - asc
-        - desc
-      example: desc
   responses:
-    TooManyRequestsError:
-      description: The number of requests (per minute) has exceeded the configured maximum
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ProblemDetail'
-          example:
-            type: /silverflow/problems/too-many-requests
-            title: Too Many Requests
-            status: 429
-            detail: You have exceeded the rate limit. Please try again after the specified delay.
-            instance: /silverflow/b0451a9d-f66d-4ef7-9f5d-d48064a2bb3e
-    NotFoundError:
-      description: The requested resource was not found
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ProblemDetail'
-          example:
-            type: https://datatracker.ietf.org/doc/html/rfc2616#section-10.4.5
-            title: Not Found
-            status: 404
-            detail: The entity referenced in the request could not be found
-            instance: https://api.silverflow.co/v1/merchants/mct-1hPdFqhgstYTUhlphPDp
     PreconditionFailedError:
       description: The conditions specified in the HTTP headers of the request were not met.
       content:
@@ -265,6 +201,42 @@ components:
             status: 412
             title: Precondition Failed
             type: /silverflow/problems/precondition-failed
+    TooManyRequestsError:
+      description: The number of requests (per minute) has exceeded the configured maximum
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ProblemDetail'
+          example:
+            type: /silverflow/problems/too-many-requests
+            title: Too Many Requests
+            status: 429
+            detail: You have exceeded the rate limit. Please try again after the specified delay.
+            instance: /silverflow/b0451a9d-f66d-4ef7-9f5d-d48064a2bb3e
+    ForbiddenError:
+      description: The authenticated client is forbidden to make the request for the resource identified.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ProblemDetail'
+          example:
+            type: https://datatracker.ietf.org/doc/html/rfc2616#section-10.4.4
+            title: Forbidden
+            status: 403
+            detail: The server is refusing to execute the request for the current authenticated user
+            instance: https://api.silverflow.co/v1/merchants/mct-1hPdFqhgstYTUhlphPDp
+    NotFoundError:
+      description: The requested resource was not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ProblemDetail'
+          example:
+            type: https://datatracker.ietf.org/doc/html/rfc2616#section-10.4.5
+            title: Not Found
+            status: 404
+            detail: The entity referenced in the request could not be found
+            instance: https://api.silverflow.co/v1/merchants/mct-1hPdFqhgstYTUhlphPDp
     BadRequestError:
       description: The request was malformed. See the response body for details
       content:
@@ -280,18 +252,6 @@ components:
             validationErrors:
             - instancePath: /tags/0/businessId
               message: must not be longer than 255 characters
-    ForbiddenError:
-      description: The authenticated client is forbidden to make the request for the resource identified.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ProblemDetail'
-          example:
-            type: https://datatracker.ietf.org/doc/html/rfc2616#section-10.4.4
-            title: Forbidden
-            status: 403
-            detail: The server is refusing to execute the request for the current authenticated user
-            instance: https://api.silverflow.co/v1/merchants/mct-1hPdFqhgstYTUhlphPDp
     UnauthorizedError:
       description: Authentication information is missing or invalid
       headers:
@@ -308,69 +268,27 @@ components:
             status: 401
             detail: The credentials supplied in the request are either missing, invalid, or not applicable in the current scope
   schemas:
-    EventSubscriptionsPage:
-      allOf:
-      - $ref: '#/components/schemas/Page'
-      - type: object
-        required:
-        - eventSubscriptions
-        properties:
-          eventSubscriptions:
-            type: array
-            items:
-              $ref: '#/components/schemas/EventSubscription'
-    Page:
-      type: object
-      properties:
-        offsetToken:
-          $ref: '#/components/schemas/offsetToken'
-        moreItems:
-          $ref: '#/components/schemas/moreItems'
-    EventSubscriptionCreate:
-      type: object
-      required:
-      - eventSource
-      - targetUrl
-      additionalProperties: false
-      properties:
-        description:
-          $ref: '#/components/schemas/FreeTextField'
-        eventSource:
-          $ref: '#/components/schemas/eventSourceRequest'
-        targetUrl:
-          $ref: '#/components/schemas/url'
+    offsetToken:
+      type: string
+      pattern: ^[a-zA-Z0-9%]+$
+      minLength: 1
+      maxLength: 2048
+    lastModified:
+      type: string
+      description: The date and time this object was last modified
+      format: date-time
+    eventSubscriptionKey:
+      type: string
+      pattern: ^sub-[a-zA-Z0-9]+$
+      minLength: 5
+      maxLength: 120
+      example: sub-NafdfrdPMf2XrS21r1d
     url:
       type: string
       description: A valid URL
       pattern: ^http(s)?:\/\/[a-z0-9-_]+(\.[a-z0-9-_]+)+(\/.*)?$
       minLength: 8
       maxLength: 2048
-    EventSubscriptionMergeUpdate:
-      type: object
-      additionalProperties: false
-      properties:
-        description:
-          $ref: '#/components/schemas/FreeTextField'
-        targetUrl:
-          $ref: '#/components/schemas/url'
-    FreeTextField:
-      type: string
-      pattern: ^[\w +=.,:;!?$@()-]+$
-      minLength: 1
-      maxLength: 160
-    moreItems:
-      type: boolean
-    offsetToken:
-      type: string
-      pattern: ^[a-zA-Z0-9%]+$
-      minLength: 1
-      maxLength: 2048
-    eventSubscriptionStatus:
-      type: string
-      description: The status of the Event Subscription
-      enum:
-      - active
-      - archived
     EventSubscription:
       type: object
       required:
@@ -413,37 +331,6 @@ components:
         targetUrl: https://my.server.com/events/disputes
         created: '2025-04-22T12:26:34.341Z'
         version: 1
-    eventSourceRequest:
-      type: string
-      enum:
-      - https://silverflow.com/charges
-      - https://silverflow.com/clearing
-      - https://silverflow.com/complianceCases
-      - https://silverflow.com/currencyRates
-      - https://silverflow.com/disputes
-      - https://silverflow.com/documents
-      - https://silverflow.com/enrollments
-      - https://silverflow.com/fraudNotifications
-      - https://silverflow.com/networkTokens
-      - https://silverflow.com/processorTokens
-      - https://silverflow.com/reconciliation
-      - https://silverflow.com/reports
-      - https://silverflow.com/distributions
-      - https://silverflow.com/ammfSubmissions
-    created:
-      type: string
-      description: The date and time this object was created
-      format: date-time
-    lastModified:
-      type: string
-      description: The date and time this object was last modified
-      format: date-time
-    eventSubscriptionKey:
-      type: string
-      pattern: ^sub-[a-zA-Z0-9]+$
-      minLength: 5
-      maxLength: 120
-      example: sub-NafdfrdPMf2XrS21r1d
     ProblemDetail:
       type: object
       description: 'The ''problem detail'' object relays detailed information about the error that occurred. It is defined
@@ -499,48 +386,10 @@ components:
 
             '
       additionalProperties: true
-    agentKey:
-      description: Uniquely identifies an Agent
-      type: string
-      pattern: ^cgt-[a-zA-Z0-9]+|current$
-      example: cgt-1UF2NafdfrdPMf2XrS2
-    PreconditionFailedProblemDetail:
-      type: object
-      required:
-      - type
-      - title
-      - status
-      - detail
-      - instance
-      properties:
-        type:
-          type: string
-          enum:
-          - /silverflow/problems/precondition-failed
-        title:
-          type: string
-          enum:
-          - Precondition Failed
-        status:
-          type: integer
-          enum:
-          - 412
-        detail:
-          type: string
-          description: 'A human readable explanation specific to this occurrence of the
-
-            problem.
-
-            '
-          example: Connection to database timed out
-        instance:
-          type: string
-          description: 'An absolute URI that identifies the specific occurrence of the problem.
-
-            It may or may not yield further information if dereferenced.
-
-            '
-      additionalProperties: false
+    version:
+      type: integer
+      description: The version of this object
+      format: int64
     BadRequestProblemDetail:
       description: 'A ''problem detail'' object for Bad Request (400) errors. Extends the base ProblemDetail
 
@@ -608,10 +457,161 @@ components:
                     description: The validation error message
                     example: must be at most 15 characters
         additionalProperties: false
-    version:
-      type: integer
-      description: The version of this object
-      format: int64
+    EventSubscriptionCreate:
+      type: object
+      required:
+      - eventSource
+      - targetUrl
+      additionalProperties: false
+      properties:
+        description:
+          $ref: '#/components/schemas/FreeTextField'
+        eventSource:
+          $ref: '#/components/schemas/eventSourceRequest'
+        targetUrl:
+          $ref: '#/components/schemas/url'
+    created:
+      type: string
+      description: The date and time this object was created
+      format: date-time
+    Page:
+      type: object
+      properties:
+        offsetToken:
+          $ref: '#/components/schemas/offsetToken'
+        moreItems:
+          $ref: '#/components/schemas/moreItems'
+    FreeTextField:
+      type: string
+      pattern: ^[\w +=.,:;!?$@()-]+$
+      minLength: 1
+      maxLength: 160
+    PreconditionFailedProblemDetail:
+      type: object
+      required:
+      - type
+      - title
+      - status
+      - detail
+      - instance
+      properties:
+        type:
+          type: string
+          enum:
+          - /silverflow/problems/precondition-failed
+        title:
+          type: string
+          enum:
+          - Precondition Failed
+        status:
+          type: integer
+          enum:
+          - 412
+        detail:
+          type: string
+          description: 'A human readable explanation specific to this occurrence of the
+
+            problem.
+
+            '
+          example: Connection to database timed out
+        instance:
+          type: string
+          description: 'An absolute URI that identifies the specific occurrence of the problem.
+
+            It may or may not yield further information if dereferenced.
+
+            '
+      additionalProperties: false
+    EventSubscriptionsPage:
+      allOf:
+      - $ref: '#/components/schemas/Page'
+      - type: object
+        required:
+        - eventSubscriptions
+        properties:
+          eventSubscriptions:
+            type: array
+            items:
+              $ref: '#/components/schemas/EventSubscription'
+    EventSubscriptionMergeUpdate:
+      type: object
+      additionalProperties: false
+      properties:
+        description:
+          $ref: '#/components/schemas/FreeTextField'
+        targetUrl:
+          $ref: '#/components/schemas/url'
+    agentKey:
+      description: Uniquely identifies an Agent
+      type: string
+      pattern: ^cgt-[a-zA-Z0-9]+|current$
+      example: cgt-1UF2NafdfrdPMf2XrS2
+    eventSubscriptionStatus:
+      type: string
+      description: The status of the Event Subscription
+      enum:
+      - active
+      - archived
+    eventSourceRequest:
+      type: string
+      enum:
+      - https://silverflow.com/charges
+      - https://silverflow.com/clearing
+      - https://silverflow.com/complianceCases
+      - https://silverflow.com/currencyRates
+      - https://silverflow.com/disputes
+      - https://silverflow.com/documents
+      - https://silverflow.com/enrollments
+      - https://silverflow.com/fraudNotifications
+      - https://silverflow.com/networkTokens
+      - https://silverflow.com/processorTokens
+      - https://silverflow.com/reconciliation
+      - https://silverflow.com/reports
+      - https://silverflow.com/distributions
+      - https://silverflow.com/ammfSubmissions
+    moreItems:
+      type: boolean
+  parameters:
+    sortOrder:
+      name: sortOrder
+      description: The sort order, __asc__ending or __desc__ending
+      in: query
+      required: false
+      schema:
+        type: string
+        enum:
+        - asc
+        - desc
+      example: desc
+    offsetToken:
+      name: offsetToken
+      description: The offset token. This token is returned in the response of previous request.
+      in: query
+      required: false
+      schema:
+        $ref: '#/components/schemas/offsetToken'
+    limit:
+      name: limit
+      description: The number of items to return
+      in: query
+      required: false
+      schema:
+        type: integer
+        format: int32
+        minimum: 1
+        maximum: 100
+        default: 10
+      example: 1
+    eventSubscriptionKey:
+      name: eventSubscriptionKey
+      description: 'Uniquely identifies an Event Subscription.
+
+        '
+      in: path
+      required: true
+      schema:
+        $ref: '#/components/schemas/eventSubscriptionKey'
   examples:
     create-event-subscription-dispute-events:
       summary: Example request creating an Event Subscription to receive Dispute event notifications on https://my.server.com/events/disputes
