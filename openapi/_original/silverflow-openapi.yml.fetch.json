@@ -1,0 +1,12 @@
+{
+ "url": "https://docs.silverflow.com/apidocs/latest/openapi.yml",
+ "requested_url": "https://docs.silverflow.com/apidocs/latest/openapi.yml",
+ "status": 200,
+ "content_type": "text/yaml; charset=UTF-8",
+ "bytes": 2161542,
+ "sha256": "0bcc409fc5800273b82b2447e6c2702d9f1c32c2f5f3aa74bec03c14517090a0",
+ "fetched_at": "2026-10-04",
+ "fetched_by": "APIEvangelist-Harvest/1.0 (+https://apievangelist.com)",
+ "match": "equivalent",
+ "note": "Re-fetched from the provider by verify-openapi-sources.py; the provider's current document describes the same operations (Jaccard 0.965), but the bytes differ, so the archive is an earlier or reformatted copy."
+}
