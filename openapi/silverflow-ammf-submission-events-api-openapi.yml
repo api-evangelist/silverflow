@@ -100,16 +100,24 @@ webhooks:
       description: Sandbox URL - Equivalent to https://api-sbx.silverflow.co/v1
 components:
   schemas:
-    common_agentKey:
-      description: Uniquely identifies an Agent.
+    ammfSubmissionKey:
+      description: Uniquely identifies a Ammf Submission entity
       type: string
-      pattern: ^cgt-[a-zA-Z0-9]+$
-      readOnly: true
-      example: cgt-EFG67b4yPre23ZDrLX
-      title: agentKey
-    dataschema:
+      pattern: ^asm-[a-zA-Z0-9]+$
+      example: asm-9RxdinkqFqJxAq2fZadf
+    dataContentType:
       type: string
-      description: The event schema with the data version of the event.
+      description: The content type of the event.
+      enum:
+      - application/json
+    AmmfSubmissionRejectedEventNotification1_0:
+      allOf:
+      - type: object
+        properties:
+          type:
+            enum:
+            - com.silverflow.ammfSubmissions.rejected
+      - $ref: '#/components/schemas/AmmfSubmissionEventNotification1_0'
     AmmfSubmissionSubmittedEventNotification1_0:
       allOf:
       - type: object
@@ -118,36 +126,18 @@ components:
             enum:
             - com.silverflow.ammfSubmissions.submitted
       - $ref: '#/components/schemas/AmmfSubmissionEventNotification1_0'
-    ammfSubmissionKey:
-      description: Uniquely identifies a Ammf Submission entity
-      type: string
-      pattern: ^asm-[a-zA-Z0-9]+$
-      example: asm-9RxdinkqFqJxAq2fZadf
-    AmmfSubmissionEventNotificationData1_0:
-      type: object
-      description: The event data.
-      required:
-      - key
-      - reportKey
-      - submittedFileName
-      properties:
-        key:
-          $ref: '#/components/schemas/ammfSubmissionKey'
-        reportKey:
-          $ref: '#/components/schemas/schemas-reportKey'
-        submittedFileName:
-          type: string
-          description: The name of the submitted file
-          example: AMMF_A123456_D20250630_S001.xlsx
-    time:
-      type: string
-      format: date-time
-      description: Date and time when the event was sent.
     schemas-reportKey:
       description: Uniquely identifies a report object
       type: string
       pattern: ^rep-[a-zA-Z0-9]+$
       example: rep-1e1dAHhgstYTUhlphPzZ
+    eventId:
+      type: string
+      description: Uniquely identifies an event.
+      pattern: ^evt-[a-zA-Z0-9]+$
+      minLength: 5
+      maxLength: 120
+      example: evt-1e1dAHhgstYTUhlphPzZ
     source:
       type: string
       description: Source system of the event.
@@ -181,31 +171,49 @@ components:
           - example: https://silverflow.com/schemas/events/ammfSubmissions/1.0
           - enum:
             - https://silverflow.com/schemas/events/ammfSubmissions/1.0
-    openapi_components-schemas-version-3:
+    time:
       type: string
-      description: The version of the spec.
-      pattern: ^[1-9]+.[0-9]+$
-      example: '1.0'
-    dataContentType:
-      type: string
-      description: The content type of the event.
-      enum:
-      - application/json
-    AmmfSubmissionRejectedEventNotification1_0:
+      format: date-time
+      description: Date and time when the event was sent.
+    AmmfSubmissionEventNotificationData1_0:
+      type: object
+      description: The event data.
+      required:
+      - key
+      - reportKey
+      - submittedFileName
+      properties:
+        key:
+          $ref: '#/components/schemas/ammfSubmissionKey'
+        reportKey:
+          $ref: '#/components/schemas/schemas-reportKey'
+        submittedFileName:
+          type: string
+          description: The name of the submitted file
+          example: AMMF_A123456_D20250630_S001.xlsx
+    AmmfSubmissionApprovedEventNotification1_0:
       allOf:
       - type: object
         properties:
           type:
             enum:
-            - com.silverflow.ammfSubmissions.rejected
+            - com.silverflow.ammfSubmissions.approved
       - $ref: '#/components/schemas/AmmfSubmissionEventNotification1_0'
-    eventId:
+    dataschema:
       type: string
-      description: Uniquely identifies an event.
-      pattern: ^evt-[a-zA-Z0-9]+$
-      minLength: 5
-      maxLength: 120
-      example: evt-1e1dAHhgstYTUhlphPzZ
+      description: The event schema with the data version of the event.
+    openapi_components-schemas-version-3:
+      type: string
+      description: The version of the spec.
+      pattern: ^[1-9]+.[0-9]+$
+      example: '1.0'
+    common_agentKey:
+      description: Uniquely identifies an Agent.
+      type: string
+      pattern: ^cgt-[a-zA-Z0-9]+$
+      readOnly: true
+      example: cgt-EFG67b4yPre23ZDrLX
+      title: agentKey
     PublicCloudEvent:
       type: object
       required:
@@ -236,27 +244,19 @@ components:
           $ref: '#/components/schemas/time'
         agent:
           $ref: '#/components/schemas/common_agentKey'
-    AmmfSubmissionApprovedEventNotification1_0:
-      allOf:
-      - type: object
-        properties:
-          type:
-            enum:
-            - com.silverflow.ammfSubmissions.approved
-      - $ref: '#/components/schemas/AmmfSubmissionEventNotification1_0'
   examples:
-    ammf-submission-submitted:
-      summary: AMMF Submission Submitted
+    ammf-submission-approved:
+      summary: AMMF Submission Approved
       value:
         id: evt-1e1dAHhgstYTUhlphPzZ
-        type: com.silverflow.ammfSubmissions.submitted
+        type: com.silverflow.ammfSubmissions.approved
         agent: cgt-EFG67b4yPre23ZDrLX
         datacontenttype: application/json
         dataschema: https://silverflow.com/schemas/events/ammfSubmissions/1.0
         source: https://silverflow.com/ammfSubmissions
         specversion: '1.0'
         subject: asm-9RxdinkqFqJxAq2fZadf
-        time: '2025-12-11T08:50:42.264Z'
+        time: '2025-12-12T08:50:42.264Z'
         data:
           key: asm-9RxdinkqFqJxAq2fZadf
           reportKey: rep-1e1dAHhgstYTUhlphPzZ
@@ -277,18 +277,18 @@ components:
           key: asm-9RxdinkqFqJxAq2fZadf
           reportKey: rep-1e1dAHhgstYTUhlphPzZ
           submittedFileName: AMMF_A123456_D20250630_S001.xlsx
-    ammf-submission-approved:
-      summary: AMMF Submission Approved
+    ammf-submission-submitted:
+      summary: AMMF Submission Submitted
       value:
         id: evt-1e1dAHhgstYTUhlphPzZ
-        type: com.silverflow.ammfSubmissions.approved
+        type: com.silverflow.ammfSubmissions.submitted
         agent: cgt-EFG67b4yPre23ZDrLX
         datacontenttype: application/json
         dataschema: https://silverflow.com/schemas/events/ammfSubmissions/1.0
         source: https://silverflow.com/ammfSubmissions
         specversion: '1.0'
         subject: asm-9RxdinkqFqJxAq2fZadf
-        time: '2025-12-12T08:50:42.264Z'
+        time: '2025-12-11T08:50:42.264Z'
         data:
           key: asm-9RxdinkqFqJxAq2fZadf
           reportKey: rep-1e1dAHhgstYTUhlphPzZ

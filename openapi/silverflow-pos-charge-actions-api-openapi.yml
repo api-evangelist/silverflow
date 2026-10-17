@@ -211,153 +211,51 @@ paths:
         '500':
           $ref: '#/components/responses/responses-InternalServerError'
 components:
-  examples:
-    refund_Response:
-      summary: Refund a charge
-      value:
-        key: rfnd-7GH9abD12TYkx8mP
-        chargeKey: chg-3pkSK2b2ES9ZTiYM4GWZ
-        type: refund
-        reference: refund-001
-        status:
-          authorization: approved
-        amount:
-          value: 2050
-          currency: EUR
-        authorizationResponse:
-          network: mastercard
-          responseCode: '00'
-          responseCodeDescription: Approved
-          authorizationCode: D4E5F6
-          systemTraceAuditNumber: '718901'
-          retrievalReferenceNumber: '326312718901'
-          eci: '0'
-        created: '2023-09-20T14:05:47.000Z'
-        version: 1
-    components-examples-Request:
-      summary: Cancel a charge
-      value:
-        reference: cancel-001
-    IdempotentRequestIsStillBeingProcessedExample:
-      value:
-        type: /silverflow/problems/idempotency/request-is-still-being-processed
-        title: Request Is Still Being Processed
-        status: 409
-        detail: The previous request with idempotency key '28gKCluIEKp8jVboUyr2' is still being processed. Please retry.
-        instance: /silverflow/b0451a9d-f66d-4ef7-9f5d-d48064a2bb3e
-    NonMatchingIdempotentRequestErrorExample:
-      value:
-        type: /silverflow/problems/idempotency/request-mismatch
-        title: Idempotent Request Mismatch
-        status: 409
-        detail: The retried request does not have the same body or URL as the initial request.
-        instance: /silverflow/b0451a9d-f66d-4ef7-9f5d-d48064a2bb3e
-    UnexpectedClearingStatusExample:
-      summary: Charge already cancelled
-      value:
-        type: /silverflow/problems/charge/unexpected-clearing-status
-        title: Unexpected Clearing Status
-        status: 409
-        detail: The status.clearing is 'cancelled', but expected 'none' or 'pending'.
-        instance: /silverflow/def-456
-    components-examples-ReferencedEntityNotFoundErrorExample:
-      value:
-        type: /silverflow/problems/referenced-entity-not-found
-        title: Referenced Entity Not Found
-        status: 409
-        detail: The referenced acceptor with key 'mac-1eOdAHhgstYTUhlphPFf' was not found.
-        instance: /silverflow/b0451a9d-f66d-4ef7-9f5d-d48064a2bb3e
-    cancel_Response:
-      summary: Cancel a charge
-      value:
-        key: rvsl-5BH5chO93SXky5gw
-        chargeKey: chg-3pkSK2b2ES9ZTiYM4GWZ
-        type: reversal
-        reference: cancel-001
-        status:
-          authorization: approved
-        replacementAmount:
-          value: 1
-          currency: EUR
-        authorizationResponse:
-          network: mastercard
-          responseCode: '00'
-          responseCodeDescription: Approved
-          authorizationCode: A1B2C3
-          systemTraceAuditNumber: '712345'
-          retrievalReferenceNumber: '326312712345'
-          eci: '0'
-        created: '2023-09-20T13:10:22.000Z'
-        version: 1
-    examples-ForbiddenErrorExample:
-      value:
-        type: /silverflow/problems/forbidden
-        title: Forbidden
-        status: 403
-        detail: 'Authenticated user ''apk-33GjasQdWl4781OsErvi'' is missing the following permission(s): charges:Create.'
-        instance: /silverflow/b0451a9d-f66d-4ef7-9f5d-d48064a2bb3e
-    components-examples-InternalServerErrorExample:
-      value:
-        type: /silverflow/problems/internal-server-error
-        title: Internal Server Error
-        status: 500
-        detail: The server encountered an unexpected condition.
-        instance: /silverflow/b045229d-f66d-4ef7-9f5d-d48064a2aa39
-    examples-AuthenticationRequiredExample:
-      value:
-        type: /silverflow/problems/authentication-required
-        title: Authentication Required
-        status: 401
-        detail: Authentication Required
-        instance: /silverflow/8e445b2e-d745-4b38-a38d-781fc998e442
-    TooManyRequestsErrorExample:
-      value:
-        type: /silverflow/problems/too-many-requests
-        title: Too Many Requests
-        status: 429
-        detail: You have exceeded the rate limit. Please try again after the specified delay.
-        instance: /silverflow/b0451a9d-f66d-4ef7-9f5d-d48064a2bb3e
-    ClearingAlreadySubmittedExample:
-      value:
-        type: /silverflow/problems/charge/clearing-already-submitted
-        title: Clearing Already Submitted
-        status: 409
-        detail: Cannot cancel the referenced charge because the clearing has already been submitted.
-        instance: /silverflow/b045229d-f66d-4ef7-9f5d-d48064a2aa39
-    InvalidRequestErrorExample:
-      value:
-        type: /silverflow/problems/charge/invalid-request
-        title: Invalid Request
-        status: 400
-        detail: Cannot create the charge due to one or more errors in the charge request.
-        instance: /silverflow/b0451a9d-f66d-4ef7-9f5d-d48064a2bb3e
-    components-examples-InvalidInputErrorExample:
-      value:
-        type: /silverflow/problems/invalid-input
-        title: Invalid Input
-        status: 400
-        detail: The request does not adhere to the defined API schema.
-        instance: /silverflow/b4cc37a0-ab24-46b4-aa8c-cc2d6eddf1b6
-        validationErrors:
-        - path: /body/card/number
-          message: must have required property 'number'
-          errorCode: required.openapi.validation
-    refund_Request:
-      summary: Refund a charge
-      value:
-        reference: refund-001
   schemas:
-    authorizationIsoFieldsDiscoverWithDiscriminator:
-      allOf:
-      - type: object
-        required:
-        - network
-        properties:
-          network:
-            type: string
-            enum:
-            - discover
-      - $ref: '#/components/schemas/commonIsoFields'
+    errorInstance:
+      type: string
+      description: 'A reference that identifies the specific occurrence of the error. The instance is unique for every error.
+
+        '
+    openapi_components-schemas-InvalidInputErrorDetails:
+      type: object
+      required:
+      - type
+      - title
+      - status
+      - detail
+      - instance
+      - validationErrors
+      properties:
+        type:
+          allOf:
+          - $ref: '#/components/schemas/errorType'
+          - enum:
+            - /silverflow/problems/invalid-input
+        title:
+          allOf:
+          - $ref: '#/components/schemas/errorTitle'
+          - enum:
+            - Invalid Input
+        status:
+          allOf:
+          - $ref: '#/components/schemas/errorStatus'
+          - enum:
+            - 400
+        detail:
+          $ref: '#/components/schemas/errorDetail'
+        instance:
+          $ref: '#/components/schemas/errorInstance'
+        validationErrors:
+          type: array
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          description: A list of validation errors.
+    errorType:
+      type: string
+      description: 'A relative URI reference, this property can be used to perform automated error handling.
+
+        '
     schemas-UnexpectedClearingStatusErrorDetails:
       type: object
       required:
@@ -377,6 +275,361 @@ components:
           - $ref: '#/components/schemas/errorTitle'
           - enum:
             - Unexpected Clearing Status
+        status:
+          allOf:
+          - $ref: '#/components/schemas/errorStatus'
+          - enum:
+            - 409
+        detail:
+          $ref: '#/components/schemas/errorDetail'
+        instance:
+          $ref: '#/components/schemas/errorInstance'
+    components-schemas-lastModified:
+      type: string
+      description: The date and time this object was last modified
+      format: iso-8601-date-time
+      readOnly: true
+    schemas-actionReference:
+      type: string
+      description: 'Action reference assigned by the agent. Must not start with "act-".
+
+        This allows merchants to track actions with their own reference system.
+
+        '
+      minLength: 1
+      maxLength: 100
+      example: cancel-001
+    chargeKey:
+      description: Uniquely identifies a charge.
+      type: string
+      pattern: ^chg-[a-zA-Z0-9]+$
+      minLength: 5
+      maxLength: 120
+      example: chg-1e1dAHhgstYTUhlphPzZ
+    schemas-actionKey:
+      type: string
+      description: Uniquely identifies an action
+      pattern: ^(act-|rvsl-|incr-|rfnd-|clr-|void-|dis-)[A-Za-z0-9]{16,22}$
+      example: rvsl-5BH5chO93SXky5gw
+    RefundRequest:
+      type: object
+      properties:
+        attemptCancel:
+          type: boolean
+          default: false
+          description: 'If true and the charge has not been cleared yet, the service attempts to cancel the transaction first.
+
+            On success, returns a "ReversalAction". On failure, falls back to the refund process.
+
+            '
+        reference:
+          $ref: '#/components/schemas/schemas-actionReference'
+        dynamicDescriptor:
+          $ref: '#/components/schemas/schemas-DynamicDescriptor'
+        clearAfter:
+          $ref: '#/components/schemas/schemas-clearAfter'
+    schemas-authorizationIsoFieldsBancontactWithDiscriminator:
+      allOf:
+      - type: object
+        required:
+        - network
+        description: Object containing the raw values from the ISO8583 response message received from the network.
+        properties:
+          network:
+            type: string
+            enum:
+            - bancontact
+      - $ref: '#/components/schemas/commonIsoFields'
+    UnauthorizedErrorDetails:
+      type: object
+      required:
+      - type
+      - title
+      - status
+      - detail
+      - instance
+      properties:
+        type:
+          allOf:
+          - $ref: '#/components/schemas/errorType'
+          - enum:
+            - /silverflow/problems/authentication-required
+        title:
+          allOf:
+          - $ref: '#/components/schemas/errorTitle'
+          - enum:
+            - Authentication Required
+        status:
+          allOf:
+          - $ref: '#/components/schemas/errorStatus'
+          - enum:
+            - 401
+        detail:
+          $ref: '#/components/schemas/errorDetail'
+        instance:
+          $ref: '#/components/schemas/errorInstance'
+    schemas-clearAfter:
+      type: string
+      description: 'If provided, clearing will not occur before this point in time. From August 13, 2025, `clearAfter` may be at most 6 months in the future from when the charge was created.
+
+        '
+      format: iso-8601-date-time
+    schemas-ResponseAmountBreakdown:
+      allOf:
+      - $ref: '#/components/schemas/schemas-BaseAmountBreakdown'
+      - type: object
+        properties:
+          cashback:
+            allOf:
+            - description: 'The cashback amount included in the total transaction `value` in minor units.
+
+                For example `$12.34` should be encoded as `1234`.
+
+                '
+            - $ref: '#/components/schemas/openapi_components-schemas-amountValue'
+          gratuity:
+            allOf:
+            - description: 'The gratuity amount included in the total transaction `value` in minor units.
+
+                For example `$12.34` should be encoded as `1234`.
+
+                '
+            - $ref: '#/components/schemas/openapi_components-schemas-amountValue'
+    openapi_components-schemas-created:
+      type: string
+      description: The date and time this object was created
+      format: iso-8601-date-time
+      readOnly: true
+    AuthorizationResponseForRefundActions:
+      description: 'Network-specific details from the authorization response for refund actions.
+
+        This is a discriminated union based on the network property.
+
+        '
+      oneOf:
+      - $ref: '#/components/schemas/authorizationIsoFieldsAmericanExpressWithDiscriminator'
+      - $ref: '#/components/schemas/schemas-authorizationIsoFieldsBancontactWithDiscriminator'
+      - $ref: '#/components/schemas/authorizationIsoFieldsDiscoverWithDiscriminator'
+      - $ref: '#/components/schemas/authorizationIsoFieldsMastercardWithDiscriminator'
+      - $ref: '#/components/schemas/authorizationIsoFieldsVisaWithDiscriminator'
+      - $ref: '#/components/schemas/authorizationIsoFieldsUnknown'
+    schemas-refundedChargeKey:
+      description: The charge key of the refunded charge.
+      type: string
+      pattern: ^chg-[a-zA-Z0-9]+$
+      minLength: 5
+      maxLength: 120
+      example: chg-1e1dAHhgstYTUhlphPzZ
+    schemas-ResponseAmount:
+      type: object
+      required:
+      - value
+      - currency
+      additionalProperties: false
+      description: 'The amount encoded as an object with a `value` in minor units and a `currency` code.
+
+
+        An optional `breakdown` can be provided to indicate specific sub-amounts.
+
+        '
+      properties:
+        value:
+          allOf:
+          - description: 'The full transaction amount in minor units. For example `$12.34` should be encoded as `1234`.
+
+
+              If a `breakdown` is provided, it must exactly add up to this `value`.
+
+              '
+          - $ref: '#/components/schemas/openapi_components-schemas-amountValue'
+        currency:
+          $ref: '#/components/schemas/openapi_components-schemas-currencyCode-2'
+        breakdown:
+          $ref: '#/components/schemas/schemas-ResponseAmountBreakdown'
+    authorizationIsoFieldsAmericanExpressWithDiscriminator:
+      allOf:
+      - type: object
+        required:
+        - network
+        properties:
+          network:
+            type: string
+            enum:
+            - american-express
+      - $ref: '#/components/schemas/commonIsoFields'
+    schemas-InvalidRequestErrorDetails:
+      type: object
+      required:
+      - type
+      - title
+      - status
+      - detail
+      - instance
+      properties:
+        type:
+          allOf:
+          - $ref: '#/components/schemas/errorType'
+          - enum:
+            - /silverflow/problems/charge/invalid-request
+        title:
+          $ref: '#/components/schemas/errorTitle'
+        status:
+          allOf:
+          - $ref: '#/components/schemas/errorStatus'
+          - enum:
+            - 400
+        detail:
+          $ref: '#/components/schemas/errorDetail'
+        instance:
+          $ref: '#/components/schemas/errorInstance'
+    isoFieldResponseCode:
+      type: string
+      description: Contents of field 39
+      example: '00'
+    InternalServerErrorDetails:
+      type: object
+      required:
+      - type
+      - title
+      - status
+      - detail
+      - instance
+      properties:
+        type:
+          allOf:
+          - $ref: '#/components/schemas/errorType'
+          - enum:
+            - /silverflow/problems/internal-server-error
+        title:
+          allOf:
+          - $ref: '#/components/schemas/errorTitle'
+          - enum:
+            - Internal Server Error
+        status:
+          allOf:
+          - $ref: '#/components/schemas/errorStatus'
+          - enum:
+            - 500
+        detail:
+          $ref: '#/components/schemas/errorDetail'
+        instance:
+          $ref: '#/components/schemas/errorInstance'
+    AlreadyCanceledErrorDetails:
+      type: object
+      required:
+      - type
+      - title
+      - status
+      - detail
+      - instance
+      properties:
+        type:
+          allOf:
+          - $ref: '#/components/schemas/errorType'
+          - enum:
+            - /silverflow/problems/charge/already-canceled
+        title:
+          allOf:
+          - $ref: '#/components/schemas/errorTitle'
+          - enum:
+            - Charge Already Canceled
+        status:
+          allOf:
+          - $ref: '#/components/schemas/errorStatus'
+          - enum:
+            - 409
+        detail:
+          $ref: '#/components/schemas/errorDetail'
+        instance:
+          $ref: '#/components/schemas/errorInstance'
+    authorizationIsoFieldsDiscoverWithDiscriminator:
+      allOf:
+      - type: object
+        required:
+        - network
+        properties:
+          network:
+            type: string
+            enum:
+            - discover
+      - $ref: '#/components/schemas/commonIsoFields'
+    authorizationIsoFieldsUnknown:
+      type: object
+      required:
+      - network
+      - responseCode
+      - responseCodeDescription
+      properties:
+        network:
+          type: string
+          enum:
+          - unknown
+        responseCode:
+          type: string
+          enum:
+          - unknown
+        responseCodeDescription:
+          type: string
+          enum:
+          - unknown
+    ValidationError:
+      type: object
+      required:
+      - path
+      - message
+      properties:
+        path:
+          type: string
+          description: A relative path to the error location within the request body.
+        errorCode:
+          type: string
+          description: A code that identifies the error.
+        message:
+          type: string
+          description: A brief description of the validation error.
+    schemas-BaseAmountBreakdown:
+      type: object
+      required:
+      - baseAmount
+      description: 'A breakdown of the transaction `value`.
+
+
+        All provided amounts must exactly add up to `value`.
+
+        Providing a breakdown is only required if any other amounts besides the `baseAmount` are included.
+
+        '
+      properties:
+        baseAmount:
+          allOf:
+          - description: 'The base transaction value in minor units. For example `$12.34` should be encoded as `1234`.
+
+              '
+          - $ref: '#/components/schemas/openapi_components-schemas-amountValue'
+    errorTitle:
+      type: string
+      description: 'A short, human-readable summary of the problem type. It does not change from occurrence to occurrence of the error.
+
+        '
+    IdempotentRequestIsStillBeingProcessedErrorDetails:
+      type: object
+      required:
+      - type
+      - title
+      - status
+      - detail
+      - instance
+      properties:
+        type:
+          allOf:
+          - $ref: '#/components/schemas/errorType'
+          - enum:
+            - /silverflow/problems/idempotency/request-is-still-being-processed
+        title:
+          allOf:
+          - $ref: '#/components/schemas/errorTitle'
+          - enum:
+            - Request Is Still Being Processed
         status:
           allOf:
           - $ref: '#/components/schemas/errorStatus'
@@ -416,307 +669,10 @@ components:
           pattern: ^[a-zA-Z0-9-\.!\*=_ ]+$
           minLength: 1
           maxLength: 13
-    schemas-authorizationIsoFieldsBancontactWithDiscriminator:
-      allOf:
-      - type: object
-        required:
-        - network
-        description: Object containing the raw values from the ISO8583 response message received from the network.
-        properties:
-          network:
-            type: string
-            enum:
-            - bancontact
-      - $ref: '#/components/schemas/commonIsoFields'
-    NonMatchingIdempotentRequestErrorDetails:
-      type: object
-      required:
-      - type
-      - title
-      - status
-      - detail
-      - instance
-      properties:
-        type:
-          allOf:
-          - $ref: '#/components/schemas/errorType'
-          - enum:
-            - /silverflow/problems/idempotency/request-mismatch
-        title:
-          allOf:
-          - $ref: '#/components/schemas/errorTitle'
-          - enum:
-            - Idempotent Request Mismatch
-        status:
-          allOf:
-          - $ref: '#/components/schemas/errorStatus'
-          - enum:
-            - 409
-        detail:
-          $ref: '#/components/schemas/errorDetail'
-        instance:
-          $ref: '#/components/schemas/errorInstance'
-    schemas-ReversalAction:
-      type: object
-      required:
-      - key
-      - chargeKey
-      - type
-      - status
-      - replacementAmount
-      - authorizationResponse
-      - created
-      - version
-      description: 'A reversal action represents a cancellation of a charge''s authorization.
-
-        '
-      properties:
-        key:
-          $ref: '#/components/schemas/schemas-actionKey'
-        chargeKey:
-          $ref: '#/components/schemas/chargeKey'
-        type:
-          type: string
-          enum:
-          - reversal
-          description: The type of action (always "reversal" for cancel operations)
-        reference:
-          $ref: '#/components/schemas/schemas-actionReference'
-        status:
-          type: object
-          required:
-          - authorization
-          properties:
-            authorization:
-              type: string
-              enum:
-              - approved
-              - declined
-              description: Authorization status of the reversal
-        replacementAmount:
-          $ref: '#/components/schemas/schemas-ResponseAmount'
-        authorizationResponse:
-          $ref: '#/components/schemas/AuthorizationResponseForReversalActions'
-        created:
-          $ref: '#/components/schemas/openapi_components-schemas-created'
-        lastModified:
-          $ref: '#/components/schemas/components-schemas-lastModified'
-        version:
-          $ref: '#/components/schemas/schemas-version'
-    errorTitle:
+    isoFieldResponseCodeDescription:
       type: string
-      description: 'A short, human-readable summary of the problem type. It does not change from occurrence to occurrence of the error.
-
-        '
-    chargeKey:
-      description: Uniquely identifies a charge.
-      type: string
-      pattern: ^chg-[a-zA-Z0-9]+$
-      minLength: 5
-      maxLength: 120
-      example: chg-1e1dAHhgstYTUhlphPzZ
-    InternalServerErrorDetails:
-      type: object
-      required:
-      - type
-      - title
-      - status
-      - detail
-      - instance
-      properties:
-        type:
-          allOf:
-          - $ref: '#/components/schemas/errorType'
-          - enum:
-            - /silverflow/problems/internal-server-error
-        title:
-          allOf:
-          - $ref: '#/components/schemas/errorTitle'
-          - enum:
-            - Internal Server Error
-        status:
-          allOf:
-          - $ref: '#/components/schemas/errorStatus'
-          - enum:
-            - 500
-        detail:
-          $ref: '#/components/schemas/errorDetail'
-        instance:
-          $ref: '#/components/schemas/errorInstance'
-    schemas-RefundAction:
-      type: object
-      required:
-      - key
-      - chargeKey
-      - type
-      - status
-      - amount
-      - authorizationResponse
-      - created
-      - version
-      description: 'A refund action represents a refund of a charge.
-
-        '
-      properties:
-        key:
-          $ref: '#/components/schemas/schemas-actionKey'
-        chargeKey:
-          $ref: '#/components/schemas/chargeKey'
-        type:
-          type: string
-          enum:
-          - refund
-          description: The type of action (always "refund" for refund operations)
-        reference:
-          $ref: '#/components/schemas/schemas-actionReference'
-        status:
-          type: object
-          required:
-          - authorization
-          properties:
-            authorization:
-              type: string
-              enum:
-              - approved
-              - declined
-              description: Authorization status of the refund
-        amount:
-          $ref: '#/components/schemas/schemas-ResponseAmount'
-        clearAfter:
-          $ref: '#/components/schemas/schemas-clearAfter'
-        refundChargeKey:
-          $ref: '#/components/schemas/schemas-refundedChargeKey'
-        authorizationResponse:
-          $ref: '#/components/schemas/AuthorizationResponseForRefundActions'
-        created:
-          $ref: '#/components/schemas/openapi_components-schemas-created'
-        lastModified:
-          $ref: '#/components/schemas/components-schemas-lastModified'
-        version:
-          $ref: '#/components/schemas/schemas-version'
-    errorDetail:
-      type: string
-      description: 'A human readable explanation specific to this occurrence of the problem.
-
-        '
-    schemas-refundedChargeKey:
-      description: The charge key of the refunded charge.
-      type: string
-      pattern: ^chg-[a-zA-Z0-9]+$
-      minLength: 5
-      maxLength: 120
-      example: chg-1e1dAHhgstYTUhlphPzZ
-    openapi_components-schemas-InvalidInputErrorDetails:
-      type: object
-      required:
-      - type
-      - title
-      - status
-      - detail
-      - instance
-      - validationErrors
-      properties:
-        type:
-          allOf:
-          - $ref: '#/components/schemas/errorType'
-          - enum:
-            - /silverflow/problems/invalid-input
-        title:
-          allOf:
-          - $ref: '#/components/schemas/errorTitle'
-          - enum:
-            - Invalid Input
-        status:
-          allOf:
-          - $ref: '#/components/schemas/errorStatus'
-          - enum:
-            - 400
-        detail:
-          $ref: '#/components/schemas/errorDetail'
-        instance:
-          $ref: '#/components/schemas/errorInstance'
-        validationErrors:
-          type: array
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          description: A list of validation errors.
-    schemas-clearAfter:
-      type: string
-      description: 'If provided, clearing will not occur before this point in time. From August 13, 2025, `clearAfter` may be at most 6 months in the future from when the charge was created.
-
-        '
-      format: iso-8601-date-time
-    AuthorizationResponseForRefundActions:
-      description: 'Network-specific details from the authorization response for refund actions.
-
-        This is a discriminated union based on the network property.
-
-        '
-      oneOf:
-      - $ref: '#/components/schemas/authorizationIsoFieldsAmericanExpressWithDiscriminator'
-      - $ref: '#/components/schemas/schemas-authorizationIsoFieldsBancontactWithDiscriminator'
-      - $ref: '#/components/schemas/authorizationIsoFieldsDiscoverWithDiscriminator'
-      - $ref: '#/components/schemas/authorizationIsoFieldsMastercardWithDiscriminator'
-      - $ref: '#/components/schemas/authorizationIsoFieldsVisaWithDiscriminator'
-      - $ref: '#/components/schemas/authorizationIsoFieldsUnknown'
-    schemas-BaseAmountBreakdown:
-      type: object
-      required:
-      - baseAmount
-      description: 'A breakdown of the transaction `value`.
-
-
-        All provided amounts must exactly add up to `value`.
-
-        Providing a breakdown is only required if any other amounts besides the `baseAmount` are included.
-
-        '
-      properties:
-        baseAmount:
-          allOf:
-          - description: 'The base transaction value in minor units. For example `$12.34` should be encoded as `1234`.
-
-              '
-          - $ref: '#/components/schemas/openapi_components-schemas-amountValue'
-    authorizationIsoFieldsMastercardWithDiscriminator:
-      allOf:
-      - type: object
-        required:
-        - network
-        properties:
-          network:
-            type: string
-            enum:
-            - mastercard
-      - $ref: '#/components/schemas/commonIsoFields'
-    AlreadyCanceledErrorDetails:
-      type: object
-      required:
-      - type
-      - title
-      - status
-      - detail
-      - instance
-      properties:
-        type:
-          allOf:
-          - $ref: '#/components/schemas/errorType'
-          - enum:
-            - /silverflow/problems/charge/already-canceled
-        title:
-          allOf:
-          - $ref: '#/components/schemas/errorTitle'
-          - enum:
-            - Charge Already Canceled
-        status:
-          allOf:
-          - $ref: '#/components/schemas/errorStatus'
-          - enum:
-            - 409
-        detail:
-          $ref: '#/components/schemas/errorDetail'
-        instance:
-          $ref: '#/components/schemas/errorInstance'
+      description: The description of the `responseCode`
+      example: Approved
     openapi_components-schemas-currencyCode-2:
       type: string
       enum:
@@ -879,154 +835,6 @@ components:
         description: Find more info here
         url: https://www.iso.org/iso-4217-currency-codes.html
       example: EUR
-    schemas-InvalidRequestErrorDetails:
-      type: object
-      required:
-      - type
-      - title
-      - status
-      - detail
-      - instance
-      properties:
-        type:
-          allOf:
-          - $ref: '#/components/schemas/errorType'
-          - enum:
-            - /silverflow/problems/charge/invalid-request
-        title:
-          $ref: '#/components/schemas/errorTitle'
-        status:
-          allOf:
-          - $ref: '#/components/schemas/errorStatus'
-          - enum:
-            - 400
-        detail:
-          $ref: '#/components/schemas/errorDetail'
-        instance:
-          $ref: '#/components/schemas/errorInstance'
-    authorizationIsoFieldsUnknown:
-      type: object
-      required:
-      - network
-      - responseCode
-      - responseCodeDescription
-      properties:
-        network:
-          type: string
-          enum:
-          - unknown
-        responseCode:
-          type: string
-          enum:
-          - unknown
-        responseCodeDescription:
-          type: string
-          enum:
-          - unknown
-    AuthorizationResponseForReversalActions:
-      description: 'Network-specific details from the authorization response.
-
-        This is a discriminated union based on the network property.
-
-        '
-      oneOf:
-      - $ref: '#/components/schemas/authorizationIsoFieldsAmericanExpressWithDiscriminator'
-      - $ref: '#/components/schemas/schemas-authorizationIsoFieldsBancontactWithDiscriminator'
-      - $ref: '#/components/schemas/authorizationIsoFieldsDiscoverWithDiscriminator'
-      - $ref: '#/components/schemas/authorizationIsoFieldsMastercardWithDiscriminator'
-      - $ref: '#/components/schemas/authorizationIsoFieldsVisaWithDiscriminator'
-      - $ref: '#/components/schemas/authorizationIsoFieldsUnknown'
-    ReferencedEntityNotFoundErrorDetails:
-      type: object
-      required:
-      - type
-      - title
-      - status
-      - detail
-      - instance
-      properties:
-        type:
-          allOf:
-          - $ref: '#/components/schemas/errorType'
-          - enum:
-            - /silverflow/problems/referenced-entity-not-found
-        title:
-          allOf:
-          - $ref: '#/components/schemas/errorTitle'
-          - enum:
-            - Referenced Entity Not Found
-        status:
-          allOf:
-          - $ref: '#/components/schemas/errorStatus'
-          - enum:
-            - 409
-        detail:
-          $ref: '#/components/schemas/errorDetail'
-        instance:
-          $ref: '#/components/schemas/errorInstance'
-    errorType:
-      type: string
-      description: 'A relative URI reference, this property can be used to perform automated error handling.
-
-        '
-    IdempotentRequestIsStillBeingProcessedErrorDetails:
-      type: object
-      required:
-      - type
-      - title
-      - status
-      - detail
-      - instance
-      properties:
-        type:
-          allOf:
-          - $ref: '#/components/schemas/errorType'
-          - enum:
-            - /silverflow/problems/idempotency/request-is-still-being-processed
-        title:
-          allOf:
-          - $ref: '#/components/schemas/errorTitle'
-          - enum:
-            - Request Is Still Being Processed
-        status:
-          allOf:
-          - $ref: '#/components/schemas/errorStatus'
-          - enum:
-            - 409
-        detail:
-          $ref: '#/components/schemas/errorDetail'
-        instance:
-          $ref: '#/components/schemas/errorInstance'
-    schemas-ResponseAmount:
-      type: object
-      required:
-      - value
-      - currency
-      additionalProperties: false
-      description: 'The amount encoded as an object with a `value` in minor units and a `currency` code.
-
-
-        An optional `breakdown` can be provided to indicate specific sub-amounts.
-
-        '
-      properties:
-        value:
-          allOf:
-          - description: 'The full transaction amount in minor units. For example `$12.34` should be encoded as `1234`.
-
-
-              If a `breakdown` is provided, it must exactly add up to this `value`.
-
-              '
-          - $ref: '#/components/schemas/openapi_components-schemas-amountValue'
-        currency:
-          $ref: '#/components/schemas/openapi_components-schemas-currencyCode-2'
-        breakdown:
-          $ref: '#/components/schemas/schemas-ResponseAmountBreakdown'
-    isoFieldResponseCodeDescription:
-      type: string
-      description: The description of the `responseCode`
-      example: Approved
     TooManyRequestsErrorDetails:
       type: object
       required:
@@ -1055,22 +863,7 @@ components:
           $ref: '#/components/schemas/errorDetail'
         instance:
           $ref: '#/components/schemas/errorInstance'
-    schemas-actionReference:
-      type: string
-      description: 'Action reference assigned by the agent. Must not start with "act-".
-
-        This allows merchants to track actions with their own reference system.
-
-        '
-      minLength: 1
-      maxLength: 100
-      example: cancel-001
-    openapi_components-schemas-created:
-      type: string
-      description: The date and time this object was created
-      format: iso-8601-date-time
-      readOnly: true
-    authorizationIsoFieldsVisaWithDiscriminator:
+    authorizationIsoFieldsMastercardWithDiscriminator:
       allOf:
       - type: object
         required:
@@ -1079,193 +872,8 @@ components:
           network:
             type: string
             enum:
-            - visa
+            - mastercard
       - $ref: '#/components/schemas/commonIsoFields'
-    schemas-ResponseAmountBreakdown:
-      allOf:
-      - $ref: '#/components/schemas/schemas-BaseAmountBreakdown'
-      - type: object
-        properties:
-          cashback:
-            allOf:
-            - description: 'The cashback amount included in the total transaction `value` in minor units.
-
-                For example `$12.34` should be encoded as `1234`.
-
-                '
-            - $ref: '#/components/schemas/openapi_components-schemas-amountValue'
-          gratuity:
-            allOf:
-            - description: 'The gratuity amount included in the total transaction `value` in minor units.
-
-                For example `$12.34` should be encoded as `1234`.
-
-                '
-            - $ref: '#/components/schemas/openapi_components-schemas-amountValue'
-    openapi_components-schemas-amountValue:
-      type: integer
-      format: int64
-      minimum: 1
-      maximum: 999999999999
-      description: 'An amount in minor units. For example `$12.34` should be encoded as `1234`.
-
-        '
-      example: 2599
-    ValidationError:
-      type: object
-      required:
-      - path
-      - message
-      properties:
-        path:
-          type: string
-          description: A relative path to the error location within the request body.
-        errorCode:
-          type: string
-          description: A code that identifies the error.
-        message:
-          type: string
-          description: A brief description of the validation error.
-    components-schemas-lastModified:
-      type: string
-      description: The date and time this object was last modified
-      format: iso-8601-date-time
-      readOnly: true
-    ForbiddenErrorDetails:
-      type: object
-      required:
-      - type
-      - title
-      - status
-      - detail
-      - instance
-      properties:
-        type:
-          allOf:
-          - $ref: '#/components/schemas/errorType'
-          - enum:
-            - /silverflow/problems/forbidden
-        title:
-          allOf:
-          - $ref: '#/components/schemas/errorTitle'
-          - enum:
-            - Forbidden
-        status:
-          allOf:
-          - $ref: '#/components/schemas/errorStatus'
-          - enum:
-            - 403
-        detail:
-          $ref: '#/components/schemas/errorDetail'
-        instance:
-          $ref: '#/components/schemas/errorInstance'
-    schemas-actionKey:
-      type: string
-      description: Uniquely identifies an action
-      pattern: ^(act-|rvsl-|incr-|rfnd-|clr-|void-|dis-)[A-Za-z0-9]{16,22}$
-      example: rvsl-5BH5chO93SXky5gw
-    ClearingAlreadySubmittedErrorDetails:
-      type: object
-      required:
-      - type
-      - title
-      - status
-      - detail
-      - instance
-      properties:
-        type:
-          allOf:
-          - $ref: '#/components/schemas/errorType'
-          - enum:
-            - /silverflow/problems/charge/clearing-already-submitted
-        title:
-          allOf:
-          - $ref: '#/components/schemas/errorTitle'
-          - enum:
-            - Clearing Already Submitted
-        status:
-          allOf:
-          - $ref: '#/components/schemas/errorStatus'
-          - enum:
-            - 409
-        detail:
-          $ref: '#/components/schemas/errorDetail'
-        instance:
-          $ref: '#/components/schemas/errorInstance'
-    RefundRequest:
-      type: object
-      properties:
-        attemptCancel:
-          type: boolean
-          default: false
-          description: 'If true and the charge has not been cleared yet, the service attempts to cancel the transaction first.
-
-            On success, returns a "ReversalAction". On failure, falls back to the refund process.
-
-            '
-        reference:
-          $ref: '#/components/schemas/schemas-actionReference'
-        dynamicDescriptor:
-          $ref: '#/components/schemas/schemas-DynamicDescriptor'
-        clearAfter:
-          $ref: '#/components/schemas/schemas-clearAfter'
-    CancelRequest:
-      type: object
-      properties:
-        reference:
-          $ref: '#/components/schemas/schemas-actionReference'
-    errorInstance:
-      type: string
-      description: 'A reference that identifies the specific occurrence of the error. The instance is unique for every error.
-
-        '
-    authorizationIsoFieldsAmericanExpressWithDiscriminator:
-      allOf:
-      - type: object
-        required:
-        - network
-        properties:
-          network:
-            type: string
-            enum:
-            - american-express
-      - $ref: '#/components/schemas/commonIsoFields'
-    UnauthorizedErrorDetails:
-      type: object
-      required:
-      - type
-      - title
-      - status
-      - detail
-      - instance
-      properties:
-        type:
-          allOf:
-          - $ref: '#/components/schemas/errorType'
-          - enum:
-            - /silverflow/problems/authentication-required
-        title:
-          allOf:
-          - $ref: '#/components/schemas/errorTitle'
-          - enum:
-            - Authentication Required
-        status:
-          allOf:
-          - $ref: '#/components/schemas/errorStatus'
-          - enum:
-            - 401
-        detail:
-          $ref: '#/components/schemas/errorDetail'
-        instance:
-          $ref: '#/components/schemas/errorInstance'
-    errorStatus:
-      type: integer
-      format: int32
-      description: 'The HTTP status code generated by the origin server for this occurrence
-
-        of the problem.
-
-        '
     AlreadyRefundedErrorDetails:
       type: object
       required:
@@ -1294,6 +902,142 @@ components:
           $ref: '#/components/schemas/errorDetail'
         instance:
           $ref: '#/components/schemas/errorInstance'
+    schemas-RefundAction:
+      type: object
+      required:
+      - key
+      - chargeKey
+      - type
+      - status
+      - amount
+      - authorizationResponse
+      - created
+      - version
+      description: 'A refund action represents a refund of a charge.
+
+        '
+      properties:
+        key:
+          $ref: '#/components/schemas/schemas-actionKey'
+        chargeKey:
+          $ref: '#/components/schemas/chargeKey'
+        type:
+          type: string
+          enum:
+          - refund
+          description: The type of action (always "refund" for refund operations)
+        reference:
+          $ref: '#/components/schemas/schemas-actionReference'
+        status:
+          type: object
+          required:
+          - authorization
+          properties:
+            authorization:
+              type: string
+              enum:
+              - approved
+              - declined
+              description: Authorization status of the refund
+        amount:
+          $ref: '#/components/schemas/schemas-ResponseAmount'
+        clearAfter:
+          $ref: '#/components/schemas/schemas-clearAfter'
+        refundChargeKey:
+          $ref: '#/components/schemas/schemas-refundedChargeKey'
+        authorizationResponse:
+          $ref: '#/components/schemas/AuthorizationResponseForRefundActions'
+        created:
+          $ref: '#/components/schemas/openapi_components-schemas-created'
+        lastModified:
+          $ref: '#/components/schemas/components-schemas-lastModified'
+        version:
+          $ref: '#/components/schemas/schemas-version'
+    ClearingAlreadySubmittedErrorDetails:
+      type: object
+      required:
+      - type
+      - title
+      - status
+      - detail
+      - instance
+      properties:
+        type:
+          allOf:
+          - $ref: '#/components/schemas/errorType'
+          - enum:
+            - /silverflow/problems/charge/clearing-already-submitted
+        title:
+          allOf:
+          - $ref: '#/components/schemas/errorTitle'
+          - enum:
+            - Clearing Already Submitted
+        status:
+          allOf:
+          - $ref: '#/components/schemas/errorStatus'
+          - enum:
+            - 409
+        detail:
+          $ref: '#/components/schemas/errorDetail'
+        instance:
+          $ref: '#/components/schemas/errorInstance'
+    authorizationIsoFieldsVisaWithDiscriminator:
+      allOf:
+      - type: object
+        required:
+        - network
+        properties:
+          network:
+            type: string
+            enum:
+            - visa
+      - $ref: '#/components/schemas/commonIsoFields'
+    CancelRequest:
+      type: object
+      properties:
+        reference:
+          $ref: '#/components/schemas/schemas-actionReference'
+    AuthorizationResponseForReversalActions:
+      description: 'Network-specific details from the authorization response.
+
+        This is a discriminated union based on the network property.
+
+        '
+      oneOf:
+      - $ref: '#/components/schemas/authorizationIsoFieldsAmericanExpressWithDiscriminator'
+      - $ref: '#/components/schemas/schemas-authorizationIsoFieldsBancontactWithDiscriminator'
+      - $ref: '#/components/schemas/authorizationIsoFieldsDiscoverWithDiscriminator'
+      - $ref: '#/components/schemas/authorizationIsoFieldsMastercardWithDiscriminator'
+      - $ref: '#/components/schemas/authorizationIsoFieldsVisaWithDiscriminator'
+      - $ref: '#/components/schemas/authorizationIsoFieldsUnknown'
+    NonMatchingIdempotentRequestErrorDetails:
+      type: object
+      required:
+      - type
+      - title
+      - status
+      - detail
+      - instance
+      properties:
+        type:
+          allOf:
+          - $ref: '#/components/schemas/errorType'
+          - enum:
+            - /silverflow/problems/idempotency/request-mismatch
+        title:
+          allOf:
+          - $ref: '#/components/schemas/errorTitle'
+          - enum:
+            - Idempotent Request Mismatch
+        status:
+          allOf:
+          - $ref: '#/components/schemas/errorStatus'
+          - enum:
+            - 409
+        detail:
+          $ref: '#/components/schemas/errorDetail'
+        instance:
+          $ref: '#/components/schemas/errorInstance'
     commonIsoFields:
       type: object
       required:
@@ -1304,51 +1048,266 @@ components:
           $ref: '#/components/schemas/isoFieldResponseCode'
         responseCodeDescription:
           $ref: '#/components/schemas/isoFieldResponseCodeDescription'
-    isoFieldResponseCode:
+    ForbiddenErrorDetails:
+      type: object
+      required:
+      - type
+      - title
+      - status
+      - detail
+      - instance
+      properties:
+        type:
+          allOf:
+          - $ref: '#/components/schemas/errorType'
+          - enum:
+            - /silverflow/problems/forbidden
+        title:
+          allOf:
+          - $ref: '#/components/schemas/errorTitle'
+          - enum:
+            - Forbidden
+        status:
+          allOf:
+          - $ref: '#/components/schemas/errorStatus'
+          - enum:
+            - 403
+        detail:
+          $ref: '#/components/schemas/errorDetail'
+        instance:
+          $ref: '#/components/schemas/errorInstance'
+    openapi_components-schemas-amountValue:
+      type: integer
+      format: int64
+      minimum: 1
+      maximum: 999999999999
+      description: 'An amount in minor units. For example `$12.34` should be encoded as `1234`.
+
+        '
+      example: 2599
+    schemas-ReversalAction:
+      type: object
+      required:
+      - key
+      - chargeKey
+      - type
+      - status
+      - replacementAmount
+      - authorizationResponse
+      - created
+      - version
+      description: 'A reversal action represents a cancellation of a charge''s authorization.
+
+        '
+      properties:
+        key:
+          $ref: '#/components/schemas/schemas-actionKey'
+        chargeKey:
+          $ref: '#/components/schemas/chargeKey'
+        type:
+          type: string
+          enum:
+          - reversal
+          description: The type of action (always "reversal" for cancel operations)
+        reference:
+          $ref: '#/components/schemas/schemas-actionReference'
+        status:
+          type: object
+          required:
+          - authorization
+          properties:
+            authorization:
+              type: string
+              enum:
+              - approved
+              - declined
+              description: Authorization status of the reversal
+        replacementAmount:
+          $ref: '#/components/schemas/schemas-ResponseAmount'
+        authorizationResponse:
+          $ref: '#/components/schemas/AuthorizationResponseForReversalActions'
+        created:
+          $ref: '#/components/schemas/openapi_components-schemas-created'
+        lastModified:
+          $ref: '#/components/schemas/components-schemas-lastModified'
+        version:
+          $ref: '#/components/schemas/schemas-version'
+    errorStatus:
+      type: integer
+      format: int32
+      description: 'The HTTP status code generated by the origin server for this occurrence
+
+        of the problem.
+
+        '
+    errorDetail:
       type: string
-      description: Contents of field 39
-      example: '00'
-  responses:
-    openapi_components-responses-UnauthorizedError:
-      description: Authentication information is missing or invalid
-      headers:
-        WWW_Authenticate:
-          schema:
-            type: string
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/UnauthorizedErrorDetails'
-          examples:
-            AuthenticationRequired:
-              $ref: '#/components/examples/examples-AuthenticationRequiredExample'
-    responses-InternalServerError:
-      description: Internal Server Error
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/InternalServerErrorDetails'
-          examples:
-            InternalServerErrorExample:
-              $ref: '#/components/examples/components-examples-InternalServerErrorExample'
-    components-responses-TooManyRequestsError:
-      description: Too Many Requests
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/TooManyRequestsErrorDetails'
-          examples:
-            TooManyRequestsErrorExample:
-              $ref: '#/components/examples/TooManyRequestsErrorExample'
-    components-responses-ForbiddenError:
-      description: The authenticated client is forbidden to make the request for the resource identified.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ForbiddenErrorDetails'
-          examples:
-            ForbiddenErrorExample:
-              $ref: '#/components/examples/examples-ForbiddenErrorExample'
+      description: 'A human readable explanation specific to this occurrence of the problem.
+
+        '
+    ReferencedEntityNotFoundErrorDetails:
+      type: object
+      required:
+      - type
+      - title
+      - status
+      - detail
+      - instance
+      properties:
+        type:
+          allOf:
+          - $ref: '#/components/schemas/errorType'
+          - enum:
+            - /silverflow/problems/referenced-entity-not-found
+        title:
+          allOf:
+          - $ref: '#/components/schemas/errorTitle'
+          - enum:
+            - Referenced Entity Not Found
+        status:
+          allOf:
+          - $ref: '#/components/schemas/errorStatus'
+          - enum:
+            - 409
+        detail:
+          $ref: '#/components/schemas/errorDetail'
+        instance:
+          $ref: '#/components/schemas/errorInstance'
+  examples:
+    examples-AuthenticationRequiredExample:
+      value:
+        type: /silverflow/problems/authentication-required
+        title: Authentication Required
+        status: 401
+        detail: Authentication Required
+        instance: /silverflow/8e445b2e-d745-4b38-a38d-781fc998e442
+    examples-ForbiddenErrorExample:
+      value:
+        type: /silverflow/problems/forbidden
+        title: Forbidden
+        status: 403
+        detail: 'Authenticated user ''apk-33GjasQdWl4781OsErvi'' is missing the following permission(s): charges:Create.'
+        instance: /silverflow/b0451a9d-f66d-4ef7-9f5d-d48064a2bb3e
+    TooManyRequestsErrorExample:
+      value:
+        type: /silverflow/problems/too-many-requests
+        title: Too Many Requests
+        status: 429
+        detail: You have exceeded the rate limit. Please try again after the specified delay.
+        instance: /silverflow/b0451a9d-f66d-4ef7-9f5d-d48064a2bb3e
+    IdempotentRequestIsStillBeingProcessedExample:
+      value:
+        type: /silverflow/problems/idempotency/request-is-still-being-processed
+        title: Request Is Still Being Processed
+        status: 409
+        detail: The previous request with idempotency key '28gKCluIEKp8jVboUyr2' is still being processed. Please retry.
+        instance: /silverflow/b0451a9d-f66d-4ef7-9f5d-d48064a2bb3e
+    refund_Request:
+      summary: Refund a charge
+      value:
+        reference: refund-001
+    cancel_Response:
+      summary: Cancel a charge
+      value:
+        key: rvsl-5BH5chO93SXky5gw
+        chargeKey: chg-3pkSK2b2ES9ZTiYM4GWZ
+        type: reversal
+        reference: cancel-001
+        status:
+          authorization: approved
+        replacementAmount:
+          value: 1
+          currency: EUR
+        authorizationResponse:
+          network: mastercard
+          responseCode: '00'
+          responseCodeDescription: Approved
+          authorizationCode: A1B2C3
+          systemTraceAuditNumber: '712345'
+          retrievalReferenceNumber: '326312712345'
+          eci: '0'
+        created: '2023-09-20T13:10:22.000Z'
+        version: 1
+    refund_Response:
+      summary: Refund a charge
+      value:
+        key: rfnd-7GH9abD12TYkx8mP
+        chargeKey: chg-3pkSK2b2ES9ZTiYM4GWZ
+        type: refund
+        reference: refund-001
+        status:
+          authorization: approved
+        amount:
+          value: 2050
+          currency: EUR
+        authorizationResponse:
+          network: mastercard
+          responseCode: '00'
+          responseCodeDescription: Approved
+          authorizationCode: D4E5F6
+          systemTraceAuditNumber: '718901'
+          retrievalReferenceNumber: '326312718901'
+          eci: '0'
+        created: '2023-09-20T14:05:47.000Z'
+        version: 1
+    UnexpectedClearingStatusExample:
+      summary: Charge already cancelled
+      value:
+        type: /silverflow/problems/charge/unexpected-clearing-status
+        title: Unexpected Clearing Status
+        status: 409
+        detail: The status.clearing is 'cancelled', but expected 'none' or 'pending'.
+        instance: /silverflow/def-456
+    ClearingAlreadySubmittedExample:
+      value:
+        type: /silverflow/problems/charge/clearing-already-submitted
+        title: Clearing Already Submitted
+        status: 409
+        detail: Cannot cancel the referenced charge because the clearing has already been submitted.
+        instance: /silverflow/b045229d-f66d-4ef7-9f5d-d48064a2aa39
+    NonMatchingIdempotentRequestErrorExample:
+      value:
+        type: /silverflow/problems/idempotency/request-mismatch
+        title: Idempotent Request Mismatch
+        status: 409
+        detail: The retried request does not have the same body or URL as the initial request.
+        instance: /silverflow/b0451a9d-f66d-4ef7-9f5d-d48064a2bb3e
+    components-examples-InvalidInputErrorExample:
+      value:
+        type: /silverflow/problems/invalid-input
+        title: Invalid Input
+        status: 400
+        detail: The request does not adhere to the defined API schema.
+        instance: /silverflow/b4cc37a0-ab24-46b4-aa8c-cc2d6eddf1b6
+        validationErrors:
+        - path: /body/card/number
+          message: must have required property 'number'
+          errorCode: required.openapi.validation
+    components-examples-ReferencedEntityNotFoundErrorExample:
+      value:
+        type: /silverflow/problems/referenced-entity-not-found
+        title: Referenced Entity Not Found
+        status: 409
+        detail: The referenced acceptor with key 'mac-1eOdAHhgstYTUhlphPFf' was not found.
+        instance: /silverflow/b0451a9d-f66d-4ef7-9f5d-d48064a2bb3e
+    InvalidRequestErrorExample:
+      value:
+        type: /silverflow/problems/charge/invalid-request
+        title: Invalid Request
+        status: 400
+        detail: Cannot create the charge due to one or more errors in the charge request.
+        instance: /silverflow/b0451a9d-f66d-4ef7-9f5d-d48064a2bb3e
+    components-examples-Request:
+      summary: Cancel a charge
+      value:
+        reference: cancel-001
+    components-examples-InternalServerErrorExample:
+      value:
+        type: /silverflow/problems/internal-server-error
+        title: Internal Server Error
+        status: 500
+        detail: The server encountered an unexpected condition.
+        instance: /silverflow/b045229d-f66d-4ef7-9f5d-d48064a2aa39
   parameters:
     chargeKey:
       name: chargeKey
@@ -1370,6 +1329,47 @@ components:
         minLength: 1
         example: 28gKCluIEKp8jVboUyr2
       required: false
+  responses:
+    components-responses-ForbiddenError:
+      description: The authenticated client is forbidden to make the request for the resource identified.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ForbiddenErrorDetails'
+          examples:
+            ForbiddenErrorExample:
+              $ref: '#/components/examples/examples-ForbiddenErrorExample'
+    responses-InternalServerError:
+      description: Internal Server Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/InternalServerErrorDetails'
+          examples:
+            InternalServerErrorExample:
+              $ref: '#/components/examples/components-examples-InternalServerErrorExample'
+    openapi_components-responses-UnauthorizedError:
+      description: Authentication information is missing or invalid
+      headers:
+        WWW_Authenticate:
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/UnauthorizedErrorDetails'
+          examples:
+            AuthenticationRequired:
+              $ref: '#/components/examples/examples-AuthenticationRequiredExample'
+    components-responses-TooManyRequestsError:
+      description: Too Many Requests
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/TooManyRequestsErrorDetails'
+          examples:
+            TooManyRequestsErrorExample:
+              $ref: '#/components/examples/TooManyRequestsErrorExample'
   securitySchemes:
     ApiKey:
       description: "The primary method of authenticating to the Silverflow API is through API keys.\n\nAPI keys can be created by calling the [createApiKey](#operation/createApiKey) endpoint. You can create up to 40 API keys and also update and delete them, allowing for _credential rotation_.\n\nThe _Agent Activation_ process will generate an initial API Key for you. See [Activate Agent](#section/Getting-Started).\n\nA call to the [createApiKey](#operation/createApiKey) endpoint will return the following structure:\n\n```json\n{\n    \"key\": \"apk-1wtRxni5IsPsSpBLWpwr\",\n    \"status\": \"active\",\n    \"agentKey\": \"cgt-1wtRvFLIjDOyyUR5Q2LB\",\n    \"description\": \"Data lake API key\",\n    \"permissions\": [\n        \"charges:List\",\n        \"reports:All\"\n    ],\n    \"created\": \"2021-06-22T11:21:45.115Z\",\n    \"secret\": \"FWtnOOHAjbD6rNxWWEeVOCj7JXSEPGJQ\",\n    \"version\": 1\n}\n```\n\n> **Important:** The `secret` is only returned once in the response to the `createApiKey` call.\n\nOnce created, the `key` and `secret` fields from the API key must be used in the HTTP `Authorization` header using the `Basic` scheme.\nThe Basic scheme requires a **username** and **password** to be specified, separated by a `:` (colon) and Base64 encoded.\n\nUse the following values from the API key to construct a Basic authentication header:\n\n| Basic field | API key field | Example |\n| ----------- | ------------- | ------- |\n| username | `key` | `apk-1wtRxni5IsPsSpBLWpwr` |\n| password | `secret` | `FWtnOOHAjbD6rNxWWEeVOCj7JXSEPGJQ` |\n\nIn pseudo-code a valid HTTP Basic Authentication header would be constructed as follows:\n\n```ts\nconst apiKeyId = \"apk-1wtRxni5IsPsSpBLWpwr\";\nconst apiKeySecret = \"FWtnOOHAjbD6rNxWWEeVOCj7JXSEPGJQ\";\nconst authnValue = \"Basic \" + base64Encode(apiKeyId + \":\" + apiKeySecret);\nrequest.setHeader(\"Authorization\", authnValue);\n```\n\nUsing the values from the example a valid HTTP request would look like the following:\n\n```http\nGET /v1/agents/current HTTP/1.1\nAccept: application/json\nAuthorization: Basic YXBrLTF3dFJ4bmk1SXNQc1NwQkxXcHdyOkZXdG5PT0hBamJENnJOeFdXRWVWT0NqN0pYU0VQR0pR\n```\n\nMore information on the Basic scheme can be found in [RFC-7617 - The 'Basic' HTTP Authentication Scheme](https://datatracker.ietf.org/doc/html/rfc7617)."

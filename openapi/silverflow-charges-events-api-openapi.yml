@@ -60,6 +60,24 @@ webhooks:
       description: Sandbox URL - Equivalent to https://api-sbx.silverflow.co/v1
 components:
   schemas:
+    openapi_components-schemas-actionKey:
+      description: Uniquely identifies an Action.
+      type: string
+      pattern: ^act-[a-zA-Z0-9]+$
+      minLength: 1
+      maxLength: 120
+      example: act-5oRIijJIHA8BstUy0dpd
+    source:
+      type: string
+      description: Source system of the event.
+      pattern: ^https://silverflow.com/[a-zA-Z]+$
+    common_agentKey:
+      description: Uniquely identifies an Agent.
+      type: string
+      pattern: ^cgt-[a-zA-Z0-9]+$
+      readOnly: true
+      example: cgt-EFG67b4yPre23ZDrLX
+      title: agentKey
     ChargeActionEventDataVersion1_0:
       type: object
       description: The event data.
@@ -74,32 +92,27 @@ components:
           $ref: '#/components/schemas/openapi_components-schemas-actionKey'
         actionType:
           $ref: '#/components/schemas/actionType'
-    openapi_components-schemas-version-3:
+    chargeActionEventType:
       type: string
-      description: The version of the spec.
-      pattern: ^[1-9]+.[0-9]+$
-      example: '1.0'
-    common_agentKey:
-      description: Uniquely identifies an Agent.
-      type: string
-      pattern: ^cgt-[a-zA-Z0-9]+$
-      readOnly: true
-      example: cgt-EFG67b4yPre23ZDrLX
-      title: agentKey
+      description: The event type.
+      enum:
+      - com.silverflow.charges.action
     dataschema:
       type: string
       description: The event schema with the data version of the event.
-    openapi_components-schemas-actionKey:
-      description: Uniquely identifies an Action.
+    openapi_components-schemas-chargeKey-2:
+      description: Uniquely identifies a Charge.
       type: string
-      pattern: ^act-[a-zA-Z0-9]+$
+      pattern: ^chg-[a-zA-Z0-9]+$
       minLength: 1
       maxLength: 120
-      example: act-5oRIijJIHA8BstUy0dpd
-    time:
+      readOnly: false
+      example: chg-1e1dAHhgstYTUhlphPzZ
+    dataContentType:
       type: string
-      format: date-time
-      description: Date and time when the event was sent.
+      description: The content type of the event.
+      enum:
+      - application/json
     actionType:
       description: The type of action that was created or updated.
       type: string
@@ -110,36 +123,15 @@ components:
       - offline-refund
       - clearing
       - increment
-    PublicCloudEvent:
-      type: object
-      required:
-      - id
-      - source
-      - specversion
-      - type
-      - datacontenttype
-      - dataschema
-      - subject
-      - time
-      - agent
-      - data
-      properties:
-        id:
-          $ref: '#/components/schemas/eventId'
-        specversion:
-          allOf:
-          - description: The version of the current spec.
-          - enum:
-            - '1.0'
-          - $ref: '#/components/schemas/openapi_components-schemas-version-3'
-        datacontenttype:
-          $ref: '#/components/schemas/dataContentType'
-        dataschema:
-          $ref: '#/components/schemas/dataschema'
-        time:
-          $ref: '#/components/schemas/time'
-        agent:
-          $ref: '#/components/schemas/common_agentKey'
+    time:
+      type: string
+      format: date-time
+      description: Date and time when the event was sent.
+    openapi_components-schemas-version-3:
+      type: string
+      description: The version of the spec.
+      pattern: ^[1-9]+.[0-9]+$
+      example: '1.0'
     ChargeActionEventNotificationVersion1_0:
       type: object
       allOf:
@@ -171,23 +163,6 @@ components:
           - example: https://silverflow.com/schemas/events/charges/action/1.0
           - enum:
             - https://silverflow.com/schemas/events/charges/action/1.0
-    source:
-      type: string
-      description: Source system of the event.
-      pattern: ^https://silverflow.com/[a-zA-Z]+$
-    dataContentType:
-      type: string
-      description: The content type of the event.
-      enum:
-      - application/json
-    openapi_components-schemas-chargeKey-2:
-      description: Uniquely identifies a Charge.
-      type: string
-      pattern: ^chg-[a-zA-Z0-9]+$
-      minLength: 1
-      maxLength: 120
-      readOnly: false
-      example: chg-1e1dAHhgstYTUhlphPzZ
     eventId:
       type: string
       description: Uniquely identifies an event.
@@ -195,76 +170,37 @@ components:
       minLength: 5
       maxLength: 120
       example: evt-1e1dAHhgstYTUhlphPzZ
-    chargeActionEventType:
-      type: string
-      description: The event type.
-      enum:
-      - com.silverflow.charges.action
+    PublicCloudEvent:
+      type: object
+      required:
+      - id
+      - source
+      - specversion
+      - type
+      - datacontenttype
+      - dataschema
+      - subject
+      - time
+      - agent
+      - data
+      properties:
+        id:
+          $ref: '#/components/schemas/eventId'
+        specversion:
+          allOf:
+          - description: The version of the current spec.
+          - enum:
+            - '1.0'
+          - $ref: '#/components/schemas/openapi_components-schemas-version-3'
+        datacontenttype:
+          $ref: '#/components/schemas/dataContentType'
+        dataschema:
+          $ref: '#/components/schemas/dataschema'
+        time:
+          $ref: '#/components/schemas/time'
+        agent:
+          $ref: '#/components/schemas/common_agentKey'
   examples:
-    increment:
-      summary: Charge action event for an increment
-      value:
-        type: com.silverflow.charges.action
-        data:
-          chargeKey: chg-5oRIiaZi9oRQi7dlN5Yi
-          actionKey: act-4oMUrNx8AGgTwAvC7mPj
-          actionType: increment
-        source: https://silverflow.com/charges
-        specversion: '1.0'
-        subject: act-4oMUrNx8AGgTwAvC7mPj
-        dataschema: https://silverflow.com/schemas/events/charges/action/1.0
-        id: evt-6j6iFM5lxyCZZmqum7eE
-        datacontenttype: application/json
-        time: '2026-02-03T10:30:17.234Z'
-        agent: cgt-1MQQgZdQ2bB3CJTdZH7f
-    reversal:
-      summary: Charge action event for a reversal
-      value:
-        type: com.silverflow.charges.action
-        data:
-          chargeKey: chg-5oRIiaZi9oRQi7dlN5Yi
-          actionKey: act-7kPQmNx3vBcRtWsY2hLf
-          actionType: reversal
-        source: https://silverflow.com/charges
-        specversion: '1.0'
-        subject: act-7kPQmNx3vBcRtWsY2hLf
-        dataschema: https://silverflow.com/schemas/events/charges/action/1.0
-        id: evt-2f2eBI1htuZUVimqiQaA
-        datacontenttype: application/json
-        time: '2026-02-03T10:20:12.123Z'
-        agent: cgt-1MQQgZdQ2bB3CJTdZH7f
-    clearing:
-      summary: Charge action event for a clearing
-      value:
-        type: com.silverflow.charges.action
-        data:
-          chargeKey: chg-5oRIiaZi9oRQi7dlN5Yi
-          actionKey: act-2mKSpLv6yEeSuYvA5kNh
-          actionType: clearing
-        source: https://silverflow.com/charges
-        specversion: '1.0'
-        subject: act-2mKSpLv6yEeSuYvA5kNh
-        dataschema: https://silverflow.com/schemas/events/charges/action/1.0
-        id: evt-5i5hEL4kwxCXYlptl6dD
-        datacontenttype: application/json
-        time: '2026-02-03T10:18:44.001Z'
-        agent: cgt-1MQQgZdQ2bB3CJTdZH7f
-    offline-refund:
-      summary: Charge action event for an offline refund
-      value:
-        type: com.silverflow.charges.action
-        data:
-          chargeKey: chg-5oRIiaZi9oRQi7dlN5Yi
-          actionKey: act-9pNTqMy7zFfUvZwB6lOi
-          actionType: offline-refund
-        source: https://silverflow.com/charges
-        specversion: '1.0'
-        subject: act-9pNTqMy7zFfUvZwB6lOi
-        dataschema: https://silverflow.com/schemas/events/charges/action/1.0
-        id: evt-4h4gDK3jvwBWXkosk5cC
-        datacontenttype: application/json
-        time: '2026-02-03T10:25:33.789Z'
-        agent: cgt-1MQQgZdQ2bB3CJTdZH7f
     authorization:
       summary: Charge action event for an authorization
       value:
@@ -296,6 +232,70 @@ components:
         id: evt-3g3fCJ2iuvAVWjnrjRbB
         datacontenttype: application/json
         time: '2026-02-03T10:22:05.456Z'
+        agent: cgt-1MQQgZdQ2bB3CJTdZH7f
+    offline-refund:
+      summary: Charge action event for an offline refund
+      value:
+        type: com.silverflow.charges.action
+        data:
+          chargeKey: chg-5oRIiaZi9oRQi7dlN5Yi
+          actionKey: act-9pNTqMy7zFfUvZwB6lOi
+          actionType: offline-refund
+        source: https://silverflow.com/charges
+        specversion: '1.0'
+        subject: act-9pNTqMy7zFfUvZwB6lOi
+        dataschema: https://silverflow.com/schemas/events/charges/action/1.0
+        id: evt-4h4gDK3jvwBWXkosk5cC
+        datacontenttype: application/json
+        time: '2026-02-03T10:25:33.789Z'
+        agent: cgt-1MQQgZdQ2bB3CJTdZH7f
+    clearing:
+      summary: Charge action event for a clearing
+      value:
+        type: com.silverflow.charges.action
+        data:
+          chargeKey: chg-5oRIiaZi9oRQi7dlN5Yi
+          actionKey: act-2mKSpLv6yEeSuYvA5kNh
+          actionType: clearing
+        source: https://silverflow.com/charges
+        specversion: '1.0'
+        subject: act-2mKSpLv6yEeSuYvA5kNh
+        dataschema: https://silverflow.com/schemas/events/charges/action/1.0
+        id: evt-5i5hEL4kwxCXYlptl6dD
+        datacontenttype: application/json
+        time: '2026-02-03T10:18:44.001Z'
+        agent: cgt-1MQQgZdQ2bB3CJTdZH7f
+    reversal:
+      summary: Charge action event for a reversal
+      value:
+        type: com.silverflow.charges.action
+        data:
+          chargeKey: chg-5oRIiaZi9oRQi7dlN5Yi
+          actionKey: act-7kPQmNx3vBcRtWsY2hLf
+          actionType: reversal
+        source: https://silverflow.com/charges
+        specversion: '1.0'
+        subject: act-7kPQmNx3vBcRtWsY2hLf
+        dataschema: https://silverflow.com/schemas/events/charges/action/1.0
+        id: evt-2f2eBI1htuZUVimqiQaA
+        datacontenttype: application/json
+        time: '2026-02-03T10:20:12.123Z'
+        agent: cgt-1MQQgZdQ2bB3CJTdZH7f
+    increment:
+      summary: Charge action event for an increment
+      value:
+        type: com.silverflow.charges.action
+        data:
+          chargeKey: chg-5oRIiaZi9oRQi7dlN5Yi
+          actionKey: act-4oMUrNx8AGgTwAvC7mPj
+          actionType: increment
+        source: https://silverflow.com/charges
+        specversion: '1.0'
+        subject: act-4oMUrNx8AGgTwAvC7mPj
+        dataschema: https://silverflow.com/schemas/events/charges/action/1.0
+        id: evt-6j6iFM5lxyCZZmqum7eE
+        datacontenttype: application/json
+        time: '2026-02-03T10:30:17.234Z'
         agent: cgt-1MQQgZdQ2bB3CJTdZH7f
   securitySchemes:
     ApiKey:

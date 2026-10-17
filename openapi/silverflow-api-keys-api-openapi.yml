@@ -196,19 +196,41 @@ paths:
           $ref: '#/components/responses/TooManyRequestsError'
 components:
   schemas:
-    permissions:
-      type: array
-      items:
-        $ref: '#/components/schemas/permission'
-        minItems: 1
-        uniqueItems: true
-    ipRanges:
-      type: array
-      description: A list of IP ranges
-      items:
-        $ref: '#/components/schemas/ipRange'
-        minItems: 1
-        uniqueItems: true
+    ApiKeysPage:
+      allOf:
+      - $ref: '#/components/schemas/Page'
+      - type: object
+        required:
+        - apiKeys
+        properties:
+          apiKeys:
+            type: array
+            items:
+              $ref: '#/components/schemas/ApiKey'
+      example:
+        offsetToken: Q29uZ3JhdHVhbHRpb25zISBZb3Ugc3VjY2Vzc2Z1bGx5IGJhc2U2NC1kZWNvZGVkIHRoZSB2YWx1ZS4gWW91J3JlIG9uIGEgcm9sbCBzbyBrZWVwIGdvaW5nIQ==
+        apiKeys:
+        - key: apk-1nM6msvaara1OMHzU7Zd
+          status: active
+          description: API Key for for use by the Data lake
+          permissions:
+          - reports:All
+          ipRanges:
+          - 185.184.111.39/32
+          created: '2021-05-27T10:57:52Z'
+          lastModified: '2021-05-27T10:57:52Z'
+          version: 1
+        - key: apk-1hPdFhmgaBzMS191nIbJ
+          status: active
+          description: API key for merchant management
+          permissions:
+          - all:All
+          ipRanges:
+          - 185.184.111.90/32
+          - 185.184.111.96/29
+          created: '2021-05-27T11:07:30Z'
+          lastModified: '2021-05-27T11:07:30Z'
+          version: 2
     ipRange:
       type: string
       description: An IP range in Classless Inter-domain Routing (CIDR) notation as defined by RFC 4632
@@ -216,25 +238,13 @@ components:
       externalDocs:
         description: RFC 4632
         url: https://datatracker.ietf.org/doc/html/rfc4632
-    offsetToken:
+    apiKeyKey:
+      description: Uniquely identifies an API Key
       type: string
-      pattern: ^[a-zA-Z0-9%]+$
-      minLength: 1
-      maxLength: 2048
-    lastModified:
-      type: string
-      description: The date and time this object was last modified
-      format: date-time
-    apiKeyUpdateStatus:
-      description: Updatable API Key statuses
-      type: string
-      enum:
-      - disabled
-      - active
-    version:
-      type: integer
-      description: The version of this object
-      format: int64
+      pattern: ^apk-[a-zA-Z0-9]+$
+      minLength: 5
+      maxLength: 120
+      example: apk-1UF2NafdfrdPMf2XrS2
     ProblemDetail:
       type: object
       description: 'The ''problem detail'' object relays detailed information about the error that occurred. It is defined
@@ -290,6 +300,17 @@ components:
 
             '
       additionalProperties: true
+    created:
+      type: string
+      description: The date and time this object was created
+      format: date-time
+    ipRanges:
+      type: array
+      description: A list of IP ranges
+      items:
+        $ref: '#/components/schemas/ipRange'
+        minItems: 1
+        uniqueItems: true
     BadRequestProblemDetail:
       description: 'A ''problem detail'' object for Bad Request (400) errors. Extends the base ProblemDetail
 
@@ -357,6 +378,59 @@ components:
                     description: The validation error message
                     example: must be at most 15 characters
         additionalProperties: false
+    version:
+      type: integer
+      description: The version of this object
+      format: int64
+    ApiKey:
+      type: object
+      required:
+      - key
+      - status
+      - agentKey
+      - permissions
+      - created
+      - version
+      description: 'An Agent represents a Silverflow customer
+
+        '
+      properties:
+        key:
+          $ref: '#/components/schemas/apiKeyKey'
+        status:
+          $ref: '#/components/schemas/apiKeyStatus'
+        agentKey:
+          $ref: '#/components/schemas/agentKey'
+        description:
+          description: A description of the API Key
+          $ref: '#/components/schemas/FreeTextField'
+        permissions:
+          $ref: '#/components/schemas/permissions'
+        ipRanges:
+          $ref: '#/components/schemas/ipRanges'
+        secret:
+          type: string
+          description: The secret part of this API Key. This value will only be returned upon creation. It cannot be changed afterwards.
+          minLength: 32
+          maxLength: 150
+        created:
+          $ref: '#/components/schemas/created'
+        lastModified:
+          $ref: '#/components/schemas/lastModified'
+        version:
+          $ref: '#/components/schemas/version'
+      example:
+        key: apk-1nM6msvaara1OMHzU7Zd
+        status: active
+        agentKey: cgt-6y5t4r3edcgfrthb
+        description: API Key for for use by the Data lake
+        permissions:
+        - reports:All
+        ipRanges:
+        - 185.184.111.39/32
+        created: '2021-05-27T10:57:52Z'
+        lastModified: '2021-05-27T10:57:52Z'
+        version: 1
     permission:
       description: A permission
       type: string
@@ -526,91 +600,13 @@ components:
       - threeDs:Create
       - threeDs:Get
       - threeDs:List
-    ApiKeyMergeUpdate:
-      type: object
-      additionalProperties: false
-      properties:
-        status:
-          $ref: '#/components/schemas/apiKeyUpdateStatus'
-        description:
-          $ref: '#/components/schemas/FreeTextField'
-          description: A description of the API Key
-        permissions:
-          $ref: '#/components/schemas/permissions'
-        ipRanges:
-          $ref: '#/components/schemas/ipRanges'
-      example:
-        status: active
-        permissions:
-        - reports:All
-        ipRanges:
-        - 185.184.111.90/32
-        - 185.184.111.96/29
-    created:
+    apiKeyStatus:
+      description: The status of an API Key
       type: string
-      description: The date and time this object was created
-      format: date-time
-    ApiKey:
-      type: object
-      required:
-      - key
-      - status
-      - agentKey
-      - permissions
-      - created
-      - version
-      description: 'An Agent represents a Silverflow customer
-
-        '
-      properties:
-        key:
-          $ref: '#/components/schemas/apiKeyKey'
-        status:
-          $ref: '#/components/schemas/apiKeyStatus'
-        agentKey:
-          $ref: '#/components/schemas/agentKey'
-        description:
-          description: A description of the API Key
-          $ref: '#/components/schemas/FreeTextField'
-        permissions:
-          $ref: '#/components/schemas/permissions'
-        ipRanges:
-          $ref: '#/components/schemas/ipRanges'
-        secret:
-          type: string
-          description: The secret part of this API Key. This value will only be returned upon creation. It cannot be changed afterwards.
-          minLength: 32
-          maxLength: 150
-        created:
-          $ref: '#/components/schemas/created'
-        lastModified:
-          $ref: '#/components/schemas/lastModified'
-        version:
-          $ref: '#/components/schemas/version'
-      example:
-        key: apk-1nM6msvaara1OMHzU7Zd
-        status: active
-        agentKey: cgt-6y5t4r3edcgfrthb
-        description: API Key for for use by the Data lake
-        permissions:
-        - reports:All
-        ipRanges:
-        - 185.184.111.39/32
-        created: '2021-05-27T10:57:52Z'
-        lastModified: '2021-05-27T10:57:52Z'
-        version: 1
-    Page:
-      type: object
-      properties:
-        offsetToken:
-          $ref: '#/components/schemas/offsetToken'
-        moreItems:
-          $ref: '#/components/schemas/moreItems'
-    FreeTextField:
-      type: string
-      pattern: ^[\w +=.,:;!?$@()-]+$
-      minLength: 1
-      maxLength: 160
+      enum:
+      - disabled
+      - active
+      - archived
     PreconditionFailedProblemDetail:
       type: object
       required:
@@ -648,62 +644,38 @@ components:
 
             '
       additionalProperties: false
-    ApiKeysPage:
-      allOf:
-      - $ref: '#/components/schemas/Page'
-      - type: object
-        required:
-        - apiKeys
-        properties:
-          apiKeys:
-            type: array
-            items:
-              $ref: '#/components/schemas/ApiKey'
-      example:
-        offsetToken: Q29uZ3JhdHVhbHRpb25zISBZb3Ugc3VjY2Vzc2Z1bGx5IGJhc2U2NC1kZWNvZGVkIHRoZSB2YWx1ZS4gWW91J3JlIG9uIGEgcm9sbCBzbyBrZWVwIGdvaW5nIQ==
-        apiKeys:
-        - key: apk-1nM6msvaara1OMHzU7Zd
-          status: active
-          description: API Key for for use by the Data lake
-          permissions:
-          - reports:All
-          ipRanges:
-          - 185.184.111.39/32
-          created: '2021-05-27T10:57:52Z'
-          lastModified: '2021-05-27T10:57:52Z'
-          version: 1
-        - key: apk-1hPdFhmgaBzMS191nIbJ
-          status: active
-          description: API key for merchant management
-          permissions:
-          - all:All
-          ipRanges:
-          - 185.184.111.90/32
-          - 185.184.111.96/29
-          created: '2021-05-27T11:07:30Z'
-          lastModified: '2021-05-27T11:07:30Z'
-          version: 2
-    apiKeyStatus:
-      description: The status of an API Key
-      type: string
-      enum:
-      - disabled
-      - active
-      - archived
+    moreItems:
+      type: boolean
     agentKey:
       description: Uniquely identifies an Agent
       type: string
       pattern: ^cgt-[a-zA-Z0-9]+|current$
       example: cgt-1UF2NafdfrdPMf2XrS2
-    apiKeyKey:
-      description: Uniquely identifies an API Key
+    ApiKeyMergeUpdate:
+      type: object
+      additionalProperties: false
+      properties:
+        status:
+          $ref: '#/components/schemas/apiKeyUpdateStatus'
+        description:
+          $ref: '#/components/schemas/FreeTextField'
+          description: A description of the API Key
+        permissions:
+          $ref: '#/components/schemas/permissions'
+        ipRanges:
+          $ref: '#/components/schemas/ipRanges'
+      example:
+        status: active
+        permissions:
+        - reports:All
+        ipRanges:
+        - 185.184.111.90/32
+        - 185.184.111.96/29
+    FreeTextField:
       type: string
-      pattern: ^apk-[a-zA-Z0-9]+$
-      minLength: 5
-      maxLength: 120
-      example: apk-1UF2NafdfrdPMf2XrS2
-    moreItems:
-      type: boolean
+      pattern: ^[\w +=.,:;!?$@()-]+$
+      minLength: 1
+      maxLength: 160
     ApiKeyCreate:
       type: object
       required:
@@ -726,19 +698,57 @@ components:
         - reports:All
         ipRanges:
         - 185.184.111.39/32
+    offsetToken:
+      type: string
+      pattern: ^[a-zA-Z0-9%]+$
+      minLength: 1
+      maxLength: 2048
+    permissions:
+      type: array
+      items:
+        $ref: '#/components/schemas/permission'
+        minItems: 1
+        uniqueItems: true
+    Page:
+      type: object
+      properties:
+        offsetToken:
+          $ref: '#/components/schemas/offsetToken'
+        moreItems:
+          $ref: '#/components/schemas/moreItems'
+    lastModified:
+      type: string
+      description: The date and time this object was last modified
+      format: date-time
+    apiKeyUpdateStatus:
+      description: Updatable API Key statuses
+      type: string
+      enum:
+      - disabled
+      - active
+  examples:
+    update-api-key-remove-ip-ranges:
+      summary: Example request removing ipRanges from an API Key
+      value:
+        ipRanges: []
+    create-api-key-ip-ranges:
+      summary: Example request creating an API key with 'all:All' permission and ip restriction for two ranges, that is 'active'
+      value:
+        status: active
+        description: IP-restricted key
+        permissions:
+        - all:All
+        ipRanges:
+        - 185.184.111.39/32
+        - 102.177.115.120/29
+        - 0.0.0.0/0
   responses:
-    PreconditionFailedError:
-      description: The conditions specified in the HTTP headers of the request were not met.
+    ConflictError:
+      description: The request could not be completed due to a conflict with the current state of the resources involved in the request.
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/PreconditionFailedProblemDetail'
-          example:
-            detail: The referenced bin with key 'bin-5nHQqdP4wTClI7MDMw5j' did not have the expected version 5
-            instance: /silverflow/00b32804-1109-4761-8776-9436a3c6b26b
-            status: 412
-            title: Precondition Failed
-            type: /silverflow/problems/precondition-failed
+            $ref: '#/components/schemas/ProblemDetail'
     TooManyRequestsError:
       description: The number of requests (per minute) has exceeded the configured maximum
       content:
@@ -751,12 +761,33 @@ components:
             status: 429
             detail: You have exceeded the rate limit. Please try again after the specified delay.
             instance: /silverflow/b0451a9d-f66d-4ef7-9f5d-d48064a2bb3e
-    ConflictError:
-      description: The request could not be completed due to a conflict with the current state of the resources involved in the request.
+    BadRequestError:
+      description: The request was malformed. See the response body for details
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/ProblemDetail'
+            $ref: '#/components/schemas/BadRequestProblemDetail'
+          example:
+            type: /silverflow/problems/bad-request
+            title: Bad Request
+            status: 400
+            detail: Validation errors occurred
+            instance: https://api.silverflow.co/v1/merchants/mct-1hPdFqhgstYTUhlphPDp
+            validationErrors:
+            - instancePath: /tags/0/businessId
+              message: must not be longer than 255 characters
+    PreconditionFailedError:
+      description: The conditions specified in the HTTP headers of the request were not met.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/PreconditionFailedProblemDetail'
+          example:
+            detail: The referenced bin with key 'bin-5nHQqdP4wTClI7MDMw5j' did not have the expected version 5
+            instance: /silverflow/00b32804-1109-4761-8776-9436a3c6b26b
+            status: 412
+            title: Precondition Failed
+            type: /silverflow/problems/precondition-failed
     ForbiddenError:
       description: The authenticated client is forbidden to make the request for the resource identified.
       content:
@@ -781,21 +812,6 @@ components:
             status: 404
             detail: The entity referenced in the request could not be found
             instance: https://api.silverflow.co/v1/merchants/mct-1hPdFqhgstYTUhlphPDp
-    BadRequestError:
-      description: The request was malformed. See the response body for details
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/BadRequestProblemDetail'
-          example:
-            type: /silverflow/problems/bad-request
-            title: Bad Request
-            status: 400
-            detail: Validation errors occurred
-            instance: https://api.silverflow.co/v1/merchants/mct-1hPdFqhgstYTUhlphPDp
-            validationErrors:
-            - instancePath: /tags/0/businessId
-              message: must not be longer than 255 characters
     UnauthorizedError:
       description: Authentication information is missing or invalid
       headers:
@@ -811,23 +827,15 @@ components:
             title: Unauthorized
             status: 401
             detail: The credentials supplied in the request are either missing, invalid, or not applicable in the current scope
-  examples:
-    update-api-key-remove-ip-ranges:
-      summary: Example request removing ipRanges from an API Key
-      value:
-        ipRanges: []
-    create-api-key-ip-ranges:
-      summary: Example request creating an API key with 'all:All' permission and ip restriction for two ranges, that is 'active'
-      value:
-        status: active
-        description: IP-restricted key
-        permissions:
-        - all:All
-        ipRanges:
-        - 185.184.111.39/32
-        - 102.177.115.120/29
-        - 0.0.0.0/0
   parameters:
+    ifMatch:
+      name: If-Match
+      description: The request condition
+      in: header
+      required: false
+      schema:
+        type: integer
+        format: int32
     sortOrder:
       name: sortOrder
       description: The sort order, __asc__ending or __desc__ending
@@ -839,21 +847,6 @@ components:
         - asc
         - desc
       example: desc
-    offsetToken:
-      name: offsetToken
-      description: The offset token. This token is returned in the response of previous request.
-      in: query
-      required: false
-      schema:
-        $ref: '#/components/schemas/offsetToken'
-    ifMatch:
-      name: If-Match
-      description: The request condition
-      in: header
-      required: false
-      schema:
-        type: integer
-        format: int32
     apiKey:
       name: apiKey
       in: path
@@ -863,6 +856,13 @@ components:
         '
       schema:
         $ref: '#/components/schemas/apiKeyKey'
+    offsetToken:
+      name: offsetToken
+      description: The offset token. This token is returned in the response of previous request.
+      in: query
+      required: false
+      schema:
+        $ref: '#/components/schemas/offsetToken'
     limit:
       name: limit
       description: The number of items to return

@@ -100,6 +100,15 @@ webhooks:
       description: Sandbox URL - Equivalent to https://api-sbx.silverflow.co/v1
 components:
   schemas:
+    source:
+      type: string
+      description: Source system of the event.
+      pattern: ^https://silverflow.com/[a-zA-Z]+$
+    processorTokenEventType:
+      type: string
+      description: The event type.
+      pattern: ^com.silverflow.processorTokens.[a-zA-Z]+$
+      example: com.silverflow.processorTokens.created
     common_version:
       type: integer
       description: The version of this object.
@@ -108,16 +117,6 @@ components:
       maximum: 1000
       example: 1
       readOnly: false
-    openapi_components-schemas-created-4:
-      type: string
-      description: The date and time this object was created.
-      format: date-time
-      readOnly: false
-    openapi_components-schemas-version-3:
-      type: string
-      description: The version of the spec.
-      pattern: ^[1-9]+.[0-9]+$
-      example: '1.0'
     common_agentKey:
       description: Uniquely identifies an Agent.
       type: string
@@ -125,129 +124,6 @@ components:
       readOnly: true
       example: cgt-EFG67b4yPre23ZDrLX
       title: agentKey
-    dataschema:
-      type: string
-      description: The event schema with the data version of the event.
-    time:
-      type: string
-      format: date-time
-      description: Date and time when the event was sent.
-    openapi_components-schemas-lastModified-3:
-      type: string
-      description: The date and time this object was last modified.
-      format: date-time
-      readOnly: false
-    PublicCloudEvent:
-      type: object
-      required:
-      - id
-      - source
-      - specversion
-      - type
-      - datacontenttype
-      - dataschema
-      - subject
-      - time
-      - agent
-      - data
-      properties:
-        id:
-          $ref: '#/components/schemas/eventId'
-        specversion:
-          allOf:
-          - description: The version of the current spec.
-          - enum:
-            - '1.0'
-          - $ref: '#/components/schemas/openapi_components-schemas-version-3'
-        datacontenttype:
-          $ref: '#/components/schemas/dataContentType'
-        dataschema:
-          $ref: '#/components/schemas/dataschema'
-        time:
-          $ref: '#/components/schemas/time'
-        agent:
-          $ref: '#/components/schemas/common_agentKey'
-    source:
-      type: string
-      description: Source system of the event.
-      pattern: ^https://silverflow.com/[a-zA-Z]+$
-    dataContentType:
-      type: string
-      description: The content type of the event.
-      enum:
-      - application/json
-    ProcessorTokenEventNotification1_1Archived:
-      type: object
-      allOf:
-      - $ref: '#/components/schemas/PublicCloudEvent'
-      required:
-      - data
-      properties:
-        type:
-          allOf:
-          - $ref: '#/components/schemas/processorTokenEventType'
-          - enum:
-            - com.silverflow.processorTokens.archived
-          - example: com.silverflow.processorTokens.archived
-        data:
-          $ref: '#/components/schemas/ProcessorTokenEventDataVersion1_1Archived'
-        source:
-          allOf:
-          - $ref: '#/components/schemas/source'
-          - enum:
-            - https://silverflow.com/processorTokens
-        specversion:
-          allOf:
-          - $ref: '#/components/schemas/openapi_components-schemas-version-3'
-          - enum:
-            - '1.0'
-        subject:
-          allOf:
-          - description: The subject of the notification, which is the processor token key.
-          - $ref: '#/components/schemas/openapi_components-schemas-processorTokenKey'
-        dataschema:
-          allOf:
-          - $ref: '#/components/schemas/dataschema'
-          - example: https://silverflow.com/schemas/events/processorTokens/1.1
-          - enum:
-            - https://silverflow.com/schemas/events/processorTokens/1.1
-    openapi_components-schemas-processorTokenKey:
-      description: Uniquely identifies a Processor Token.
-      type: string
-      pattern: ^ptk-[a-zA-Z0-9]+$
-      minLength: 5
-      maxLength: 120
-      example: ptk-1e1dA2fgs1YTUhlhyPOp
-    ProcessorTokenEventDataVersion1_1Created:
-      type: object
-      description: The event data for processor token created notifications.
-      required:
-      - key
-      - status
-      - created
-      - version
-      properties:
-        key:
-          $ref: '#/components/schemas/openapi_components-schemas-processorTokenKey'
-        status:
-          type: string
-          description: The current status of a Processor Token.
-          enum:
-          - active
-          example: active
-        reference:
-          $ref: '#/components/schemas/processorTokenReference'
-        created:
-          $ref: '#/components/schemas/openapi_components-schemas-created-4'
-        lastModified:
-          $ref: '#/components/schemas/openapi_components-schemas-lastModified-3'
-        version:
-          $ref: '#/components/schemas/common_version'
-    processorTokenEventType:
-      type: string
-      description: The event type.
-      pattern: ^com.silverflow.processorTokens.[a-zA-Z]+$
-      example: com.silverflow.processorTokens.created
     ProcessorTokenEventDataVersion1_1Archived:
       type: object
       description: The event data for processor token archived notifications.
@@ -273,54 +149,6 @@ components:
           $ref: '#/components/schemas/openapi_components-schemas-lastModified-3'
         version:
           $ref: '#/components/schemas/common_version'
-    processorTokenReference:
-      type: string
-      description: Optional reference assigned by the agent to the processor token.
-      minLength: 5
-      maxLength: 120
-      example: VEQNS4L35E6IU1TN
-    eventId:
-      type: string
-      description: Uniquely identifies an event.
-      pattern: ^evt-[a-zA-Z0-9]+$
-      minLength: 5
-      maxLength: 120
-      example: evt-1e1dAHhgstYTUhlphPzZ
-    ProcessorTokenEventNotification1_1CvcDeleted:
-      type: object
-      allOf:
-      - $ref: '#/components/schemas/PublicCloudEvent'
-      required:
-      - data
-      properties:
-        type:
-          allOf:
-          - $ref: '#/components/schemas/processorTokenEventType'
-          - enum:
-            - com.silverflow.processorTokens.cvcDeleted
-          - example: com.silverflow.processorTokens.cvcDeleted
-        data:
-          $ref: '#/components/schemas/ProcessorTokenEventDataVersion1_1CvcDeleted'
-        source:
-          allOf:
-          - $ref: '#/components/schemas/source'
-          - enum:
-            - https://silverflow.com/processorTokens
-        specversion:
-          allOf:
-          - $ref: '#/components/schemas/openapi_components-schemas-version-3'
-          - enum:
-            - '1.0'
-        subject:
-          allOf:
-          - description: The subject of the notification, which is the processor token key.
-          - $ref: '#/components/schemas/openapi_components-schemas-processorTokenKey'
-        dataschema:
-          allOf:
-          - $ref: '#/components/schemas/dataschema'
-          - example: https://silverflow.com/schemas/events/processorTokens/1.1
-          - enum:
-            - https://silverflow.com/schemas/events/processorTokens/1.1
     ProcessorTokenEventDataVersion1_1CvcDeleted:
       type: object
       description: The event data for processor token CVC deleted notifications.
@@ -382,6 +210,178 @@ components:
           - example: https://silverflow.com/schemas/events/processorTokens/1.1
           - enum:
             - https://silverflow.com/schemas/events/processorTokens/1.1
+    ProcessorTokenEventNotification1_1Archived:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/PublicCloudEvent'
+      required:
+      - data
+      properties:
+        type:
+          allOf:
+          - $ref: '#/components/schemas/processorTokenEventType'
+          - enum:
+            - com.silverflow.processorTokens.archived
+          - example: com.silverflow.processorTokens.archived
+        data:
+          $ref: '#/components/schemas/ProcessorTokenEventDataVersion1_1Archived'
+        source:
+          allOf:
+          - $ref: '#/components/schemas/source'
+          - enum:
+            - https://silverflow.com/processorTokens
+        specversion:
+          allOf:
+          - $ref: '#/components/schemas/openapi_components-schemas-version-3'
+          - enum:
+            - '1.0'
+        subject:
+          allOf:
+          - description: The subject of the notification, which is the processor token key.
+          - $ref: '#/components/schemas/openapi_components-schemas-processorTokenKey'
+        dataschema:
+          allOf:
+          - $ref: '#/components/schemas/dataschema'
+          - example: https://silverflow.com/schemas/events/processorTokens/1.1
+          - enum:
+            - https://silverflow.com/schemas/events/processorTokens/1.1
+    openapi_components-schemas-created-4:
+      type: string
+      description: The date and time this object was created.
+      format: date-time
+      readOnly: false
+    ProcessorTokenEventDataVersion1_1Created:
+      type: object
+      description: The event data for processor token created notifications.
+      required:
+      - key
+      - status
+      - created
+      - version
+      properties:
+        key:
+          $ref: '#/components/schemas/openapi_components-schemas-processorTokenKey'
+        status:
+          type: string
+          description: The current status of a Processor Token.
+          enum:
+          - active
+          example: active
+        reference:
+          $ref: '#/components/schemas/processorTokenReference'
+        created:
+          $ref: '#/components/schemas/openapi_components-schemas-created-4'
+        lastModified:
+          $ref: '#/components/schemas/openapi_components-schemas-lastModified-3'
+        version:
+          $ref: '#/components/schemas/common_version'
+    dataschema:
+      type: string
+      description: The event schema with the data version of the event.
+    dataContentType:
+      type: string
+      description: The content type of the event.
+      enum:
+      - application/json
+    processorTokenReference:
+      type: string
+      description: Optional reference assigned by the agent to the processor token.
+      minLength: 5
+      maxLength: 120
+      example: VEQNS4L35E6IU1TN
+    openapi_components-schemas-lastModified-3:
+      type: string
+      description: The date and time this object was last modified.
+      format: date-time
+      readOnly: false
+    time:
+      type: string
+      format: date-time
+      description: Date and time when the event was sent.
+    openapi_components-schemas-version-3:
+      type: string
+      description: The version of the spec.
+      pattern: ^[1-9]+.[0-9]+$
+      example: '1.0'
+    openapi_components-schemas-processorTokenKey:
+      description: Uniquely identifies a Processor Token.
+      type: string
+      pattern: ^ptk-[a-zA-Z0-9]+$
+      minLength: 5
+      maxLength: 120
+      example: ptk-1e1dA2fgs1YTUhlhyPOp
+    eventId:
+      type: string
+      description: Uniquely identifies an event.
+      pattern: ^evt-[a-zA-Z0-9]+$
+      minLength: 5
+      maxLength: 120
+      example: evt-1e1dAHhgstYTUhlphPzZ
+    ProcessorTokenEventNotification1_1CvcDeleted:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/PublicCloudEvent'
+      required:
+      - data
+      properties:
+        type:
+          allOf:
+          - $ref: '#/components/schemas/processorTokenEventType'
+          - enum:
+            - com.silverflow.processorTokens.cvcDeleted
+          - example: com.silverflow.processorTokens.cvcDeleted
+        data:
+          $ref: '#/components/schemas/ProcessorTokenEventDataVersion1_1CvcDeleted'
+        source:
+          allOf:
+          - $ref: '#/components/schemas/source'
+          - enum:
+            - https://silverflow.com/processorTokens
+        specversion:
+          allOf:
+          - $ref: '#/components/schemas/openapi_components-schemas-version-3'
+          - enum:
+            - '1.0'
+        subject:
+          allOf:
+          - description: The subject of the notification, which is the processor token key.
+          - $ref: '#/components/schemas/openapi_components-schemas-processorTokenKey'
+        dataschema:
+          allOf:
+          - $ref: '#/components/schemas/dataschema'
+          - example: https://silverflow.com/schemas/events/processorTokens/1.1
+          - enum:
+            - https://silverflow.com/schemas/events/processorTokens/1.1
+    PublicCloudEvent:
+      type: object
+      required:
+      - id
+      - source
+      - specversion
+      - type
+      - datacontenttype
+      - dataschema
+      - subject
+      - time
+      - agent
+      - data
+      properties:
+        id:
+          $ref: '#/components/schemas/eventId'
+        specversion:
+          allOf:
+          - description: The version of the current spec.
+          - enum:
+            - '1.0'
+          - $ref: '#/components/schemas/openapi_components-schemas-version-3'
+        datacontenttype:
+          $ref: '#/components/schemas/dataContentType'
+        dataschema:
+          $ref: '#/components/schemas/dataschema'
+        time:
+          $ref: '#/components/schemas/time'
+        agent:
+          $ref: '#/components/schemas/common_agentKey'
   examples:
     archived:
       summary: Processor Token was archived
@@ -402,24 +402,6 @@ components:
         datacontenttype: application/json
         time: '2024-02-15T14:30:45.123Z'
         agent: cgt-1UF2NafdfrdPMf2XrS2
-    created:
-      summary: Processor Token was created
-      value:
-        type: com.silverflow.processorTokens.created
-        data:
-          key: ptk-1e1dA2fgs1YTUhlhyPOp
-          status: active
-          reference: VEQNS4L35E6IU1TN
-          created: '2024-01-31T09:55:00.999Z'
-          version: 1
-        source: https://silverflow.com/processorTokens
-        specversion: '1.0'
-        subject: ptk-1e1dA2fgs1YTUhlhyPOp
-        dataschema: https://silverflow.com/schemas/events/processorTokens/1.1
-        id: evt-3IgSdT7DbeXNVftim0oY
-        datacontenttype: application/json
-        time: '2024-01-31T10:03:19.951Z'
-        agent: cgt-1UF2NafdfrdPMf2XrS2
     cvc-deleted:
       summary: CVC was deleted from Processor Token
       value:
@@ -438,6 +420,24 @@ components:
         id: evt-5RqTbZ9VfhjLYxvmpSqD
         datacontenttype: application/json
         time: '2024-02-01T08:15:30.456Z'
+        agent: cgt-1UF2NafdfrdPMf2XrS2
+    created:
+      summary: Processor Token was created
+      value:
+        type: com.silverflow.processorTokens.created
+        data:
+          key: ptk-1e1dA2fgs1YTUhlhyPOp
+          status: active
+          reference: VEQNS4L35E6IU1TN
+          created: '2024-01-31T09:55:00.999Z'
+          version: 1
+        source: https://silverflow.com/processorTokens
+        specversion: '1.0'
+        subject: ptk-1e1dA2fgs1YTUhlhyPOp
+        dataschema: https://silverflow.com/schemas/events/processorTokens/1.1
+        id: evt-3IgSdT7DbeXNVftim0oY
+        datacontenttype: application/json
+        time: '2024-01-31T10:03:19.951Z'
         agent: cgt-1UF2NafdfrdPMf2XrS2
   securitySchemes:
     ApiKey:

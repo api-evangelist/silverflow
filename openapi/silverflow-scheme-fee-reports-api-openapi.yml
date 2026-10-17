@@ -110,72 +110,11 @@ paths:
           $ref: '#/components/responses/openapi_components-responses-TooManyRequestsError-3'
 components:
   schemas:
-    distributions:
-      description: 'The distribution objects'' keys.
-
-
-        If passed, the report will be distributed when generation is completed.
+    errorInstance:
+      type: string
+      description: 'A reference that identifies the specific occurrence of the error. The instance is unique for every error.
 
         '
-      type: array
-      items:
-        $ref: '#/components/schemas/distributionKey'
-    schemeFeeDetailsReportMimeType:
-      type: string
-      description: The mime-type in which the scheme fee details report is available.
-      enum:
-      - application/json
-      - application/x-ndjson
-      - text/csv
-    errorTitle:
-      type: string
-      description: 'A short, human-readable summary of the problem type. It does not change from occurrence to occurrence of the error.
-
-        '
-    bookDateTo:
-      type: string
-      format: date-time
-      description: Include all scheme fees that have been created earlier than and including from the date specified.
-    SchemeFeeDetailsReportName:
-      type: string
-      description: The name of the report.
-      enum:
-      - SchemeFeeDetails
-    NotAuthorizedErrorDetails:
-      type: object
-      required:
-      - type
-      - title
-      - status
-      - detail
-      - instance
-      properties:
-        type:
-          allOf:
-          - $ref: '#/components/schemas/errorType'
-          - enum:
-            - /silverflow/problems/report/not-authorized
-        title:
-          allOf:
-          - $ref: '#/components/schemas/errorTitle'
-          - enum:
-            - Not authorized
-        status:
-          allOf:
-          - $ref: '#/components/schemas/errorStatus'
-          - enum:
-            - 401
-        detail:
-          $ref: '#/components/schemas/errorDetail'
-        instance:
-          $ref: '#/components/schemas/errorInstance'
-    reportKey:
-      description: Uniquely identifies a report object
-      type: string
-      pattern: ^rep-[a-zA-Z0-9]+$
-      minLength: 10
-      maxLength: 120
-      example: rep-1e1dAHhgstYTUhlphPzZ
     bookDateFrom:
       type: string
       format: date-time
@@ -184,12 +123,12 @@ components:
         Required when querying with book dates.
 
         '
-    errorDetail:
+    errorType:
       type: string
-      description: 'A human readable explanation specific to this occurrence of the problem.
+      description: 'A relative URI reference, this property can be used to perform automated error handling.
 
         '
-    InputValidationError:
+    InvalidBookDateRangeErrorDetails:
       type: object
       required:
       - type
@@ -197,7 +136,6 @@ components:
       - status
       - detail
       - instance
-      - validationErrors
       properties:
         type:
           allOf:
@@ -208,7 +146,7 @@ components:
           allOf:
           - $ref: '#/components/schemas/errorTitle'
           - enum:
-            - Invalid Input
+            - Invalid Book Date Range
         status:
           allOf:
           - $ref: '#/components/schemas/errorStatus'
@@ -218,19 +156,137 @@ components:
           allOf:
           - $ref: '#/components/schemas/errorDetail'
           - enum:
-            - The request does not adhere to the defined API schema.
+            - Book date range is greater than a week
         instance:
           $ref: '#/components/schemas/errorInstance'
-        validationErrors:
-          type: array
-          items:
-            $ref: '#/components/schemas/openapi_components-schemas-ValidationError'
-          description: A list of validation errors.
+    SchemeFeeDetailsReportName:
+      type: string
+      description: The name of the report.
+      enum:
+      - SchemeFeeDetails
+    InvalidDateRangeErrorDetails:
+      type: object
+      required:
+      - type
+      - title
+      - status
+      - detail
+      - instance
+      properties:
+        type:
+          allOf:
+          - $ref: '#/components/schemas/errorType'
+          - enum:
+            - /silverflow/problems/report/invalid-date-range
+        title:
+          allOf:
+          - $ref: '#/components/schemas/errorTitle'
+          - enum:
+            - Invalid date range
+        status:
+          allOf:
+          - $ref: '#/components/schemas/errorStatus'
+          - enum:
+            - 400
+        detail:
+          $ref: '#/components/schemas/errorDetail'
+        instance:
+          $ref: '#/components/schemas/errorInstance'
+    bookDateTo:
+      type: string
+      format: date-time
+      description: Include all scheme fees that have been created earlier than and including from the date specified.
+    reportKey:
+      description: Uniquely identifies a report object
+      type: string
+      pattern: ^rep-[a-zA-Z0-9]+$
+      minLength: 10
+      maxLength: 120
+      example: rep-1e1dAHhgstYTUhlphPzZ
     createReportStatus:
       description: The status of the report.
       type: string
       enum:
       - scheduled
+    AgentKey:
+      description: Uniquely identifies an Agent
+      type: string
+      pattern: ^cgt-[a-zA-Z0-9]+|current$
+      readOnly: true
+      example: cgt-1UF2NafdfrdPMf2XrS2
+    distributions:
+      description: 'The distribution objects'' keys.
+
+
+        If passed, the report will be distributed when generation is completed.
+
+        '
+      type: array
+      items:
+        $ref: '#/components/schemas/distributionKey'
+    openapi_components-schemas-ValidationError:
+      type: object
+      required:
+      - path
+      - errorCode
+      - message
+      properties:
+        path:
+          type: string
+          description: The path to the error location in the request params or body.
+        errorCode:
+          type: string
+          description: The error code identifying the error type.
+        message:
+          type: string
+          description: The error message.
+    distributionKey:
+      description: Uniquely identifies a distribution object
+      type: string
+      pattern: ^dst-[a-zA-Z0-9]+$
+      minLength: 10
+      maxLength: 120
+      example: dst-1e1dAHhgstYTUhlphPzZ
+    errorTitle:
+      type: string
+      description: 'A short, human-readable summary of the problem type. It does not change from occurrence to occurrence of the error.
+
+        '
+    schemeFeeDetailsReportMimeType:
+      type: string
+      description: The mime-type in which the scheme fee details report is available.
+      enum:
+      - application/json
+      - application/x-ndjson
+      - text/csv
+    InvalidReportNameErrorDetails:
+      type: object
+      required:
+      - type
+      - title
+      - status
+      - detail
+      - instance
+      properties:
+        type:
+          allOf:
+          - $ref: '#/components/schemas/errorType'
+          - enum:
+            - /silverflow/problems/report/invalid-report-name
+        title:
+          allOf:
+          - $ref: '#/components/schemas/errorTitle'
+          - enum:
+            - Invalid report name
+        status:
+          allOf:
+          - $ref: '#/components/schemas/errorStatus'
+          - enum:
+            - 400
+        detail:
+          $ref: '#/components/schemas/errorDetail'
+        instance:
+          $ref: '#/components/schemas/errorInstance'
     MissingBookDateFromErrorDetails:
       type: object
       required:
@@ -262,6 +318,44 @@ components:
             - Missing bookDateFrom parameter.
         instance:
           $ref: '#/components/schemas/errorInstance'
+    openapi_components-schemas-created-2:
+      type: string
+      description: The date and time this object was created
+      format: date-time
+      readOnly: true
+    CreateSchemeFeeDetailsReportResponse:
+      type: object
+      required:
+      - reportName
+      - parameters
+      - mimeType
+      - key
+      - agentKey
+      - status
+      - created
+      properties:
+        reportName:
+          $ref: '#/components/schemas/SchemeFeeDetailsReportName'
+        parameters:
+          $ref: '#/components/schemas/schemeFeeDetailsReportParameters'
+        mimeType:
+          $ref: '#/components/schemas/schemeFeeDetailsReportMimeType'
+        key:
+          $ref: '#/components/schemas/reportKey'
+        agentKey:
+          $ref: '#/components/schemas/AgentKey'
+        reference:
+          $ref: '#/components/schemas/components-schemas-reference'
+        status:
+          $ref: '#/components/schemas/createReportStatus'
+        created:
+          $ref: '#/components/schemas/openapi_components-schemas-created-2'
+        distributions:
+          $ref: '#/components/schemas/distributions'
+    components-schemas-reference:
+      type: string
+      description: Unique ID used to identify a report.
+      maxLength: 120
     CreateSchemeFeeDetailsReportRequest:
       type: object
       required:
@@ -278,22 +372,17 @@ components:
           $ref: '#/components/schemas/schemeFeeDetailsReportMimeType'
         distributions:
           $ref: '#/components/schemas/distributions'
-    openapi_components-schemas-created-2:
-      type: string
-      description: The date and time this object was created
-      format: date-time
-      readOnly: true
-    errorType:
-      type: string
-      description: 'A relative URI reference, this property can be used to perform automated error handling.
-
-        '
-    AgentKey:
-      description: Uniquely identifies an Agent
-      type: string
-      pattern: ^cgt-[a-zA-Z0-9]+|current$
-      readOnly: true
-      example: cgt-1UF2NafdfrdPMf2XrS2
+    schemeFeeDetailsReportParameters:
+      type: object
+      description: The query parameters used for a report.
+      required:
+      - bookDateFrom
+      additionalProperties: false
+      properties:
+        bookDateFrom:
+          $ref: '#/components/schemas/bookDateFrom'
+        bookDateTo:
+          $ref: '#/components/schemas/bookDateTo'
     openapi_components-schemas-ProblemDetail-2:
       type: object
       description: 'The ''problem detail'' object relays detailed information about the error that occurred. It is defined
@@ -360,42 +449,7 @@ components:
         validationErrors:
         - The value of property 'status' should be one of 'idle', 'active' or 'archived'
         - The value of property 'tags.0.businessId' must not be longer than 255 characters
-    errorInstance:
-      type: string
-      description: 'A reference that identifies the specific occurrence of the error. The instance is unique for every error.
-
-        '
-    schemeFeeDetailsReportParameters:
-      type: object
-      description: The query parameters used for a report.
-      required:
-      - bookDateFrom
-      additionalProperties: false
-      properties:
-        bookDateFrom:
-          $ref: '#/components/schemas/bookDateFrom'
-        bookDateTo:
-          $ref: '#/components/schemas/bookDateTo'
-    components-schemas-reference:
-      type: string
-      description: Unique ID used to identify a report.
-      maxLength: 120
-    errorStatus:
-      type: integer
-      format: int32
-      description: 'The HTTP status code generated by the origin server for this occurrence
-
-        of the problem.
-
-        '
-    distributionKey:
-      description: Uniquely identifies a distribution object
-      type: string
-      pattern: ^dst-[a-zA-Z0-9]+$
-      minLength: 10
-      maxLength: 120
-      example: dst-1e1dAHhgstYTUhlphPzZ
-    InvalidDateRangeErrorDetails:
+    InputValidationError:
       type: object
       required:
       - type
@@ -403,63 +457,7 @@ components:
       - status
       - detail
       - instance
-      properties:
-        type:
-          allOf:
-          - $ref: '#/components/schemas/errorType'
-          - enum:
-            - /silverflow/problems/report/invalid-date-range
-        title:
-          allOf:
-          - $ref: '#/components/schemas/errorTitle'
-          - enum:
-            - Invalid date range
-        status:
-          allOf:
-          - $ref: '#/components/schemas/errorStatus'
-          - enum:
-            - 400
-        detail:
-          $ref: '#/components/schemas/errorDetail'
-        instance:
-          $ref: '#/components/schemas/errorInstance'
-    CreateSchemeFeeDetailsReportResponse:
-      type: object
-      required:
-      - reportName
-      - parameters
-      - mimeType
-      - key
-      - agentKey
-      - status
-      - created
-      properties:
-        reportName:
-          $ref: '#/components/schemas/SchemeFeeDetailsReportName'
-        parameters:
-          $ref: '#/components/schemas/schemeFeeDetailsReportParameters'
-        mimeType:
-          $ref: '#/components/schemas/schemeFeeDetailsReportMimeType'
-        key:
-          $ref: '#/components/schemas/reportKey'
-        agentKey:
-          $ref: '#/components/schemas/AgentKey'
-        reference:
-          $ref: '#/components/schemas/components-schemas-reference'
-        status:
-          $ref: '#/components/schemas/createReportStatus'
-        created:
-          $ref: '#/components/schemas/openapi_components-schemas-created-2'
-        distributions:
-          $ref: '#/components/schemas/distributions'
-    InvalidBookDateRangeErrorDetails:
-      type: object
-      required:
-      - type
-      - title
-      - status
-      - detail
-      - instance
+      - validationErrors
       properties:
         type:
           allOf:
@@ -470,7 +468,7 @@ components:
           allOf:
           - $ref: '#/components/schemas/errorTitle'
           - enum:
-            - Invalid Book Date Range
+            - Invalid Input
         status:
           allOf:
           - $ref: '#/components/schemas/errorStatus'
@@ -480,26 +478,15 @@ components:
           allOf:
           - $ref: '#/components/schemas/errorDetail'
           - enum:
-            - Book date range is greater than a week
+            - The request does not adhere to the defined API schema.
         instance:
           $ref: '#/components/schemas/errorInstance'
-    openapi_components-schemas-ValidationError:
-      type: object
-      required:
-      - path
-      - errorCode
-      - message
-      properties:
-        path:
-          type: string
-          description: The path to the error location in the request params or body.
-        errorCode:
-          type: string
-          description: The error code identifying the error type.
-        message:
-          type: string
-          description: The error message.
-    InvalidReportNameErrorDetails:
+        validationErrors:
+          type: array
+          items:
+            $ref: '#/components/schemas/openapi_components-schemas-ValidationError'
+          description: A list of validation errors.
+    NotAuthorizedErrorDetails:
       type: object
       required:
       - type
@@ -512,34 +499,44 @@ components:
           allOf:
           - $ref: '#/components/schemas/errorType'
           - enum:
-            - /silverflow/problems/report/invalid-report-name
+            - /silverflow/problems/report/not-authorized
         title:
           allOf:
           - $ref: '#/components/schemas/errorTitle'
           - enum:
-            - Invalid report name
+            - Not authorized
         status:
           allOf:
           - $ref: '#/components/schemas/errorStatus'
           - enum:
-            - 400
+            - 401
         detail:
           $ref: '#/components/schemas/errorDetail'
         instance:
           $ref: '#/components/schemas/errorInstance'
+    errorStatus:
+      type: integer
+      format: int32
+      description: 'The HTTP status code generated by the origin server for this occurrence
+
+        of the problem.
+
+        '
+    errorDetail:
+      type: string
+      description: 'A human readable explanation specific to this occurrence of the problem.
+
+        '
+  examples:
+    InvalidDateRangeError:
+      summary: Invalid Date Range Error
+      value:
+        type: /silverflow/problems/report/invalid-date-range
+        title: Invalid date range
+        status: 400
+        detail: 'Invalid date range: 2019-08-25T14:15:22Z - 2019-08-24T14:15:22Z'
+        instance: /silverflow/b4cc37a0-ab24-46b4-aa8c-cc2d6eddf1b6
   responses:
-    openapi_components-responses-ForbiddenError-3:
-      description: The authenticated client is forbidden to make the request for the resource identified.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/openapi_components-schemas-ProblemDetail-2'
-          example:
-            type: /silverflow/problems/forbidden
-            title: Forbidden
-            status: 403
-            detail: 'Authenticated user ''apk-33GjasQdWl4781OsErvi'' is missing the following permission(s): reports:List'
-            instance: /silverflow/b0451a9d-f66d-4ef7-9f5d-d48064a2bb3e
     openapi_components-responses-TooManyRequestsError-3:
       description: The number of requests (per minute) has exceeded the configured maximum
       content:
@@ -552,15 +549,18 @@ components:
             status: 429
             detail: You have exceeded the rate limit. Please try again after the specified delay.
             instance: /silverflow/b0451a9d-f66d-4ef7-9f5d-d48064a2bb3e
-  examples:
-    InvalidDateRangeError:
-      summary: Invalid Date Range Error
-      value:
-        type: /silverflow/problems/report/invalid-date-range
-        title: Invalid date range
-        status: 400
-        detail: 'Invalid date range: 2019-08-25T14:15:22Z - 2019-08-24T14:15:22Z'
-        instance: /silverflow/b4cc37a0-ab24-46b4-aa8c-cc2d6eddf1b6
+    openapi_components-responses-ForbiddenError-3:
+      description: The authenticated client is forbidden to make the request for the resource identified.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/openapi_components-schemas-ProblemDetail-2'
+          example:
+            type: /silverflow/problems/forbidden
+            title: Forbidden
+            status: 403
+            detail: 'Authenticated user ''apk-33GjasQdWl4781OsErvi'' is missing the following permission(s): reports:List'
+            instance: /silverflow/b0451a9d-f66d-4ef7-9f5d-d48064a2bb3e
   securitySchemes:
     ApiKey:
       description: "The primary method of authenticating to the Silverflow API is through API keys.\n\nAPI keys can be created by calling the [createApiKey](#operation/createApiKey) endpoint. You can create up to 40 API keys and also update and delete them, allowing for _credential rotation_.\n\nThe _Agent Activation_ process will generate an initial API Key for you. See [Activate Agent](#section/Getting-Started).\n\nA call to the [createApiKey](#operation/createApiKey) endpoint will return the following structure:\n\n```json\n{\n    \"key\": \"apk-1wtRxni5IsPsSpBLWpwr\",\n    \"status\": \"active\",\n    \"agentKey\": \"cgt-1wtRvFLIjDOyyUR5Q2LB\",\n    \"description\": \"Data lake API key\",\n    \"permissions\": [\n        \"charges:List\",\n        \"reports:All\"\n    ],\n    \"created\": \"2021-06-22T11:21:45.115Z\",\n    \"secret\": \"FWtnOOHAjbD6rNxWWEeVOCj7JXSEPGJQ\",\n    \"version\": 1\n}\n```\n\n> **Important:** The `secret` is only returned once in the response to the `createApiKey` call.\n\nOnce created, the `key` and `secret` fields from the API key must be used in the HTTP `Authorization` header using the `Basic` scheme.\nThe Basic scheme requires a **username** and **password** to be specified, separated by a `:` (colon) and Base64 encoded.\n\nUse the following values from the API key to construct a Basic authentication header:\n\n| Basic field | API key field | Example |\n| ----------- | ------------- | ------- |\n| username | `key` | `apk-1wtRxni5IsPsSpBLWpwr` |\n| password | `secret` | `FWtnOOHAjbD6rNxWWEeVOCj7JXSEPGJQ` |\n\nIn pseudo-code a valid HTTP Basic Authentication header would be constructed as follows:\n\n```ts\nconst apiKeyId = \"apk-1wtRxni5IsPsSpBLWpwr\";\nconst apiKeySecret = \"FWtnOOHAjbD6rNxWWEeVOCj7JXSEPGJQ\";\nconst authnValue = \"Basic \" + base64Encode(apiKeyId + \":\" + apiKeySecret);\nrequest.setHeader(\"Authorization\", authnValue);\n```\n\nUsing the values from the example a valid HTTP request would look like the following:\n\n```http\nGET /v1/agents/current HTTP/1.1\nAccept: application/json\nAuthorization: Basic YXBrLTF3dFJ4bmk1SXNQc1NwQkxXcHdyOkZXdG5PT0hBamJENnJOeFdXRWVWT0NqN0pYU0VQR0pR\n```\n\nMore information on the Basic scheme can be found in [RFC-7617 - The 'Basic' HTTP Authentication Scheme](https://datatracker.ietf.org/doc/html/rfc7617)."

@@ -67,49 +67,24 @@ webhooks:
       description: Sandbox URL - Equivalent to https://api-sbx.silverflow.co/v1
 components:
   schemas:
-    common_agentKey:
-      description: Uniquely identifies an Agent.
+    openapi_components-schemas-chargeKey-2:
+      description: Uniquely identifies a Charge.
       type: string
-      pattern: ^cgt-[a-zA-Z0-9]+$
-      readOnly: true
-      example: cgt-EFG67b4yPre23ZDrLX
-      title: agentKey
-    dataschema:
+      pattern: ^chg-[a-zA-Z0-9]+$
+      minLength: 1
+      maxLength: 120
+      readOnly: false
+      example: chg-1e1dAHhgstYTUhlphPzZ
+    openapi_components-schemas-actionReference-2:
+      description: Reference assigned by the agent to the clearing action.
       type: string
-      description: The event schema with the data version of the event.
-    ClearingEventNotificationVersion1_0AbandonedClearingEvent:
-      type: object
-      allOf:
-      - $ref: '#/components/schemas/PublicCloudEvent'
-      required:
-      - data
-      properties:
-        data:
-          $ref: '#/components/schemas/AbandonedClearingEventData1_0'
-        source:
-          allOf:
-          - $ref: '#/components/schemas/source'
-          - enum:
-            - https://silverflow.com/clearing
-        specversion:
-          allOf:
-          - $ref: '#/components/schemas/openapi_components-schemas-version-3'
-          - enum:
-            - '1.0'
-        subject:
-          allOf:
-          - description: The subject of the notification, which is the CRN, the unique identifier of the clearing
-          - $ref: '#/components/schemas/crn'
-        type:
-          type: string
-          description: The event type.
-          enum:
-          - com.silverflow.clearing.abandoned
-        dataschema:
-          allOf:
-          - $ref: '#/components/schemas/dataschema'
-          - enum:
-            - https://silverflow.com/schemas/events/clearing/1.0
+      minLength: 1
+      maxLength: 120
+    dataContentType:
+      type: string
+      description: The content type of the event.
+      enum:
+      - application/json
     OfflineRefundOutcomeEventData1_0:
       type: object
       required:
@@ -134,75 +109,6 @@ components:
           enum:
           - cleared
           - abandoned
-    time:
-      type: string
-      format: date-time
-      description: Date and time when the event was sent.
-    openapi_components-schemas-actionReference-2:
-      description: Reference assigned by the agent to the clearing action.
-      type: string
-      minLength: 1
-      maxLength: 120
-    openapi_components-schemas-chargeKey-2:
-      description: Uniquely identifies a Charge.
-      type: string
-      pattern: ^chg-[a-zA-Z0-9]+$
-      minLength: 1
-      maxLength: 120
-      readOnly: false
-      example: chg-1e1dAHhgstYTUhlphPzZ
-    openapi_components-schemas-version-3:
-      type: string
-      description: The version of the spec.
-      pattern: ^[1-9]+.[0-9]+$
-      example: '1.0'
-    source:
-      type: string
-      description: Source system of the event.
-      pattern: ^https://silverflow.com/[a-zA-Z]+$
-    dataContentType:
-      type: string
-      description: The content type of the event.
-      enum:
-      - application/json
-    eventId:
-      type: string
-      description: Uniquely identifies an event.
-      pattern: ^evt-[a-zA-Z0-9]+$
-      minLength: 5
-      maxLength: 120
-      example: evt-1e1dAHhgstYTUhlphPzZ
-    AbandonedClearingEventData1_0:
-      type: object
-      required:
-      - chargeKey
-      - actionKey
-      - reason
-      properties:
-        actionReference:
-          $ref: '#/components/schemas/openapi_components-schemas-actionReference-2'
-        transactionReference:
-          type: string
-        chargeKey:
-          $ref: '#/components/schemas/openapi_components-schemas-chargeKey-2'
-        actionKey:
-          $ref: '#/components/schemas/schema_actionKey'
-        reason:
-          type: string
-          description: Human-readable reason why the clearing record was abandoned.
-    schema_actionKey:
-      description: Uniquely identifies an Action.
-      type: string
-      pattern: ^act-[a-zA-Z0-9]+$
-      minLength: 1
-      maxLength: 120
-      example: act-5vJNRKF4NDViSzkr8TQ5
-    crn:
-      description: Unique identifier of the clearing
-      type: string
-      minLength: 23
-      maxLength: 100
-      example: visa-01234566082009717735284
     ClearingEventNotificationVersion1_0OfflineRefundOutcomeEvent:
       type: object
       allOf:
@@ -236,6 +142,100 @@ components:
           - $ref: '#/components/schemas/dataschema'
           - enum:
             - https://silverflow.com/schemas/events/clearing/1.0
+    eventId:
+      type: string
+      description: Uniquely identifies an event.
+      pattern: ^evt-[a-zA-Z0-9]+$
+      minLength: 5
+      maxLength: 120
+      example: evt-1e1dAHhgstYTUhlphPzZ
+    source:
+      type: string
+      description: Source system of the event.
+      pattern: ^https://silverflow.com/[a-zA-Z]+$
+    crn:
+      description: Unique identifier of the clearing
+      type: string
+      minLength: 23
+      maxLength: 100
+      example: visa-01234566082009717735284
+    time:
+      type: string
+      format: date-time
+      description: Date and time when the event was sent.
+    schema_actionKey:
+      description: Uniquely identifies an Action.
+      type: string
+      pattern: ^act-[a-zA-Z0-9]+$
+      minLength: 1
+      maxLength: 120
+      example: act-5vJNRKF4NDViSzkr8TQ5
+    dataschema:
+      type: string
+      description: The event schema with the data version of the event.
+    openapi_components-schemas-version-3:
+      type: string
+      description: The version of the spec.
+      pattern: ^[1-9]+.[0-9]+$
+      example: '1.0'
+    ClearingEventNotificationVersion1_0AbandonedClearingEvent:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/PublicCloudEvent'
+      required:
+      - data
+      properties:
+        data:
+          $ref: '#/components/schemas/AbandonedClearingEventData1_0'
+        source:
+          allOf:
+          - $ref: '#/components/schemas/source'
+          - enum:
+            - https://silverflow.com/clearing
+        specversion:
+          allOf:
+          - $ref: '#/components/schemas/openapi_components-schemas-version-3'
+          - enum:
+            - '1.0'
+        subject:
+          allOf:
+          - description: The subject of the notification, which is the CRN, the unique identifier of the clearing
+          - $ref: '#/components/schemas/crn'
+        type:
+          type: string
+          description: The event type.
+          enum:
+          - com.silverflow.clearing.abandoned
+        dataschema:
+          allOf:
+          - $ref: '#/components/schemas/dataschema'
+          - enum:
+            - https://silverflow.com/schemas/events/clearing/1.0
+    common_agentKey:
+      description: Uniquely identifies an Agent.
+      type: string
+      pattern: ^cgt-[a-zA-Z0-9]+$
+      readOnly: true
+      example: cgt-EFG67b4yPre23ZDrLX
+      title: agentKey
+    AbandonedClearingEventData1_0:
+      type: object
+      required:
+      - chargeKey
+      - actionKey
+      - reason
+      properties:
+        actionReference:
+          $ref: '#/components/schemas/openapi_components-schemas-actionReference-2'
+        transactionReference:
+          type: string
+        chargeKey:
+          $ref: '#/components/schemas/openapi_components-schemas-chargeKey-2'
+        actionKey:
+          $ref: '#/components/schemas/schema_actionKey'
+        reason:
+          type: string
+          description: Human-readable reason why the clearing record was abandoned.
     PublicCloudEvent:
       type: object
       required:

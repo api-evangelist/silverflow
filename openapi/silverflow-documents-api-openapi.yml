@@ -149,139 +149,100 @@ paths:
         '429':
           $ref: '#/components/responses/responses-TooManyRequestsError'
 components:
-  responses:
-    responses-ConflictError:
-      description: The request could not be completed due to a conflict with the current state of the resources involved in the request.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/schemas-ProblemDetail'
-    UnsupportedMediaTypeError:
-      description: The format of the request payload is not supported by the server
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/schemas-ProblemDetail'
-          example:
-            type: https://datatracker.ietf.org/doc/html/rfc2616#section-10.4.16
-            title: Unsupported Media Type
-            status: 415
-            detail: The server is refusing the request because the entity of the request is in a format that is not supported
-            instance: https://api.silverflow.co/v1/merchants/mct-1hPdFqhgstYTUhlphPDp
-    responses-NotFoundError:
-      description: The requested resource was not found
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/schemas-ProblemDetail'
-          example:
-            type: https://datatracker.ietf.org/doc/html/rfc2616#section-10.4.5
-            title: Not Found
-            status: 404
-            detail: The entity referenced in the request could not be found
-            instance: https://api.silverflow.co/v1/merchants/mct-1hPdFqhgstYTUhlphPDp
-    responses-TooManyRequestsError:
-      description: The number of requests (per minute) has exceeded the configured maximum
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/schemas-ProblemDetail'
-          example:
-            type: https://api.silverflow.co/problem/too-many-requests
-            title: Too Many Requests
-            status: 429
-            detail: The number of requests performed by the client has exceeded the configured maximum for a given period
-    responses-UnauthorizedError:
-      description: Authentication information is missing or invalid
-      headers:
-        WWW_Authenticate:
-          schema:
-            type: string
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/schemas-ProblemDetail'
-          example:
-            type: https://datatracker.ietf.org/doc/html/rfc2616#section-10.4.2
-            title: Unauthorized
-            status: 401
-            detail: The credentials supplied in the request are either missing, invalid, or not applicable in the current scope
-    responses-ForbiddenError:
-      description: The authenticated client is forbidden to make the request for the resource identified.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/schemas-ProblemDetail'
-          example:
-            type: https://datatracker.ietf.org/doc/html/rfc2616#section-10.4.4
-            title: Forbidden
-            status: 403
-            detail: The server is refusing to execute the request for the current authenticated user
-            instance: https://api.silverflow.co/v1/merchants/mct-1hPdFqhgstYTUhlphPDp
-    PayloadTooLargeError:
-      description: Request payload is larger than limits defined by server.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/schemas-ProblemDetail'
-          example:
-            type: https://datatracker.ietf.org/doc/html/rfc2616#section-10.4.14
-            title: Payload too Large
-            status: 413
-            detail: The server is refused the request because the size of the request entity is larger than that defined by the server
-            instance: https://api.silverflow.co/v1/merchants/mct-1hPdFqhgstYTUhlphPDp
-    responses-PreconditionFailedError:
-      description: The conditions specified in the HTTP headers of the request were not met.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/schemas-ProblemDetail'
-          example:
-            type: https://datatracker.ietf.org/doc/html/rfc2616#section-10.4.13
-            title: Precondition failed
-            status: 412
-            detail: The version of the entity did not match the required version specified in the precondition of the request
-            instance: https://api.silverflow.co/v1/merchants/mct-1hPdFqhgstYTUhlphPDp
-            preconditionVersion: 3
-            actualVersion: 4
-    LengthRequiredError:
-      description: The server doesn't accept requests without a defined 'content-Length'
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/schemas-ProblemDetail'
-          example:
-            type: https://datatracker.ietf.org/doc/html/rfc2616#section-10.4.12
-            title: Length Required
-            status: 411
-            detail: The server refuses to accept the request without a defined Content-Length
-            instance: https://api.silverflow.co/v1/merchants/mct-1hPdFqhgstYTUhlphPDp
   schemas:
-    owner:
-      description: The owner of a Dispute Document
+    components-schemas-agentKey:
+      description: Uniquely identifies an Agent
       type: string
-      enum:
-      - issuer
-      - acquirer
-      - merchant
-      - card-network
-    openapi_components-schemas-version:
-      type: integer
-      description: The version of this object
-      format: int64
-      minimum: 1
-      maximum: 1000
-      example: 1
+      pattern: ^cgt-[a-zA-Z0-9]+|current$
+      minLength: 1
+      maxLength: 120
       readOnly: false
-    contentType:
-      description: 'Accepted Content-Types
+      example: cgt-1UF2NafdfrdPMf2XrS2
+    openapi_components-schemas-lastModified-2:
+      type: string
+      description: The date and time this object was last modified
+      format: date-time
+      readOnly: false
+    originalFilename:
+      description: Name of the file. Allows letters, numbers, whitespaces and characters _()
+      type: string
+      pattern: ^([\w() ])+(.jpg|.jpeg|.pdf|.tiff|.tif)$
+      readOnly: false
+    Document:
+      type: object
+      required:
+      - key
+      - agentKey
+      - originalFilename
+      - owner
+      - status
+      - created
+      - version
+      description: 'A Document
 
         '
+      properties:
+        key:
+          $ref: '#/components/schemas/documentKey'
+        agentKey:
+          $ref: '#/components/schemas/components-schemas-agentKey'
+        merchantKey:
+          $ref: '#/components/schemas/components-schemas-merchantKey'
+        disputeKey:
+          $ref: '#/components/schemas/disputeKey'
+        disputeStage:
+          $ref: '#/components/schemas/disputeStage'
+        originalFilename:
+          $ref: '#/components/schemas/originalFilename'
+        filename:
+          type: string
+        contentLength:
+          type: number
+        contentType:
+          $ref: '#/components/schemas/contentType'
+        owner:
+          $ref: '#/components/schemas/owner'
+        description:
+          $ref: '#/components/schemas/schemas-FreeTextField'
+        status:
+          $ref: '#/components/schemas/documents_status'
+        created:
+          $ref: '#/components/schemas/openapi_components-schemas-created-3'
+        lastModified:
+          $ref: '#/components/schemas/openapi_components-schemas-lastModified-2'
+        version:
+          $ref: '#/components/schemas/openapi_components-schemas-version'
+    disputeStage:
+      description: The current stage of a Dispute
       type: string
       enum:
-      - image/jpeg
-      - application/pdf
-      - image/tiff
+      - rapidDisputeResolution
+      - collaboration
+      - requestForInformation
+      - requestForInformationResponse
+      - collaborationResponse
+      - chargeback
+      - chargebackResponse
+      - preArbitration
+      - preArbitrationResponse
+      - arbitration
+    openapi_components-schemas-created-3:
+      type: string
+      description: The date and time this object was created
+      format: date-time
+      readOnly: false
+    documents_status:
+      description: The current status of the document.
+      type: string
+      enum:
+      - pending
+      - active
+      - archived
+    schemas-FreeTextField:
+      type: string
+      pattern: ^[\w +-=.,:;!?$@()]+$
+      minLength: 1
+      maxLength: 160
     schemas-ProblemDetail:
       type: object
       description: 'The ''problem detail'' object relays detailed information about the error that occurred. It is defined
@@ -348,65 +309,22 @@ components:
         validationErrors:
         - The value of property 'status' should be one of 'idle', 'active' or 'archived'
         - The value of property 'tags.0.businessId' must not be longer than 255 characters
-    originalFilename:
-      description: Name of the file. Allows letters, numbers, whitespaces and characters _()
-      type: string
-      pattern: ^([\w() ])+(.jpg|.jpeg|.pdf|.tiff|.tif)$
-      readOnly: false
-    components-schemas-merchantKey:
-      description: Uniquely identifies a Merchant
-      type: string
-      pattern: ^mct-[a-zA-Z0-9]+$
-      minLength: 1
-      maxLength: 120
-      readOnly: false
-      example: mct-123dinkqFqfq3q2f2adfa
-    documents_status:
-      description: The current status of the document.
+    contentType:
+      description: 'Accepted Content-Types
+
+        '
       type: string
       enum:
-      - pending
-      - active
-      - archived
-    openapi_components-schemas-lastModified-2:
-      type: string
-      description: The date and time this object was last modified
-      format: date-time
-      readOnly: false
-    components-schemas-agentKey:
-      description: Uniquely identifies an Agent
-      type: string
-      pattern: ^cgt-[a-zA-Z0-9]+|current$
-      minLength: 1
-      maxLength: 120
-      readOnly: false
-      example: cgt-1UF2NafdfrdPMf2XrS2
-    disputeStage:
-      description: The current stage of a Dispute
-      type: string
-      enum:
-      - rapidDisputeResolution
-      - collaboration
-      - requestForInformation
-      - requestForInformationResponse
-      - collaborationResponse
-      - chargeback
-      - chargebackResponse
-      - preArbitration
-      - preArbitrationResponse
-      - arbitration
-    documentKey:
-      description: Uniquely identifies a document
-      type: string
-      pattern: ^dok-[a-zA-Z0-9]+$
-      minLength: 1
-      maxLength: 120
-      readOnly: false
-      example: dok-1UF2NafdfrdPMf2XrS2
-    openapi_components-schemas-created-3:
-      type: string
-      description: The date and time this object was created
-      format: date-time
+      - image/jpeg
+      - application/pdf
+      - image/tiff
+    openapi_components-schemas-version:
+      type: integer
+      description: The version of this object
+      format: int64
+      minimum: 1
+      maximum: 1000
+      example: 1
       readOnly: false
     disputeKey:
       description: Uniquely identifies a Dispute.
@@ -416,56 +334,146 @@ components:
       maxLength: 120
       readOnly: false
       example: dsp-1JRadf2ffdfrdPMf2XrS2
-    schemas-FreeTextField:
+    documentKey:
+      description: Uniquely identifies a document
       type: string
-      pattern: ^[\w +-=.,:;!?$@()]+$
+      pattern: ^dok-[a-zA-Z0-9]+$
       minLength: 1
-      maxLength: 160
-    Document:
-      type: object
-      required:
-      - key
-      - agentKey
-      - originalFilename
-      - owner
-      - status
-      - created
-      - version
-      description: 'A Document
-
-        '
-      properties:
-        key:
-          $ref: '#/components/schemas/documentKey'
-        agentKey:
-          $ref: '#/components/schemas/components-schemas-agentKey'
-        merchantKey:
-          $ref: '#/components/schemas/components-schemas-merchantKey'
-        disputeKey:
-          $ref: '#/components/schemas/disputeKey'
-        disputeStage:
-          $ref: '#/components/schemas/disputeStage'
-        originalFilename:
-          $ref: '#/components/schemas/originalFilename'
-        filename:
-          type: string
-        contentLength:
-          type: number
-        contentType:
-          $ref: '#/components/schemas/contentType'
-        owner:
-          $ref: '#/components/schemas/owner'
-        description:
-          $ref: '#/components/schemas/schemas-FreeTextField'
-        status:
-          $ref: '#/components/schemas/documents_status'
-        created:
-          $ref: '#/components/schemas/openapi_components-schemas-created-3'
-        lastModified:
-          $ref: '#/components/schemas/openapi_components-schemas-lastModified-2'
-        version:
-          $ref: '#/components/schemas/openapi_components-schemas-version'
+      maxLength: 120
+      readOnly: false
+      example: dok-1UF2NafdfrdPMf2XrS2
+    components-schemas-merchantKey:
+      description: Uniquely identifies a Merchant
+      type: string
+      pattern: ^mct-[a-zA-Z0-9]+$
+      minLength: 1
+      maxLength: 120
+      readOnly: false
+      example: mct-123dinkqFqfq3q2f2adfa
+    owner:
+      description: The owner of a Dispute Document
+      type: string
+      enum:
+      - issuer
+      - acquirer
+      - merchant
+      - card-network
+  responses:
+    responses-ForbiddenError:
+      description: The authenticated client is forbidden to make the request for the resource identified.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/schemas-ProblemDetail'
+          example:
+            type: https://datatracker.ietf.org/doc/html/rfc2616#section-10.4.4
+            title: Forbidden
+            status: 403
+            detail: The server is refusing to execute the request for the current authenticated user
+            instance: https://api.silverflow.co/v1/merchants/mct-1hPdFqhgstYTUhlphPDp
+    responses-ConflictError:
+      description: The request could not be completed due to a conflict with the current state of the resources involved in the request.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/schemas-ProblemDetail'
+    PayloadTooLargeError:
+      description: Request payload is larger than limits defined by server.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/schemas-ProblemDetail'
+          example:
+            type: https://datatracker.ietf.org/doc/html/rfc2616#section-10.4.14
+            title: Payload too Large
+            status: 413
+            detail: The server is refused the request because the size of the request entity is larger than that defined by the server
+            instance: https://api.silverflow.co/v1/merchants/mct-1hPdFqhgstYTUhlphPDp
+    responses-UnauthorizedError:
+      description: Authentication information is missing or invalid
+      headers:
+        WWW_Authenticate:
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/schemas-ProblemDetail'
+          example:
+            type: https://datatracker.ietf.org/doc/html/rfc2616#section-10.4.2
+            title: Unauthorized
+            status: 401
+            detail: The credentials supplied in the request are either missing, invalid, or not applicable in the current scope
+    responses-TooManyRequestsError:
+      description: The number of requests (per minute) has exceeded the configured maximum
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/schemas-ProblemDetail'
+          example:
+            type: https://api.silverflow.co/problem/too-many-requests
+            title: Too Many Requests
+            status: 429
+            detail: The number of requests performed by the client has exceeded the configured maximum for a given period
+    responses-NotFoundError:
+      description: The requested resource was not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/schemas-ProblemDetail'
+          example:
+            type: https://datatracker.ietf.org/doc/html/rfc2616#section-10.4.5
+            title: Not Found
+            status: 404
+            detail: The entity referenced in the request could not be found
+            instance: https://api.silverflow.co/v1/merchants/mct-1hPdFqhgstYTUhlphPDp
+    responses-PreconditionFailedError:
+      description: The conditions specified in the HTTP headers of the request were not met.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/schemas-ProblemDetail'
+          example:
+            type: https://datatracker.ietf.org/doc/html/rfc2616#section-10.4.13
+            title: Precondition failed
+            status: 412
+            detail: The version of the entity did not match the required version specified in the precondition of the request
+            instance: https://api.silverflow.co/v1/merchants/mct-1hPdFqhgstYTUhlphPDp
+            preconditionVersion: 3
+            actualVersion: 4
+    UnsupportedMediaTypeError:
+      description: The format of the request payload is not supported by the server
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/schemas-ProblemDetail'
+          example:
+            type: https://datatracker.ietf.org/doc/html/rfc2616#section-10.4.16
+            title: Unsupported Media Type
+            status: 415
+            detail: The server is refusing the request because the entity of the request is in a format that is not supported
+            instance: https://api.silverflow.co/v1/merchants/mct-1hPdFqhgstYTUhlphPDp
+    LengthRequiredError:
+      description: The server doesn't accept requests without a defined 'content-Length'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/schemas-ProblemDetail'
+          example:
+            type: https://datatracker.ietf.org/doc/html/rfc2616#section-10.4.12
+            title: Length Required
+            status: 411
+            detail: The server refuses to accept the request without a defined Content-Length
+            instance: https://api.silverflow.co/v1/merchants/mct-1hPdFqhgstYTUhlphPDp
   parameters:
+    ifMatch:
+      name: If-Match
+      description: The request condition
+      in: header
+      required: false
+      schema:
+        type: integer
+        format: int32
     documentKey:
       name: documentKey
       in: path
@@ -475,14 +483,6 @@ components:
         '
       schema:
         $ref: '#/components/schemas/documentKey'
-    ifMatch:
-      name: If-Match
-      description: The request condition
-      in: header
-      required: false
-      schema:
-        type: integer
-        format: int32
   securitySchemes:
     ApiKey:
       description: "The primary method of authenticating to the Silverflow API is through API keys.\n\nAPI keys can be created by calling the [createApiKey](#operation/createApiKey) endpoint. You can create up to 40 API keys and also update and delete them, allowing for _credential rotation_.\n\nThe _Agent Activation_ process will generate an initial API Key for you. See [Activate Agent](#section/Getting-Started).\n\nA call to the [createApiKey](#operation/createApiKey) endpoint will return the following structure:\n\n```json\n{\n    \"key\": \"apk-1wtRxni5IsPsSpBLWpwr\",\n    \"status\": \"active\",\n    \"agentKey\": \"cgt-1wtRvFLIjDOyyUR5Q2LB\",\n    \"description\": \"Data lake API key\",\n    \"permissions\": [\n        \"charges:List\",\n        \"reports:All\"\n    ],\n    \"created\": \"2021-06-22T11:21:45.115Z\",\n    \"secret\": \"FWtnOOHAjbD6rNxWWEeVOCj7JXSEPGJQ\",\n    \"version\": 1\n}\n```\n\n> **Important:** The `secret` is only returned once in the response to the `createApiKey` call.\n\nOnce created, the `key` and `secret` fields from the API key must be used in the HTTP `Authorization` header using the `Basic` scheme.\nThe Basic scheme requires a **username** and **password** to be specified, separated by a `:` (colon) and Base64 encoded.\n\nUse the following values from the API key to construct a Basic authentication header:\n\n| Basic field | API key field | Example |\n| ----------- | ------------- | ------- |\n| username | `key` | `apk-1wtRxni5IsPsSpBLWpwr` |\n| password | `secret` | `FWtnOOHAjbD6rNxWWEeVOCj7JXSEPGJQ` |\n\nIn pseudo-code a valid HTTP Basic Authentication header would be constructed as follows:\n\n```ts\nconst apiKeyId = \"apk-1wtRxni5IsPsSpBLWpwr\";\nconst apiKeySecret = \"FWtnOOHAjbD6rNxWWEeVOCj7JXSEPGJQ\";\nconst authnValue = \"Basic \" + base64Encode(apiKeyId + \":\" + apiKeySecret);\nrequest.setHeader(\"Authorization\", authnValue);\n```\n\nUsing the values from the example a valid HTTP request would look like the following:\n\n```http\nGET /v1/agents/current HTTP/1.1\nAccept: application/json\nAuthorization: Basic YXBrLTF3dFJ4bmk1SXNQc1NwQkxXcHdyOkZXdG5PT0hBamJENnJOeFdXRWVWT0NqN0pYU0VQR0pR\n```\n\nMore information on the Basic scheme can be found in [RFC-7617 - The 'Basic' HTTP Authentication Scheme](https://datatracker.ietf.org/doc/html/rfc7617)."
