@@ -1,5 +1,5 @@
 generated: '2026-10-12'
-method: none
+method: searched
 source:
 - https://zapier.com/apps/silverflow/integrations
 - https://n8n.io/integrations/silverflow/
@@ -10,7 +10,44 @@ checked:
 - https://monid.ai/tools/silverflow
 - https://n8n.io/integrations/silverflow/
 - https://zapier.com/apps/silverflow/integrations
+- https://portal.mvp.bafin.de/database/InstInfo/
+- https://www.dnb.nl/en/public-register/
+- https://www.finma.ch/en/finma-public/authorised-institutions-individuals-and-products/
 summary: null
 marketplace_apps: []
-edges: []
+edges:
+- partner_name: DNB public register (supervised institutions, Netherlands)
+  partner: null
+  partner_match: register-name
+  type: register
+  channel: regulator-register
+  relationship: standard-participant
+  direction: partner-built
+  evidence: https://www.dnb.nl/en/public-register/
+  category: Dutch financial supervisory licence (DNB)
+  contract_reference:
+    register: DNB public register (supervised institutions, Netherlands)
+    spec_file: null
+    standard: null
+    role: licensed-participant
+    registrations:
+    - registered_name: Silverflow B.V.
+      licences:
+      - Payment processing service providers
+      register_country: NL
+      matched_domain: null
+      matched_by: register-name
+      register_id: DNB R191982
+      lei: 724500S2VI4UGGPTMN84
+      register_name_note: register-name 'silverflow' = silverflow; no wikidata P856
+    signal_note: 'participation only: a supervisory licence / authorisation; no API conformance is published by
+      this register'
+    detected_by: sweep-dach-financial-registers.py
+    detected: '2026-10-21'
+    matched_by: register-name
+    identity_source: register-name
+    identity_note: register gave only the name; exact normalised match to the repo's apis.yml name, one repo, Wikidata
+      P856 not contradicting (Kin 2026-10-20 decision 2)
+  detected_by: sweep-dach-financial-registers.py
+  first_seen: '2026-10-21'
 templates: []
