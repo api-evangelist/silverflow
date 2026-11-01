@@ -64,5 +64,173 @@
 > Full detail: **[Where this data comes from](https://apievangelist.com/about/where-our-data-comes-from)**
 <!-- API-EVANGELIST-PROVENANCE:END -->
 
-Silverflow is a company surfaced via the API Evangelist harvest backlog (source: secondary-market) and added to the network as a stub for full-pipeline profiling.
-- https://www.nasdaqprivatemarket.com/
+Silverflow is an Amsterdam-based cloud-native card processing platform that connects acquirers, payment service providers, payment facilitators and merchants directly to the card networks (Visa, Mastercard, Amex, Discover, Diners, Maestro, Bancontact) through a single REST API. Founded in 2019, the company replaces legacy acquiring processor infrastructure with a contract-first, OpenAPI 3.0-described platform covering merchant and acceptor onboarding, 3-D Secure and BEP authentication, processor and network tokenization, authorization, clearing and settlement, incremental authorizations, reversals, refunds and payouts, terminal-to-cloud POS charges, ATM card management, dispute and chargeback handling, fraud notifications, transaction risk assessment, interchange and scheme-fee estimation, and a full reconciliation and reporting suite. The Silverflow API exposes 137 operations across 101 paths, emits 31 CloudEvents 1.0 webhook notifications through an event-subscription surface, and publishes a sandbox with amount-driven authorization test scenarios.
+
+**Areas:** Payments · Card Processing · Acquiring · Financial Services · Tokenization · 3D Secure · Disputes · Chargebacks · Interchange · Reconciliation · Point-of-Sale · Netherlands
+
+## Silverflow on APIs.io
+
+Everything profiled for Silverflow is published on APIs.io rather than in this repository. Start at the provider page — **[apis.io/providers/silverflow/](https://apis.io/providers/silverflow/)** — or go straight to one of the APIs or properties below.
+
+### APIs (50)
+
+- [Silverflow 3DS Authentication API](https://apis.io/apis/silverflow/silverflow-3ds-authentication-api/) — 3DS Authentication Endpoints
+- [Silverflow Agents API](https://apis.io/apis/silverflow/silverflow-agents-api/)
+- [Silverflow AMMF Submission Events API](https://apis.io/apis/silverflow/silverflow-ammf-submission-events-api/)
+- [Silverflow API Keys API](https://apis.io/apis/silverflow/silverflow-api-keys-api/)
+- [Silverflow BEP Authentication API](https://apis.io/apis/silverflow/silverflow-bep-authentication-api/) — The BEP Authentication API from Silverflow — 3 operation(s) for bep authentication.
+- [Silverflow Bins API](https://apis.io/apis/silverflow/silverflow-bins-api/)
+- [Silverflow Card Info API](https://apis.io/apis/silverflow/silverflow-card-info-api/) — Provides information from the card networks about Card Ranges.
+- [Silverflow Card Management API](https://apis.io/apis/silverflow/silverflow-card-management-api/) — ATM card management actions: PIN change, PIN unblock, balance inquiry and PIN change reversal.
+- [Silverflow Card Network Reports API](https://apis.io/apis/silverflow/silverflow-card-network-reports-api/) — The Card Network Reports API from Silverflow — 2 operation(s) for card network reports.
+- [Silverflow Charge Actions API](https://apis.io/apis/silverflow/silverflow-charge-actions-api/) — Perform different actions on existing charges.
+- [Silverflow Charges Events API](https://apis.io/apis/silverflow/silverflow-charges-events-api/)
+- [Silverflow Charges Reports API](https://apis.io/apis/silverflow/silverflow-charges-reports-api/) — The Charges Reports API from Silverflow — 1 operation(s) for charges reports.
+- [Silverflow Clearing Events API](https://apis.io/apis/silverflow/silverflow-clearing-events-api/)
+- [Silverflow Create Charges API](https://apis.io/apis/silverflow/silverflow-create-charges-api/) — Create different types of charges.
+- [Silverflow Create POS Charges API](https://apis.io/apis/silverflow/silverflow-create-pos-charges-api/) — Create a POS charge.
+- [Silverflow Create Recurring API](https://apis.io/apis/silverflow/silverflow-create-recurring-api/) — Create different types of recurring charges.
+- [Silverflow Currency Conversion Rates API](https://apis.io/apis/silverflow/silverflow-currency-conversion-rates-api/) — The Currency Conversion Rates API from Silverflow — 1 operation(s) for currency conversion rates.
+- [Silverflow Dispute Reports API](https://apis.io/apis/silverflow/silverflow-dispute-reports-api/) — The Dispute Reports API from Silverflow — 1 operation(s) for dispute reports.
+- [Silverflow Disputes API](https://apis.io/apis/silverflow/silverflow-disputes-api/) — The Disputes API from Silverflow — 9 operation(s) for disputes.
+- [Silverflow Disputes Events API](https://apis.io/apis/silverflow/silverflow-disputes-events-api/)
+- [Silverflow Distribution Events API](https://apis.io/apis/silverflow/silverflow-distribution-events-api/)
+- [Silverflow Distributions API](https://apis.io/apis/silverflow/silverflow-distributions-api/) — The Distributions API from Silverflow — 2 operation(s) for distributions.
+- [Silverflow Documents API](https://apis.io/apis/silverflow/silverflow-documents-api/) — A Document is a file with associated metadata that can be uploaded and downloaded. Documents have to be attached to a business entity, for example `Dispute…
+- [Silverflow Enrollments API](https://apis.io/apis/silverflow/silverflow-enrollments-api/)
+- [Silverflow Event Subscriptions API](https://apis.io/apis/silverflow/silverflow-event-subscriptions-api/)
+- [Silverflow Fees API](https://apis.io/apis/silverflow/silverflow-fees-api/) — The Fees API from Silverflow — 2 operation(s) for fees.
+- [Silverflow File Subscriptions API](https://apis.io/apis/silverflow/silverflow-file-subscriptions-api/) — Subscribe to raw files from the card networks.
+- [Silverflow Fraud Notification Events API](https://apis.io/apis/silverflow/silverflow-fraud-notification-events-api/)
+- [Silverflow Fraud Notifications API](https://apis.io/apis/silverflow/silverflow-fraud-notifications-api/) — Fraud Notifications are created by the schemes when a fraudulent transaction is reported to them. The Fraud Notification endpoints, allow to obtain more…
+- [Silverflow Fraud Notifications Reports API](https://apis.io/apis/silverflow/silverflow-fraud-notifications-reports-api/) — The Fraud Notifications Reports API from Silverflow — 1 operation(s) for fraud notifications reports.
+- [Silverflow Merchant Acceptors API](https://apis.io/apis/silverflow/silverflow-merchant-acceptors-api/)
+- [Silverflow Merchants API](https://apis.io/apis/silverflow/silverflow-merchants-api/)
+- [Silverflow Network Funds Transfers API](https://apis.io/apis/silverflow/silverflow-network-funds-transfers-api/) — The Network Funds Transfers API from Silverflow — 2 operation(s) for network funds transfers.
+- [Silverflow Network Tokenization API](https://apis.io/apis/silverflow/silverflow-network-tokenization-api/) — Network Tokenization
+- [Silverflow Network Tokens Events API](https://apis.io/apis/silverflow/silverflow-network-tokens-events-api/)
+- [Silverflow POS Charge Actions API](https://apis.io/apis/silverflow/silverflow-pos-charge-actions-api/) — Perform different actions on a previously created charge.
+- [Silverflow Processor Tokenization API](https://apis.io/apis/silverflow/silverflow-processor-tokenization-api/) — Processor Tokenization
+- [Silverflow Processor Tokens Events API](https://apis.io/apis/silverflow/silverflow-processor-tokens-events-api/)
+- [Silverflow Reconciliation Details API](https://apis.io/apis/silverflow/silverflow-reconciliation-details-api/) — The Reconciliation Details API from Silverflow — 3 operation(s) for reconciliation details.
+- [Silverflow Reconciliation Events API](https://apis.io/apis/silverflow/silverflow-reconciliation-events-api/)
+- [Silverflow Reconciliation Reports API](https://apis.io/apis/silverflow/silverflow-reconciliation-reports-api/) — The Reconciliation Reports API from Silverflow — 2 operation(s) for reconciliation reports.
+- [Silverflow Report Events API](https://apis.io/apis/silverflow/silverflow-report-events-api/) — The Report Events API from Silverflow — 0 operation(s) for report events.
+- [Silverflow Report Scheduling API](https://apis.io/apis/silverflow/silverflow-report-scheduling-api/) — The Report Scheduling API from Silverflow — 2 operation(s) for report scheduling.
+- [Silverflow Retrieve Charges API](https://apis.io/apis/silverflow/silverflow-retrieve-charges-api/) — Retrieve a single or multiple charges.
+- [Silverflow Retrieve POS Charges API](https://apis.io/apis/silverflow/silverflow-retrieve-pos-charges-api/) — Retrieve charges for given merchant and with additonal filters.
+- [Silverflow Retrieve Reports API](https://apis.io/apis/silverflow/silverflow-retrieve-reports-api/) — The Retrieve Reports API from Silverflow — 3 operation(s) for retrieve reports.
+- [Silverflow Scheme Fee Reports API](https://apis.io/apis/silverflow/silverflow-scheme-fee-reports-api/) — The Scheme Fee Reports API from Silverflow — 1 operation(s) for scheme fee reports.
+- [Silverflow Screenings API](https://apis.io/apis/silverflow/silverflow-screenings-api/)
+- [Silverflow Settlement Reports API](https://apis.io/apis/silverflow/silverflow-settlement-reports-api/) — The Settlement Reports API from Silverflow — 1 operation(s) for settlement reports.
+- [Silverflow Transaction Risk Assessment API](https://apis.io/apis/silverflow/silverflow-transaction-risk-assessment-api/) — Transaction Risk Assessment
+
+### Published properties
+
+Each property below is a page on APIs.io carrying the machine-readable artifact and what it says.
+
+#### AsyncAPI (1)
+
+Event-driven and webhook contracts.
+
+- [Silverflow Events Webhooks](https://apis.io/asyncapis/silverflow/silverflow-events-webhooks/)
+
+#### MCP servers (1)
+
+Model Context Protocol servers that expose the API to agents.
+
+- [Silverflow MCP server (candidate)](https://apis.io/servers/silverflow/silverflow-mcp-server-candidate/)
+
+#### Overlays (1)
+
+OpenAPI overlays, including conversational phrasing for each operation.
+
+- [Silverflow Openapi Overlay](https://apis.io/overlays/silverflow/silverflow-openapi-overlay/)
+
+#### Security (3)
+
+Authentication, trust centre, and vulnerability disclosure.
+
+- [Silverflow Authentication](https://apis.io/security/silverflow/silverflow-authentication/)
+- [Silverflow Domain Security](https://apis.io/security/silverflow/silverflow-domain-security/)
+- [Silverflow Vulnerability Disclosure](https://apis.io/security/silverflow/silverflow-vulnerability-disclosure/)
+
+#### Plans and pricing (1)
+
+Published plans, tiers and prices.
+
+- [Silverflow Plans Pricing](https://apis.io/plans/silverflow/silverflow-plans-pricing/)
+
+#### Rate limits (1)
+
+Published request limits.
+
+- [Silverflow Rate Limits](https://apis.io/rate-limits/silverflow/silverflow-rate-limits/)
+
+## Where to find this API
+
+Links to the company's own pages. This repository publishes no copy of their specifications — the canonical document is theirs and lives at the URLs below.
+
+- [Website](https://www.silverflow.com/)
+- [Documentation](https://docs.silverflow.com/)
+- [Getting started](https://docs.silverflow.com/guides/getting-started)
+- [API reference](https://docs.silverflow.com/apidocs/latest/index.html)
+- [Support](https://www.silverflow.com/contact)
+- [Blog](https://www.silverflow.com/blog)
+- [Privacy policy](https://www.silverflow.com/privacy)
+- [Status](https://status.silverflow.com/)
+
+## API Evangelist rating
+
+**Kin Score 51.9** — developing · rubric 0.25.0 · scored 2026-10-23
+
+| Facet | Score |
+|---|---|
+| Discoverability | 73.2 |
+| Contract quality | 62.9 |
+| Contract governance | 4.5 |
+| Operational transparency | 57.9 |
+| Developer ergonomics | 66.1 |
+| Access clarity | 17.1 |
+
+**Agent readiness 43.0** — agent-native
+
+| Agent-readiness dimension | Result |
+|---|---|
+| Spec Presence | yes |
+| Agentic Access | — |
+| Reversibility Documented | documented (partial credit) |
+| MCP Server | — |
+| Auth Clarity | bearer (partial credit) |
+| Idempotency | verified |
+| Error Semantics | verified |
+| OpenAPI Examples | verified |
+| Rate Limit Signal | verified |
+| Event Surface Described | derived (partial credit) |
+| Agent Skills | derived (partial credit) |
+| Well Known Catalog | — |
+| Consent Identity | — |
+| Agent Card | — |
+| Dry Run Mode | — |
+| Delegated Identity | — |
+| Protected Resource Metadata | — |
+| Dynamic Client Registration | — |
+| Agentic Commerce | — |
+| Pagination Ratio | partial |
+| Operation Distinctiveness | distinct |
+
+**Regulatory alignment 33.0** — Payments
+
+The rubric is published at [github.com/api-evangelist/kin-score](https://github.com/api-evangelist/kin-score). The per-check breakdown behind these numbers — which checks were earned, partial or missed — along with score history and how this provider compares to its peers, is available at [apis.io/providers/silverflow/](https://apis.io/providers/silverflow/).
+
+## How this profile is made
+
+API Evangelist profiles a company's public API surface the way a developer would find it: the website, developer portal and documentation, the specifications it publishes, its public repositories, and its pricing, status and changelog pages. From that it derives the properties above — contracts split per API, workflows, schemas, collections, governance rules, plans and rate limits — and scores them against the published [Kin Score rubric](https://github.com/api-evangelist/kin-score).
+
+The artifacts are published on [APIs.io](https://apis.io), not in this repository. This repository is the public record for Silverflow: the place to say something is wrong, missing or out of date, and to ask for a re-score or a removal.
+
+## Open an issue
+
+- **Something about this listing** — a wrong description, a missing API, a stale artifact or a question about the rating: [open an issue on this repository](https://github.com/api-evangelist/silverflow/issues/new).
+- **A new API, or one that is not in the catalog yet** — [submit it on APIs.io](https://apis.io/add/).
+- **Anything else** — [the APIs.io inbox](https://github.com/api-search/inbox/issues/new) or [info@apievangelist.com](mailto:info@apievangelist.com).
